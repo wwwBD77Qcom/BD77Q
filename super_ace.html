@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Ace VIP Royal Slot - 100% VIP Loading</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #3a0066, #12001f, #000000);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* ভিআইপি লোডিং স্ক্রিন ওভারলে */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, #2a0845, #05010a);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
+        }
+
+        .loader-logo {
+            font-size: 55px;
+            animation: bounceLogo 1.5s infinite alternate;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px #ffd700);
+        }
+
+        @keyframes bounceLogo {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-12px) scale(1.1); }
+        }
+
+        .loader-title {
+            font-size: 22px;
+            font-weight: 900;
+            background: linear-gradient(to right, #ffd700, #ff4500, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+        }
+
+        .progress-bar-container {
+            width: 280px;
+            height: 16px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            padding: 2px;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #ff8800, #ffd700, #00ffcc);
+            border-radius: 6px;
+            transition: width 0.1s linear;
+            box-shadow: 0 0 10px #ffd700;
+        }
+
+        .loading-percentage {
+            font-size: 16px;
+            font-weight: 800;
+            color: #00ffcc;
+            letter-spacing: 1px;
+        }
+
+        /* মূল গেম কন্টেইনার */
+        .game-container {
+            background: linear-gradient(135deg, rgba(80, 10, 120, 0.95), rgba(20, 2, 35, 0.98));
+            border: 6px solid;
+            border-image: linear-gradient(to bottom, #ffd700, #ff8800, #b39223) 1;
+            border-radius: 25px;
+            padding: 18px;
+            width: 440px;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(255, 215, 0, 0.6), inset 0 0 30px rgba(255, 215, 0, 0.3);
+            position: relative;
+            display: none;
+        }
+
+        .header-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 12px;
+            border-radius: 15px;
+            border: 1.5px solid rgba(255, 215, 0, 0.5);
+        }
+
+        .live-dealer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-box {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff00ff, #5a005a);
+            border: 2px solid #00ffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            box-shadow: 0 0 15px #ff00ff;
+            animation: pulseAvatar 2s infinite alternate;
+        }
+
+        @keyframes pulseAvatar {
+            0% { transform: scale(1); box-shadow: 0 0 10px #ff00ff; }
+            100% { transform: scale(1.08); box-shadow: 0 0 20px #00ffff; }
+        }
+
+        .dealer-info {
+            text-align: left;
+        }
+
+        .dealer-name {
+            font-size: 13px;
+            font-weight: 800;
+            color: #ffd700;
+            text-shadow: 0 0 5px rgba(255,215,0,0.8);
+        }
+
+        .dealer-status {
+            font-size: 10px;
+            color: #00ffcc;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            background: #00ff00;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #00ff00;
+            animation: blinkDot 1s infinite alternate;
+        }
+
+        @keyframes blinkDot {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .logo-title {
+            font-size: 17px;
+            font-weight: 900;
+            background: linear-gradient(to right, #ffd700, #ff4500, #00ffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .main-screen {
+            margin-bottom: 12px;
+            background: rgba(5, 0, 10, 0.95);
+            padding: 10px;
+            border-radius: 16px;
+            border: 2.5px solid #ffd700;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9);
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            overflow: hidden;
+        }
+
+        .card-cell {
+            background: #ffffff;
+            color: #000;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px;
+            border-radius: 8px;
+            border: 2px solid #b39223;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .card-cell.dropping {
+            animation: dropFromTop 0.4s ease-in-out;
+        }
+
+        @keyframes dropFromTop {
+            0% { transform: translateY(-180px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .card-cell.winner {
+            background: #fff9cc;
+            border-color: #ff2200;
+            box-shadow: 0 0 20px #ff4500;
+            transform: scale(1.08);
+            z-index: 10;
+        }
+
+        .card-cell.scatter {
+            background: #ffcc00;
+            border-color: #ff00ff;
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        .card-top-left {
+            position: absolute;
+            top: 4px;
+            left: 5px;
+            font-size: 11px;
+            font-weight: 900;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        .card-center-art {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 35px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-bottom-right {
+            position: absolute;
+            bottom: 4px;
+            right: 5px;
+            font-size: 11px;
+            font-weight: 900;
+            line-height: 1.1;
+            text-align: center;
+            transform: rotate(180deg);
+        }
+
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            border: 1.5px solid #ffd700;
+        }
+
+        .bet-control {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(40, 10, 60, 0.85);
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 1px solid #ffaa00;
+            font-size: 13px;
+        }
+
+        .ctrl-btn {
+            background: #ffaa00;
+            color: #000;
+            border: none;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .ctrl-btn:active {
+            transform: scale(0.9);
+        }
+
+        .spin-btn {
+            background: linear-gradient(to bottom, #00f2fe, #4facfe);
+            color: #000;
+            border: 3px solid #fff;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: 900;
+            width: 100%;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 242, 254, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .spin-btn:active {
+            transform: scale(0.96);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loadingScreen">
+        <div class="loader-logo">👑</div>
+        <div class="loader-title">Super Ace VIP Royal</div>
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressFill"></div>
+        </div>
+        <div class="loading-percentage" id="loadingText">LOADING 0%</div>
+    </div>
+
+    <div class="game-container" id="gameContainer">
+        <div class="header-area">
+            <div class="live-dealer">
+                <div class="avatar-box">🧙‍♂️</div>
+                <div class="dealer-info">
+                    <div class="dealer-name">VIP HOST</div>
+                    <div class="dealer-status"><span class="live-dot"></span> LIVE DEALER</div>
+                </div>
+            </div>
+            <div class="logo-title">👑 ROYAL ACE</div>
+        </div>
+
+        <div class="main-screen">
+            <div class="card-grid" id="cardGrid"></div>
+        </div>
+
+        <div class="controls">
+            <div class="info-panel">
+                <span>BALANCE: <strong id="balance" style="color: #ffd700;">0.00</strong> 🪙</span>
+                <span>STATUS: <strong id="statusText" style="color: #00ffcc;">READY</strong></span>
+            </div>
+
+            <div class="bet-control">
+                <button class="ctrl-btn" onclick="changeBet(-1)">-</button>
+                <span>BET: <strong id="betAmount" style="color: #ff00ff;">1.00</strong> 🪙</span>
+                <button class="ctrl-btn" onclick="changeBet(1)">+</button>
+            </div>
+
+            <button class="spin-btn" id="spinBtn" onclick="spinGame()">SPIN / PLAY</button>
+        </div>
+    </div>
+
+    <script>
+        let loadProgress = 0;
+        const progressFill = document.getElementById('progressFill');
+        const loadingText = document.getElementById('loadingText');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const gameContainer = document.getElementById('gameContainer');
+
+        const loadingInterval = setInterval(() => {
+            loadProgress += Math.floor(Math.random() * 4) + 2;
+            if (loadProgress >= 100) {
+                loadProgress = 100;
+                clearInterval(loadingInterval);
+                
+                loadingText.textContent = "LOADING 100% - READY!";
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        gameContainer.style.display = 'block';
+                        initGrid();
+                    }, 500);
+                }, 400);
+            }
+            progressFill.style.width = loadProgress + '%';
+            loadingText.textContent = `LOADING ${loadProgress}%`;
+        }, 30);
+
+        const standardCards = [
+            { rank: 'A', suit: '♠', color: '#000000', art: '♠' }, 
+            { rank: 'K', suit: '♠', color: '#000000', art: '👑' }, 
+            { rank: 'Q', suit: '♥', color: '#cc0000', art: '👸' }, 
+            { rank: 'J', suit: '♦', color: '#cc0000', art: '🛡️' }, 
+            { rank: '10', suit: '♣', color: '#000000', art: '♣' } 
+        ];
+
+        const rows = 4;
+        const cols = 5;
+        let currentBetIndex = 2;
+        let isSpinning = false;
+        let freeSpins = 0;
+
+        const betSteps = [0.50, 1.00, 2.00, 5.00, 10.00, 20.00, 50.00, 100.00, 200.00];
+
+        function getCurrentUserBalance() {
+            try {
+                const currentUserKey = localStorage.getItem('aviator_current_user');
+                if (!currentUserKey) return 0.00;
+
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                if (usersDb[currentUserKey] !== undefined) {
+                    return parseFloat(usersDb[currentUserKey].balance) || 0.00;
+                }
+            } catch (e) {
+                console.error("Database sync error:", e);
+            }
+            return 0.00;
+        }
+
+        function updateDatabaseBalance(newBalance) {
+            try {
+                const currentUserKey = localStorage.getItem('aviator_current_user');
+                if (!currentUserKey) return;
+
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                if (usersDb[currentUserKey]) {
+                    usersDb[currentUserKey].balance = parseFloat(newBalance.toFixed(2));
+                    localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                }
+            } catch (e) {
+                console.error("Database update error:", e);
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const initialBalance = getCurrentUserBalance();
+            document.getElementById('balance').textContent = initialBalance.toFixed(2);
+        });
+
+        function checkHourlyScatter() {
+            const lastScatterTime = localStorage.getItem('last_scatter_time');
+            const currentTime = new Date().getTime();
+            const oneHour = 60 * 60 * 1000; 
+
+            if (!lastScatterTime || (currentTime - lastScatterTime) > oneHour) {
+                localStorage.setItem('last_scatter_time', currentTime);
+                return true;
+            }
+            return false;
+        }
+
+        function initGrid() {
+            const grid = document.getElementById('cardGrid');
+            grid.innerHTML = '';
+            for (let i = 0; i < rows * cols; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('card-cell');
+                const card = getRandomCard();
+                cell.innerHTML = createCardHTML(card);
+                grid.appendChild(cell);
+            }
+        }
+
+        function createCardHTML(card) {
+            if (card.isScatter) {
+                return `
+                    <div class="card-top-left" style="color:#d900ff">SC<br>⭐</div>
+                    <div class="card-center-art" style="color:#d900ff">🌟</div>
+                    <div class="card-bottom-right" style="color:#d900ff">SC<br>⭐</div>
+                `;
+            }
+            return `
+                <div class="card-top-left" style="color:${card.color}">${card.rank}<br>${card.suit}</div>
+                <div class="card-center-art" style="color:${card.color}">${card.art}</div>
+                <div class="card-bottom-right" style="color:${card.color}">${card.rank}<br>${card.suit}</div>
+            `;
+        }
+
+        function getRandomCard() {
+            return standardCards[Math.floor(Math.random() * standardCards.length)];
+        }
+
+        function changeBet(direction) {
+            if (isSpinning) return;
+            currentBetIndex += direction;
+            if (currentBetIndex < 0) currentBetIndex = 0;
+            if (currentBetIndex >= betSteps.length) currentBetIndex = betSteps.length - 1;
+            
+            document.getElementById('betAmount').textContent = betSteps[currentBetIndex].toFixed(2);
+        }
+
+        function spinGame() {
+            if (isSpinning) return;
+            
+            let currentBalance = getCurrentUserBalance();
+            let currentBet = betSteps[currentBetIndex];
+
+            if (freeSpins > 0) {
+                freeSpins--;
+            } else {
+                if (currentBalance < currentBet) {
+                    alert('অপর্যাপ্ত ব্যালেন্স বা কয়েন! দয়া করে ডিপোজিট বা ব্যালেন্স যোগ করুন।');
+                    return;
+                }
+                currentBalance -= currentBet;
+                updateDatabaseBalance(currentBalance);
+            }
+
+            isSpinning = true;
+            document.getElementById('balance').textContent = currentBalance.toFixed(2);
+            
+            if (freeSpins > 0) {
+                document.getElementById('statusText').textContent = `FREE SPINS: ${freeSpins + 1}`;
+                document.getElementById('statusText').style.color = '#00ffff';
+            } else {
+                document.getElementById('statusText').textContent = 'DROPPING...';
+                document.getElementById('statusText').style.color = '#ff00ff';
+            }
+
+            const cells = document.querySelectorAll('.card-cell');
+            let forceScatter = checkHourlyScatter();
+            let scatterIndices = [];
+            if (forceScatter) {
+                while(scatterIndices.length < 3) {
+                    let rIdx = Math.floor(Math.random() * cells.length);
+                    if(!scatterIndices.includes(rIdx)) scatterIndices.push(rIdx);
+                }
+            }
+
+            cells.forEach((cell, idx) => {
+                cell.classList.remove('winner', 'scatter');
+                cell.classList.remove('dropping');
+                void cell.offsetWidth; 
+                cell.classList.add('dropping');
+
+                setTimeout(() => {
+                    let card;
+                    if (forceScatter && scatterIndices.includes(idx)) {
+                        card = { isScatter: true };
+                        cell.classList.add('scatter');
+                    } else {
+                        card = getRandomCard();
+                    }
+                    cell.innerHTML = createCardHTML(card);
+                }, 200 + (idx * 20));
+            });
+
+            setTimeout(() => {
+                isSpinning = false;
+                if (forceScatter) {
+                    freeSpins = 9; 
+                    document.getElementById('statusText').textContent = '🎉 ৩ স্কেটার! ১০ ফ্রি স্পিন!';
+                    document.getElementById('statusText').style.color = '#00ff00';
+                } else {
+                    checkWin(currentBet);
+                }
+            }, 1000);
+        }
+
+        function checkWin(currentBet) {
+            const win = Math.random() > 0.45; 
+            const statusText = document.getElementById('statusText');
+            let currentBalance = getCurrentUserBalance();
+            
+            if (win) {
+                const tinyMultipliers = [0.3, 0.5, 0.8, 1.0, 1.2];
+                const selectedMultiplier = tinyMultipliers[Math.floor(Math.random() * tinyMultipliers.length)];
+                const winAmt = currentBet * selectedMultiplier;
+
+                currentBalance += winAmt;
+                updateDatabaseBalance(currentBalance);
+
+                document.getElementById('balance').textContent = currentBalance.toFixed(2);
+                statusText.textContent = `WIN! +${winAmt.toFixed(2)}`;
+                statusText.style.color = '#ffd700';
+                
+                const cells = document.querySelectorAll('.card-cell');
+                for(let i = 0; i < 3; i++) {
+                    let r = Math.floor(Math.random() * cells.length);
+                    cells[r].classList.add('winner');
+                    setTimeout(() => cells[r].classList.remove('winner'), 1500);
+                }
+            } else {
+                statusText.textContent = freeSpins > 0 ? `FREE SPIN (${freeSpins})` : 'TRY AGAIN';
+                statusText.style.color = '#ff4500';
+            }
+        }
+    </script>
+</body>
+</html>
