@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Admin Panel - Dynamic Game Loader</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080a0f;color:#fff;font-family:Arial,sans-serif}
+.app{width:100%;max-width:520px;margin:auto;min-height:100vh;background:#11151d;box-shadow:0 0 40px rgba(0,0,0,.45);padding:15px}
+.card{background:#191f29;border:1px solid #2a303b;border-radius:14px;padding:16px;margin-bottom:12px}
+label{display:block;color:#9da7b6;font-size:12px;margin-bottom:6px}
+input,textarea{width:100%;background:#0e1218;border:1px solid #303846;color:#fff;padding:12px;border-radius:8px;font-size:16px;outline:none;margin-bottom:12px}
+textarea{resize:vertical;min-height:80px}
+button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cursor:pointer;width:100%}
+.cash{background:#20b56b;color:#fff}
+.admin-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
+.admin-table th,.admin-table td{border:1px solid #2a303b;padding:8px;text-align:left}
+.admin-table th{background:#161c27;color:#9da7b6}
+.admin-btn{padding:5px 8px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer;border:0;margin-right:3px}
+.approve-btn{background:#20b56b;color:#fff}
+.reject-btn{background:#ff4961;color:#fff}
+.modal-note{font-size:11px;color:#7f8999;line-height:1.5}
+.screen{display:none}
+.screen.active{display:block}
+.stat-box{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:12px;text-align:center;margin-bottom:12px}
+.stat-value{font-size:24px;font-weight:900;color:#20b56b;margin-top:4px}
+.support-photo{max-width:140px;max-height:100px;border-radius:8px;object-fit:cover;display:block;margin-top:6px}
+.support-action{display:flex;flex-direction:column;gap:6px;min-width:180px}
+</style>
+
+<!-- Firebase SDKs & Config (Modular CDN) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, get, set, update, child, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
+    authDomain: "uk77-56f6d.firebaseapp.com",
+    databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
+    projectId: "uk77-56f6d",
+    storageBucket: "uk77-56f6d.firebasestorage.app",
+    messagingSenderId: "1062783431056",
+    appId: "1:1062783431056:web:c44fd51195cf4061998315",
+    measurementId: "G-C0ST13Q8PJ"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  let adminPassword = '44admin121';
+
+  async function initAdmin() {
+      const dbRef = ref(db);
+      try {
+          const snapshot = await get(child(dbRef, 'admin/password'));
+          if (snapshot.exists()) {
+              adminPassword = snapshot.val();
+          } else {
+              await set(ref(db, 'admin/password'), '44admin121');
+          }
+      } catch (error) {
+          console.error(error);
+      }
+      
+      if(localStorage.getItem('aviator_admin_logged') === 'true'){
+          loadAdminDashboard();
+      }
+  }
+
+  window.verifyAdminLogin = async function() {
+      const pw = document.getElementById('adminLoginPassword').value;
+      const msg = document.getElementById('adminLoginMsg');
+
+      const snapshot = await get(child(ref(db), 'admin/password'));
+      if(snapshot.exists()) adminPassword = snapshot.val();
+
+      if(pw !== adminPassword){ 
+          msg.textContent = 'ভুল পাসওয়ার্ড!'; 
+          return; 
+      }
+
+      localStorage.setItem('aviator_admin_logged', 'true');
+      loadAdminDashboard();
+  }
+
+  window.adminLogout = function() {
+      localStorage.removeItem('aviator_admin_logged');
+      document.getElementById('adminDashboardScreen').classList.remove('active');
+      document.getElementById('adminLoginScreen').classList.add('active');
+  }
+
+  window.loadAdminDashboard = async function() {
+      document.getElementById('adminLoginScreen').classList.remove('active');
+      document.getElementById('adminDashboardScreen').classList.add('active');
+      
+      const usersSnap = await get(child(ref(db), 'users'));
+      if(usersSnap.exists()){
+          const usersData = usersSnap.val();
+          const totalUsersCount = Object.keys(usersData).length;
+          document.getElementById('totalUsersCount').textContent = totalUsersCount;
+      } else {
+          document.getElementById('totalUsersCount').textContent = '0';
+      }
+
+      const numSnap = await get(child(ref(db), 'settings/numbers'));
+      if(numSnap.exists()){
+          const nums = numSnap.val();
+          document.getElementById('adminBkash').value = nums.bKash || '';
+          document.getElementById('adminNagad').value = nums.Nagad || '';
+          document.getElementById('adminRocket').value = nums.Rocket || '';
+      }
+
+      const noticeSnap = await get(child(ref(db), 'settings/officialNotice'));
+      if(noticeSnap.exists()){
+          document.getElementById('adminNoticeText').value = noticeSnap.val() || '';
+      }
+
+      const vipNoticeSnap = await get(child(ref(db), 'settings/vipAnnouncement'));
+      if(vipNoticeSnap.exists()){
+          document.getElementById('adminVipNoticeText').value = vipNoticeSnap.val() || '';
+      }
+
+      fetchRequests();
+      fetchSupportTickets();
+  }
+
+  window.giveUserTurnover = async function() {
+      const phone = document.getElementById('targetUserPhone').value.trim();
+      const amount = Number(document.getElementById('targetUserAmount').value);
+      const msg = document.getElementById('turnoverMsg');
+
+      if(!phone || !amount){
+          msg.style.color = '#ff7888';
+          msg.textContent = 'দয়া করে সঠিক মোবাইল নম্বর এবং টাকার পরিমাণ লিখুন!';
+          return;
+      }
+
+      const userRef = ref(db, 'users/' + phone);
+      const userSnap = await get(userRef);
+
+      if(!userSnap.exists()){
+          msg.style.color = '#ff7888';
+          msg.textContent = 'এই নম্বরের কোনো ইউজার ডাটাবেজে পাওয়া যায়নি!';
+          return;
+      }
+
+      let userData = userSnap.val();
+      let currentBal = userData.balance || 0;
+      let newBalance = currentBal + amount;
+
+      await update(userRef, { balance: newBalance });
+      msg.style.color = '#7ed6a7';
+      msg.textContent = `সফলভাবে ${phone} নম্বরের অ্যাকাউন্টে ৳${amount} টার্নওভার/ব্যালেন্স যোগ করা হয়েছে!`;
+      document.getElementById('targetUserPhone').value = '';
+      document.getElementById('targetUserAmount').value = '';
+  }
+
+  window.saveOfficialNotice = async function() {
+      const noticeText = document.getElementById('adminNoticeText').value.trim();
+      await set(ref(db, 'settings/officialNotice'), noticeText);
+      document.getElementById('adminNoticeMsg').style.color = '#7ed6a7';
+      document.getElementById('adminNoticeMsg').textContent = 'অফিশিয়াল নিউজ সফলভাবে আপডেট হয়েছে!';
+  }
+
+  window.saveVipAnnouncement = async function() {
+      const vipNoticeText = document.getElementById('adminVipNoticeText').value.trim();
+      await set(ref(db, 'settings/vipAnnouncement'), vipNoticeText);
+      document.getElementById('adminVipNoticeMsg').style.color = '#7ed6a7';
+      document.getElementById('adminVipNoticeMsg').textContent = 'ভিআইপি নোটিশ সফলভাবে আপডেট হয়েছে!';
+  }
+
+  async function fetchRequests() {
+      const dbRef = ref(db);
+      
+      const depSnap = await get(child(dbRef, 'requests'));
+      const depTable = document.getElementById('adminDepositTableBody');
+      if(depSnap.exists()){
+          let reqs = depSnap.val();
+          let html = '';
+          Object.keys(reqs).forEach(key => {
+              let r = reqs[key];
+              html += `
+                  <tr>
+                      <td>${r.userPhone}</td>
+                      <td>${r.method || 'Bkash/Nagad'}</td>
+                      <td>৳${Math.round(r.amount||0)}</td>
+                      <td>${r.trx}</td>
+                      <td>
+                          ${r.status === 'Pending' ? `
+                              <button class="admin-btn approve-btn" onclick="handleDeposit('${key}', 'Accept', '${r.userPhone}',${r.amount})">Accept</button>
+                              <button class="admin-btn reject-btn" onclick="handleDeposit('${key}', 'Reject', '${r.userPhone}',${r.amount})">Reject</button>
+                          ` : `<strong>${r.status}</strong>`}
+                      </td>
+                  </tr>
+              `;
+          });
+          depTable.innerHTML = html || `<tr><td colspan="5" style="text-align:center">কোনো ডিপোজিট রিকুয়েস্ট নেই</td></tr>`;
+      } else {
+          depTable.innerHTML = `<tr><td colspan="5" style="text-align:center">কোনো ডিপোজিট রিকুয়েস্ট নেই</td></tr>`;
+      }
+
+      const wSnap = await get(child(dbRef, 'withdrawRequests'));
+      const withdrawTable = document.getElementById('adminWithdrawTableBody');
+      if(wSnap.exists()){
+          let wReqs = wSnap.val();
+          let wHtml = '';
+          Object.keys(wReqs).forEach(key => {
+              let w = wReqs[key];
+              wHtml += `
+                  <tr>
+                      <td>${w.userPhone}</td>
+                      <td>${w.number}</td>
+                      <td>৳${Math.round(w.amount||0)}</td>
+                      <td>
+                          ${w.status === 'Pending' ? `
+                              <button class="admin-btn approve-btn" onclick="handleWithdraw('${key}', 'Accept', '${w.userPhone}',${w.amount})">Accept</button>
+                              <button class="admin-btn reject-btn" onclick="handleWithdraw('${key}', 'Reject', '${w.userPhone}',${w.amount})">Reject & Refund</button>
+                          ` : `<strong>${w.status}</strong>`}
+                      </td>
+                  </tr>
+              `;
+          });
+          withdrawTable.innerHTML = wHtml || `<tr><td colspan="4" style="text-align:center">কোনো উইথড্র রিকুয়েস্ট নেই</td></tr>`;
+      } else {
+          withdrawTable.innerHTML = `<tr><td colspan="4" style="text-align:center">কোনো উইথড্র রিকুয়েস্ট নেই</td></tr>`;
+      }
+  }
+
+  // হেল্প কেয়ার / সাপোর্ট টিকেট লোড করার ফাংশন
+  const HELP_CARE_24H = 24 * 60 * 60 * 1000;
+
+  async function cleanupExpiredSupportTickets() {
+      try {
+          const snap = await get(child(ref(db), 'supportTickets'));
+          if (!snap.exists()) return;
+          const data = snap.val() || {};
+          const now = Date.now();
+          const jobs = [];
+          Object.keys(data).forEach(key => {
+              const t = data[key] || {};
+              const created = Number(t.createdAt) || 0;
+              if (created && now - created >= HELP_CARE_24H) {
+                  jobs.push(remove(ref(db, 'supportTickets/' + key)));
+              }
+          });
+          if (jobs.length) await Promise.all(jobs);
+      } catch (e) {
+          console.error('Help Care 24h cleanup failed:', e);
+      }
+  }
+
+  async function fetchSupportTickets() {
+      await cleanupExpiredSupportTickets();
+      const supportSnap = await get(child(ref(db), 'supportTickets'));
+      const supportTable = document.getElementById('adminSupportTableBody');
+
+      if(supportSnap.exists()){
+          let tickets = supportSnap.val();
+          let html = '';
+
+          Object.keys(tickets).reverse().forEach(key => {
+              let t = tickets[key];
+              const status = t.status || 'Pending';
+              const aiReply = t.aiReply || '';
+              const createdAt = Number(t.createdAt) || 0;
+              const expiresAt = Number(t.expiresAt) || (createdAt + HELP_CARE_24H);
+              const remaining = Math.max(0, expiresAt - Date.now());
+              const remainingHours = Math.floor(remaining / 3600000);
+              const sourceLabel = aiReply ? '🤖 AI Replied' : '👤 Admin Needed';
+              const category = t.category || 'অন্যান্য সমস্যা';
+              const image = t.image || t.adminImage || '';
+
+              html += `
+                <tr>
+                  <td>${t.userPhone || 'N/A'}</td>
+                  <td>
+                    <strong>${category}</strong> <span style="font-size:10px;color:#7ed6a7">${sourceLabel}</span><br>
+                    <span>${t.message || ''}</span><br><small style="color:#9da7b6">⏳ Auto delete: ${remainingHours}h-এর মধ্যে</small>
+                    ${image ? `<br><img src="${image}" alt="Support Image" style="max-width:140px;max-height:100px;border-radius:8px;margin-top:7px;object-fit:cover;">` : ''}
+                  </td>
+                  <td>
+                    <select onchange="updateSupportStatus('${key}', this.value)"
+                      style="background:#0e1218;color:#fff;border:1px solid #303846;border-radius:6px;padding:6px;font-size:11px;">
+                      <option value="Pending" ${status==='Pending'?'selected':''}>Pending</option>
+                      <option value="Processing" ${status==='Processing'?'selected':''}>Processing</option>
+                      <option value="Replied" ${status==='Replied'?'selected':''}>Replied</option>
+                      <option value="Solved" ${status==='Solved'?'selected':''}>Solved</option>
+                    </select>
+                  </td>
+                  <td>
+                    ${aiReply ? `<div style="background:#17251d;padding:6px;border-radius:6px;margin-bottom:5px;color:#9de6b5;"><b>🤖 AI:</b> ${aiReply}</div>` : ''}
+                    ${t.adminReply || 'রিপ্লাই দেওয়া হয়নি'}
+                    ${t.adminImage ? `<br><img src="${t.adminImage}" alt="Admin Image" style="max-width:140px;max-height:100px;border-radius:8px;margin-top:7px;object-fit:cover;">` : ''}
+                  </td>
+                  <td>
+                    <div style="display:flex;flex-direction:column;gap:6px;min-width:180px;">
+                      <input type="text" id="reply_${key}" placeholder="উত্তর লিখুন..."
+                        style="margin-bottom:0;padding:7px;font-size:12px;">
+                      <button class="admin-btn approve-btn"
+                        onclick="sendSupportReply('${key}', '${t.userPhone || ''}')"
+                        style="width:100%;margin-right:0;">💬 রিপ্লাই পাঠান</button>
+
+                      <label style="background:#252b35;color:#fff;border-radius:7px;padding:7px;text-align:center;cursor:pointer;font-size:11px;">
+                        🖼️ ছবি নির্বাচন
+                        <input id="supportImage_${key}" type="file" accept="image/*" hidden
+                          onchange="previewSupportImage('${key}')">
+                      </label>
+
+                      <img id="supportPreview_${key}" style="display:none;max-width:140px;max-height:90px;border-radius:7px;object-fit:cover;">
+
+                      <button class="admin-btn"
+                        onclick="saveSupportImage('${key}')"
+                        style="background:#6c5ce7;color:#fff;width:100%;margin-right:0;">📤 ছবি পাঠান</button>
+                    </div>
+                  </td>
+                </tr>
+              `;
+          });
+
+          supportTable.innerHTML = html || `<tr><td colspan="5" style="text-align:center">কোনো সাপোর্ট মেসেজ নেই</td></tr>`;
+      } else {
+          supportTable.innerHTML = `<tr><td colspan="5" style="text-align:center">কোনো সাপোর্ট মেসেজ নেই</td></tr>`;
+      }
+  }
+
+
+  // Help Care ticket status পরিবর্তন
+  window.updateSupportStatus = async function(ticketKey, status) {
+      await update(ref(db, 'supportTickets/' + ticketKey), { status: status });
+      fetchSupportTickets();
+  }
+
+  // Help Care টিকিট/চ্যাটে ছবি সংরক্ষণ
+  window.saveSupportImage = async function(ticketKey) {
+      const input = document.getElementById(`supportImage_${ticketKey}`);
+      if(!input || !input.files || !input.files[0]) {
+          alert('দয়া করে একটি ছবি নির্বাচন করুন!');
+          return;
+      }
+
+      const file = input.files[0];
+      if(!file.type.startsWith('image/')) {
+          alert('শুধু ছবি পাঠানো যাবে।');
+          return;
+      }
+      if(file.size > 1024 * 1024) {
+          alert('ছবির সাইজ ১ MB-এর মধ্যে রাখুন।');
+          return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+          await update(ref(db, 'supportTickets/' + ticketKey), {
+              adminImage: e.target.result,
+              adminImageName: file.name,
+              adminImageTime: new Date().toLocaleString('bn-BD')
+          });
+          alert('ছবি সফলভাবে পাঠানো হয়েছে!');
+          fetchSupportTickets();
+      };
+      reader.readAsDataURL(file);
+  }
+
+  // সাপোর্ট টিকেট/চ্যাটে ছবির preview দেখানো
+  window.previewSupportImage = function(ticketKey) {
+      const input = document.getElementById(`supportImage_${ticketKey}`);
+      const preview = document.getElementById(`supportPreview_${ticketKey}`);
+      if(input && input.files && input.files[0] && preview) {
+          const reader = new FileReader();
+          reader.onload = e => {
+              preview.src = e.target.result;
+              preview.style.display = 'block';
+          };
+          reader.readAsDataURL(input.files[0]);
+      }
+  }
+
+  // সাপোর্টের উত্তর ইউজারের কাছে পাঠানোর ফাংশন
+  window.sendSupportReply = async function(ticketKey, userPhone) {
+      const replyText = document.getElementById(`reply_${ticketKey}`).value.trim();
+      if(!replyText) {
+          alert('দয়া করে কিছু লিখে তারপর পাঠান!');
+          return;
+      }
+
+      // ১. সাপোর্ট টিকেটে উত্তর ও স্ট্যাটাস আপডেট করা
+      const ticketRef = ref(db, 'supportTickets/' + ticketKey);
+      await update(ticketRef, {
+          adminReply: replyText,
+          status: 'Replied',
+          adminReplyTime: new Date().toLocaleString('bn-BD')
+      });
+
+      // ২. ইউজারের ইনবক্সেও মেসেজটি পাঠিয়ে দেওয়া যাতে ইউজার সহজে দেখতে পায়
+      await sendUserInboxSms(userPhone, "🛠️ হেল্প কেয়ার আপডেট", `আপনার সমস্যার উত্তর: ${replyText}`);
+
+      alert('সফলভাবে উত্তর পাঠানো হয়েছে!');
+      fetchSupportTickets();
+  }
+
+  window.saveAdminNumbers = async function() {
+      const bKash = document.getElementById('adminBkash').value.trim();
+      const Nagad = document.getElementById('adminNagad').value.trim();
+      const Rocket = document.getElementById('adminRocket').value.trim();
+
+      await set(ref(db, 'settings/numbers'), { bKash, Nagad, Rocket });
+      document.getElementById('adminNumMsg').style.color = '#7ed6a7';
+      document.getElementById('adminNumMsg').textContent = 'নম্বর সফলভাবে ফায়ারবেসে আপডেট হয়েছে!';
+  }
+
+  window.changeAdminPassword = async function() {
+      const oldPw = document.getElementById('adminOldPw').value;
+      const newPw = document.getElementById('adminNewPw').value;
+      const msg = document.getElementById('adminPwMsg');
+
+      const snapshot = await get(child(ref(db), 'admin/password'));
+      if(snapshot.exists()) adminPassword = snapshot.val();
+
+      if(oldPw !== adminPassword){
+          msg.textContent = 'পুরাতন পাসওয়ার্ড ভুল!';
+          return;
+      }
+      if(!newPw || newPw.length < 6){
+          msg.textContent = 'নতুন পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।';
+          return;
+      }
+
+      await set(ref(db, 'admin/password'), newPw);
+      adminPassword = newPw;
+      msg.style.color = '#7ed6a7';
+      msg.textContent = 'পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!';
+  }
+
+  async function sendUserInboxSms(phone, title, text) {
+      const userRef = ref(db, 'users/' + phone);
+      const userSnap = await get(userRef);
+      if(userSnap.exists()){
+          let userData = userSnap.val();
+          let inbox = userData.inboxSms || [];
+          inbox.unshift({
+              id: Date.now(),
+              title: title,
+              text: text,
+              time: "এখন"
+          });
+          await update(userRef, { inboxSms: inbox });
+      }
+  }
+
+  window.handleDeposit = async function(reqKey, action, phone, amount) {
+      const reqRef = ref(db, 'requests/' + reqKey);
+      const snap = await get(reqRef);
+      if(!snap.exists()) return;
+      let req = snap.val();
+      if(req.status !== 'Pending') return;
+
+      if(action === 'Accept'){
+          const userRef = ref(db, 'users/' + phone);
+          const userSnap = await get(userRef);
+          let currentBal = 0;
+          if(userSnap.exists()){
+              currentBal = userSnap.val().balance || 0;
+          }
+          await update(userRef, { balance: currentBal + Number(amount) });
+          await update(reqRef, { status: 'Success' });
+          
+          await sendUserInboxSms(phone, "💰 ডিপোজিট সফল", `আপনার অ্যাকাউন্টে সফলভাবে ${amount} টাকা জমা হয়েছে।`);
+          alert('ডিপোজিট সফলভাবে Accept করা হয়েছে!');
+      } else {
+          await update(reqRef, { status: 'Rejected' });
+          await sendUserInboxSms(phone, "❌ ডিপোজিট ব্যর্থ", `আপনার ডিপোজিট রিকোয়েস্টটি গ্রহণ করা সম্ভব হয়নি। সঠিক ট্রানজেকশন আইডি দিয়ে আবার চেষ্টা করুন।`);
+          alert('ডিপোজিট রিকুয়েস্ট Reject করা হয়েছে!');
+      }
+      fetchRequests();
+  }
+
+  window.handleWithdraw = async function(wKey, action, phone, amount) {
+      const wRef = ref(db, 'withdrawRequests/' + wKey);
+      const snap = await get(wRef);
+      if(!snap.exists()) return;
+      let wReq = snap.val();
+      if(wReq.status !== 'Pending') return;
+
+      if(action === 'Accept'){
+          await update(wRef, { status: 'Success' });
+          
+          await sendUserInboxSms(phone, "✅ পেমেন্ট সফল (Withdrawal Successful)", `অভিনন্দন! আপনার ${amount} টাকা সফলভাবে এক্সেপ্ট করা হয়েছে এবং পেমেন্ট সম্পন্ন হয়েছে। ধন্যবাদ সাথে থাকার জন্য।`);
+          alert('উইথড্র রিকুয়েস্ট সফলভাবে Accept করা হয়েছে!');
+      } else {
+          const userRef = ref(db, 'users/' + phone);
+          const userSnap = await get(userRef);
+          let currentBal = 0;
+          if(userSnap.exists()){
+              currentBal = userSnap.val().balance || 0;
+          }
+          await update(userRef, { balance: currentBal + Number(amount) });
+          
+          await update(wRef, { status: 'Rejected' });
+          
+          const rejectMsg = `হ্যালো, সিস্টেম স্বয়ংক্রিয়ভাবে এটি জালিয়াতি সনাক্ত করেছে। আপনার বাজিতে একটি অস্বাভাবিকতা রয়েছে, যার ফলে সিস্টেম আপনার উত্তোলন প্রক্রিয়া করতে অক্ষম। সিস্টেম স্বয়ংক্রিয়ভাবে আপনার পরিমাণ ব্যালেন্সের টার্নওভার বাড়িয়ে দিয়েছে। অনুগ্রহ করে অবশিষ্ট টার্নওভার পরিমাণ পূরণ করুন।`;
+          await sendUserInboxSms(phone, "⚠️ উত্তোলন প্রত্যাখ্যান করা হয়েছে", rejectMsg);
+          
+          alert('উইথড্র রিকুয়েস্ট Reject করা হয়েছে এবং টাকা একাউন্টে রিফান্ড করা হয়েছে!');
+      }
+      fetchRequests();
+  }
+
+  window.addEventListener('DOMContentLoaded', initAdmin);
+</script>
+</head>
+<body>
+
+<div class="app">
+  <div id="adminLoginScreen" class="screen active">
+    <div style="text-align:center;margin:40px 0 20px">
+      <div style="font-size:36px">🛡️</div>
+      <div style="font-size:22px;font-weight:900;margin-top:5px">Admin Panel Login</div>
+    </div>
+    <div class="card">
+      <label>Admin Password</label>
+      <input id="adminLoginPassword" type="password" placeholder="পাসওয়ার্ড দিন">
+      <button class="cash" type="button" onclick="verifyAdminLogin()">লগইন করুন</button>
+      <div id="adminLoginMsg" class="modal-note" style="margin-top:10px;color:#ff7888;text-align:center"></div>
+    </div>
+  </div>
+
+  <div id="adminDashboardScreen" class="screen">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+      <div style="font-size:20px;font-weight:900;color:#ffcf72">🛡️ Admin Dashboard</div>
+      <button onclick="adminLogout()" style="width:auto;background:#252b35;color:#ff7888;padding:6px 12px;font-size:11px;border-radius:8px">লগআউট</button>
+    </div>
+
+    <div class="stat-box">
+      <div style="font-size:13px;color:#9da7b6">মোট রেজিস্টার্ড ইউজার</div>
+      <div class="stat-value" id="totalUsersCount">0</div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">🎯 ইউজার টার্নওভার / ব্যালেন্স অ্যাড</div>
+      <label>ইউজারের মোবাইল নম্বর</label>
+      <input id="targetUserPhone" type="tel" placeholder="01XXXXXXXXX">
+      <label>টাকার পরিমাণ (টার্নওভার/বোনাস)</label>
+      <input id="targetUserAmount" type="number" placeholder="পরিমাণ লিখুন">
+      <button class="cash" type="button" onclick="giveUserTurnover()">টাকা অ্যাড করুন</button>
+      <div id="turnoverMsg" class="modal-note" style="margin-top:5px"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">📢 অফিশিয়াল নিউজ ও নোটিশ বোর্ড</div>
+      <label>বিজ্ঞাপন বা নোটিশের টেক্সট লিখুন</label>
+      <textarea id="adminNoticeText" placeholder="এখানে অ্যাপের অফিশিয়াল নিউজ বা নোটিশ লিখুন..."></textarea>
+      <button class="cash" type="button" onclick="saveOfficialNotice()">নোটিশ পাবলিশ করুন</button>
+      <div id="adminNoticeMsg" class="modal-note" style="margin-top:5px"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">👑 ভিআইপি অফিশিয়াল নোটিশ বোর্ড</div>
+      <label>ভিআইপি নোটিশের টেক্সট লিখুন</label>
+      <textarea id="adminVipNoticeText" placeholder="এখানে ভিআইপি নোটিশ লিখুন..."></textarea>
+      <button class="cash" type="button" onclick="saveVipAnnouncement()">ভিআইপি নোটিশ পাবলিশ করুন</button>
+      <div id="adminVipNoticeMsg" class="modal-note" style="margin-top:5px"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">⚙️ পেমেন্ট নম্বর সেটিংস</div>
+      <label>bKash Number</label>
+      <input id="adminBkash" type="text">
+      <label>Nagad Number</label>
+      <input id="adminNagad" type="text">
+      <label>Rocket Number</label>
+      <input id="adminRocket" type="text">
+      <button class="cash" type="button" onclick="saveAdminNumbers()">Save Numbers</button>
+      <div id="adminNumMsg" class="modal-note" style="margin-top:5px"></div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">🔐 পাসওয়ার্ড পরিবর্তন</div>
+      <label>Current Password</label>
+      <input id="adminOldPw" type="password">
+      <label>New Password</label>
+      <input id="adminNewPw" type="password">
+      <button style="background:#ffb300;color:#111" type="button" onclick="changeAdminPassword()">Update Password</button>
+      <div id="adminPwMsg" class="modal-note" style="margin-top:5px"></div>
+    </div>
+
+    <!-- Help Care / Support Ticket Management -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
+        <div style="font-size:16px;font-weight:900;color:#ffcf72">🛟 Help Care — ইউজার সাপোর্ট</div>
+        <button type="button" onclick="fetchSupportTickets()" style="width:auto;background:#252b35;color:#fff;padding:7px 10px;font-size:11px">↻ Refresh</button>
+      </div>
+      <div class="modal-note" style="margin-bottom:12px">
+        এখানে পাসওয়ার্ড, অ্যাকাউন্ট, ডিপোজিট, টার্নওভার, উইথড্রসহ সব ধরনের ইউজার সমস্যা ও চ্যাট দেখা যাবে।
+        ইউজারের ছবি দেখা এবং Admin থেকে ছবি/রিপ্লাই পাঠানো যাবে।
+      </div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>User Phone</th><th>Problem / Chat</th><th>Status</th><th>Admin Reply / Image</th><th>Action</th></tr></thead>
+          <tbody id="adminSupportTableBody"><tr><td colspan="5" style="text-align:center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">📥 ডিপোজিট রিকুয়েস্ট লিস্ট</div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>User</th><th>Method</th><th>Amount</th><th>TrxID</th><th>Action</th></tr></thead>
+          <tbody id="adminDepositTableBody"><tr><td colspan="5" style="text-align:center">Loading...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">📤 উইথড্র রিকুয়েস্ট লিস্ট</div>
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>User</th><th>Method</th><th>Amount</th><th>Action</th></tr></thead>
+          <tbody id="adminWithdrawTableBody"><tr><td colspan="4" style="text-align:center">কোনো উইথড্র রিকুয়েস্ট নেই</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+
+<script>setInterval(()=>{location.reload();},300000);</script>
