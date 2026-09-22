@@ -201,6 +201,17 @@
         <span id="vipTickerText" class="vip-ticker-text">অ্যাডমিন প্যানেল থেকে ভিআইপি নোটিশ লোড হচ্ছে... নিয়মিত খেলুন এবং বোনাস জিতুন!</span>
       </div>
     </div>
+
+    <!-- Admin Banner Container -->
+    <div id="userBannerContainer" style="width:100%; max-width:520px; margin: 12px auto; padding: 0 12px; display:none;">
+      <div style="border-radius: 14px; overflow: hidden; background: #061b1e; border: 1px solid #19575d; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+        <img id="userBannerImg" src="" alt="Banner" style="width:100%; aspect-ratio:3/1; object-fit:cover; display:none;">
+        <div style="padding: 10px 12px; background: rgba(7,39,44,0.9);">
+          <b id="userBannerName" style="color: #28f0d0; font-size: 14px; display: block; margin-bottom: 3px;"></b>
+          <div id="userBannerText" style="font-size: 12px; color: #9fc4c1;"></div>
+        </div>
+      </div>
+    </div>
     
     <!-- HELP CARE -->
     <div class="help-care-card">
@@ -661,7 +672,47 @@ window.addEventListener('DOMContentLoaded',()=>{
     renderWithdrawHistory();
     renderTopReferrers(usersDb);
     checkRouletteCardVisibility();
+    renderHomeBanner();
 });
+
+// হোমপেজে ব্যানার রেন্ডার করার ফাংশন (LocalStorage থেকে Active ব্যানার ফেচ করবে)
+function renderHomeBanner() {
+    let savedBanners = JSON.parse(localStorage.getItem("adminBanners") || "[]");
+    let activeBanners = savedBanners.filter(b => b.active);
+    let bannerContainer = document.getElementById("userBannerContainer");
+    
+    if (!bannerContainer) return;
+
+    if (activeBanners.length > 0) {
+        // Priority অনুযায়ী সর্ট করা
+        activeBanners.sort((a, b) => a.priority - b.priority);
+        let currentBanner = activeBanners[0];
+        
+        let imgElement = document.getElementById("userBannerImg");
+        let nameElement = document.getElementById("userBannerName");
+        let textElement = document.getElementById("userBannerText");
+        
+        imgElement.src = currentBanner.image;
+        imgElement.style.display = "block";
+        nameElement.textContent = currentBanner.name;
+        textElement.textContent = currentBanner.description || '';
+        
+        bannerContainer.style.display = "block";
+        
+        // লিংকে ক্লিক করলে রিডাইরেক্ট করা
+        if (currentBanner.link) {
+            imgElement.style.cursor = "pointer";
+            imgElement.onclick = function() {
+                window.open(currentBanner.link, '_blank');
+            };
+        } else {
+            imgElement.style.cursor = "default";
+            imgElement.onclick = null;
+        }
+    } else {
+        bannerContainer.style.display = "none";
+    }
+}
 
 // লাকি রুলেট কার্ড ২৪ ঘণ্টা লুকিয়ে রাখার বা দেখানোর ফাংশন
 function checkRouletteCardVisibility() {
@@ -1066,6 +1117,7 @@ function syncAppBalance(){
     const h=document.getElementById('homeHistory');if(h)h.innerHTML=history.length?history.slice(0,6).map(x=>`<div class="item"><span>Crash</span><strong>${x.toFixed(2)}×</strong></div>`).join(''):'<div class="item"><span>Round</span><strong>Waiting...</strong></div>';
     updateDepositNumberDisplay();
     checkRouletteCardVisibility();
+    renderHomeBanner();
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
