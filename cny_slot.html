@@ -551,4 +551,34 @@
 
             if (stepIndex < (isFreeSpin ? 4 : 2) && Math.random() > 0.3) { 
                 setTimeout(() => {
-                    runMultiplierCascade(stepIndex + 1, baseW
+                    runMultiplierCascade(stepIndex + 1, baseWin, isFreeSpin);
+                }, 600);
+            } else {
+                balance += calculatedWin;
+                document.getElementById('balanceDisp').innerText = balance.toFixed(2);
+                syncWithFirebase(balance);
+                checkNextAction(isFreeSpin);
+            }
+        }
+
+        function checkNextAction(isFreeSpin) {
+            if (isFreeSpin) {
+                freeSpinsLeft--;
+                if (freeSpinsLeft > 0) {
+                    document.getElementById('headerWays').innerText = `🔥 VIP FREE GAME (${freeSpinsLeft} Left) 🔥`;
+                    setTimeout(runAutoFreeSpins, 1000);
+                } else {
+                    runAutoFreeSpins();
+                }
+            }
+        }
+
+        function changeBet(val) {
+            if (freeSpinsLeft > 0) return;
+            totalBet += val * 0.40;
+            if (totalBet < 0.40) totalBet = 0.40;
+            document.getElementById('betDisp').innerText = totalBet.toFixed(2);
+        }
+    </script>
+</body>
+</html>
