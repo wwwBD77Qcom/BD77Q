@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Ace - Low Win Config</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+        body {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .loading-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0d0d0d, #221a05);
+            z-index: 100; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; transition: opacity 0.5s ease;
+        }
+        .loading-screen.fade-out { opacity: 0; pointer-events: none; }
+        .loading-cartoon {
+            width: 120px; height: 120px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 50px; box-shadow: 0 0 30px rgba(255, 215, 0, 0.6);
+            animation: bounce 1s infinite alternate; margin-bottom: 20px; border: 4px solid #fff;
+        }
+        @keyframes bounce { 0% { transform: translateY(0) scale(1); } 100% { transform: translateY(-15px) scale(1.05); } }
+        .loading-text { color: #ffd700; font-size: 18px; font-weight: 900; letter-spacing: 2px; text-shadow: 0 0 10px #ff4500; }
+
+        .game-container {
+            width: 100%; max-width: 420px;
+            background: linear-gradient(135deg, #111111 0%, #1c180b 100%);
+            border: 4px solid; border-image: linear-gradient(to bottom, #ffd700, #996515, #ffd700) 1;
+            border-radius: 20px; padding: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9), inset 0 0 20px rgba(255,215,0,0.25);
+            display: flex; flex-direction: column; align-items: center; position: relative;
+        }
+
+        .top-status-bar {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 6px; padding: 0 4px; font-size: 11px; color: #00ffcc; font-weight: bold;
+        }
+        .online-badge {
+            display: flex; align-items: center; gap: 5px;
+            background: rgba(0, 255, 204, 0.1); border: 1px solid rgba(0, 255, 204, 0.4);
+            padding: 3px 8px; border-radius: 12px;
+        }
+        .online-dot {
+            width: 7px; height: 7px; background-color: #00ffcc; border-radius: 50%;
+            box-shadow: 0 0 6px #00ffcc; animation: pulse-dot 1s infinite alternate;
+        }
+        @keyframes pulse-dot { 0% { opacity: 0.4; transform: scale(0.9); } 100% { opacity: 1; transform: scale(1.15); } }
+
+        .cartoon-banner {
+            width: 100%; height: 60px;
+            background: linear-gradient(to right, #4a1500, #b35900, #4a1500);
+            border: 2px solid #ffd700; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+        }
+        .banner-icon { font-size: 26px; animation: pulse-icon 1.5s infinite alternate; }
+        @keyframes pulse-icon { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+        .banner-title {
+            font-size: 16px; font-weight: 900;
+            background: linear-gradient(to bottom, #fff 20%, #ffd700 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9); letter-spacing: 1px;
+        }
+
+        .buy-scatter-panel {
+            display: flex; align-items: center; justify-content: space-between; width: 100%;
+            background: linear-gradient(135deg, #4a1500, #1a0500); border: 2px solid #ff4500;
+            border-radius: 10px; padding: 6px 10px; margin-bottom: 8px; box-shadow: 0 0 10px rgba(255,69,0,0.4);
+        }
+        .buy-info { font-size: 11px; color: #ffd700; font-weight: bold; }
+        .buy-btn {
+            background: linear-gradient(to bottom, #ff4500, #b30000); border: 2px solid #ffd700;
+            color: #fff; padding: 6px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;
+        }
+        .buy-btn:active { transform: scale(0.95); }
+
+        .scatter-modal {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(5px); z-index: 30;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 15px; border-radius: 16px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .scatter-modal.active { opacity: 1; pointer-events: auto; }
+        .modal-title { color: #ffd700; font-size: 16px; font-weight: 900; margin-bottom: 12px; text-shadow: 0 0 8px #ff4500; }
+        .scatter-options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; max-height: 280px; overflow-y: auto; margin-bottom: 12px; }
+        .scatter-option-card {
+            background: linear-gradient(135deg, #222, #111); border: 2px solid #b38728; border-radius: 8px;
+            padding: 10px; text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .scatter-option-card:hover { border-color: #ffd700; transform: scale(1.03); }
+        .scatter-option-card h4 { color: #ffd700; font-size: 13px; margin-bottom: 3px; }
+        .scatter-option-card p { color: #00ffcc; font-size: 11px; font-weight: bold; }
+        .close-modal-btn { background: #b30000; border: 2px solid #ffd700; color: #fff; padding: 5px 20px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; }
+
+        .slot-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
+            background: #080808; padding: 6px; border-radius: 12px; border: 2px solid #43320f;
+            width: 100%; margin-bottom: 10px; box-shadow: inset 0 0 15px rgba(0,0,0,0.9);
+        }
+        .card-cell {
+            background: linear-gradient(135deg, #fcfcfc 0%, #e0e0e0 100%); color: #111; height: 65px;
+            border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; position: relative; border: 2px solid #b38728; box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+            transform: translateY(-25px); opacity: 0; transition: transform 0.12s ease, opacity 0.12s ease;
+        }
+        .card-cell.dropped { transform: translateY(0); opacity: 1; }
+        .card-cell.winner-highlight { border-color: #00ffcc; box-shadow: 0 0 10px #00ffcc; background: linear-gradient(135deg, #e0fff0, #b2dfdb); }
+        .card-cell.scatter-highlight { border-color: #ff4500; box-shadow: 0 0 12px #ff4500; background: linear-gradient(135deg, #ffe6e6, #ffcccc); animation: pulse-scatter 0.6s infinite alternate; }
+        @keyframes pulse-scatter { 0% { transform: scale(1); } 100% { transform: scale(1.06); } }
+        
+        .card-val { font-size: 12px; position: absolute; top: 2px; left: 4px; font-weight: 900; }
+        .card-suit { font-size: 22px; line-height: 1; }
+
+        .info-panel {
+            display: flex; justify-content: space-between; width: 100%;
+            background: rgba(0, 0, 0, 0.7); padding: 7px 12px; border-radius: 8px;
+            margin-bottom: 8px; font-size: 11px; border: 1px solid #33260c; color: #ccc;
+        }
+        .info-panel span { color: #ffd700; font-weight: bold; }
+        
+        .controls { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 5px; }
+        .spin-btn {
+            background: linear-gradient(to bottom, #ffd700, #b38728); border: 3px solid #fff; border-radius: 50%;
+            width: 58px; height: 58px; font-size: 12px; font-weight: 900; color: #000; cursor: pointer; box-shadow: 0 5px 12px rgba(0,0,0,0.8);
+        }
+        .spin-btn:active { transform: scale(0.92); }
+        .auto-btn {
+            background: linear-gradient(to bottom, #27ae60, #1e8449); border: 2px solid #ffd700;
+            color: white; padding: 6px 8px; border-radius: 8px; cursor: pointer; font-size: 10px; font-weight: bold;
+        }
+        .auto-btn.active { background: linear-gradient(to bottom, #c0392b, #962d22); }
+        .btn-side { background: #1a1a1a; border: 2px solid #b38728; color: #ffd700; padding: 6px 8px; border-radius: 6px; cursor: pointer; font-size: 10px; font-weight: bold; }
+        
+        .win-popup {
+            position: absolute; top: 38%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: rgba(10, 10, 10, 0.95); border: 4px solid #ffd700; padding: 15px 25px;
+            border-radius: 14px; text-align: center; z-index: 20; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none; box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+        }
+        .win-popup.show { transform: translate(-50%, -50%) scale(1); }
+        .win-popup h3 { color: #ffd700; font-size: 18px; margin-bottom: 4px; text-shadow: 0 0 8px #ff4500; }
+        .win-popup p { color: #00ffcc; font-size: 14px; font-weight: bold; }
+
+        .msg-box { margin-top: 6px; font-size: 11px; color: #ffd700; font-weight: bold; min-height: 16px; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-cartoon">👑🃏</div>
+        <div class="loading-text">SUPER ACE LOADING...</div>
+    </div>
+
+<div class="game-container">
+    
+    <div class="top-status-bar">
+        <div class="online-badge">
+            <div class="online-dot"></div>
+            <span>Online: <strong id="onlineCountVal">1,482</strong></span>
+        </div>
+        <div style="font-size: 10px; color: #aaa;">SUPER ACE ROOM #09</div>
+    </div>
+
+    <div class="cartoon-banner">
+        <div class="banner-icon">🃏</div>
+        <div class="banner-title">SUPER ACE CARTOON</div>
+        <div class="banner-icon">👑</div>
+    </div>
+
+    <div class="scatter-modal" id="scatterModal">
+        <div class="modal-title">Select Scatter Package</div>
+        <div class="scatter-options-grid">
+            <div class="scatter-option-card" onclick="buySelectedScatter(150, 10)"><h4>Standard Pack</h4><p>150৳ (10 Free Spins)</p></div>
+            <div class="scatter-option-card" onclick="buySelectedScatter(500, 12)"><h4>Silver Pack</h4><p>500৳ (12 Free Spins)</p></div>
+            <div class="scatter-option-card" onclick="buySelectedScatter(1000, 15)"><h4>Gold Pack</h4><p>1,000৳ (15 Free Spins)</p></div>
+            <div class="scatter-option-card" onclick="buySelectedScatter(5000, 20)"><h4>Platinum Pack</h4><p>5,000৳ (20 Free Spins)</p></div>
+            <div class="scatter-option-card" onclick="buySelectedScatter(10000, 25)"><h4>Diamond Pack</h4><p>10,000৳ (25 Free Spins)</p></div>
+            <div class="scatter-option-card" onclick="buySelectedScatter(20000, 35)"><h4>VIP Mega Pack</h4><p>20,000৳ (35 Free Spins)</p></div>
+        </div>
+        <button class="close-modal-btn" onclick="toggleScatterModal(false)">Close</button>
+    </div>
+
+    <div class="win-popup" id="winPopup">
+        <h3 id="popupHeader">WIN!</h3>
+        <p id="popupSub">0.00</p>
+    </div>
+
+    <div class="buy-scatter-panel">
+        <div class="buy-info">
+            <div>Buy Free Spin Scatters</div>
+            <div style="font-size: 9px; color: #ff9966;">Hit 3 Scatters = Free Auto Spins</div>
+        </div>
+        <button class="buy-btn" onclick="toggleScatterModal(true)">Scatter Menu</button>
+    </div>
+
+    <div class="slot-grid" id="slotGrid"></div>
+
+    <div class="info-panel">
+        <div>Bal: <span id="balanceVal">0.00</span>৳</div>
+        <div>Win: <span id="winVal">0.00</span>৳</div>
+        <div>FreeSpins: <span id="freeSpinVal">0</span></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn-side" onclick="changeBetIndex(-1)">-</button>
+        <div style="font-size: 11px;">Bet: <span id="betText">15.00</span></div>
+        <button class="btn-side" onclick="changeBetIndex(1)">+</button>
+        <button class="spin-btn" onclick="executeSpin()">SPIN</button>
+        <button class="auto-btn" id="autoBtn" onclick="toggleAutoPlay()">AUTO</button>
+    </div>
+
+    <div class="msg-box" id="msgText">Press SPIN to play!</div>
+</div>
+
+<script>
+    // --- মূল প্রোফাইল এবং অ্যাপের ডাটাবেজের সাথে ব্যালেন্স সিঙ্ক করার লজিক ---
+    let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+    let currentUserPhone = localStorage.getItem('aviator_current_user') || null;
+
+    function getUserBalance() {
+        if (currentUserPhone && usersDb[currentUserPhone]) {
+            return Number(usersDb[currentUserPhone].balance) || 0;
+        }
+        return 0;
+    }
+
+    function updateUserBalance(newBalance) {
+        if (currentUserPhone && usersDb[currentUserPhone]) {
+            usersDb[currentUserPhone].balance = newBalance;
+            localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+        }
+    }
+
+    let balance = getUserBalance();
+
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playTune(type) {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        let now = audioCtx.currentTime;
+        if (type === 'scatter') {
+            [440, 554.37, 659.25, 880, 1108.73, 1318.51].forEach((freq, idx) => {
+                let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+                gain.gain.setValueAtTime(0.25, now + idx * 0.08); gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now + idx * 0.08); osc.stop(now + idx * 0.08 + 0.25);
+            });
+        } else if (type === 'win') {
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'triangle'; osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.2, now + idx * 0.1); gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.1 + 0.3);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now + idx * 0.1); osc.stop(now + idx * 0.1 + 0.3);
+            });
+        } else if (type === 'scatter_tease') {
+            [587.33, 783.99].forEach((freq, idx) => {
+                let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'square'; osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.15, now + idx * 0.15); gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.15 + 0.2);
+                osc.connect(gain); gain.connect(audioCtx.destination); osc.start(now + idx * 0.15); osc.stop(now + idx * 0.15 + 0.2);
+            });
+        }
+    }
+
+    let onlineUsers = 1482;
+    setInterval(() => {
+        onlineUsers += Math.floor(Math.random() * 11) - 5;
+        if (onlineUsers < 1350) onlineUsers = 1350;
+        document.getElementById('onlineCountVal').innerText = onlineUsers.toLocaleString();
+    }, 4000);
+
+    let sessionStartTime = Date.now();
+    let firstScatterDone = false;
+    let nextScatterTargetTime = sessionStartTime + (30 * 60 * 1000);
+
+    window.addEventListener('load', () => {
+        balance = getUserBalance();
+        document.getElementById('balanceVal').innerText = balance.toFixed(2);
+        setTimeout(() => document.getElementById('loadingScreen').classList.add('fade-out'), 1800);
+    });
+
+    const cardData = [
+        { val: 'A', suit: '♠', color: '#000', multiplier: 5 },  
+        { val: 'A', suit: '♥', color: '#b30000', multiplier: 4 },
+        { val: 'K', suit: '♠', color: '#000', multiplier: 3 },  
+        { val: 'K', suit: '♥', color: '#b30000', multiplier: 3 },  
+        { val: 'Q', suit: '♦', color: '#b30000', multiplier: 2 },  
+        { val: 'Q', suit: '♣', color: '#003366', multiplier: 2 }, 
+        { val: 'J', suit: '♠', color: '#000', multiplier: 1 },   
+        { val: 'J', suit: '♦', color: '#b30000', multiplier: 1 }    
+    ];
+
+    const scatterCard = { val: 'SCATTER', suit: '👑', color: '#ff4500', isScatter: true };
+
+    const betLevels = [15, 20, 30, 40, 50, 60, 100, 180, 200];
+    let betIndex = 0;
+    let freeSpins = 0;
+    let isSpinning = false;
+    let autoPlayInterval = null;
+
+    function getBetAmount() { return betLevels[betIndex]; }
+
+    function changeBetIndex(dir) {
+        if (isSpinning || autoPlayInterval) return;
+        betIndex += dir;
+        if (betIndex < 0) betIndex = 0;
+        if (betIndex >= betLevels.length) betIndex = betLevels.length - 1;
+        document.getElementById('betText').innerText = getBetAmount().toFixed(2);
+    }
+
+    function toggleScatterModal(show) {
+        document.getElementById('scatterModal').classList.toggle('active', show);
+    }
+
+    function buySelectedScatter(cost, spins) {
+        if (isSpinning) return;
+        balance = getUserBalance();
+        if (balance < cost) { alert('Insufficient balance!'); return; }
+        balance -= cost; 
+        updateUserBalance(balance);
+        document.getElementById('balanceVal').innerText = balance.toFixed(2);
+        freeSpins += spins; document.getElementById('freeSpinVal').innerText = freeSpins;
+        toggleScatterModal(false); playTune('scatter');
+        triggerWinPopup("👑 SCATTER PACK!", `${spins} Free Spins Added!`);
+        checkAndStartAutoFreeSpin();
+    }
+
+    function createInitialGrid() {
+        const gridEl = document.getElementById('slotGrid');
+        gridEl.innerHTML = '';
+        for (let i = 0; i < 20; i++) {
+            const cell = document.createElement('div'); cell.className = 'card-cell';
+            gridEl.appendChild(cell);
+        }
+    }
+
+    function renderGridSequentially(gridData, matchIndices, scatterIndices, callback) {
+        const cells = document.getElementById('slotGrid').children;
+        for (let i = 0; i < cells.length; i++) { cells[i].className = 'card-cell'; cells[i].innerHTML = ''; }
+        let index = 0;
+        let interval = setInterval(() => {
+            if (index < gridData.length) {
+                const item = gridData[index], cell = cells[index];
+                cell.innerHTML = `<span class="card-val" style="color:${item.color}">${item.val}</span><span class="card-suit" style="color:${item.color}">${item.suit}</span>`;
+                if (matchIndices && matchIndices.includes(index)) cell.classList.add('winner-highlight');
+                if (scatterIndices && scatterIndices.includes(index)) cell.classList.add('scatter-highlight');
+                setTimeout(() => cell.classList.add('dropped'), 15);
+                index++;
+            } else { clearInterval(interval); if (callback) callback(); }
+        }, 25);
+    }
+
+    function toggleAutoPlay() {
+        const autoBtn = document.getElementById('autoBtn');
+        if (autoPlayInterval) {
+            clearInterval(autoPlayInterval); autoPlayInterval = null;
+            autoBtn.classList.remove('active'); autoBtn.innerText = "AUTO";
+            document.getElementById('msgText').innerText = "Auto spin stopped";
+        } else {
+            autoPlayInterval = setInterval(() => { if (!isSpinning) executeSpin(); }, 1400);
+            autoBtn.classList.add('active'); autoBtn.innerText = "STOP";
+            document.getElementById('msgText').innerText = "Auto spin running...";
+        }
+    }
+
+    function checkAndStartAutoFreeSpin() {
+        if (freeSpins > 0 && !autoPlayInterval) {
+            autoPlayInterval = setInterval(() => {
+                if (!isSpinning) {
+                    if (freeSpins <= 0) {
+                        clearInterval(autoPlayInterval); autoPlayInterval = null;
+                        document.getElementById('autoBtn').classList.remove('active');
+                        document.getElementById('autoBtn').innerText = "AUTO";
+                        return;
+                    }
+                    executeSpin();
+                }
+            }, 1200);
+            document.getElementById('autoBtn').classList.add('active');
+            document.getElementById('autoBtn').innerText = "STOP";
+        }
+    }
+
+    function executeSpin() {
+        if (isSpinning) return;
+        let bet = getBetAmount();
+        balance = getUserBalance();
+        
+        if (freeSpins <= 0 && balance < bet) {
+            alert('Insufficient balance!');
+            if (autoPlayInterval) toggleAutoPlay();
+            return;
+        }
+
+        isSpinning = true;
+        if (freeSpins > 0) {
+            freeSpins--;
+            document.getElementById('freeSpinVal').innerText = freeSpins;
+        } else {
+            balance -= bet;
+            updateUserBalance(balance);
+            document.getElementById('balanceVal').innerText = balance.toFixed(2);
+        }
+
+        document.getElementById('winVal').innerText = "0.00";
+        document.getElementById('msgText').innerText = "Spinning cards...";
+
+        let newGrid = Array.from({length: 20}, () => cardData[Math.floor(Math.random() * cardData.length)]);
+        let scatterCount = 0, scatterIndices = [];
+
+        if (Date.now() >= nextScatterTargetTime) {
+            scatterCount = 3;
+            if (!firstScatterDone) {
+                firstScatterDone = true;
+                nextScatterTargetTime = Date.now() + (60 * 60 * 1000);
+            } else {
+                nextScatterTargetTime = Date.now() + (60 * 60 * 1000);
+            }
+        }
+
+        if (scatterCount > 0) {
+            let available = [...Array(20).keys()];
+            for (let s = 0; s < scatterCount; s++) {
+                let chosen = available.splice(Math.floor(Math.random() * available.length), 1)[0];
+                newGrid[chosen] = scatterCard;
+                scatterIndices.push(chosen);
+            }
+        }
+
+        let allowWin = Math.random() < 0.25, matchIndices = [], winningCard = null;
+        if (allowWin && scatterCount < 3) {
+            winningCard = cardData[Math.floor(Math.random() * cardData.length)];
+            let matchCount = Math.floor(Math.random() * 2) + 2; 
+            let available = [...Array(20).keys()].filter(idx => !scatterIndices.includes(idx));
+            for (let m = 0; m < matchCount && available.length > 0; m++) {
+                let chosen = available.splice(Math.floor(Math.random() * available.length), 1)[0];
+                newGrid[chosen] = winningCard; matchIndices.push(chosen);
+            }
+        }
+
+        renderGridSequentially(newGrid, matchIndices, scatterIndices, () => {
+            let hasWon = false;
+
+            if (scatterCount >= 3) {
+                freeSpins += 5; 
+                document.getElementById('freeSpinVal').innerText = freeSpins;
+                playTune('scatter');
+                let bonusWin = Math.min(bet * 0.5, 10);
+                balance = getUserBalance() + bonusWin;
+                updateUserBalance(balance);
+                document.getElementById('balanceVal').innerText = balance.toFixed(2);
+                document.getElementById('winVal').innerText = bonusWin.toFixed(2);
+                triggerWinPopup("👑 3+ SCATTER!", `+5 Free Spins & ${bonusWin.toFixed(2)}৳!`);
+                document.getElementById('msgText').innerText = "3 Scatters hit! Low bonus active.";
+                hasWon = true;
+                checkAndStartAutoFreeSpin();
+            } else if (scatterCount > 0) {
+                playTune('scatter_tease');
+                document.getElementById('msgText').innerText = `${scatterCount} Scatter dropped!`;
+            }
+
+            if (allowWin && matchIndices.length >= 2 && scatterCount < 3) {
+                let calculatedWin = bet * 0.05 * (matchIndices.length / 3);
+                if (calculatedWin < 0.10) calculatedWin = 0.10;
+                balance = getUserBalance() + calculatedWin;
+                updateUserBalance(balance);
+                document.getElementById('balanceVal').innerText = balance.toFixed(2);
+                document.getElementById('winVal').innerText = calculatedWin.toFixed(2);
+                playTune('win');
+                triggerWinPopup("WIN!", `${calculatedWin.toFixed(2)}৳`);
+                document.getElementById('msgText').innerText = `Matched! Win: ${calculatedWin.toFixed(2)}৳`;
+            } else if (scatterCount === 0 && !hasWon) {
+                document.getElementById('msgText').innerText = "No match, try again...";
+            }
+
+            isSpinning = false;
+        });
+    }
+
+    function triggerWinPopup(header, subText) {
+        document.getElementById('popupHeader').innerText = header;
+        document.getElementById('popupSub').innerText = subText;
+        const p = document.getElementById('winPopup');
+        p.classList.add('show');
+        setTimeout(() => p.classList.remove('show'), 1500);
+    }
+
+    createInitialGrid();
+    renderGridSequentially(Array.from({length: 20}, () => cardData[Math.floor(Math.random() * cardData.length)]), [], [], null);
+</script>
+
+</body>
+</html>
