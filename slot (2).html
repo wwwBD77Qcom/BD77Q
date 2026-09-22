@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIP Slot Game - Dynamic Bet Multiplier</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+        body {
+            background-color: #030604;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slot-screen {
+            width: 100%;
+            max-width: 400px;
+            height: 100%;
+            max-height: 800px;
+            background: linear-gradient(180deg, #0d2218 0%, #05100a 50%, #010402 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            border: 3px solid #d4af37;
+            padding: 8px;
+        }
+
+        /* Top Banner */
+        .top-sign {
+            background: linear-gradient(180deg, #0e2b1d 0%, #05110a 100%);
+            border-bottom: 3px solid #020805;
+            padding: 8px 12px;
+            text-align: center;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .free-spin-counter {
+            background: linear-gradient(135deg, #ff4500, #b22222);
+            border: 1.5px solid #ffd700;
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            box-shadow: 0 0 10px rgba(255,69,0,0.9);
+        }
+
+        .multiplier-row {
+            display: flex;
+            gap: 4px;
+        }
+        .mult-item {
+            font-size: 9px;
+            font-weight: bold;
+            color: #a3e8cc;
+            padding: 2px 5px;
+            background: #040e09;
+            border-radius: 4px;
+            border: 1px solid #1a5c3a;
+        }
+        .mult-item.current {
+            background: linear-gradient(135deg, #ffd700, #b8860b);
+            color: #030604;
+            border-color: #fff;
+        }
+
+        /* Game Main Grid */
+        .game-main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .scatter-shield {
+            background: radial-gradient(circle, #1a422d 0%, #0d2217 70%, #030b07 100%);
+            border: 4px solid #d4af37;
+            border-radius: 14px;
+            padding: 8px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.9), 0 5px 15px rgba(0,0,0,0.8);
+            position: relative;
+            width: 100%;
+        }
+
+        .reels-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 5px;
+            background: #020704;
+            padding: 6px;
+            border-radius: 8px;
+            border: 2px solid #10452a;
+        }
+
+        .reel-cell {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #0b2619 0%, #133b27 100%);
+            border: 2px solid #1f6b43;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.8);
+        }
+
+        .reel-cell.cascading {
+            animation: dropDown 0.3s ease-in-out;
+        }
+
+        .reel-cell.diamond-glow {
+            background: linear-gradient(135deg, #00ffff, #0044cc);
+            border-color: #fff;
+            box-shadow: 0 0 15px #00ffff;
+            transform: scale(1.1);
+        }
+
+        .reel-cell.leaf-glow {
+            background: linear-gradient(135deg, #00ff66, #006622);
+            border-color: #fff;
+            box-shadow: 0 0 15px #00ff66;
+            transform: scale(1.1);
+        }
+
+        @keyframes dropDown {
+            0% { transform: translateY(-25px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .scatter-badge-box {
+            position: absolute;
+            bottom: 4px;
+            right: 8px;
+            background: rgba(54, 6, 6, 0.9);
+            border: 1px solid #ff4d4d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: bold;
+            color: #ff9999;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: linear-gradient(90deg, #082114 0%, #134229 50%, #082114 100%);
+            border-top: 2px solid #d4af37;
+            border-bottom: 2px solid #d4af37;
+            padding: 6px 8px;
+            text-align: center;
+            font-size: 11px;
+            color: #ffd700;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Bottom Panel */
+        .bottom-panel {
+            background: linear-gradient(180deg, #091c13 0%, #020704 100%);
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            border-top: 3px solid #d4af37;
+            border-radius: 8px;
+        }
+
+        .controls-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-badge {
+            background: #030a06;
+            border: 1px solid #1a5c3a;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+        }
+        .stat-badge span {
+            color: #00ffcc;
+            font-weight: bold;
+        }
+
+        .bet-select-box {
+            background: #0d291b;
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            padding: 4px 8px;
+            color: #fff;
+            font-size: 11px;
+            font-weight: bold;
+            outline: none;
+        }
+
+        .controls-action-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .side-action-btn {
+            background: #0d291b;
+            border: 1.5px solid #d4af37;
+            color: #ffd700;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .main-spin-btn {
+            background: radial-gradient(circle, #ffea80 0%, #ffd700 50%, #b8860b 100%);
+            border: 3px solid #fff;
+            color: #030604;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .main-spin-btn:active { transform: scale(0.92); }
+        .main-spin-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+
+<div class="slot-screen">
+    <!-- Top Banner -->
+    <div class="top-sign">
+        <div class="free-spin-counter" id="freeSpinBadge">ফ্রি স্পিন: ০</div>
+        <div class="multiplier-row">
+            <div class="mult-item" id="mx1">x1</div>
+            <div class="mult-item" id="mx2">x2</div>
+            <div class="mult-item current" id="mx5">x5</div>
+            <div class="mult-item" id="mx10">x10</div>
+        </div>
+    </div>
+
+    <!-- Main Grid Section -->
+    <div class="game-main">
+        <div class="scatter-shield">
+            <div class="reels-grid" id="reelsGrid"></div>
+            <div class="scatter-badge-box" id="timerBadge">টাইমার: ৬০:০০</div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBarText">
+        💡 গেমটি শুরু করতে SPIN বাটনে ক্লিক করুন!
+    </div>
+
+    <!-- Bottom Control Panel -->
+    <div class="bottom-panel">
+        <div class="controls-top-row">
+            <div class="stat-badge">ব্যালেন্স: <span id="txtBalance">0.00</span> ৳</div>
+            <div class="stat-badge">জয়: <span id="txtWin">0.00</span> ৳</div>
+        </div>
+        <div class="controls-action-row">
+            <button class="side-action-btn" id="speakerBtn" onclick="toggleAudio()" title="Sound">🔊</button>
+            
+            <select class="bet-select-box" id="betSelector" onchange="changeBet(this.value)">
+                <option value="1">বেট: ১ ৳</option>
+                <option value="2">বেট: ২ ৳</option>
+                <option value="5">বেট: ৫ ৳</option>
+                <option value="10" selected>বেট: ১০ ৳</option>
+                <option value="20">বেট: ২০ ৳</option>
+                <option value="50">বেট: ৫০ ৳</option>
+            </select>
+
+            <button class="side-action-btn" id="autoBtn" onclick="toggleAutoMode()" title="Auto">⚡</button>
+        </div>
+        <div style="display: flex; justify-content: center;">
+            <button class="main-spin-btn" id="btnSpin" onclick="triggerSpin()">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#030604" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.73-5.73"/></svg>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- মূল প্রোফাইল এবং অ্যাপের ডাটাবেজের সাথে ব্যালেন্স সিঙ্ক করার লজিক ---[cite: 5]
+    let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+    let currentUserPhone = localStorage.getItem('aviator_current_user') || null;
+
+    function getUserBalance() {
+        if (currentUserPhone && usersDb[currentUserPhone]) {
+            return Number(usersDb[currentUserPhone].balance) || 0;
+        }
+        return 0;
+    }
+
+    function updateUserBalance(newBalance) {
+        if (currentUserPhone && usersDb[currentUserPhone]) {
+            usersDb[currentUserPhone].balance = newBalance;
+            localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+        }
+    }
+
+    let userWallet = getUserBalance();
+
+    let currentBet = 10.00;
+    let isGameRunning = false;
+    let soundEnabled = true;
+    let autoModeActive = false;
+    let autoSpinCount = 0;
+    let autoIntervalId = null;
+
+    let freeSpinsRemaining = 0; 
+    let spinCounter = 0;
+
+    let freeSpinTimerSeconds = 3600; 
+    setInterval(() => {
+        if (freeSpinTimerSeconds > 0) {
+            freeSpinTimerSeconds--;
+            let mins = Math.floor(freeSpinTimerSeconds / 60);
+            let secs = freeSpinTimerSeconds % 60;
+            document.getElementById('timerBadge').innerText = `টাইমার: ${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        } else {
+            freeSpinsRemaining += 3;
+            freeSpinTimerSeconds = 3600;
+            document.getElementById('freeSpinBadge').innerText = `ফ্রি স্পিন: ${freeSpinsRemaining}`;
+            document.getElementById('statusBarText').innerText = `🎉 ১ ঘণ্টা পূর্ণ! ৩টি ফ্রি স্পিন যোগ হয়েছে।`;
+        }
+    }, 1000);
+
+    let audioCtx = null;
+    function initAudio() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+    }
+
+    function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+            initAudio();
+            if(audioCtx.state === 'suspended') audioCtx.resume();
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            let now = audioCtx.currentTime;
+            if (type === 'spin') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'win') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(450, now);
+                osc.frequency.setValueAtTime(650, now + 0.1);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            }
+        } catch(e) {}
+    }
+
+    function toggleAudio() {
+        soundEnabled = !soundEnabled;
+        document.getElementById('speakerBtn').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    const standardSymbols = ['⭐', '🔔', '👑', '🔥', '💰'];
+    const leafSymbol = '🍀';    
+    const diamondSymbol = '💎';  
+    const totalRows = 5;
+    const totalCols = 5;
+    let boardState = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+        userWallet = getUserBalance();
+        document.getElementById('txtBalance').innerText = userWallet.toFixed(2);
+        initializeBoard();
+    });
+
+    function initializeBoard() {
+        const gridContainer = document.getElementById('reelsGrid');
+        gridContainer.innerHTML = '';
+        boardState = [];
+        for (let r = 0; r < totalRows; r++) {
+            let rowCols = [];
+            for (let c = 0; c < totalCols; c++) {
+                let sym = standardSymbols[Math.floor(Math.random() * standardSymbols.length)];
+                rowCols.push(sym);
+                let cell = document.createElement('div');
+                cell.className = 'reel-cell';
+                cell.innerText = sym;
+                cell.id = `cell-${r}-${c}`;
+                gridContainer.appendChild(cell);
+            }
+            boardState.push(rowCols);
+        }
+    }
+
+    function changeBet(val) {
+        if (isGameRunning) return;
+        currentBet = parseFloat(val);
+    }
+
+    function toggleAutoMode() {
+        if (autoModeActive) {
+            stopAutoMode();
+        } else {
+            startAutoMode();
+        }
+    }
+
+    function startAutoMode() {
+        autoModeActive = true;
+        autoSpinCount = 10;
+        document.getElementById('autoBtn').style.background = '#ffd700';
+        document.getElementById('autoBtn').style.color = '#030604';
+        document.getElementById('statusBarText').innerText = `⚡ অটো মোড চালু আছে...`;
+        runNextAutoSpin();
+    }
+
+    function stopAutoMode() {
+        autoModeActive = false;
+        if (autoIntervalId) clearTimeout(autoIntervalId);
+        document.getElementById('autoBtn').style.background = '#0d291b';
+        document.getElementById('autoBtn').style.color = '#ffd700';
+    }
+
+    function runNextAutoSpin() {
+        if (!autoModeActive || autoSpinCount <= 0) {
+            stopAutoMode();
+            return;
+        }
+        triggerSpin(() => {
+            autoSpinCount--;
+            if (autoSpinCount > 0 && autoModeActive) {
+                autoIntervalId = setTimeout(runNextAutoSpin, 600);
+            } else {
+                stopAutoMode();
+            }
+        });
+    }
+
+    async function triggerSpin(callback = null) {
+        if (isGameRunning) return;
+
+        spinCounter++;
+        userWallet = getUserBalance();
+
+        let isFreeSpin = false;
+        if (freeSpinsRemaining > 0) {
+            isFreeSpin = true;
+            freeSpinsRemaining--;
+            document.getElementById('freeSpinBadge').innerText = `ফ্রি স্পিন: ${freeSpinsRemaining}`;
+        } else {
+            if (userWallet < currentBet) {
+                alert('পর্যাপ্ত ব্যালেন্স নেই!');
+                if (autoModeActive) stopAutoMode();
+                if (callback) callback();
+                return;
+            }
+            userWallet -= currentBet;
+            updateUserBalance(userWallet);
+            document.getElementById('txtBalance').innerText = userWallet.toFixed(2);
+        }
+
+        document.getElementById('txtWin').innerText = '0.00';
+        playSound('spin');
+
+        isGameRunning = true;
+        document.getElementById('btnSpin').disabled = true;
+
+        let allowDiamondDrop = (spinCounter % 6 === 0);
+        let allowLeafDrop = (spinCounter % 5 === 0 && !allowDiamondDrop);
+
+        for (let col = 0; col < totalCols; col++) {
+            for (let row = 0; row < totalRows; row++) {
+                await new Promise(res => setTimeout(res, 10));
+                let sym;
+                
+                if (allowDiamondDrop && Math.random() < 0.20) {
+                    sym = diamondSymbol;
+                } else if (allowLeafDrop && Math.random() < 0.20) {
+                    sym = leafSymbol;
+                } else {
+                    sym = standardSymbols[Math.floor(Math.random() * standardSymbols.length)];
+                }
+                
+                boardState[row][col] = sym;
+                let cell = document.getElementById(`cell-${row}-${col}`);
+                if (cell) {
+                    cell.innerText = sym;
+                    cell.className = 'reel-cell cascading';
+                    setTimeout(() => cell.classList.remove('cascading'), 200);
+                }
+            }
+        }
+
+        setTimeout(() => {
+            let diamondCount = 0;
+            let leafCount = 0;
+            let diamondPositions = [];
+            let leafPositions = [];
+
+            for (let r = 0; r < totalRows; r++) {
+                for (let c = 0; c < totalCols; c++) {
+                    if (boardState[r][c] === diamondSymbol) {
+                        diamondCount++;
+                        diamondPositions.push({r, c});
+                    } else if (boardState[r][c] === leafSymbol) {
+                        leafCount++;
+                        leafPositions.push({r, c});
+                    }
+                }
+            }
+
+            let winAmount = 0;
+            let winText = "";
+
+            if (diamondCount >= 3) {
+                let diamondUnitValue = currentBet * 0.3; 
+                winAmount = diamondCount * diamondUnitValue;
+                winText = `💎 ডায়মন্ড ম্যাচ! ${diamondCount}টি ডায়মন্ড মিলেছে। জিতলেন: ${winAmount.toFixed(2)} ৳!`;
+                playSound('win');
+
+                diamondPositions.forEach(pos => {
+                    let cNode = document.getElementById(`cell-${pos.r}-${pos.c}`);
+                    if(cNode) {
+                        cNode.classList.add('diamond-glow');
+                        setTimeout(() => cNode.classList.remove('diamond-glow'), 1200);
+                    }
+                });
+            } 
+            else if (leafCount >= 3) {
+                let leafUnitValue = currentBet * 0.2; 
+                winAmount = leafCount * leafUnitValue;
+                winText = `🍀 পাতা ম্যাচ! ${leafCount}টি পাতা মিলেছে। জিতলেন: ${winAmount.toFixed(2)} ৳!`;
+                playSound('win');
+
+                leafPositions.forEach(pos => {
+                    let cNode = document.getElementById(`cell-${pos.r}-${pos.c}`);
+                    if(cNode) {
+                        cNode.classList.add('leaf-glow');
+                        setTimeout(() => cNode.classList.remove('leaf-glow'), 1200);
+                    }
+                });
+            } 
+            else {
+                let matchedSymbol = null;
+                let matchCount = 0;
+                for (let r = 0; r < totalRows; r++) {
+                    let counts = {};
+                    for (let c = 0; c < totalCols; c++) {
+                        let s = boardState[r][c];
+                        if (s === diamondSymbol || s === leafSymbol) continue;
+                        counts[s] = (counts[s] || 0) + 1;
+                        if (counts[s] >= 3) {
+                            matchedSymbol = s;
+                            matchCount = counts[s];
+                        }
+                    }
+                }
+
+                if (matchedSymbol && matchCount >= 3) {
+                    winAmount = matchCount >= 4 ? currentBet * 0.3 : currentBet * 0.1;
+                    winText = `✨ ম্যাচ উইন! ${matchCount}টি (${matchedSymbol}) মিলেছে। জিতলেন: ${winAmount.toFixed(2)} ৳!`;
+                    playSound('win');
+                } else {
+                    if (diamondCount > 0 || leafCount > 0) {
+                        winText = `💡 কিছু ডায়মন্ড/পাতা আসলেও ৩টি মেলেনি। আবার চেষ্টা করুন!`;
+                    } else {
+                        winText = isFreeSpin ? `🎁 ফ্রি স্পিন চলছে (${freeSpinsRemaining} বাকি)...` : `💡 খালি স্পিন, আবার চেষ্টা করুন!`;
+                    }
+                }
+            }
+
+            if (winAmount > 0) {
+                userWallet = getUserBalance() + winAmount;
+                updateUserBalance(userWallet);
+                document.getElementById('txtBalance').innerText = userWallet.toFixed(2);
+                document.getElementById('txtWin').innerText = winAmount.toFixed(2);
+            }
+
+            document.getElementById('statusBarText').innerText = winText;
+
+            isGameRunning = false;
+            document.getElementById('btnSpin').disabled = false;
+            if (callback) callback();
+        }, 200);
+    }
+</script>
+
+</body>
+</html>
