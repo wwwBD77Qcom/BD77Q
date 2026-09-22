@@ -56,18 +56,32 @@
 .leaderboard-user-info p { margin: 2px 0 0; color: #aeb7c6; font-size: 11px; }
 .leaderboard-badge { background: #28a745; color: white; padding: 4px 8px; border-radius: 15px; font-weight: bold; font-size: 12px; }
 
-/* Helpline Icon & Widget Styles */
-.helpline-pill { display: inline-flex; align-items: center; gap: 6px; background: #222d3d; border: 1px solid #303e54; padding: 6px 12px; border-radius: 20px; cursor: pointer; color: #ffcf72; font-weight: 900; font-size: 12px; transition: 0.2s; }
-.helpline-pill:hover { background: #2d3b50; }
-.chat-msg-box { max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; padding-right: 4px; }
-.chat-bubble { padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.4; max-width: 85%; }
-.chat-bubble.support { background: #1e2636; color: #dce2eb; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #2a303b; }
-.chat-bubble.user { background: #20b56b; color: #fff; align-self: flex-end; border-bottom-right-radius: 2px; }
-.helpline-quick-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-.helpline-q-btn { background: #252e3d; color: #ffcf72; border: 1px solid #323f54; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer; text-align: left; }
-.helpline-q-btn:hover { background: #303e54; }
-
 @media(max-width:420px){.profile-action-btn{font-size:14px;padding:13px 7px}.sky{height:360px}.mult{font-size:46px}.row{gap:6px}}
+
+/* HELP CARE */
+.help-care-card{margin:12px;background:linear-gradient(135deg,#182333,#111722);border:1px solid #3b4d67;border-radius:16px;padding:14px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.help-care-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.help-care-title{font-size:18px;font-weight:900}.help-care-sub{font-size:11px;color:#9da7b6;margin-top:3px}.help-care-open{background:linear-gradient(135deg,#20b56b,#0f8f52);color:#fff;border-radius:12px;padding:11px 14px;font-weight:900}
+.help-care-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.86);z-index:500;align-items:center;justify-content:center;padding:12px}.help-care-modal.show{display:flex}
+.help-care-panel{width:min(500px,100%);max-height:94vh;overflow:hidden;background:#151b25;border:1px solid #303a49;border-radius:16px;display:flex;flex-direction:column}
+.help-care-top{padding:13px 14px;border-bottom:1px solid #2a3340;display:flex;align-items:center;justify-content:space-between}.help-care-cats{padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:7px;overflow:auto;max-height:145px}
+.help-care-cat{background:#202938;color:#dce2eb;border:1px solid #313d4f;border-radius:9px;padding:9px 7px;text-align:left;font-size:11px;font-weight:900}.help-care-cat.active{border-color:#20b56b;background:#173526;color:#7ed6a7}
+.help-care-chat{height:300px;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:8px;background:#0f141c}
+.help-care-msg{max-width:86%;padding:9px 12px;border-radius:12px;font-size:13px;line-height:1.45;word-break:break-word}.help-care-msg.user{align-self:flex-end;background:#20b56b;color:#fff;border-bottom-right-radius:3px}.help-care-msg.admin{align-self:flex-start;background:#202938;color:#e6ebf2;border:1px solid #303b4b;border-bottom-left-radius:3px}.help-care-msg.pending{align-self:flex-start;background:#292317;color:#ffd166;border:1px solid #554522}
+.help-care-img{max-width:210px;max-height:180px;border-radius:9px;margin-top:6px;display:block}.help-care-compose{padding:10px 12px;border-top:1px solid #2a3340;background:#151b25}.help-care-preview{display:none;position:relative;margin-bottom:8px}.help-care-preview.show{display:block}.help-care-preview img{max-width:120px;max-height:90px;border-radius:8px}.help-care-remove-img{position:absolute;top:-7px;left:108px;width:24px;height:24px;padding:0;border-radius:50%;background:#ff4961;color:#fff}
+.help-care-input-row{display:flex;gap:7px;align-items:center}.help-care-attach{width:42px;height:42px;padding:0;background:#252e3d;color:#ffcf72;font-size:18px}.help-care-text{flex:1;min-width:0}.help-care-send{width:48px;height:42px;padding:0;background:#20b56b;color:#fff}.help-care-status{font-size:11px;color:#8fd3ff;min-height:16px;margin-top:5px}
+@media(max-width:420px){.help-care-card{margin:10px}.help-care-chat{height:280px}.help-care-cats{max-height:155px}}
+
+
+/* Help Care Welcome Loading */
+.help-care-welcome{display:none;position:fixed;inset:0;background:linear-gradient(145deg,rgba(8,10,15,.98),rgba(17,21,29,.98));z-index:1200;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px}
+.help-care-welcome.show{display:flex}
+.help-care-welcome-icon{width:82px;height:82px;border-radius:24px;background:linear-gradient(135deg,#20b56b,#148a50);display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 0 35px rgba(32,181,107,.35);animation:helpCarePulse 1.4s ease-in-out infinite;margin-bottom:18px}
+.help-care-welcome-title{font-size:25px;font-weight:900;margin-bottom:7px}
+.help-care-welcome-sub{font-size:13px;color:#aeb7c6}
+.help-care-progress{width:min(280px,80%);height:5px;background:#252c37;border-radius:10px;overflow:hidden;margin-top:22px}
+.help-care-progress i{display:block;width:35%;height:100%;background:#20b56b;border-radius:10px;animation:helpCareLoad 1.15s ease-in-out infinite}
+@keyframes helpCarePulse{0%,100%{transform:scale(1);box-shadow:0 0 25px rgba(32,181,107,.25)}50%{transform:scale(1.08);box-shadow:0 0 40px rgba(32,181,107,.5)}}
+@keyframes helpCareLoad{0%{transform:translateX(-120%)}100%{transform:translateX(400%)}}
 </style>
 </head>
 <body>
@@ -87,11 +101,7 @@
           <div style="font-size:32px">👑</div>
           <div style="font-size:22px;font-weight:900;margin-top:2px">BD77Q</div>
         </div>
-        <!-- Helpline on Login Screen -->
-        <div class="helpline-pill" onclick="openHelpLineModal()">
-          🎧 <span>হেল্পলাইন</span>
-        </div>
-      </div>
+</div>
       
       <div class="auth-card">
         <div class="auth-tabs">
@@ -135,11 +145,7 @@
     <div class="header">
       <div class="logo"><span>👑</span> BD77Q</div>
       <div style="display:flex;align-items:center;gap:8px">
-        <!-- Helpline Small Icon on Home Top Bar -->
-        <div class="helpline-pill" onclick="openHelpLineModal()" style="padding:5px 10px; font-size:11px;">
-          🎧 হেল্পলাইন
-        </div>
-        <div class="balance">💰 ৳ <span id="homeBalance">0</span></div>
+<div class="balance">💰 ৳ <span id="homeBalance">0</span></div>
         <button onclick="handleLogout()" style="background:#252b35;color:#ff7888;padding:6px 10px;font-size:11px;border-radius:8px">লগআউট</button>
       </div>
     </div>
@@ -152,6 +158,14 @@
       </div>
     </div>
     
+    <!-- HELP CARE -->
+    <div class="help-care-card">
+      <div class="help-care-head">
+        <div><div class="help-care-title">🆘 Help Care</div><div class="help-care-sub">অ্যাকাউন্ট, ডিপোজিট, টার্নওভার ও উইথড্র সমস্যায় সরাসরি সাপোর্ট</div></div>
+        <button class="help-care-open" type="button" onclick="openHelpCare()">💬 Chat</button>
+      </div>
+    </div>
+
     <div class="card" style="background:linear-gradient(135deg,#1e2636,#111722);border:1px solid #ffcf72">
       <div style="display:flex;align-items:center;justify-content:space-between">
         <div>
@@ -252,11 +266,7 @@
     <div class="header">
       <div class="logo">👤 Profile</div>
       <div style="display:flex; align-items:center; gap:8px;">
-        <!-- Helpline on Profile Screen Top Bar -->
-        <div class="helpline-pill" onclick="openHelpLineModal()" style="padding:5px 10px; font-size:11px;">
-          🎧 হেল্পলাইন
-        </div>
-        <div class="balance">💰 ৳ <span id="profileBalance">0</span></div>
+<div class="balance">💰 ৳ <span id="profileBalance">0</span></div>
       </div>
     </div>
     
@@ -271,7 +281,8 @@
 
     <div class="card"><div class="nickname-box"><div class="nickname-head"><div><div class="nickname-title">✨ Nickname</div><div class="nickname-value" id="profileNickname">Not set</div></div><button class="nickname-edit" type="button" onclick="toggleNicknameForm()">✏️ Edit</button></div><div id="nicknameForm" class="nickname-form"><label>Your Nickname</label><input id="nicknameInput" type="text" maxlength="30" placeholder="Enter your nickname"><div class="row" style="margin-top:9px"><button class="small" style="flex:1" type="button" onclick="toggleNicknameForm()">Cancel</button><button class="cash" style="flex:1;margin:0" type="button" onclick="saveNickname()">Save</button></div><div id="nicknameMsg" class="nickname-msg"></div></div></div></div>
     
-    <div class="profile-action-grid">
+    <div class="card" style="margin-bottom:10px;"><button type="button" onclick="openHelpCare()" style="width:100%;background:linear-gradient(135deg,#20b56b,#0f8f52);color:#fff;padding:14px;border-radius:12px;font-weight:900;font-size:15px;">🆘 Help Care — Support Chat</button></div>
+        <div class="profile-action-grid">
       <button class="profile-action-btn deposit-btn" type="button" onclick="openProfileModal('depositModal')">📥 Deposit<span>Deposit + 20% Bonus</span></button>
       <button class="profile-action-btn money-btn" type="button" onclick="openProfileModal('moneyModal')">💰 Money<span>Balance + Withdraw</span></button>
     </div>
@@ -283,37 +294,40 @@
     <div class="card"><div style="font-size:18px;font-weight:900;margin-bottom:10px">⚙️ Settings</div><button class="small" style="width:100%" onclick="openPasswordModal()">🔐 Transaction Password</button><div id="passwordStatus" style="font-size:12px;color:#9da7b6;margin-top:9px">Password not set</div></div>
   </div>
 
-  <!-- HELPLINE LIVE CHAT MODAL -->
-  <div id="helpLineModal" class="profile-modal" onclick="modalBackdrop(event,'helpLineModal')">
-    <div class="card profile-modal-card">
-      <div class="modal-top">
-        <div style="font-size:19px;font-weight:900;color:#ffcf72;display:flex;align-items:center;gap:6px;">
-          🎧 BD77Q লাইভ হেল্পলাইন
-        </div>
-        <button class="modal-close" type="button" onclick="closeHelpLineModal()">×</button>
-      </div>
-      
-      <div class="modal-note" style="margin-bottom:10px;">আমাদের সাপোর্ট স্পেশালিস্ট সবসময় প্রস্তুত। আপনার যেকোনো সমস্যার সমাধান পেতে নিচে থেকে ক্যাটাগরি বেছে নিন অথবা মেসেজ লিখুন:</div>
-      
-      <!-- Quick Options -->
-      <div class="helpline-quick-btns">
-        <button class="helpline-q-btn" onclick="sendHelpQuery('ডিপোজিট সমস্যা')">📥 ডিপোজিট সমস্যা</button>
-        <button class="helpline-q-btn" onclick="sendHelpQuery('টাকা উইথড্র সমস্যা')">📤 উইথড্র সমস্যা</button>
-        <button class="helpline-q-btn" onclick="sendHelpQuery('টার্নওভার সমস্যা')">📊 টার্নওভার সমস্যা</button>
-        <button class="helpline-q-btn" onclick="sendHelpQuery('পাসওয়ার্ড রিসেট ও একাউন্ট')">🔐 পাসওয়ার্ড ও একাউন্ট</button>
-      </div>
 
-      <!-- Chat Messages Area -->
-      <div id="helpChatBox" class="chat-msg-box">
-        <div class="chat-bubble support">
-          আসসালামু আলাইকুম! BD77Q সাপোর্টে আপনাকে স্বাগতম। ডিপোজিট, উইথড্র, টার্নওভার বা পাসওয়ার্ড সংক্রান্ত যেকোনো সহায়তার জন্য বলুন। আমি কীভাবে সাহায্য করতে পারি?
-        </div>
-      </div>
 
-      <!-- Chat Input Area -->
-      <div class="row" style="margin-top:6px;">
-        <input id="helpUserInput" type="text" placeholder="আপনার সমস্যা এখানে বিস্তারিত লিখুন..." onkeydown="if(event.key==='Enter') sendCustomHelpMsg()">
-        <button class="cash" style="width:100px;margin-top:0;padding:0 10px;" type="button" onclick="sendCustomHelpMsg()">ارسال</button>
+  <!-- HELP CARE WELCOME LOADING -->
+  <div id="helpCareWelcomeLoading" class="help-care-welcome" aria-hidden="true">
+    <div class="help-care-welcome-icon">🆘</div>
+    <div class="help-care-welcome-title">Help Care আপনাকে স্বাগতম</div>
+    <div class="help-care-welcome-sub">আপনার সমস্যাটি বুঝে সাপোর্ট প্রস্তুত করা হচ্ছে...</div>
+    <div class="help-care-progress"><i></i></div>
+  </div>
+
+  <!-- HELP CARE MODAL -->
+  <div id="helpCareModal" class="help-care-modal" onclick="helpCareBackdrop(event)">
+    <div class="help-care-panel">
+      <div class="help-care-top"><div><div class="help-care-title">🆘 Help Care</div><div class="help-care-sub">আপনার মেসেজ সরাসরি সাপোর্ট টিমে যাবে</div></div><button class="modal-close" type="button" onclick="closeHelpCare()">×</button></div>
+      <div class="help-care-cats">
+        <button class="help-care-cat active" onclick="selectHelpCategory('Account Problem',this)">👤 Account Problem</button>
+        <button class="help-care-cat" onclick="selectHelpCategory('Password Registration',this)">🔐 Password Registration</button>
+        <button class="help-care-cat" onclick="selectHelpCategory('Change Old Password',this)">🔄 Password Change</button>
+        <button class="help-care-cat" onclick="selectHelpCategory('Deposit Problem',this)">📥 Deposit Problem</button>
+        <button class="help-care-cat" onclick="selectHelpCategory('Turnover Problem',this)">📊 Turnover Problem</button>
+        <button class="help-care-cat" onclick="selectHelpCategory('Withdraw Problem',this)">📤 Withdraw Problem</button>
+        <button class="help-care-cat" onclick="selectHelpCategory('Other Problem',this)">💬 Other Problem</button>
+        <button class="help-care-cat" onclick="selectHelpCategory('All Kinds of Chat',this)">💭 General Chat</button>
+      </div>
+      <div id="helpCareChat" class="help-care-chat"><div class="help-care-msg admin">আসসালামু আলাইকুম! Help Care-এ স্বাগতম। 🤖 AI Assistant আগে সাহায্য করার চেষ্টা করবে; প্রয়োজন হলে Admin Support-এ পাঠানো হবে।</div></div>
+      <div class="help-care-compose">
+        <div id="helpCareImagePreview" class="help-care-preview"><img id="helpCarePreviewImg" src="" alt="Selected image"><button class="help-care-remove-img" type="button" onclick="removeHelpCareImage()">×</button></div>
+        <div class="help-care-input-row">
+          <input id="helpCareImage" type="file" accept="image/*" style="display:none" onchange="previewHelpCareImage(event)">
+          <button class="help-care-attach" type="button" onclick="document.getElementById('helpCareImage').click()">📎</button>
+          <input id="helpCareText" class="help-care-text" type="text" placeholder="আপনার সমস্যাটি লিখুন..." onkeydown="if(event.key==='Enter') sendHelpCareMessage()">
+          <button class="help-care-send" type="button" onclick="sendHelpCareMessage()">➤</button>
+        </div>
+        <div id="helpCareStatus" class="help-care-status"></div>
       </div>
     </div>
   </div>
@@ -466,7 +480,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-  import { getDatabase, ref, set, get, update, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, get, update, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
@@ -486,6 +500,7 @@
   window.fbDb = db;
   window.fbRef = ref;
   window.fbSet = set;
+  window.fbRemove = remove;
   window.fbGet = get;
   window.fbUpdate = update;
   window.fbPush = push;
@@ -590,61 +605,96 @@ window.addEventListener('DOMContentLoaded',()=>{
     renderTopReferrers(usersDb);
 });
 
-/* HELPLINE CHAT SYSTEM FUNCTIONS */
-function openHelpLineModal() {
-    const modal = document.getElementById('helpLineModal');
-    if(modal) modal.classList.add('show');
+
+
+/* HELP CARE - AI Assistant + Firebase supportTickets + 24H AUTO CLEANUP */
+let helpCareCategory='Account Problem';
+let helpCareSelectedImage='';
+let helpCareListenerStarted=false;
+const HELP_CARE_24H=24*60*60*1000;
+
+function openHelpCare(){
+  const welcome=document.getElementById('helpCareWelcomeLoading');
+  const m=document.getElementById('helpCareModal');
+  if(welcome){welcome.classList.add('show');welcome.setAttribute('aria-hidden','false');}
+  cleanupMyExpiredHelpCare();
+  loadHelpCareTickets();
+  setTimeout(()=>{
+    if(welcome){welcome.classList.remove('show');welcome.setAttribute('aria-hidden','true');}
+    if(m)m.classList.add('show');
+  },1200);
+}
+function closeHelpCare(){const m=document.getElementById('helpCareModal');if(m)m.classList.remove('show');}
+function helpCareBackdrop(e){if(e.target&&e.target.id==='helpCareModal')closeHelpCare();}
+function selectHelpCategory(category,btn){helpCareCategory=category;document.querySelectorAll('.help-care-cat').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');const i=document.getElementById('helpCareText');if(i)i.placeholder=category+' সম্পর্কে আপনার সমস্যা লিখুন...';}
+function escapeHelpCareHtml(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+function previewHelpCareImage(e){const f=e.target.files&&e.target.files[0];if(!f)return;if(f.size>1024*1024){alert('ছবির সাইজ ১ MB-এর মধ্যে রাখুন।');e.target.value='';return;}const r=new FileReader();r.onload=()=>{helpCareSelectedImage=r.result;document.getElementById('helpCarePreviewImg').src=r.result;document.getElementById('helpCareImagePreview').classList.add('show');};r.readAsDataURL(f);}
+function removeHelpCareImage(){helpCareSelectedImage='';const i=document.getElementById('helpCareImage');const img=document.getElementById('helpCarePreviewImg');const box=document.getElementById('helpCareImagePreview');if(i)i.value='';if(img)img.src='';if(box)box.classList.remove('show');}
+function addHelpCareBubble(type,text,image,time,label){const box=document.getElementById('helpCareChat');if(!box)return;const d=document.createElement('div');d.className='help-care-msg '+type;if(label){const lb=document.createElement('div');lb.style.cssText='font-size:10px;font-weight:900;margin-bottom:4px;opacity:.8';lb.textContent=label;d.appendChild(lb);}const tx=document.createElement('div');tx.innerHTML=escapeHelpCareHtml(text||'');d.appendChild(tx);if(image){const im=document.createElement('img');im.className='help-care-img';im.src=image;im.alt='Support image';d.appendChild(im);}if(time){const tm=document.createElement('div');tm.style.cssText='font-size:9px;opacity:.65;margin-top:4px';tm.textContent=time;d.appendChild(tm);}box.appendChild(d);}
+
+/* Local AI Assistant: common Help Care questions are answered instantly.
+   For unknown/complex questions the ticket stays Pending for Admin. */
+function getHelpCareAIReply(category,message){
+  const q=String(message||'').toLowerCase();
+  if(/password|পাসওয়ার্ড|পাসওয়ার্ড|security/.test(q)||/password/i.test(category))
+    return '🤖 AI Assistant: Transaction Password সেট বা পরিবর্তন করতে Profile → Settings → Transaction Password এ যান। পুরোনো পাসওয়ার্ড জানা না থাকলে Admin Support-এ মেসেজ দিন।';
+  if(/deposit|ডিপোজিট|জমা|টাকা.*দিয়|দিয়েছি/.test(q)||/deposit/i.test(category))
+    return '🤖 AI Assistant: Deposit করার পর Transaction ID/প্রমাণ সংরক্ষণ করুন। আপনার Deposit status না বদলালে Help Care-এ Transaction ID ও প্রয়োজনীয় তথ্য দিন; প্রয়োজন হলে Admin Support বিষয়টি যাচাই করবে।';
+  if(/withdraw|উইথড্র|উত্তোলন|টাকা.*তুল/.test(q)||/withdraw/i.test(category))
+    return '🤖 AI Assistant: Withdraw সমস্যার ক্ষেত্রে amount, method এবং request status দেখুন। Pending থাকলে কিছু সময় অপেক্ষা করুন; সমস্যা থাকলে Admin Support-এ বিস্তারিত লিখুন।';
+  if(/turnover|টার্নওভার|টার্নওভার/.test(q)||/turnover/i.test(category))
+    return '🤖 AI Assistant: Turnover সম্পূর্ণ হওয়ার নিয়ম আপনার অ্যাকাউন্টের বর্তমান গেম/বোনাস শর্তের ওপর নির্ভর করে। নির্দিষ্ট হিসাব জানতে আপনার বর্তমান turnover সমস্যা লিখুন; প্রয়োজন হলে Admin যাচাই করবে।';
+  if(/account|অ্যাকাউন্ট|একাউন্ট|login|লগইন|verify|ভেরিফাই/.test(q)||/account/i.test(category))
+    return '🤖 AI Assistant: Account সমস্যার ক্ষেত্রে আপনার লগইন নম্বর, সমস্যার ধরন এবং প্রয়োজনীয় তথ্য লিখুন। ব্যক্তিগত PIN/পাসওয়ার্ড কখনো চ্যাটে প্রকাশ করবেন না। জটিল হলে Admin Support-এ পাঠানো হবে।';
+  if(/hello|hi|হাই|হ্যালো|আসসালামু|help|সাহায্য/.test(q)||/general chat/i.test(category))
+    return '🤖 AI Assistant: ওয়ালাইকুম আসসালাম! আমি Help Care AI। Deposit, Withdraw, Turnover, Password বা Account সমস্যা লিখুন। উত্তর না পেলে “Admin” লিখে পাঠান।';
+  if(/admin|এডমিন|অ্যাডমিন|মানুষ|human/.test(q)) return '';
+  return '';
 }
 
-function closeHelpLineModal() {
-    const modal = document.getElementById('helpLineModal');
-    if(modal) modal.classList.remove('show');
+async function cleanupMyExpiredHelpCare(){
+  if(!currentUserPhone||!window.fbDb||!window.fbRef||!window.fbGet||!window.fbRemove)return;
+  try{
+    const snap=await window.fbGet(window.fbRef(window.fbDb,'supportTickets'));
+    const data=snap.val()||{},now=Date.now(),jobs=[];
+    Object.keys(data).forEach(key=>{const t=data[key];if(String(t.userPhone||'')===String(currentUserPhone)&&now-(Number(t.createdAt)||now)>=HELP_CARE_24H)jobs.push(window.fbRemove(window.fbRef(window.fbDb,'supportTickets/'+key)));});
+    if(jobs.length)await Promise.all(jobs);
+  }catch(e){console.warn('Help Care 24h cleanup:',e);}
 }
 
-function sendHelpQuery(issueTitle) {
-    const chatBox = document.getElementById('helpChatBox');
-    if(!chatBox) return;
-
-    // User Message
-    chatBox.innerHTML += `<div class="chat-bubble user">আমার ${issueTitle} নিয়ে সমস্যা হচ্ছে। সমাধান চাই।</div>`;
-    
-    // Auto Support Response logic based on issue category
-    setTimeout(() => {
-        let replyText = "আপনার সমস্যাটি নোট করা হয়েছে। আমাদের প্রতিনিধি দ্রুত সমাধান করে দিচ্ছেন।";
-        if(issueTitle.includes('ডিপোজিট')) {
-            replyText = "ডিপোজিট সমস্যা সমাধানের জন্য দয়া করে সঠিক Transaction ID এবং সঠিক সেন্ড নাম্বার দিয়ে পুনরায় রিকোয়েস্ট করুন অথবা পেমেন্ট ট্রানজ্যাকশন স্ক্রিনশটসহ অ্যাডমিনের সাথে যোগাযোগ করুন। সাধারণত ৫-১০ মিনিটে ডিপোজিট অ্যাপ্রুভ হয়।";
-        } else if(issueTitle.includes('উইথড্র')) {
-            replyText = "উইথড্র করার জন্য আপনার টার্নওভার (Turnover) শর্ত শতভাগ পূর্ণ থাকতে হবে এবং সঠিক ট্রানজ্যাকশন পাসওয়ার্ড প্রদান করতে হবে। শর্ত পূর্ণ থাকলে সাধারণত ১৫-৩০ মিনিটের মধ্যে টাকা চলে যায়।";
-        } else if(issueTitle.includes('টার্নওভার')) {
-            replyText = "টার্নওভার হলো আপনার ডিপোজিট ও বোনাস অনুযায়ী প্রয়োজনীয় বাজির শর্ত। প্রোফাইল বা গেম স্ক্রিনে আপনার বর্তমান টার্নওভার স্ট্যাটাস দেখতে পাবেন। টার্গেট পূরণ না হওয়া পর্যন্ত উইথড্র করা যাবে না।";
-        } else if(issueTitle.includes('পাসওয়ার্ড')) {
-            replyText = "পাসওয়ার্ড পরিবর্তনের জন্য প্রোফাইলের 'Transaction Password' অপশনে গিয়ে পুরাতন পাসওয়ার্ড দিয়ে নতুন পাসওয়ার্ড সেট করতে পারেন। লগইন পাসওয়ার্ড ভুলে গেলে সাপোর্টে নতুন নম্বরের তথ্য দিন।";
-        }
-        
-        chatBox.innerHTML += `<div class="chat-bubble support">সাপোর্ট স্পেশালিস্ট: ${replyText}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 600);
-
-    chatBox.scrollTop = chatBox.scrollHeight;
+async function sendHelpCareMessage(){
+  const input=document.getElementById('helpCareText'),status=document.getElementById('helpCareStatus'),text=(input?.value||'').trim();
+  if(!currentUserPhone){if(status)status.textContent='দয়া করে আগে লগইন করুন।';return;}
+  if(!text&&!helpCareSelectedImage){if(status)status.textContent='মেসেজ বা ছবি দিন।';return;}
+  try{
+    if(status)status.textContent='🤖 AI যাচাই করছে...';
+    const createdAt=Date.now(),aiReply=getHelpCareAIReply(helpCareCategory,text);
+    const ticketRef=window.fbPush(window.fbRef(window.fbDb,'supportTickets'));
+    await window.fbSet(ticketRef,{userPhone:String(currentUserPhone),category:helpCareCategory,message:text,image:helpCareSelectedImage||'',status:aiReply?'AI Replied':'Pending',adminReply:'',adminImage:'',aiReply:aiReply||'',aiReplyTime:aiReply?createdAt:0,createdAt,expiresAt:createdAt+HELP_CARE_24H,adminReplyTime:0});
+    if(input)input.value='';removeHelpCareImage();
+    if(status)status.textContent=aiReply?'🤖 AI উত্তর দিয়েছে। প্রয়োজন হলে Admin-এ পাঠানো হবে।':'👤 আপনার মেসেজ Admin Support-এ পাঠানো হয়েছে।';
+  }catch(e){console.error(e);if(status)status.textContent='মেসেজ পাঠানো যায়নি। আবার চেষ্টা করুন।';}
 }
-
-function sendCustomHelpMsg() {
-    const input = document.getElementById('helpUserInput');
-    const chatBox = document.getElementById('helpChatBox');
-    if(!input || !chatBox) return;
-    const txt = input.value.trim();
-    if(!txt) return;
-
-    chatBox.innerHTML += `<div class="chat-bubble user">${escapeHtml(txt)}</div>`;
-    input.value = '';
-    chatBox.scrollTop = chatBox.scrollHeight;
-
-    setTimeout(() => {
-        let genericReply = "ধন্যবাদ আপনার বার্তার জন্য! আমাদের হেল্পলাইন এজেন্ট আপনার প্রশ্নটি যাচাই করছেন। আপনার অ্যাকাউন্ট ও সমস্যার বিবরণ নোট করা হয়েছে, শীঘ্রই সমাধান করা হবে।";
-        chatBox.innerHTML += `<div class="chat-bubble support">সাপোর্ট স্পেশালিস্ট: ${genericReply}</div>`;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }, 800);
+function loadHelpCareTickets(){
+  if(!currentUserPhone||!window.fbDb||helpCareListenerStarted)return;
+  helpCareListenerStarted=true;
+  window.fbOnValue(window.fbRef(window.fbDb,'supportTickets'),snapshot=>{
+    const box=document.getElementById('helpCareChat');if(!box)return;
+    const data=snapshot.val()||{},rows=[],now=Date.now();
+    Object.keys(data).forEach(key=>{const t=data[key];if(String(t.userPhone||'')===String(currentUserPhone)&&now-(Number(t.createdAt)||now)<HELP_CARE_24H)rows.push({key,...t});});
+    rows.sort((a,b)=>(Number(a.createdAt)||0)-(Number(b.createdAt)||0));
+    box.innerHTML='';
+    if(!rows.length)addHelpCareBubble('admin','আসসালামু আলাইকুম! Help Care-এ স্বাগতম। 🤖 AI Assistant আগে সাহায্য করবে; প্রয়োজন হলে Admin Support-এ পাঠানো হবে।','','','🤖 Help Care AI');
+    rows.forEach(t=>{
+      addHelpCareBubble('user',t.message||'',t.image||'',t.createdAt?new Date(t.createdAt).toLocaleString('bn-BD'):'','👤 You');
+      if(t.aiReply)addHelpCareBubble('admin',t.aiReply,'',t.aiReplyTime?new Date(t.aiReplyTime).toLocaleString('bn-BD'):'','🤖 AI Assistant');
+      if(t.adminReply||t.adminImage)addHelpCareBubble('admin',t.adminReply||'সাপোর্ট টিম একটি ছবি পাঠিয়েছে।',t.adminImage||'',t.adminReplyTime?new Date(t.adminReplyTime).toLocaleString('bn-BD'):'','👨‍💼 Admin Support');
+      else if(t.status==='Processing')addHelpCareBubble('pending','আপনার অনুরোধটি সাপোর্ট টিম দেখছে...','','','⏳ Support');
+    });
+    box.scrollTop=box.scrollHeight;
+  });
 }
+setInterval(()=>{if(currentUserPhone)cleanupMyExpiredHelpCare();},5*60*1000);
 
 function renderTopReferrers(dbSource) {
     const container = document.getElementById('topReferrersList');
