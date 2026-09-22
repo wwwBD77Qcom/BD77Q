@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Banner Control</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:#071f24;color:#eefdfb}
+.container{max-width:1100px;margin:auto;padding:18px}
+.header{background:linear-gradient(135deg,#073f46,#075e5d);padding:18px 20px;border-radius:18px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:10px;box-shadow:0 8px 25px #0005}
+.header h1{margin:0;font-size:23px}.header small{color:#a9d9d4}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:#0a3036;border:1px solid #15565c;border-radius:18px;padding:18px;box-shadow:0 8px 24px #0004}
+.card h2{font-size:19px;margin:0 0 16px;color:#28f0d0}
+label{display:block;font-size:14px;color:#b9d8d6;margin:12px 0 7px}
+input,select,textarea{width:100%;padding:12px 13px;border-radius:11px;border:1px solid #28656a;background:#06262b;color:#fff;outline:none}
+input:focus,select:focus,textarea:focus{border-color:#20e5c5}
+textarea{min-height:80px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.upload{border:2px dashed #28787a;border-radius:14px;padding:14px;text-align:center;background:#06272c}
+.preview{width:100%;aspect-ratio:3/1;border-radius:13px;object-fit:cover;background:#061b1e;margin-top:10px;display:none}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+button{border:0;border-radius:11px;padding:12px 18px;font-weight:bold;cursor:pointer}
+.primary{background:#13d9b5;color:#03231f}.secondary{background:#164e55;color:#fff}.danger{background:#d83d4d;color:#fff}
+.toggleline{display:flex;align-items:center;justify-content:space-between;background:#06272c;padding:12px;border-radius:11px;margin-top:10px}
+.switch{width:48px;height:26px;border-radius:30px;background:#36565a;padding:3px;cursor:pointer}
+.switch i{display:block;width:20px;height:20px;border-radius:50%;background:white;transition:.2s}
+.switch.on{background:#16d9b7}.switch.on i{margin-left:22px}
+.banner-list{grid-column:1/-1}
+.banner-item{display:grid;grid-template-columns:150px 1fr auto;gap:15px;align-items:center;padding:12px;border:1px solid #19575d;border-radius:14px;margin:10px 0;background:#07272c}
+.banner-item img{width:150px;height:70px;object-fit:cover;border-radius:9px;background:#021719}
+.info b{display:block;margin-bottom:5px}.info span{font-size:12px;color:#9bc2c0}
+.status{display:inline-block;padding:4px 8px;border-radius:20px;font-size:11px;background:#12544d;color:#62f5da;margin-left:5px}
+.actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.actions button{padding:8px 10px;font-size:12px}
+.note{background:#08262a;border-left:3px solid #19ddbd;padding:11px;border-radius:8px;color:#afd3d0;font-size:13px;line-height:1.6;margin-top:12px}
+.empty{text-align:center;color:#87aaa8;padding:30px}
+@media(max-width:750px){
+ .grid{grid-template-columns:1fr}.banner-list{grid-column:auto}
+ .banner-item{grid-template-columns:95px 1fr}.banner-item img{width:95px;height:60px}.actions{grid-column:1/-1;justify-content:flex-start}
+ .header{align-items:flex-start;flex-direction:column}.row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1>🎯 Banner & Advertisement Control</h1>
+      <small>অ্যাপের Home Banner / Promotion ছবি দিয়ে নিয়ন্ত্রণ করুন</small>
+    </div>
+    <button class="secondary" onclick="resetForm()">＋ নতুন ব্যানার</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2 id="formTitle">নতুন ব্যানার যোগ করুন</h2>
+
+      <label>ব্যানারের নাম</label>
+      <input id="name" placeholder="যেমন: ঈদ স্পেশাল অফার">
+
+      <label>ব্যানার ছবি</label>
+      <div class="upload">
+        <input id="image" type="file" accept="image/*" onchange="previewImage(event)">
+        <div id="uploadText">JPG / PNG / WEBP ছবি নির্বাচন করুন</div>
+        <img id="preview" class="preview">
+      </div>
+
+      <label>ছবির URL (ঐচ্ছিক)</label>
+      <input id="imageUrl" placeholder="https://example.com/banner.jpg" oninput="urlPreview()">
+
+      <div class="row">
+        <div>
+          <label>কোথায় দেখাবে</label>
+          <select id="position">
+            <option>Home Top Banner</option>
+            <option>Home Middle Banner</option>
+            <option>Game Page Banner</option>
+            <option>Promotion Page</option>
+            <option>Popup Banner</option>
+          </select>
+        </div>
+        <div>
+          <label>ক্রম / Priority</label>
+          <input id="priority" type="number" value="1" min="1">
+        </div>
+      </div>
+
+      <label>ক্লিক করলে কোথায় যাবে</label>
+      <input id="link" placeholder="https://example.com/promotion">
+
+      <label>ব্যানারের ছোট বিবরণ</label>
+      <textarea id="description" placeholder="এই ব্যানারে কী অফার বা তথ্য থাকবে..."></textarea>
+
+      <div class="row">
+        <div>
+          <label>শুরু তারিখ</label>
+          <input id="start" type="datetime-local">
+        </div>
+        <div>
+          <label>শেষ তারিখ</label>
+          <input id="end" type="datetime-local">
+        </div>
+      </div>
+
+      <div class="toggleline">
+        <span>ব্যানার Active রাখুন</span>
+        <div id="activeSwitch" class="switch on" onclick="toggleSwitch()"><i></i></div>
+      </div>
+
+      <div class="toggleline">
+        <span>Auto Slide-এ দেখাবেন</span>
+        <div id="slideSwitch" class="switch on" onclick="toggleSlide()"><i></i></div>
+      </div>
+
+      <div class="btns">
+        <button class="primary" onclick="saveBanner()">💾 Save Banner</button>
+        <button class="secondary" onclick="resetForm()">Clear</button>
+      </div>
+      <div class="note">
+        এটি একটি single-file admin demo। ডাটাগুলো এই ব্রাউজারের LocalStorage-এ রাখা হবে।
+        আসল অ্যাপে Firebase/API/Database যুক্ত করলে Admin থেকে পরিবর্তন করা ব্যানার সব ইউজারের অ্যাপে দেখানো যাবে।
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📱 Banner Preview</h2>
+      <div style="background:#06383b;border-radius:15px;padding:10px">
+        <img id="livePreview" src="" style="width:100%;aspect-ratio:3/1;object-fit:cover;border-radius:12px;background:#082124;display:block">
+        <div style="padding:10px 4px 3px">
+          <b id="liveName">আপনার ব্যানার এখানে দেখা যাবে</b>
+          <div id="liveDesc" style="font-size:12px;color:#9fc4c1;margin-top:5px">ছবি নির্বাচন করলে preview দেখা যাবে</div>
+        </div>
+      </div>
+      <div class="note">
+        আপনার দেওয়া ছবির মতো Home-এর উপরের বড় Banner Slider বানাতে এই ফর্মে একাধিক ব্যানার যোগ করা যাবে।
+        Priority কম নম্বর আগে দেখানো হবে।
+      </div>
+    </div>
+
+    <div class="card banner-list">
+      <h2>🖼️ Added Banners</h2>
+      <div id="list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let banners = JSON.parse(localStorage.getItem("adminBanners") || "[]");
+let editId = null;
+let selectedImage = "";
+let active = true;
+let autoSlide = true;
+
+function previewImage(e){
+  const file=e.target.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    selectedImage=ev.target.result;
+    showPreview(selectedImage);
+  };
+  reader.readAsDataURL(file);
+}
+
+function urlPreview(){
+  const url=document.getElementById("imageUrl").value.trim();
+  if(url){
+    selectedImage=url;
+    showPreview(url);
+  }
+}
+function showPreview(src){
+  const p=document.getElementById("preview");
+  p.src=src;p.style.display="block";
+  document.getElementById("livePreview").src=src;
+}
+function toggleSwitch(){
+  active=!active;
+  document.getElementById("activeSwitch").classList.toggle("on",active);
+}
+function toggleSlide(){
+  autoSlide=!autoSlide;
+  document.getElementById("slideSwitch").classList.toggle("on",autoSlide);
+}
+function saveBanner(){
+  const name=document.getElementById("name").value.trim();
+  if(!name){alert("ব্যানারের নাম দিন");return;}
+  if(!selectedImage){alert("একটি ব্যানার ছবি নির্বাচন করুন অথবা Image URL দিন");return;}
+
+  const data={
+    id:editId||Date.now(),
+    name,
+    image:selectedImage,
+    position:document.getElementById("position").value,
+    priority:Number(document.getElementById("priority").value)||1,
+    link:document.getElementById("link").value.trim(),
+    description:document.getElementById("description").value.trim(),
+    start:document.getElementById("start").value,
+    end:document.getElementById("end").value,
+    active,
+    autoSlide
+  };
+
+  if(editId){
+    banners=banners.map(x=>x.id===editId?data:x);
+  }else{
+    banners.push(data);
+  }
+  localStorage.setItem("adminBanners",JSON.stringify(banners));
+  alert(editId?"ব্যানার আপডেট হয়েছে":"ব্যানার যোগ হয়েছে");
+  resetForm();render();
+}
+function editBanner(id){
+  const b=banners.find(x=>x.id===id); if(!b)return;
+  editId=id;
+  document.getElementById("formTitle").textContent="ব্যানার Edit করুন";
+  document.getElementById("name").value=b.name;
+  document.getElementById("imageUrl").value=b.image.startsWith("data:")?"":b.image;
+  document.getElementById("position").value=b.position;
+  document.getElementById("priority").value=b.priority;
+  document.getElementById("link").value=b.link||"";
+  document.getElementById("description").value=b.description||"";
+  document.getElementById("start").value=b.start||"";
+  document.getElementById("end").value=b.end||"";
+  selectedImage=b.image;active=b.active;autoSlide=b.autoSlide;
+  document.getElementById("activeSwitch").classList.toggle("on",active);
+  document.getElementById("slideSwitch").classList.toggle("on",autoSlide);
+  showPreview(b.image);
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function deleteBanner(id){
+  if(!confirm("এই ব্যানারটি মুছে ফেলবেন?"))return;
+  banners=banners.filter(x=>x.id!==id);
+  localStorage.setItem("adminBanners",JSON.stringify(banners));
+  render();
+}
+function resetForm(){
+  editId=null;selectedImage="";active=true;autoSlide=true;
+  document.getElementById("formTitle").textContent="নতুন ব্যানার যোগ করুন";
+  ["name","imageUrl","link","description","start","end"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("priority").value=1;
+  document.getElementById("image").value="";
+  document.getElementById("preview").style.display="none";
+  document.getElementById("livePreview").src="";
+  document.getElementById("liveName").textContent="আপনার ব্যানার এখানে দেখা যাবে";
+  document.getElementById("liveDesc").textContent="ছবি নির্বাচন করলে preview দেখা যাবে";
+  document.getElementById("activeSwitch").classList.add("on");
+  document.getElementById("slideSwitch").classList.add("on");
+}
+function render(){
+  const list=document.getElementById("list");
+  if(!banners.length){list.innerHTML='<div class="empty">এখনও কোনো ব্যানার যোগ করা হয়নি।</div>';return;}
+  banners.sort((a,b)=>a.priority-b.priority);
+  list.innerHTML=banners.map(b=>`
+    <div class="banner-item">
+      <img src="${escapeHtml(b.image)}" onerror="this.style.opacity=.3">
+      <div class="info">
+        <b>${escapeHtml(b.name)} ${b.active?'<span class="status">ACTIVE</span>':'<span class="status" style="background:#57343a;color:#ff9ca5">OFF</span>'}</b>
+        <span>Position: ${escapeHtml(b.position)} · Priority: ${b.priority} · Auto Slide: ${b.autoSlide?'ON':'OFF'}</span>
+        <br><span>${escapeHtml(b.description||'কোনো বিবরণ নেই')}</span>
+      </div>
+      <div class="actions">
+        <button class="secondary" onclick="editBanner(${b.id})">✏️ Edit</button>
+        <button class="danger" onclick="deleteBanner(${b.id})">🗑 Delete</button>
+      </div>
+    </div>`).join("");
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+}
+document.getElementById("name").addEventListener("input",e=>document.getElementById("liveName").textContent=e.target.value||"আপনার ব্যানার এখানে দেখা যাবে");
+document.getElementById("description").addEventListener("input",e=>document.getElementById("liveDesc").textContent=e.target.value||"ছবি নির্বাচন করলে preview দেখা যাবে");
+render();
+</script>
+</body>
+</html>
