@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chinese New Year MoreWays Slot</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background: #0b0f19;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-screen {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 850px;
+            background: linear-gradient(135deg, #780000 0%, #400000 50%, #1a0000 100%);
+            border: 5px solid #d4af37;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.9);
+            transition: background 0.5s ease;
+        }
+        .game-screen.vip-theme {
+            background: radial-gradient(circle at center, #800080 0%, #4b0082 40%, #000000 100%);
+            border: 5px solid #00ffff;
+            box-shadow: 0 0 30px #00ffff;
+        }
+
+        /* লোডিং স্ক্রিন স্টাইল */
+        #loadingScreen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #500 0%, #200 60%, #000 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            border-radius: 15px;
+            text-align: center;
+            padding: 20px;
+        }
+        .loading-title {
+            color: #ffdf00;
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px #000;
+            letter-spacing: 2px;
+        }
+        .loader-bar-container {
+            width: 80%;
+            height: 18px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 10px #000;
+            margin-bottom: 15px;
+        }
+        .loader-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(to right, #ff8c00, #ffdf00);
+            border-radius: 8px;
+            transition: width 0.1s linear;
+        }
+        .loading-percent {
+            color: #00ffff;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 1px 1px 4px #000;
+        }
+
+        .header-ways {
+            background: linear-gradient(to bottom, #ffdf00, #ff8c00);
+            color: #610000;
+            text-align: center;
+            font-weight: 900;
+            font-size: 20px;
+            letter-spacing: 1px;
+            padding: 8px;
+            border-bottom: 4px solid #b22222;
+            box-shadow: inset 0 -3px 5px rgba(0,0,0,0.4);
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.7);
+        }
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 4px;
+            padding: 8px;
+            background: rgba(0, 0, 0, 0.5);
+            margin: 8px 10px;
+            border-radius: 10px;
+            border: 3px solid #b8860b;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+        }
+        .reel {
+            background: linear-gradient(to bottom, #b5651d, #5c2c16);
+            border: 2px solid #ffdf00;
+            border-radius: 6px;
+            height: 230px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .symbol {
+            background: rgba(255, 255, 255, 0.18);
+            width: 90%;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            border: 1.5px solid rgba(255, 215, 0, 0.8);
+            font-size: 32px;
+            font-weight: 900;
+            color: #00ffff;
+            text-shadow: 2px 2px 6px #000;
+        }
+        .free-game-banner {
+            background: linear-gradient(to right, #004d00, #008000, #004d00);
+            color: #ffdf00;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            padding: 4px;
+            border-top: 2px solid #ffdf00;
+            border-bottom: 2px solid #ffdf00;
+            text-shadow: 1px 1px 2px #000;
+        }
+        .temple-stage {
+            background: radial-gradient(circle at center, #600 0%, #200 80%);
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border-top: 2px solid #b8860b;
+        }
+        .multipliers-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 15px;
+        }
+        .side-orb {
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(circle, #ff4500, #800000);
+            border: 2px solid #ffdf00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ffdf00;
+            box-shadow: 0 0 10px #ff0000;
+        }
+        .center-main-orb {
+            width: 75px;
+            height: 75px;
+            background: radial-gradient(circle, #ff3300, #660000);
+            border: 3px solid #ffdf00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: 900;
+            color: #adff2f;
+            box-shadow: 0 0 20px #ff0000;
+            text-shadow: 2px 2px 4px #000;
+            transition: transform 0.2s ease;
+        }
+        .feature-buttons-row {
+            display: flex;
+            justify-content: center;
+            margin-top: 5px;
+        }
+        .buy-feature-pill {
+            background: linear-gradient(to bottom, #32cd32, #006400);
+            color: #fff;
+            border: 2px solid #ffdf00;
+            padding: 6px 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.6);
+        }
+        .control-panel {
+            background: linear-gradient(to bottom, #380404, #150101);
+            border-top: 3px solid #ffdf00;
+            padding: 8px 12px;
+        }
+        .actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .circle-btn {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(to bottom, #1e90ff, #00008b);
+            border: 2px solid #ffdf00;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .spin-btn {
+            width: 68px;
+            height: 68px;
+            background: radial-gradient(circle, #ff2200, #800000);
+            border: 3px solid #ffdf00;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff0000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #ffdf00;
+            font-size: 15px;
+            text-shadow: 1px 1px 2px #000;
+        }
+        .spin-btn:active {
+            transform: scale(0.95);
+        }
+        .bet-adjust {
+            background: #008000;
+            color: #fff;
+            border: 2px solid #ffdf00;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stats-footer {
+            display: flex;
+            justify-content: space-between;
+            background: #0f0202;
+            border: 2px solid #b8860b;
+            padding: 6px 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .stat-box div:first-child {
+            font-size: 10px;
+            font-weight: bold;
+            color: #ffdf00;
+        }
+        .stat-box div:last-child {
+            color: #ffffff;
+            font-weight: 900;
+            font-size: 16px;
+            margin-top: 1px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #2b0000, #5a0000);
+            border: 3px solid #ffd700;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            width: 90%;
+            max-width: 320px;
+            box-shadow: 0 0 20px #ffd700;
+        }
+        .modal-content h3 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        .buy-option {
+            background: linear-gradient(to bottom, #ff8c00, #ff4500);
+            color: #fff;
+            border: 2px solid #ffd700;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 15px;
+        }
+        .close-modal {
+            background: #444;
+            color: #fff;
+            border: none;
+            padding: 6px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-screen" id="gameScreen">
+        <div id="loadingScreen">
+            <div class="loading-title">⛩️ CHINESE NEW YEAR ⛩️<br><span style="font-size: 15px; color: #ff8c00;">Loading Game...</span></div>
+            <div class="loader-bar-container">
+                <div class="loader-fill" id="loaderFill"></div>
+            </div>
+            <div class="loading-percent" id="loadingPercent">1%</div>
+        </div>
+
+        <div class="header-ways" id="headerWays">
+            ⛩️ 1350 WAYS ⛩️
+        </div>
+
+        <div class="slot-grid">
+            <div class="reel"><div class="symbol">10</div><div class="symbol">Q</div><div class="symbol">10</div><div class="symbol">10</div></div>
+            <div class="reel"><div class="symbol">Q</div><div class="symbol">🥠</div><div class="symbol">Q</div><div class="symbol">K</div></div>
+            <div class="reel"><div class="symbol">K</div><div class="symbol">🪙</div><div class="symbol">🪙</div><div class="symbol">K</div></div>
+            <div class="reel"><div class="symbol">💰</div><div class="symbol">J</div><div class="symbol">J</div><div class="symbol">J</div></div>
+            <div class="reel"><div class="symbol">A</div><div class="symbol">A</div><div class="symbol">A</div><div class="symbol">A</div></div>
+            <div class="reel"><div class="symbol">🪙</div><div class="symbol">🥣</div><div class="symbol">🪙</div><div class="symbol">A</div></div>
+        </div>
+
+        <div class="free-game-banner" id="freeGameBanner">
+            Enter FREE GAME with 4 🟢 !
+        </div>
+
+        <div class="temple-stage">
+            <div class="multipliers-row">
+                <div class="side-orb">1536X</div>
+                <div class="center-main-orb" id="mainMult">1X</div>
+                <div class="side-orb">2X</div>
+            </div>
+            <div class="feature-buttons-row">
+                <div class="buy-feature-pill" onclick="openBuyModal()">Buy Feature</div>
+            </div>
+        </div>
+
+        <div class="control-panel">
+            <div class="actions-row">
+                <button class="circle-btn">⚡</button>
+                <button class="bet-adjust" onclick="changeBet(-1)">-</button>
+                <button class="spin-btn" onclick="triggerSpin()">SPIN</button>
+                <button class="bet-adjust" onclick="changeBet(1)">+</button>
+                <button class="circle-btn">☰</button>
+            </div>
+
+            <div class="stats-footer">
+                <div class="stat-box">
+                    <div>BALANCE</div>
+                    <div id="balanceDisp">0.00</div>
+                </div>
+                <div class="stat-box">
+                    <div>WIN</div>
+                    <div id="winDisp">0.00</div>
+                </div>
+                <div class="stat-box">
+                    <div>TOTAL BETS</div>
+                    <div id="betDisp">2.40</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="buyModal">
+        <div class="modal-content">
+            <h3>🎁 Buy Free Game Feature</h3>
+            <button class="buy-option" onclick="buyFreeSpins(50, 10)">৫০ টাকা - ১০টি ফ্রি স্পিন</button>
+            <button class="buy-option" onclick="buyFreeSpins(100, 15)">১০০ টাকা - ১৫টি ফ্রি স্পিন</button>
+            <br>
+            <button class="close-modal" onclick="closeBuyModal()">বাতিল</button>
+        </div>
+    </div>
+
+    <script>
+        // গেম লোডিং স্ক্রিন লজিক (১ থেকে ১০০ পর্যন্ত)
+        let currentPercent = 1;
+        const loaderFill = document.getElementById('loaderFill');
+        const loadingPercent = document.getElementById('loadingPercent');
+        const loadingScreen = document.getElementById('loadingScreen');
+
+        let loadingInterval = setInterval(() => {
+            currentPercent += Math.floor(Math.random() * 5) + 2; 
+            if (currentPercent >= 100) {
+                currentPercent = 100;
+                clearInterval(loadingInterval);
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    loadingScreen.style.transition = 'opacity 0.5s ease';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }, 300);
+            }
+            loaderFill.style.width = currentPercent + '%';
+            loadingPercent.innerText = currentPercent + '%';
+        }, 40);
+
+        // --- মূল প্রোফাইল এবং অ্যাপের সাথে ব্যালেন্স সিঙ্ক করার লজিক ---
+        let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+        let currentUserPhone = localStorage.getItem('aviator_current_user') || null;
+
+        function getUserBalance() {
+            if (currentUserPhone && usersDb[currentUserPhone]) {
+                return Number(usersDb[currentUserPhone].balance) || 0;
+            }
+            return 0;
+        }
+
+        function updateUserBalance(newBalance) {
+            if (currentUserPhone && usersDb[currentUserPhone]) {
+                usersDb[currentUserPhone].balance = newBalance;
+                localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+            }
+        }
+
+        let balance = getUserBalance();
+        let totalBet = 2.40;
+        let freeSpinsLeft = 0;
+        const multiplierSteps = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 1536];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            balance = getUserBalance();
+            document.getElementById('balanceDisp').innerText = balance.toFixed(2);
+        });
+
+        function syncWithFirebase(newBalance) {
+            updateUserBalance(newBalance);
+        }
+
+        function openBuyModal() {
+            document.getElementById('buyModal').style.display = 'flex';
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buyModal').style.display = 'none';
+        }
+
+        function buyFreeSpins(cost, spinsCount) {
+            if (balance < cost) {
+                alert('আপনার পর্যাপ্ত ব্যালেন্স নেই!');
+                return;
+            }
+            balance -= cost;
+            document.getElementById('balanceDisp').innerText = balance.toFixed(2);
+            syncWithFirebase(balance);
+            closeBuyModal();
+
+            freeSpinsLeft = spinsCount;
+            document.getElementById('gameScreen').classList.add('vip-theme');
+            document.getElementById('headerWays').innerText = `🔥 VIP FREE GAME (${freeSpinsLeft} Left) 🔥`;
+            
+            runAutoFreeSpins();
+        }
+
+        function runAutoFreeSpins() {
+            if (freeSpinsLeft <= 0) {
+                document.getElementById('gameScreen').classList.remove('vip-theme');
+                document.getElementById('headerWays').innerText = "⛩️ 1350 WAYS ⛩️";
+                document.getElementById('freeGameBanner').innerText = "Enter FREE GAME with 4 🟢 !";
+                return;
+            }
+
+            document.getElementById('freeGameBanner').innerText = `⚡ VIP অটো ফ্রি স্পিন চলছে... বাকি: ${freeSpinsLeft}`;
+            triggerSpinLogic(true);
+        }
+
+        function triggerSpin() {
+            if (freeSpinsLeft > 0) return;
+            if (balance < totalBet) {
+                alert('পর্যাপ্ত ব্যালেন্স নেই!');
+                return;
+            }
+            balance -= totalBet;
+            document.getElementById('balanceDisp').innerText = balance.toFixed(2);
+            syncWithFirebase(balance);
+            triggerSpinLogic(false);
+        }
+
+        function triggerSpinLogic(isFreeSpin) {
+            document.getElementById('winDisp').innerText = "0.00";
+            document.getElementById('mainMult').innerText = "1X";
+
+            setTimeout(() => {
+                const symbolsList = ['10', 'J', 'Q', 'K', 'A', '🪙', '💰', '🥠'];
+                const reels = document.querySelectorAll('.reel');
+                reels.forEach(reel => {
+                    const syms = reel.querySelectorAll('.symbol');
+                    syms.forEach(s => {
+                        s.innerText = symbolsList[Math.floor(Math.random() * symbolsList.length)];
+                    });
+                });
+                
+                let isWin = isFreeSpin ? true : (Math.random() > 0.4);
+                if (isWin) {
+                    let winMultiplierFactor = isFreeSpin ? 0.15 : 0.25;
+                    runMultiplierCascade(0, totalBet * winMultiplierFactor, isFreeSpin);
+                } else {
+                    document.getElementById('mainMult').innerText = "1X";
+                    checkNextAction(isFreeSpin);
+                }
+            }, 400);
+        }
+
+        function runMultiplierCascade(stepIndex, baseWin, isFreeSpin) {
+            if (stepIndex >= multiplierSteps.length) stepIndex = multiplierSteps.length - 1;
+            let currentMult = multiplierSteps[stepIndex];
+            
+            document.getElementById('mainMult').innerText = currentMult + "X";
+            document.getElementById('mainMult').style.transform = "scale(1.2)";
+            setTimeout(() => { document.getElementById('mainMult').style.transform = "scale(1)"; }, 150);
+
+            let calculatedWin = baseWin * currentMult;
+            document.getElementById('winDisp').innerText = calculatedWin.toFixed(2);
+
+            if (stepIndex < (isFreeSpin ? 4 : 2) && Math.random() > 0.3) { 
+                setTimeout(() => {
+                    runMultiplierCascade(stepIndex + 1, baseW
