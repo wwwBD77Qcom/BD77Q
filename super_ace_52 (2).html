@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Ace 52 Cards VIP Slot Game</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts Cinzel & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at center, #1b0c2e 0%, #06020c 100%);
+            color: #ffffff;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+        .title-font {
+            font-family: 'Cinzel', serif;
+        }
+        .vip-casino-glow {
+            box-shadow: 0 0 40px rgba(234, 179, 8, 0.5), inset 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+        .card-vip {
+            background: linear-gradient(145deg, #ffffff 0%, #f1f5f9 100%);
+            border: 2px solid #cbd5e1;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+        .card-vip::after {
+            content: '';
+            position: absolute;
+            inset: 3px;
+            border: 1px dashed rgba(203, 213, 225, 0.7);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+        .scatter-vip {
+            background: radial-gradient(circle, #fef08a 0%, #f59e0b 60%, #b45309 100%) !important;
+            border: 2px solid #fde047 !important;
+            box-shadow: 0 0 28px rgba(245, 158, 11, 0.95), inset 0 0 12px rgba(255, 255, 255, 0.9) !important;
+            animation: scatterGlow 1.4s infinite alternate;
+        }
+        @keyframes scatterGlow {
+            0% { transform: scale(1); filter: brightness(1); }
+            100% { transform: scale(1.05); filter: brightness(1.3); }
+        }
+        .card-matched {
+            animation: pulseMatch 0.5s infinite alternate;
+            border-color: #facc15 !important;
+            box-shadow: 0 0 35px #facc15, inset 0 0 15px #fef08a;
+            transform: scale(1.06);
+            z-index: 20;
+        }
+        @keyframes pulseMatch {
+            0% { transform: scale(1.03); filter: brightness(1.2); }
+            100% { transform: scale(1.09); filter: brightness(1.45); }
+        }
+        @keyframes columnDrop {
+            0% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .animate-column-drop {
+            animation: columnDrop 0.3s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+        }
+        .multiplier-box {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .multiplier-active {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+            color: #ffffff !important;
+            transform: scale(1.15);
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.9);
+            border-color: #fef08a !important;
+        }
+        .spin-btn-gradient {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #92400e 100%);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.6), inset 0 2px 5px rgba(255, 255, 255, 0.7);
+            transition: all 0.2s ease;
+        }
+        .spin-btn-gradient:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(245, 158, 11, 0.9), inset 0 2px 6px rgba(255, 255, 255, 0.9);
+        }
+        .golden-text {
+            background: linear-gradient(180deg, #fffbeb 0%, #fde047 40%, #ca8a04 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .win-popup {
+            animation: popUpWin 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @keyframes popUpWin {
+            0% { transform: scale(0.3); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between select-none p-2 md:p-4">
+
+    <!-- Loading Screen Overlay -->
+    <div id="loadingScreen" class="fixed inset-0 z-50 bg-neutral-950 flex flex-col items-center justify-center gap-6 transition-opacity duration-700">
+        <div class="relative flex flex-col items-center gap-3">
+            <div class="w-28 h-28 md:w-36 md:h-36 rounded-3xl bg-gradient-to-tr from-amber-600 via-yellow-500 to-amber-300 p-1 shadow-[0_0_50px_rgba(245,158,11,0.6)] animate-pulse flex items-center justify-center">
+                <div class="w-full h-full bg-neutral-900 rounded-[22px] flex flex-col items-center justify-center border-2 border-amber-400/50">
+                    <span class="text-4xl md:text-5xl">👑</span>
+                    <span class="title-font text-xs font-black tracking-widest text-amber-400 mt-1">SUPER ACE</span>
+                </div>
+            </div>
+            <h2 class="title-font text-xl md:text-2xl font-black golden-text tracking-wider mt-2">VIP CASINO 52</h2>
+        </div>
+
+        <!-- Loading Bar & Percentage -->
+        <div class="w-64 md:w-80 flex flex-col items-center gap-2">
+            <div class="w-full bg-neutral-900 border border-amber-500/30 rounded-full h-3 p-0.5 shadow-inner overflow-hidden">
+                <div id="loadingBar" class="bg-gradient-to-r from-amber-500 to-yellow-300 h-full rounded-full transition-all duration-100" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between w-full text-xs text-amber-300/80 font-bold px-1">
+                <span>Loading Game...</span>
+                <span id="loadingPercent">0%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Panel -->
+    <header class="w-full max-w-xl mx-auto flex flex-col items-center gap-2">
+        <div class="relative px-8 py-2 bg-gradient-to-r from-red-950 via-amber-950 to-red-950 border-2 border-amber-500 rounded-2xl vip-casino-glow flex items-center justify-center">
+            <h1 class="title-font text-2xl md:text-3xl font-black tracking-wider golden-text drop-shadow-md">SUPER ACE 52 CARDS</h1>
+            <div class="absolute -top-2.5 -right-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-black text-[10px] font-black px-2 py-0.5 rounded-full uppercase shadow-lg border border-yellow-200">VIP</div>
+        </div>
+
+        <!-- Combo Multipliers -->
+        <div class="w-full bg-black/80 border border-amber-500/60 rounded-xl p-2 flex justify-around items-center backdrop-blur-md shadow-inner">
+            <div id="mult-1" class="multiplier-box px-3 py-1 rounded-lg bg-neutral-900/90 border border-neutral-700 text-neutral-400 font-bold text-sm">x1</div>
+            <div id="mult-2" class="multiplier-box px-3 py-1 rounded-lg bg-neutral-900/90 border border-neutral-700 text-neutral-400 font-bold text-sm">x2</div>
+            <div id="mult-3" class="multiplier-box px-3 py-1 rounded-lg bg-neutral-900/90 border border-neutral-700 text-neutral-400 font-bold text-sm">x3</div>
+            <div id="mult-5" class="multiplier-box px-3 py-1 rounded-lg bg-neutral-900/90 border border-neutral-700 text-neutral-400 font-bold text-sm">x5</div>
+        </div>
+
+        <!-- Stats & Bet Box -->
+        <div class="w-full bg-neutral-950/95 border-2 border-amber-500/50 rounded-2xl p-3 shadow-2xl backdrop-blur-md flex flex-col gap-2.5">
+            <div class="grid grid-cols-2 gap-2">
+                <div class="bg-black/90 border border-amber-500/20 rounded-xl p-2 flex flex-col shadow-inner">
+                    <span class="text-[10px] text-amber-400/80 font-bold uppercase tracking-wider">Balance</span>
+                    <span id="balanceVal" class="text-base font-black text-amber-300">0.00</span>
+                </div>
+                <div class="bg-black/90 border border-emerald-500/20 rounded-xl p-2 flex flex-col shadow-inner">
+                    <span class="text-[10px] text-emerald-400/80 font-bold uppercase tracking-wider">Total Win</span>
+                    <span id="totalWinVal" class="text-base font-black text-emerald-400">0.00</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-2">
+                <div class="flex items-center bg-black/90 border border-neutral-800 rounded-xl p-1 gap-1.5 shadow-inner w-full justify-center">
+                    <button onclick="adjustBet(-1)" class="w-8 h-8 rounded-lg bg-neutral-800 hover:bg-neutral-700 active:scale-95 flex items-center justify-center text-base font-bold text-white transition">-</button>
+                    <div class="flex flex-col items-center px-4">
+                        <span class="text-[8px] text-neutral-400 uppercase font-bold">Bet</span>
+                        <span id="betVal" class="text-sm font-black text-white">2.00</span>
+                    </div>
+                    <button onclick="adjustBet(1)" class="w-8 h-8 rounded-lg bg-neutral-800 hover:bg-neutral-700 active:scale-95 flex items-center justify-center text-base font-bold text-white transition">+</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Board -->
+    <main class="w-full max-w-xl mx-auto px-2 flex-1 flex flex-col justify-center items-center relative my-2">
+        
+        <!-- Win Pop-up -->
+        <div id="winBanner" class="absolute z-30 pointer-events-none hidden flex-col items-center justify-center inset-0 bg-black/60 backdrop-blur-[4px] rounded-2xl">
+            <div class="win-popup bg-gradient-to-b from-amber-400 via-amber-500 to-yellow-600 border-2 border-white px-5 py-2.5 rounded-2xl shadow-xl flex flex-col items-center">
+                <span class="text-[10px] uppercase tracking-widest text-black font-black">Matched Win!</span>
+                <span id="winAmountText" class="title-font text-2xl md:text-3xl font-black text-white drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">+0.00</span>
+            </div>
+        </div>
+
+        <!-- 4x4 Grid Board -->
+        <div class="w-full aspect-square bg-gradient-to-b from-slate-950 via-indigo-950 to-neutral-950 p-3 rounded-2xl border-4 border-amber-500/80 shadow-2xl relative overflow-hidden flex flex-col gap-2 vip-casino-glow">
+            <div id="slotGrid" class="grid grid-cols-4 grid-rows-4 gap-2 h-full w-full">
+                <!-- Javascript দিয়ে রেন্ডার হবে -->
+            </div>
+            <div class="absolute top-3 right-3 pointer-events-none opacity-50 flex items-center gap-1">
+                <div class="w-5 h-5 rounded-full bg-amber-400 border border-yellow-200 flex items-center justify-center text-[10px] font-black text-black shadow">🪙</div>
+                <span class="text-[9px] font-black tracking-widest text-amber-300">SCATTER</span>
+            </div>
+        </div>
+
+        <div id="gameStatus" class="mt-2 text-xs md:text-sm font-semibold tracking-wide text-amber-200/90 h-6 flex items-center justify-center">
+            52 Cards Loaded! Click SPIN to play.
+        </div>
+    </main>
+
+    <!-- Footer Spin Button -->
+    <footer class="w-full max-w-xl mx-auto p-2">
+        <button id="spinBtn" onclick="startSpin()" class="spin-btn-gradient w-full py-4 px-6 rounded-2xl text-black font-black text-lg md:text-xl uppercase tracking-wider flex items-center justify-center gap-2 shadow-2xl">
+            <span>SPIN NOW</span>
+            <svg class="w-6 h-6 fill-black" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+    </footer>
+
+    <!-- Script Logic for Loading & Game Play -->
+    <script>
+        // --- লোকাল স্টোরেজ থেকে ড্যাশবোর্ডের ব্যালেন্স লোড এবং সিঙ্ক করার ফাংশন ---
+        let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+        let currentUserPhone = localStorage.getItem('aviator_current_user') || null;
+
+        function getDashboardBalance() {
+            if (currentUserPhone && usersDb[currentUserPhone]) {
+                return Number(usersDb[currentUserPhone].balance) || 0;
+            }
+            return Number(localStorage.getItem('balance')) || 0;
+        }
+
+        function saveDashboardBalance(newBalance) {
+            if (currentUserPhone && usersDb[currentUserPhone]) {
+                usersDb[currentUserPhone].balance = newBalance;
+                localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+            }
+            localStorage.setItem('balance', newBalance);
+        }
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // লোডিং স্ক্রিন প্রোগ্রেস লজিক (১ থেকে ১০০%)
+        function runLoadingScreen() {
+            let progress = 0;
+            const bar = document.getElementById('loadingBar');
+            const percentText = document.getElementById('loadingPercent');
+            const screen = document.getElementById('loadingScreen');
+
+            const interval = setInterval(() => {
+                progress += Math.floor(Math.random() * 8) + 3; 
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    screen.style.opacity = '0';
+                    setTimeout(() => {
+                        screen.style.display = 'none';
+                    }, 700);
+                }
+                bar.style.width = progress + '%';
+                percentText.innerText = progress + '%';
+            }, 50);
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+
+            if (type === 'spin') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+                gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.15);
+            } else if (type === 'win') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.4);
+            }
+        }
+
+        let balance = getDashboardBalance();
+        let currentBet = 2.00;
+        let totalWin = 0.00;
+        let isSpinning = false;
+        let currentComboLevel = 0; 
+        let gridData = [];
+
+        const betSteps = [1.00, 2.00, 5.00, 10.00, 20.00, 50.00, 100.00];
+        let betIndex = 1;
+
+        function updateUI() {
+            balance = getDashboardBalance();
+            document.getElementById('balanceVal').innerText = balance.toFixed(2);
+            document.getElementById('totalWinVal').innerText = totalWin.toFixed(2);
+            document.getElementById('betVal').innerText = currentBet.toFixed(2);
+        }
+
+        function adjustBet(direction) {
+            if (isSpinning) return;
+            betIndex += direction;
+            if (betIndex < 0) betIndex = 0;
+            if (betIndex >= betSteps.length) betIndex = betSteps.length - 1;
+            currentBet = betSteps[betIndex];
+            updateUI();
+        }
+
+        function getRandomCard() {
+            const rand = Math.random();
+            if (rand < 0.01) {
+                return { name: 'SCATTER_COIN', label: '🪙', group: 'SCATTER', color: 'text-amber-500', payout: 0.5, isScatter: true, id: Math.random().toString(36).substr(2, 9) };
+            }
+            
+            const cardSymbols = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+            const groups = ['SPADE', 'CLUB', 'DIAMOND', 'HEART'];
+            const randomGroup = groups[Math.floor(Math.random() * groups.length)];
+            const randomSymbol = cardSymbols[Math.floor(Math.random() * cardSymbols.length)];
+            
+            let color = 'text-slate-900';
+            if (randomGroup === 'DIAMOND' || randomGroup === 'HEART') color = 'text-red-600';
+            if (randomSymbol === 'J') color = 'text-blue-700 font-extrabold';
+            if (randomSymbol === 'Q') color = 'text-purple-700 font-extrabold';
+            if (randomSymbol === 'K') color = 'text-amber-700 font-extrabold';
+            if (randomSymbol === 'A') color = 'text-red-700 font-extrabold';
+
+            return {
+                name: `${randomGroup}_${randomSymbol}`,
+                label: `${randomSymbol}${randomGroup === 'SPADE' ? '♠' : randomGroup === 'CLUB' ? '♣' : randomGroup === 'DIAMOND' ? '♦' : '♥'}`,
+                group: ['J', 'Q', 'K', 'A'].includes(randomSymbol) ? randomSymbol : randomGroup,
+                color: color,
+                payout: 0.05,
+                id: Math.random().toString(36).substr(2, 9)
+            };
+        }
+
+        function initGrid() {
+            const gridContainer = document.getElementById('slotGrid');
+            gridContainer.innerHTML = '';
+            gridData = [];
+
+            for (let r = 0; r < 4; r++) {
+                let row = [];
+                for (let c = 0; c < 4; c++) {
+                    const card = getRandomCard();
+                    row.push(card);
+                    
+                    const cell = document.createElement('div');
+                    cell.id = `cell-${r}-${c}`;
+                    
+                    if (card.isScatter) {
+                        cell.className = `w-full h-full rounded-xl flex flex-col items-center justify-center font-black text-xl md:text-2xl relative overflow-hidden scatter-vip`;
+                        cell.innerHTML = `<span class="drop-shadow-lg scale-110">🪙</span><span class="text-[7px] font-black text-black absolute bottom-1 uppercase bg-yellow-200/90 px-1 rounded">Scatter</span>`;
+                    } else {
+                        cell.className = `w-full h-full rounded-xl flex flex-col items-center justify-center font-black text-lg md:text-2xl relative overflow-hidden card-vip ${card.color}`;
+                        cell.innerHTML = `<span>${card.label}</span>`;
+                    }
+                    gridContainer.appendChild(cell);
+                }
+                gridData.push(row);
+            }
+        }
+
+        function renderCardsColumnByColumn(callback) {
+            const gridContainer = document.getElementById('slotGrid');
+            gridContainer.innerHTML = '';
+
+            let cells = [];
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    cells.push({ r, c });
+                }
+            }
+
+            for (let i = 0; i < 16; i++) {
+                const { r, c } = cells[i];
+                const card = gridData[r][c];
+                
+                const cell = document.createElement('div');
+                cell.id = `cell-${r}-${c}`;
+                
+                const columnDelay = c * 0.08 + (Math.random() * 0.05);
+                cell.style.animationDelay = `${columnDelay}s`;
+                
+                if (card.isScatter) {
+                    cell.className = `w-full h-full rounded-xl flex flex-col items-center justify-center font-black text-xl md:text-2xl relative overflow-hidden scatter-vip animate-column-drop`;
+                    cell.innerHTML = `<span class="drop-shadow-lg scale-110">🪙</span><span class="text-[7px] font-black text-black absolute bottom-1 uppercase bg-yellow-200/90 px-1 rounded">Scatter</span>`;
+                } else {
+                    cell.className = `w-full h-full rounded-xl flex flex-col items-center justify-center font-black text-lg md:text-2xl relative overflow-hidden card-vip ${card.color} animate-column-drop`;
+                    cell.innerHTML = `<span>${card.label}</span>`;
+                }
+                gridContainer.appendChild(cell);
+            }
+
+            if (callback) {
+                setTimeout(callback, 450);
+            }
+        }
+
+        function startSpin() {
+            if (isSpinning) return;
+            balance = getDashboardBalance(); // স্পিন করার আগে রিয়েল ব্যালেন্স রিড করা হচ্ছে
+            if (balance < currentBet) {
+                showStatus("Insufficient Balance! Game Over.");
+                return;
+            }
+
+            isSpinning = true;
+            balance -= currentBet;
+            saveDashboardBalance(balance); // বেটের টাকা কেটে ড্যাশবোর্ডে সেভ করা হচ্ছে
+            totalWin = 0.00;
+            currentComboLevel = 0;
+
+            updateUI();
+            updateMultiplierDisplay();
+            hideWinBanner();
+            showStatus("Dealing 52 cards sequentially...");
+            playSound('spin');
+
+            document.getElementById('spinBtn').disabled = true;
+
+            gridData = [];
+            for (let r = 0; r < 4; r++) {
+                let row = [];
+                for (let c = 0; c < 4; c++) {
+                    row.push(getRandomCard());
+                }
+                gridData.push(row);
+            }
+
+            renderCardsColumnByColumn(() => {
+                processCascades();
+            });
+        }
+
+        function processCascades() {
+            let counts = {};
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const group = gridData[r][c].group;
+                    if (!counts[group]) counts[group] = [];
+                    counts[group].push({ r, c });
+                }
+            }
+
+            let matchedPositions = [];
+            let spinWin = 0;
+
+            for (let group in counts) {
+                if (group !== 'SCATTER' && counts[group].length >= 4) {
+                    let multiplierVal = 0.1;
+                    spinWin += currentBet * multiplierVal;
+                    counts[group].forEach(pos => matchedPositions.push(pos));
+                }
+            }
+
+            if (matchedPositions.length > 0) {
+                matchedPositions.forEach(pos => {
+                    const cell = document.getElementById(`cell-${pos.r}-${pos.c}`);
+                    if (cell) cell.classList.add('card-matched');
+                });
+
+                const comboMults = [1, 1.05, 1.1, 1.15];
+                const activeMultiplier = comboMults[Math.min(currentComboLevel, comboMults.length - 1)];
+                let evaluatedWin = spinWin * activeMultiplier;
+
+                totalWin += evaluatedWin;
+                balance = getDashboardBalance() + evaluatedWin;
+                saveDashboardBalance(balance); // জেতার পর টাকা যোগ করে ড্যাশবোর্ডে সেভ করা হচ্ছে
+
+                updateMultiplierDisplay();
+                showWinBanner(evaluatedWin);
+                playSound('win');
+                showStatus(`Matched! Win: +${evaluatedWin.toFixed(2)} coins!`);
+                updateUI();
+
+                if (currentComboLevel < 3) currentComboLevel++;
+
+                setTimeout(() => {
+                    hideWinBanner();
+                    matchedPositions.forEach(pos => {
+                        gridData[pos.r][pos.c] = getRandomCard();
+                    });
+                    renderCardsColumnByColumn(() => {
+                        processCascades();
+                    });
+                }, 1100);
+
+            } else {
+                endSpinRound();
+            }
+        }
+
+        function endSpinRound() {
+            isSpinning = false;
+            document.getElementById('spinBtn').disabled = false;
+            if (totalWin > 0) {
+                showStatus(`Total Win: ${totalWin.toFixed(2)} coins!`);
+            } else {
+                showStatus("No match! Try again.");
+            }
+        }
+
+        function updateMultiplierDisplay() {
+            const mults = ['mult-1', 'mult-2', 'mult-3', 'mult-5'];
+            mults.forEach((id, idx) => {
+                const el = document.getElementById(id);
+                if (idx === currentComboLevel) {
+                    el.classList.add('multiplier-active');
+                } else {
+                    el.classList.remove('multiplier-active');
+                }
+            });
+        }
+
+        function showWinBanner(amount) {
+            const banner = document.getElementById('winBanner');
+            const text = document.getElementById('winAmountText');
+            text.innerText = `+${amount.toFixed(2)}`;
+            banner.classList.remove('hidden');
+            banner.classList.add('flex');
+        }
+
+        function hideWinBanner() {
+            const banner = document.getElementById('winBanner');
+            banner.classList.add('hidden');
+            banner.classList.remove('flex');
+        }
+
+        function showStatus(msg) {
+            document.getElementById('gameStatus').innerText = msg;
+        }
+
+        window.onload = function() {
+            runLoadingScreen(); 
+            initGrid();
+            updateUI();
+        };
+    </script>
+</body>
+</html>
