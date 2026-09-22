@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucky Roulette Spin - BD77Q</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #071318 0%, #0b1d22 50%, #112e35 100%);
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 400px;
+            width: 100%;
+            background: rgba(11, 29, 34, 0.92);
+            border: 2px solid rgba(255, 204, 0, 0.4);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 204, 0, 0.1);
+        }
+        h3 {
+            font-size: 15px;
+            color: #ffdd44;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .timer {
+            font-size: 12px;
+            margin: 8px 0;
+            color: #ffcc00;
+            background: #112a30;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            border: 1px solid #ffcc00;
+        }
+        .timer span {
+            background: #254a54;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .wheel-wrapper {
+            position: relative;
+            width: 310px;
+            height: 310px;
+            margin: 10px auto;
+            background: radial-gradient(circle, #ffbb00 20%, #ff5500 70%, #991100 100%);
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 0 25px rgba(255, 153, 0, 0.8);
+            border: 4px solid #fff5cc;
+        }
+        canvas {
+            display: block;
+            border-radius: 50%;
+            background: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+        .pointer {
+            position: absolute;
+            top: 1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 28px solid #ff0000;
+            z-index: 10;
+            filter: drop-shadow(0 3px 4px rgba(0,0,0,0.7));
+        }
+        .go-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #ff5555 20%, #cc0000 100%);
+            border: 4px solid #ffffff;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-size: 17px;
+            cursor: pointer;
+            z-index: 5;
+            box-shadow: 0 0 12px rgba(0,0,0,0.8);
+        }
+        .go-btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+        }
+        .claim-btn {
+            background: linear-gradient(to bottom, #ffcc00, #ff8800);
+            border: 2px solid #fff;
+            padding: 8px 40px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            border-radius: 25px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(255,140,0,0.5);
+        }
+        .result-msg {
+            margin-top: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #00ffcc;
+            min-height: 16px;
+        }
+        .history-box {
+            background: linear-gradient(135deg, #112a30, #081519);
+            border: 2px solid #ffcc00;
+            border-radius: 12px;
+            padding: 6px;
+            margin-top: 12px;
+            height: 35px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 8px rgba(255,204,0,0.3);
+        }
+        .history-item {
+            font-size: 12px;
+            color: #ffcc00;
+            position: absolute;
+            width: 100%;
+            left: 0;
+            top: 8px;
+            transition: top 0.5s ease;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h3>The dream journey begins, lucky roulette</h3>
+        
+        <div class="timer">
+            Remaining time: <span id="timerText">24 : 00 : 00</span>
+        </div>
+
+        <div class="wheel-wrapper">
+            <div class="pointer"></div>
+            <canvas id="wheelCanvas" width="290" height="290"></canvas>
+            <button class="go-btn" id="goBtn" onclick="spinWheel()">GO</button>
+        </div>
+
+        <div class="result-msg" id="resultMsg"></div>
+        <button class="claim-btn" onclick="goBackHome()">Back to Home</button>
+
+        <div class="history-box" id="historyBox">
+            <div class="history-item">01********0 &nbsp;&nbsp;&nbsp;&nbsp; ৳ 1.00</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const currentUserPhone = localStorage.getItem('aviator_current_user') || '';
+
+        const sectors = [
+            { text: "৳ ১", sub: "🏆", color: "#ffffff", value: 1 },
+            { text: "চেষ্টা করুন", sub: "🎯", color: "#fff8e1", value: 0 },
+            { text: "৳ ১০", sub: "🏆", color: "#ffffff", value: 10 },
+            { text: "৳ ৫", sub: "🏆", color: "#fff8e1", value: 5 },
+            { text: "চেষ্টা করুন", sub: "🎯", color: "#ffffff", value: 0 },
+            { text: "৳ ৫০", sub: "🏆", color: "#fff8e1", value: 50 },
+            { text: "৳ ১০০", sub: "🏆", color: "#fff8e1", value: 100 },
+            { text: "চেষ্টা করুন", sub: "🎯", color: "#ffe0b2", value: 0 }
+        ];
+
+        const numSectors = sectors.length;
+        const arc = Math.PI / (numSectors / 2);
+        let isSpinning = false;
+        let currentRotation = 0;
+
+        function drawSector(sector, i) {
+            const ang = arc * i;
+            ctx.save();
+            ctx.beginPath();
+            ctx.fillStyle = sector.color;
+            ctx.moveTo(145, 145);
+            ctx.arc(145, 145, 145, ang, ang + arc, false);
+            ctx.lineTo(145, 145);
+            ctx.fill();
+            ctx.stroke();
+
+            ctx.translate(145, 145);
+            ctx.rotate(ang + arc / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "#222";
+            ctx.font = "bold 13px Arial";
+            ctx.fillText(sector.text, 120, 5);
+
+            ctx.font = "12px Arial";
+            ctx.fillText(sector.sub, 85, 5);
+            ctx.restore();
+        }
+
+        function drawWheel() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < numSectors; i++) {
+                drawSector(sectors[i], i);
+            }
+        }
+        drawWheel();
+
+        const weights = [35, 25, 25, 10, 25, 4, 2, 25]; 
+
+        function getRandomIndex() {
+            const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+            let randomNum = Math.random() * totalWeight;
+            for (let i = 0; i < weights.length; i++) {
+                if (randomNum < weights[i]) return i;
+                randomNum -= weights[i];
+            }
+            return 0;
+        }
+
+        const COOLDOWN_TIME = 24 * 60 * 60 * 1000;
+
+        function checkSpinAvailability() {
+            const lastSpinTime = localStorage.getItem('lastSpinTime_' + currentUserPhone);
+            if (lastSpinTime) {
+                const elapsed = Date.now() - parseInt(lastSpinTime);
+                if (elapsed < COOLDOWN_TIME) {
+                    startCountdown(COOLDOWN_TIME - elapsed);
+                    document.getElementById('goBtn').disabled = true;
+                }
+            }
+        }
+
+        function startCountdown(duration) {
+            let timeLeft = duration;
+            const timerInterval = setInterval(() => {
+                timeLeft -= 1000;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    localStorage.removeItem('lastSpinTime_' + currentUserPhone);
+                    document.getElementById('timerText').innerText = "00 : 00 : 00";
+                    document.getElementById('goBtn').disabled = false;
+                    document.getElementById('resultMsg').innerText = "স্পিন করার সময় হয়ে গেছে!";
+                    return;
+                }
+
+                const hours = String(Math.floor((timeLeft / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+                const minutes = String(Math.floor((timeLeft / (1000 * 60)) % 60)).padStart(2, '0');
+                const seconds = String(Math.floor((timeLeft / 1000) % 60)).padStart(2, '0');
+
+                document.getElementById('timerText').innerText = `${hours} : ${minutes} : ${seconds}`;
+            }, 1000);
+        }
+
+        function spinWheel() {
+            if (isSpinning) return;
+            if (!currentUserPhone) {
+                alert("দয়া করে মূল অ্যাপ থেকে লগইন করে নিন!");
+                return;
+            }
+
+            const lastSpinTime = localStorage.getItem('lastSpinTime_' + currentUserPhone);
+            if (lastSpinTime && (Date.now() - parseInt(lastSpinTime) < COOLDOWN_TIME)) {
+                alert("২৪ ঘণ্টার মধ্যে আপনি ইতিমধ্যে একবার স্পিন করেছেন!");
+                return;
+            }
+
+            isSpinning = true;
+            document.getElementById('resultMsg').innerText = "ঘুরছে...";
+
+            const winningIndex = getRandomIndex();
+            const degreesPerSector = 360 / numSectors;
+            const targetAngle = 360 - (winningIndex * degreesPerSector) - (degreesPerSector / 2);
+            const extraSpins = 360 * 7; 
+            
+            currentRotation += extraSpins + (targetAngle - (currentRotation % 360));
+
+            canvas.style.transition = "transform 4s cubic-bezier(0.15, 0.75, 0.1, 1)";
+            canvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            setTimeout(() => {
+                isSpinning = false;
+                const wonItem = sectors[winningIndex];
+                
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                if (usersDb[currentUserPhone]) {
+                    if (wonItem.value > 0) {
+                        usersDb[currentUserPhone].balance = (usersDb[currentUserPhone].balance || 0) + wonItem.value;
+                        localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                        document.getElementById('resultMsg').innerText = `অভিনন্দন! আপনি জিতেছেন: ${wonItem.text} (মূল ব্যালেন্সে যোগ হয়েছে)`;
+                    } else {
+                        document.getElementById('resultMsg').innerText = `আফসোস! ${wonItem.text}, আগামীকাল আবার চেষ্টা করুন!`;
+                    }
+                }
+
+                localStorage.setItem('lastSpinTime_' + currentUserPhone, Date.now().toString());
+                document.getElementById('goBtn').disabled = true;
+                startCountdown(COOLDOWN_TIME);
+
+                // স্পিন শেষ হওয়ার পর ৩ সেকেন্ড পর স্বয়ংক্রিয়ভাবে হোমপেজে ফিরে যাবে
+                setTimeout(() => {
+                    goBackHome();
+                }, 3000);
+
+            }, 4000);
+        }
+
+        function goBackHome() {
+            // আপনার মূল অ্যাপের ফাইলের নাম যদি index.html হয় তবে নিচের লাইন কাজ করবে
+            window.location.href = "index.html"; 
+        }
+
+        window.onload = function() {
+            checkSpinAvailability();
+        };
+
+        const histories = [
+            "01********0  ----  ৳ 1.00",
+            "01********3  ----  আগামীকাল আবার চেষ্টা করুন",
+            "01********7  ----  ৳ 10.00",
+            "01********9  ----  ৳ 1.00",
+            "01********4  ----  ৳ 50.00"
+        ];
+
+        let hIndex = 0;
+        const historyBox = document.getElementById('historyBox');
+        setInterval(() => {
+            hIndex = (hIndex + 1) % histories.length;
+            historyBox.innerHTML = `<div class="history-item">${histories[hIndex]}</div>`;
+        }, 2500);
+    </script>
+</body>
+</html>
