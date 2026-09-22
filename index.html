@@ -22,8 +22,7 @@
 .splash-sub{font-size:13px;color:#aeb7c6;margin-bottom:24px}
 .splash-spinner{width:42px;height:42px;border:4px solid #303846;border-top-color:#20b56b;border-radius:50%;animation:spin 0.8s linear infinite}
 
-@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}
-}
+@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
 
 /* রেজিস্ট্রেশন এবং হোমপেজে ছবিটিকে একদম ফুল স্ক্রিন ও ক্লিয়ার ব্যাকগ্রাউন্ড থিম হিসেবে সেট করা হলো */
 #authScreen, #homeScreen {
@@ -108,7 +107,6 @@
 .help-care-img{max-width:210px;max-height:180px;border-radius:9px;margin-top:6px;display:block}.help-care-compose{padding:10px 12px;border-top:1px solid #2a3340;background:#151b25}.help-care-preview{display:none;position:relative;margin-bottom:8px}.help-care-preview.show{display:block}.help-care-preview img{max-width:120px;max-height:90px;border-radius:8px}.help-care-remove-img{position:absolute;top:-7px;left:108px;width:24px;height:24px;padding:0;border-radius:50%;background:#ff4961;color:#fff}
 .help-care-input-row{display:flex;gap:7px;align-items:center}.help-care-attach{width:42px;height:42px;padding:0;background:#252e3d;color:#ffcf72;font-size:18px}.help-care-text{flex:1;min-width:0}.help-care-send{width:48px;height:42px;padding:0;background:#20b56b;color:#fff}.help-care-status{font-size:11px;color:#8fd3ff;min-height:16px;margin-top:5px}
 @media(max-width:420px){.help-care-card{margin:10px}.help-care-chat{height:280px}.help-care-cats{max-height:155px}}
-
 
 /* Help Care Welcome Loading */
 .help-care-welcome{display:none;position:fixed;inset:0;background:linear-gradient(145deg,rgba(8,10,15,.98),rgba(17,21,29,.98));z-index:1200;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px}
@@ -242,6 +240,12 @@
     <div class="card">
       <div style="font-size:16px;font-weight:900;margin-bottom:8px">🎮 All Games</div>
       <div class="game-cards-grid">
+        <!-- Lucky Roulette Spin Game Card (24h hide feature added with id="luckyRouletteCard") -->
+        <a href="lucky_roulette.html" id="luckyRouletteCard" class="game-card-item" style="background: linear-gradient(135deg, #b45309, #d97706); border-color:#ffcc00;">
+          <div class="game-card-icon">🎡</div>
+          <div class="game-card-title">Lucky Roulette</div>
+          <div style="font-size: 10px; color: #fff5cc; margin-top:2px;">ঘুরিয়ে জিতুন!</div>
+        </a>
         <a href="super_ace.html" target="_blank" class="game-card-item" style="background: linear-gradient(135deg, #4a00e0, #8e2de2);">
           <div class="game-card-icon">👑</div>
           <div class="game-card-title">Super Ace Slot</div>
@@ -339,8 +343,6 @@
 
     <div class="card"><div style="font-size:18px;font-weight:900;margin-bottom:10px">⚙️ Settings</div><button class="small" style="width:100%" onclick="openPasswordModal()">🔐 Transaction Password</button><div id="passwordStatus" style="font-size:12px;color:#9da7b6;margin-top:9px">Password not set</div></div>
   </div>
-
-
 
   <!-- HELP CARE WELCOME LOADING -->
   <div id="helpCareWelcomeLoading" class="help-care-welcome" aria-hidden="true">
@@ -658,9 +660,29 @@ window.addEventListener('DOMContentLoaded',()=>{
     updateDepositPreview();
     renderWithdrawHistory();
     renderTopReferrers(usersDb);
+    checkRouletteCardVisibility();
 });
 
+// লাকি রুলেট কার্ড ২৪ ঘণ্টা লুকিয়ে রাখার বা দেখানোর ফাংশন
+function checkRouletteCardVisibility() {
+    const phone = localStorage.getItem('aviator_current_user') || '';
+    const lastSpinTime = localStorage.getItem('lastSpinTime_' + phone);
+    const COOLDOWN_TIME = 24 * 60 * 60 * 1000; // ২৪ ঘণ্টা
+    const rouletteCard = document.getElementById('luckyRouletteCard');
 
+    if (!rouletteCard) return;
+
+    if (lastSpinTime) {
+        const elapsed = Date.now() - parseInt(lastSpinTime);
+        if (elapsed < COOLDOWN_TIME) {
+            rouletteCard.style.display = 'none'; // ২৪ ঘণ্টা পূর্ণ না হলে কার্ড হাইড থাকবে
+        } else {
+            rouletteCard.style.display = 'block'; // ২৪ ঘণ্টা পার হলে আবার শো করবে
+        }
+    } else {
+        rouletteCard.style.display = 'block';
+    }
+}
 
 /* HELP CARE - AI Assistant + Firebase supportTickets + 24H AUTO CLEANUP */
 let helpCareCategory='Account Problem';
@@ -687,8 +709,6 @@ function previewHelpCareImage(e){const f=e.target.files&&e.target.files[0];if(!f
 function removeHelpCareImage(){helpCareSelectedImage='';const i=document.getElementById('helpCareImage');const img=document.getElementById('helpCarePreviewImg');const box=document.getElementById('helpCareImagePreview');if(i)i.value='';if(img)img.src='';if(box)box.classList.remove('show');}
 function addHelpCareBubble(type,text,image,time,label){const box=document.getElementById('helpCareChat');if(!box)return;const d=document.createElement('div');d.className='help-care-msg '+type;if(label){const lb=document.createElement('div');lb.style.cssText='font-size:10px;font-weight:900;margin-bottom:4px;opacity:.8';lb.textContent=label;d.appendChild(lb);}const tx=document.createElement('div');tx.innerHTML=escapeHelpCareHtml(text||'');d.appendChild(tx);if(image){const im=document.createElement('img');im.className='help-care-img';im.src=image;im.alt='Support image';d.appendChild(im);}if(time){const tm=document.createElement('div');tm.style.cssText='font-size:9px;opacity:.65;margin-top:4px';tm.textContent=time;d.appendChild(tm);}box.appendChild(d);}
 
-/* Local AI Assistant: common Help Care questions are answered instantly.
-   For unknown/complex questions the ticket stays Pending for Admin. */
 function getHelpCareAIReply(category,message){
   const q=String(message||'').toLowerCase();
   if(/password|পাসওয়ার্ড|পাসওয়ার্ড|security/.test(q)||/password/i.test(category))
@@ -1045,6 +1065,7 @@ function syncAppBalance(){
     ['homeBalance','profileBalance','profileBalance2','moneyBalance'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(balance)});
     const h=document.getElementById('homeHistory');if(h)h.innerHTML=history.length?history.slice(0,6).map(x=>`<div class="item"><span>Crash</span><strong>${x.toFixed(2)}×</strong></div>`).join(''):'<div class="item"><span>Round</span><strong>Waiting...</strong></div>';
     updateDepositNumberDisplay();
+    checkRouletteCardVisibility();
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
