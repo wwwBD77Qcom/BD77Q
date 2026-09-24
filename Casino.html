@@ -619,7 +619,6 @@ const closeShop=document.getElementById('closeShop');
 const buy10Spins=document.getElementById('buy10Spins');
 const buy12Spins=document.getElementById('buy12Spins');
 
-// লোকাল স্টোরেজ থেকে ব্যালেন্স লোড করা (মূল অ্যাপের সাথে সিংক রাখার জন্য)
 let balance = parseFloat(localStorage.getItem('app_balance')) || 1000;
 let bet = 10, spinning = false;
 let currentMultiplierIndex = 0; 
@@ -643,10 +642,8 @@ const multiElements = [
 profileBtn.onclick = () => { profileModal.classList.add('active'); };
 closeProfile.onclick = () => { profileModal.classList.remove('active'); };
 
-// মূল অ্যাপে বা হোম পেজে ফিরে যাওয়ার লজিক
 homeBtn.onclick = () => {
-  // যদি মূল অ্যাপ অন্য কোনো পেজ হয়, পাথ বসিয়ে দিতে পারো
-  window.history.back();
+  window.location.href = '../index.html';
 };
 
 bonusBtn.onclick = () => {
@@ -799,7 +796,6 @@ function updateMoney(){
   balanceEl.textContent='৳'+balance.toFixed(2);
   profileBalance.textContent='৳'+balance.toFixed(2);
   betEl.textContent=bet;
-  // মূল অ্যাপের লোকাল স্টোরেজে ব্যালেন্স আপডেট করে রাখা
   localStorage.setItem('app_balance', balance);
 }
 
@@ -1104,7 +1100,7 @@ function initial(){
   currentCardsData = [];
   for(let i=0;i<16;i++){
     let cData = normalSymbols[Math.floor(Math.random()*normalSymbols.length)];
-    currentCardsData.push(cData);
+    currentCardsData.pipe ? null : currentCardsData.push(cData);
     const cardEl = makeCard(cData, i, false);
     cardEl.style.opacity = '1';
     cardEl.style.transform = 'none';
