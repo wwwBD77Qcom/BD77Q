@@ -84,6 +84,15 @@ body{display:flex;justify-content:center;align-items:center;color:#fff}
   letter-spacing: 1px;
 }
 
+.dashboard-balance-card{background:linear-gradient(135deg,#191f29,#11161e)!important;border:1px solid #303846!important;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.dashboard-balance{font-size:30px!important;color:#7ed6a7!important}
+.dashboard-mini-row{display:flex;justify-content:space-between;gap:10px;margin-top:10px;padding-top:10px;border-top:1px solid #2a303b;color:#9da7b6;font-size:12px}
+.dashboard-mini-row strong{color:#fff}
+.profile-dashboard-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.profile-dashboard-actions>div{background:#11161e;border:1px solid #2a303b;border-radius:12px;padding:12px;display:grid;gap:4px}
+.profile-dashboard-actions span{font-size:20px}.profile-dashboard-actions small{color:#9da7b6}.profile-dashboard-actions strong{font-size:16px;color:#fff}
+.balance-dashboard-strip{margin:8px 12px 0;padding:9px 12px;border:1px solid #3a2b57;border-radius:12px;background:linear-gradient(135deg,rgba(31,18,55,.92),rgba(17,12,30,.92));display:flex;justify-content:space-between;align-items:center;gap:10px}
+.balance-dashboard-strip .bd-label{font-size:10px;color:#aeb7c6;letter-spacing:.7px}.balance-dashboard-strip .bd-value{font-size:20px;font-weight:1000;color:#7ed6a7}
 .game{
   position:relative;width:min(100vw,560px);height:min(100vh,920px);
   min-height:560px;overflow:hidden;
@@ -516,17 +525,22 @@ body{display:flex;justify-content:center;align-items:center;color:#fff}
       <div class="profile-title">👤 প্লেয়ার ড্যাশবোর্ড</div>
       <button class="close-profile" id="closeProfile">✕</button>
     </div>
+    <div class="profile-card-box dashboard-balance-card">
+      <div class="p-label">বর্তমান ব্যালেন্স</div>
+      <div class="p-val dashboard-balance" id="profileBalance">৳1000.00</div>
+      <div class="dashboard-mini-row"><span>গেম ব্যালেন্স</span><strong id="dashboardGameBalance">৳1000.00</strong></div>
+    </div>
     <div class="profile-card-box">
       <div class="p-label">প্লেয়ার আইডি</div>
       <div class="p-val" id="profileId">VIP_SAJIB_786</div>
     </div>
     <div class="profile-card-box">
-      <div class="p-label">বর্তমান ব্যালেন্স</div>
-      <div class="p-val" id="profileBalance">৳1000.00</div>
-    </div>
-    <div class="profile-card-box">
       <div class="p-label">অটো প্লে স্ট্যাটাস</div>
       <div class="p-val" id="profileAutoStatus">বন্ধ আছে</div>
+    </div>
+    <div class="profile-dashboard-actions">
+      <div><span>💰</span><small>Balance</small><strong id="dashboardBalance2">৳1000.00</strong></div>
+      <div><span>🎰</span><small>Game Bet</small><strong id="dashboardBet">৳10</strong></div>
     </div>
   </div>
 
@@ -544,6 +558,7 @@ body{display:flex;justify-content:center;align-items:center;color:#fff}
       </div>
     </div>
     <div class="status" id="status">READY TO SPIN</div>
+    <div class="balance-dashboard-strip"><div><div class="bd-label">PROFILE DASHBOARD BALANCE</div><div class="bd-value" id="dashboardTopBalance">৳1000.00</div></div><div style="font-size:20px">💰</div></div>
     <div class="multis" id="multisContainer">
       <div class="multi active" id="m1">x1</div>
       <div class="multi" id="m2">x2</div>
@@ -619,8 +634,33 @@ const closeShop=document.getElementById('closeShop');
 const buy10Spins=document.getElementById('buy10Spins');
 const buy12Spins=document.getElementById('buy12Spins');
 
-// লোকাল স্টোরেজ থেকে ব্যালেন্স লোড করা (মূল অ্যাপের সাথে সিংক রাখার জন্য)
-let balance = parseFloat(localStorage.getItem('app_balance')) || 1000;
+// মূল User App-এর একই user database থেকে ব্যালেন্স নেওয়া হবে।
+// index.html যেহেতু aviator_current_user + aviator_users_db ব্যবহার করে,
+// Casino-ও একই data source ব্যবহার করছে।
+const SHARED_USER_DB_KEY = 'aviator_users_db';
+const SHARED_CURRENT_USER_KEY = 'aviator_current_user';
+const LEGACY_CURRENT_USER_KEY = 'currentUserPhone';
+const SHARED_BALANCE_KEY = 'app_balance';
+
+function getSharedCurrentUser(){
+  return localStorage.getItem(SHARED_CURRENT_USER_KEY) || localStorage.getItem(LEGACY_CURRENT_USER_KEY) || '';
+}
+
+function getSharedUser(){
+  try{
+    const db = JSON.parse(localStorage.getItem(SHARED_USER_DB_KEY) || '{}');
+    const phone = getSharedCurrentUser();
+    return {db, phone, user: phone && db[phone] ? db[phone] : null};
+  }catch(e){
+    return {db:{}, phone:'', user:null};
+  }
+}
+
+const sharedUserState = getSharedUser();
+let currentUserPhone = sharedUserState.phone;
+let balance = sharedUserState.user && Number.isFinite(Number(sharedUserState.user.balance))
+  ? Number(sharedUserState.user.balance)
+  : (Number.isFinite(parseFloat(localStorage.getItem(SHARED_BALANCE_KEY))) ? parseFloat(localStorage.getItem(SHARED_BALANCE_KEY)) : 0);
 let bet = 10, spinning = false;
 let currentMultiplierIndex = 0; 
 let freeSpinsRemaining = 0;
@@ -645,7 +685,7 @@ closeProfile.onclick = () => { profileModal.classList.remove('active'); };
 
 // মূল অ্যাপে বা হোম পেজে ফিরে যাওয়ার লজিক
 homeBtn.onclick = () => {
-  window.location.href = '../index.html';
+  window.location.href = 'index.html';
 };
 
 bonusBtn.onclick = () => {
@@ -794,13 +834,55 @@ function makeCard(data, i, isCascade = false){
   return el;
 }
 
-function updateMoney(){
-  balanceEl.textContent='৳'+balance.toFixed(2);
-  profileBalance.textContent='৳'+balance.toFixed(2);
-  betEl.textContent=bet;
-  // মূল অ্যাপের লোকাল স্টোরেজে ব্যালেন্স আপডেট করে রাখা
-  localStorage.setItem('app_balance', balance);
+
+function syncProfileDashboard(){
+  try{
+    const db=JSON.parse(localStorage.getItem(SHARED_USER_DB_KEY)||'{}');
+    const current=getSharedCurrentUser();
+    const user=current && db[current] ? db[current] : null;
+    const idEl=document.getElementById('profileId');
+    if(idEl && user){ idEl.textContent=user.myReferCode || current || 'VIP PLAYER'; }
+  }catch(e){}
 }
+
+function updateMoney(){
+  const money='৳'+balance.toFixed(2);
+  balanceEl.textContent=money;
+  profileBalance.textContent=money;
+  betEl.textContent=bet;
+  const top=document.getElementById('dashboardTopBalance'); if(top) top.textContent=money;
+  const gb=document.getElementById('dashboardGameBalance'); if(gb) gb.textContent=money;
+  const gb2=document.getElementById('dashboardBalance2'); if(gb2) gb2.textContent=money;
+  const db=document.getElementById('dashboardBet'); if(db) db.textContent='৳'+bet;
+
+  // একই User App account balance-এ লিখে দিচ্ছি।
+  try{
+    const dbData=JSON.parse(localStorage.getItem(SHARED_USER_DB_KEY)||'{}');
+    const phone=getSharedCurrentUser();
+    if(phone && dbData[phone]){
+      dbData[phone].balance=Number(balance.toFixed(2));
+      localStorage.setItem(SHARED_USER_DB_KEY, JSON.stringify(dbData));
+    }
+    // fallback/instant cross-page sync key
+    localStorage.setItem(SHARED_BALANCE_KEY, String(balance));
+  }catch(e){}
+}
+
+window.addEventListener('storage', (event) => {
+  if(event.key === SHARED_USER_DB_KEY || event.key === SHARED_CURRENT_USER_KEY || event.key === LEGACY_CURRENT_USER_KEY || event.key === SHARED_BALANCE_KEY) {
+    if(spinning) return;
+    const fresh=getSharedUser();
+    currentUserPhone=fresh.phone;
+    if(fresh.user && Number.isFinite(Number(fresh.user.balance))){
+      balance=Number(fresh.user.balance);
+    }else if(event.key === SHARED_BALANCE_KEY){
+      const next=parseFloat(event.newValue);
+      if(Number.isFinite(next)) balance=next;
+    }
+    updateMoney();
+    syncProfileDashboard();
+  }
+});
 
 function updateMultipliersUI(){
   multiElements.forEach((el, idx)=>{
@@ -1114,6 +1196,8 @@ function initial(){
 }
 
 initial();
+updateMoney();
+syncProfileDashboard();
 updateMoney();
 </script>
 </body>
