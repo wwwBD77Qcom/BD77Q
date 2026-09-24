@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Super Ace VIP - Royal Casino</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;font-family:'Segoe UI',Arial,sans-serif;background:#030008;overflow:hidden}
+body{display:flex;justify-content:center;align-items:center;color:#fff}
+
+/* স্প্ল্যাশ ও লোডিং স্ক্রিন স্টাইল */
+.splash-screen {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #4c1d95 0%, #1e1b4b 60%, #030008 100%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.5s ease;
+}
+.splash-screen.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash-logo-box {
+  text-align: center;
+  animation: splashPulse 1.5s ease-in-out infinite alternate;
+}
+@keyframes splashPulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(250,204,21,0.6)); }
+  100% { transform: scale(1.08); filter: drop-shadow(0 0 35px rgba(250,204,21,0.9)); }
+}
+.splash-brand {
+  font-weight: 1000;
+  font-size: 42px;
+  font-style: italic;
+  background: linear-gradient(180deg, #fffdf0 0%, #fde047 50%, #ca8a04 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+}
+.splash-suits {
+  font-size: 32px;
+  letter-spacing: -4px;
+  color: #f3e8ff;
+  margin: 5px 0 15px;
+}
+.splash-vip {
+  display: inline-block;
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fef08a;
+  font-size: 14px;
+  font-weight: 900;
+  padding: 4px 14px;
+  border-radius: 8px;
+  border: 1.5px solid #facc15;
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.8);
+  letter-spacing: 2px;
+}
+.loader-bar-box {
+  width: 220px;
+  height: 12px;
+  background: rgba(0,0,0,0.5);
+  border: 2px solid #facc15;
+  border-radius: 10px;
+  margin-top: 35px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(250,204,21,0.4);
+}
+.loader-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #ca8a04, #facc15, #fef08a);
+  transition: width 0.1s linear;
+}
+.loading-text {
+  font-size: 13px;
+  color: #fde047;
+  font-weight: bold;
+  margin-top: 12px;
+  letter-spacing: 1px;
+}
+
+.game{
+  position:relative;width:min(100vw,560px);height:min(100vh,920px);
+  min-height:560px;overflow:hidden;
+  background:radial-gradient(circle at center, #3b0764 0%, #1e1b4b 50%, #030008 100%);
+  box-shadow:0 0 60px rgba(168,85,247,0.5);
+  border:3px solid #facc15;
+}
+
+.bg-glow {
+  position: absolute;
+  inset: 0;
+  background: 
+    radial-gradient(circle at 20% 20%, rgba(234, 179, 8, 0.2), transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(217, 70, 239, 0.2), transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.15), transparent 60%);
+  animation: royalPulse 6s ease-in-out infinite alternate;
+  pointer-events: none;
+  z-index: 1;
+}
+@keyframes royalPulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.1); opacity: 1; }
+}
+
+.top, .board-wrap, .bottom, .betbox, .message, .side-info, .menu, .status, .profile-modal, .buy-shop-modal {
+  z-index: 2;
+  position: relative;
+}
+
+.top{
+  height:125px;padding:8px 12px 0;position:relative;
+  background:linear-gradient(180deg,rgba(45,10,80,0.95),rgba(25,5,45,0.95) 70%,rgba(15,2,30,0.95));
+  border-bottom:3px solid #facc15;
+  box-shadow:0 4px 25px rgba(0,0,0,0.8);
+}
+.topline{display:flex;align-items:center;justify-content:space-between;height:34px}
+
+.brand-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.brand {
+  font-weight: 1000;
+  font-size: 24px;
+  font-style: italic;
+  background: linear-gradient(180deg, #fffdf0 0%, #fde047 50%, #ca8a04 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(2px 2px 2px #4a044e);
+  letter-spacing: -0.5px;
+}
+.vip-badge {
+  background: linear-gradient(135deg, #dc2626, #b91c1c);
+  color: #fef08a;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid #facc15;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.8);
+  letter-spacing: 1px;
+}
+
+.suits{font-size:20px;letter-spacing:-3px;color:#f3e8ff}
+.top-actions{display:flex;gap:6px}
+.circle{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:rgba(40,10,70,0.9);border:1px solid #facc15;color:#fde047;font-size:12px;cursor:pointer}
+
+.multis{position:absolute;left:8px;right:8px;bottom:5px;display:flex;align-items:center;gap:3px}
+.multi{
+  height:38px;flex:1;display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:900;color:#fde047;text-shadow:0 1px 2px rgba(0,0,0,0.8);
+  background:linear-gradient(#4a044e,#2e1065);
+  clip-path:polygon(0 0,100% 0,85% 100%,15% 100%);
+  border:1.5px solid #c084fc;transition:0.25s;opacity:0.4;
+}
+.multi.active{
+  background:linear-gradient(#db2777,#ca8a04);
+  border-color:#facc15;color:#fff;opacity:1;transform:scale(1.06);
+  box-shadow:0 0 15px rgba(250,204,21,0.8);
+}
+.buy{
+  height:38px;flex:1.2;clip-path:polygon(6% 0,94% 0,100% 50%,94% 100%,6% 100%,0 50%);
+  background:linear-gradient(135deg,#ca8a04,#eab308);border:1.5px solid #fff;
+  color:#1e1b4b;font-weight:900;font-size:10px;text-shadow:none;
+  cursor:pointer;box-shadow:0 0 12px rgba(234,179,8,0.7);
+}
+
+.board-wrap{
+  position:absolute;left:12px;right:12px;top:135px;bottom:112px;
+  padding:8px;border-radius:14px;
+  background:linear-gradient(135deg,#f59e0b,#78350f,#d97706);
+  box-shadow:0 0 30px rgba(245,158,11,0.5),inset 0 0 15px rgba(0,0,0,0.7);
+}
+.board{height:100%;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(4,1fr);gap:4px;background:#090114;padding:4px;border-radius:10px}
+
+.card{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(145deg,#ffffff,#e2e8f0);border:1px solid #cbd5e1;
+  color:#0f172a;font-weight:900;font-size:clamp(30px,7vw,52px);
+  border-radius:6px;overflow:hidden;user-select:none;
+  opacity:0; transform:translateY(-60px) scale(0.4);
+}
+.card.red{color:#dc2626}
+.card.special{background:linear-gradient(145deg,#fef08a,#eab308);color:#1e1b4b;border:1px solid #ca8a04}
+
+.card.wild {
+  background: radial-gradient(circle, #38bdf8, #0284c7 60%, #0369a1);
+  border: 2.5px solid #fff;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(56, 189, 248, 0.9);
+}
+.wild-inner {
+  display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;
+}
+.wild-sign {
+  font-size:clamp(22px,5vw,36px);font-weight:900;color:#fff;
+  text-shadow:0 2px 4px rgba(0,0,0,0.6),0 0 12px #38bdf8;
+}
+.wild-text {
+  font-size:8px;font-weight:900;background:#0369a1;color:#fef08a;
+  padding:1px 5px;border-radius:4px;border:1px solid #facc15;
+  letter-spacing:0.5px;margin-top:-2px;
+}
+
+.card.scatter{
+  background:radial-gradient(circle,#ffeb3b,#f57f17 60%,#b71c1c);
+  border:2.5px solid #fff;color:#fff;
+  box-shadow:0 0 20px rgba(255, 215, 0, 0.9);
+}
+.scatter-inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;
+}
+.coin-sign{
+  font-size:clamp(24px,6vw,42px);font-weight:900;color:#fff;
+  text-shadow:0 2px 4px rgba(0,0,0,0.6),0 0 12px #ffeb3b;
+}
+.scatter-text{
+  font-size:9px;font-weight:900;background:#7f1d1d;color:#fef08a;
+  padding:1px 5px;border-radius:4px;border:1px solid #facc15;
+  letter-spacing:0.5px;margin-top:-2px;
+}
+
+.card:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,0.8) 50%,transparent 70%);transform:translateX(-130%);animation:shine 3s infinite}
+@keyframes shine{60%,100%{transform:translateX(130%))}}
+
+.card .rank{position:absolute;left:5px;top:3px;font-size:16px;line-height:1}
+.card .symbol{font-size:clamp(34px,9vw,60px);line-height:1}
+.ace-logo{font-size:16px!important;font-style:italic;color:#312e81;text-shadow:0 1px #fff}
+
+.winner{animation:winAnim 0.6s ease-in-out infinite alternate;z-index:2}
+@keyframes winAnim{to{box-shadow:inset 0 0 0 3px #facc15,0 0 25px #facc15;transform:scale(0.95);background:#fef9c3}}
+
+.mega-winner {
+  animation: megaWinBurst 0.4s ease-in-out infinite alternate;
+  z-index: 5;
+}
+@keyframes megaWinBurst {
+  0% { transform: scale(1); filter: brightness(1); box-shadow: 0 0 10px #ff0000; background: #fff; }
+  50% { transform: scale(1.15) rotate(3deg); filter: brightness(1.4); box-shadow: 0 0 45px #ffcc00, 0 0 80px #ff00ff; background: #fffbbf; }
+  100% { transform: scale(1.05) rotate(-3deg); filter: brightness(1.2); box-shadow: 0 0 30px #00ffff; background: #ffee55; }
+}
+
+.match-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  color: #fef08a;
+  border: 2px solid #facc15;
+  font-size: 22px;
+  font-weight: 1000;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.9);
+  z-index: 10;
+  animation: badgePop 0.5s cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+}
+@keyframes badgePop {
+  0% { transform: translate(-50%, -50%) scale(0); }
+  70% { transform: translate(-50%, -50%) scale(1.2); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.card.drop-serial {
+  animation: dropSerialAnim 0.35s cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+}
+@keyframes dropSerialAnim {
+  0% { transform: translateY(-80px) rotate(80deg) scale(0.2); opacity: 0; }
+  70% { transform: translateY(6px) rotate(-10deg) scale(1.08); opacity: 1; }
+  100% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+}
+
+.card.drop-scatter-heavy {
+  animation: dropScatterHeavy 0.5s cubic-bezier(0.1, 0.9, 0.2, 1.2) forwards;
+}
+@keyframes dropScatterHeavy {
+  0% { transform: translateY(-120px) scale(0.2) rotate(180deg); opacity: 0; }
+  60% { transform: translateY(10px) scale(1.2) rotate(-15deg); opacity: 1; }
+  80% { transform: translateY(-5px) scale(0.95) rotate(5deg); opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+}
+
+.card.cascade-drop {
+  animation: cascadeDropAnim 0.4s cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+}
+@keyframes cascadeDropAnim {
+  0% { transform: translateY(-150px) scale(0.5); opacity: 0; }
+  70% { transform: translateY(10px) scale(1.05); opacity: 1; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.buy-shop-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 2, 25, 0.95);
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s ease;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.buy-shop-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.shop-title {
+  font-size: 24px;
+  font-weight: 1000;
+  color: #fde047;
+  margin-bottom: 20px;
+  text-shadow: 0 0 10px rgba(250,204,21,0.5);
+}
+.shop-option-card {
+  width: 100%;
+  max-width: 320px;
+  background: linear-gradient(135deg, #3b0764, #581c87);
+  border: 2px solid #facc15;
+  border-radius: 14px;
+  padding: 15px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+  transition: transform 0.2s;
+}
+.shop-option-card:active {
+  transform: scale(0.96);
+}
+.shop-opt-head {
+  font-size: 18px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 5px;
+}
+.shop-opt-price {
+  font-size: 20px;
+  font-weight: 1000;
+  color: #fef08a;
+}
+.close-shop {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 8px 25px;
+  border-radius: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.profile-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 2, 25, 0.95);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s ease;
+}
+.profile-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #facc15;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+.profile-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #fde047;
+}
+.close-profile {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-weight: bold;
+  cursor: pointer;
+}
+.profile-card-box {
+  background: linear-gradient(135deg, #2e0854, #4a044e);
+  border: 1.5px solid #facc15;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+.p-label { font-size: 11px; color: #d8b4fe; }
+.p-val { font-size: 18px; font-weight: 900; color: #fff; margin-top: 4px; }
+
+.message{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) scale(0.5);
+  opacity:0;z-index:10;pointer-events:none;font-size:26px;font-weight:1000;
+  color:#fef08a;text-shadow:0 3px 10px rgba(0,0,0,0.9),0 0 25px #eab308;
+  white-space:nowrap;text-align:center;
+}
+.message.show{animation:popMsg 1s ease-out}
+@keyframes popMsg{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}100%{opacity:0;transform:translate(-50%,-50%) scale(1)}}
+
+.side-info{position:absolute;right:14px;top:140px;writing-mode:vertical-rl;font-size:10px;font-weight:bold;color:#f3e8ff;opacity:0.7;letter-spacing:1px}
+
+.bottom{
+ position:absolute;left:0;right:0;bottom:0;height:104px;
+ background:linear-gradient(180deg,rgba(35,8,65,0.95),rgba(12,2,25,0.95));border-top:2px solid #eab308;
+ display:flex;align-items:center;padding:10px 14px;gap:10px;
+ box-shadow:0 -5px 25px rgba(0,0,0,0.7);
+}
+.info{flex:1;min-width:0}
+.label{font-size:10px;color:#d8b4fe;letter-spacing:0.5px}
+.value{font-size:17px;font-weight:900;margin-top:2px;color:#fff}
+.last{margin-bottom:5px}
+
+.spin{
+ width:74px;height:74px;border-radius:50%;border:4px solid #facc15;
+ background:radial-gradient(circle,#facc15,#ca8a04 60%,#78350f);
+ box-shadow:0 0 25px rgba(250,204,21,0.8),inset 0 0 0 3px rgba(255,255,255,0.5);
+ display:grid;place-items:center;font-size:38px;color:#1e1b4b;
+ cursor:pointer;transition:0.15s;
+}
+.spin:active{transform:scale(0.9) rotate(15deg)}
+.spin.spinning{animation:rotateSpin 0.5s linear infinite}
+@keyframes rotateSpin{to{transform:rotate(360deg)}}
+
+.auto-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border: 1.5px solid #93c5fd;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
+}
+.auto-btn.active {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  border-color: #facc15;
+  animation: autoPulse 0.8s infinite alternate;
+}
+@keyframes autoPulse {
+  to { transform: scale(1.05); box-shadow: 0 0 15px #dc2626; }
+}
+
+.betbox{
+  position:absolute;left:50%;bottom:108px;transform:translateX(-50%);z-index:8;
+  display:flex;align-items:center;gap:6px;background:rgba(40,10,70,0.95);
+  border:1px solid #facc15;border-radius:20px;padding:4px 10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.6);
+}
+.betbox button{border:0;background:#ca8a04;color:#fff;width:26px;height:26px;border-radius:50%;font-size:16px;cursor:pointer}
+.bet{min-width:70px;text-align:center;font-weight:900;font-size:14px;color:#facc15}
+
+.status{position:absolute;top:100px;left:50%;transform:translateX(-50%);font-size:11px;color:#fde047;font-weight:bold;letter-spacing:1px}
+.menu{position:absolute;right:10px;bottom:112px;display:flex;gap:5px}
+.mini{width:30px;height:30px;border-radius:50%;background:rgba(40,10,70,0.9);border:1px solid #facc15;display:grid;place-items:center;font-size:12px;color:#fde047;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="splash-screen" id="splashScreen">
+  <div class="splash-logo-box">
+    <div class="splash-brand">SUPER ACE</div>
+    <div class="splash-suits">♠ ♥ ♦ ♣</div>
+    <div class="splash-vip">VIP ROYAL CASINO</div>
+  </div>
+  <div class="loader-bar-box">
+    <div class="loader-fill" id="loaderFill"></div>
+  </div>
+  <div class="loading-text" id="loadingText">LOADING GAME... 0%</div>
+</div>
+
+<div class="game">
+  <div class="bg-glow"></div>
+
+  <div class="buy-shop-modal" id="buyShopModal">
+    <div class="shop-title">🛒 স্ক্যাটার ফ্রি মার কিনুন</div>
+    <div class="shop-option-card" id="buy10Spins">
+      <div class="shop-opt-head">১০টি ফ্রি মার (Spins)</div>
+      <div class="shop-opt-price">৳১৫০.০০</div>
+    </div>
+    <div class="shop-option-card" id="buy12Spins">
+      <div class="shop-opt-head">১২টি ফ্রি মার (Spins)</div>
+      <div class="shop-opt-price">৳৩০০.০০</div>
+    </div>
+    <button class="close-shop" id="closeShop">বন্ধ করুন</button>
+  </div>
+
+  <div class="profile-modal" id="profileModal">
+    <div class="profile-header">
+      <div class="profile-title">👤 প্লেয়ার ড্যাশবোর্ড</div>
+      <button class="close-profile" id="closeProfile">✕</button>
+    </div>
+    <div class="profile-card-box">
+      <div class="p-label">প্লেয়ার আইডি</div>
+      <div class="p-val" id="profileId">VIP_SAJIB_786</div>
+    </div>
+    <div class="profile-card-box">
+      <div class="p-label">বর্তমান ব্যালেন্স</div>
+      <div class="p-val" id="profileBalance">৳1000.00</div>
+    </div>
+    <div class="profile-card-box">
+      <div class="p-label">অটো প্লে স্ট্যাটাস</div>
+      <div class="p-val" id="profileAutoStatus">বন্ধ আছে</div>
+    </div>
+  </div>
+
+  <div class="top">
+    <div class="topline">
+      <div class="brand-container">
+        <div class="brand">SUPER ACE</div>
+        <div class="vip-badge">VIP</div>
+      </div>
+      <div class="suits">♠♥♦♣</div>
+      <div class="top-actions">
+        <button class="auto-btn" id="autoBtn">AUTO: OFF</button>
+        <div class="circle" id="musicToggle" title="Music On/Off">🎵</div>
+        <div class="circle" id="profileBtn" title="Profile Dashboard">👤</div>
+      </div>
+    </div>
+    <div class="status" id="status">READY TO SPIN</div>
+    <div class="multis" id="multisContainer">
+      <div class="multi active" id="m1">x1</div>
+      <div class="multi" id="m2">x2</div>
+      <div class="multi" id="m3">x3</div>
+      <div class="multi" id="m4">x4</div>
+      <div class="multi" id="m5">x5</div>
+      <button class="buy" id="bonusBtn">BONUS</button>
+    </div>
+  </div>
+
+  <div class="side-info">ROYAL CASINO</div>
+  <div class="board-wrap"><div class="board" id="board"></div></div>
+  <div class="message" id="message"></div>
+
+  <div class="betbox">
+    <button id="minus">−</button><div class="bet">৳<span id="bet">10</span></div><button id="plus">+</button>
+  </div>
+
+  <div class="menu">
+    <div class="mini" id="homeBtn" title="Back to App">⌂</div><div class="mini">⌁</div><div class="mini">☰</div>
+  </div>
+
+  <div class="bottom">
+    <div class="info">
+      <div class="last"><div class="label">LAST WIN</div><div class="value" id="lastWin">৳0.00</div></div>
+      <div><div class="label">BALANCE</div><div class="value" id="balance">৳1000.00</div></div>
+    </div>
+    <button class="spin" id="spin" aria-label="Spin">↻</button>
+  </div>
+</div>
+
+<script>
+let loadProgress = 0;
+const loaderFill = document.getElementById('loaderFill');
+const loadingText = document.getElementById('loadingText');
+const splashScreen = document.getElementById('splashScreen');
+
+const loadingInterval = setInterval(() => {
+  loadProgress += Math.floor(Math.random() * 15) + 5;
+  if(loadProgress >= 100) {
+    loadProgress = 100;
+    clearInterval(loadingInterval);
+    loaderFill.style.width = '100%';
+    loadingText.textContent = 'READY! STARTING...';
+    setTimeout(() => {
+      splashScreen.classList.add('fade-out');
+    }, 400);
+  } else {
+    loaderFill.style.width = loadProgress + '%';
+    loadingText.textContent = `LOADING GAME... ${loadProgress}%`;
+  }
+}, 120);
+
+const board=document.getElementById('board');
+const spin=document.getElementById('spin');
+const balanceEl=document.getElementById('balance');
+const lastWinEl=document.getElementById('lastWin');
+const betEl=document.getElementById('bet');
+const statusEl=document.getElementById('status');
+const message=document.getElementById('message');
+const musicToggle=document.getElementById('musicToggle');
+const autoBtn=document.getElementById('autoBtn');
+const profileBtn=document.getElementById('profileBtn');
+const profileModal=document.getElementById('profileModal');
+const closeProfile=document.getElementById('closeProfile');
+const profileBalance=document.getElementById('profileBalance');
+const profileAutoStatus=document.getElementById('profileAutoStatus');
+const homeBtn=document.getElementById('homeBtn');
+
+const bonusBtn=document.getElementById('bonusBtn');
+const buyShopModal=document.getElementById('buyShopModal');
+const closeShop=document.getElementById('closeShop');
+const buy10Spins=document.getElementById('buy10Spins');
+const buy12Spins=document.getElementById('buy12Spins');
+
+// লোকাল স্টোরেজ থেকে ব্যালেন্স লোড করা (মূল অ্যাপের সাথে সিংক রাখার জন্য)
+let balance = parseFloat(localStorage.getItem('app_balance')) || 1000;
+let bet = 10, spinning = false;
+let currentMultiplierIndex = 0; 
+let freeSpinsRemaining = 0;
+let autoPlayActive = false;
+let autoPlayTimer = null;
+let bgMusicPlaying = false;
+let bgMusicInterval = null;
+
+let currentCardsData = [];
+
+const multiplierValues = [1, 2, 3, 4, 5];
+const multiElements = [
+  document.getElementById('m1'), 
+  document.getElementById('m2'), 
+  document.getElementById('m3'), 
+  document.getElementById('m4'), 
+  document.getElementById('m5')
+];
+
+profileBtn.onclick = () => { profileModal.classList.add('active'); };
+closeProfile.onclick = () => { profileModal.classList.remove('active'); };
+
+// মূল অ্যাপে বা হোম পেজে ফিরে যাওয়ার লজিক
+homeBtn.onclick = () => {
+  window.location.href = '../index.html';
+};
+
+bonusBtn.onclick = () => {
+  if(!spinning) {
+    buyShopModal.classList.add('active');
+  }
+};
+closeShop.onclick = () => {
+  buyShopModal.classList.remove('active');
+};
+
+buy10Spins.onclick = () => {
+  if(balance >= 150) {
+    balance -= 150;
+    freeSpinsRemaining = 10;
+    buyShopModal.classList.remove('active');
+    playScatterSound();
+    updateMoney();
+    showMessage('৳১৫০ দিয়ে ১০টি ফ্রি মার কেনা সফল!');
+    doSpin();
+  } else {
+    showMessage('অপর্যাপ্ত ব্যালেন্স!');
+  }
+};
+
+buy12Spins.onclick = () => {
+  if(balance >= 300) {
+    balance -= 300;
+    freeSpinsRemaining = 12;
+    buyShopModal.classList.remove('active');
+    playScatterSound();
+    updateMoney();
+    showMessage('৳৩০০ দিয়ে ১২টি ফ্রি মার কেনা সফল!');
+    doSpin();
+  } else {
+    showMessage('অপর্যাপ্ত ব্যালেন্স!');
+  }
+};
+
+function startBackgroundMusic() {
+  if(bgMusicPlaying) return;
+  bgMusicPlaying = true;
+  musicToggle.style.borderColor = '#22c55e';
+  
+  const notes = [261.63, 329.63, 392.00, 523.25, 392.00, 329.63]; 
+  let noteIdx = 0;
+
+  bgMusicInterval = setInterval(() => {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(notes[noteIdx], audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+      
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.4);
+      
+      noteIdx = (noteIdx + 1) % notes.length;
+    } catch(e) {}
+  }, 500);
+}
+
+function stopBackgroundMusic() {
+  bgMusicPlaying = false;
+  musicToggle.style.borderColor = '#facc15';
+  clearInterval(bgMusicInterval);
+}
+
+musicToggle.onclick = () => {
+  if(bgMusicPlaying) {
+    stopBackgroundMusic();
+    musicToggle.textContent = '🔇';
+  } else {
+    startBackgroundMusic();
+    musicToggle.textContent = '🎵';
+  }
+};
+
+document.body.addEventListener('click', () => {
+  if(!bgMusicPlaying && bgMusicInterval === null) {
+    startBackgroundMusic();
+  }
+}, {once: true});
+
+function playScatterSound() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = audioCtx.currentTime;
+    [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((freq, index) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now + index * 0.08);
+      gain.gain.setValueAtTime(0.2, now + index * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + index * 0.08 + 0.4);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + index * 0.08);
+      osc.stop(now + index * 0.08 + 0.4);
+    });
+  } catch(e) {}
+}
+
+const normalSymbols=[
+ {r:'A',s:'♠',c:'',isBig:true},{r:'A',s:'♥',c:'red',isBig:true},{r:'A',s:'♦',c:'red',isBig:true},{r:'A',s:'♣',c:'',isBig:true},
+ {r:'K',s:'♠',c:'',isBig:true},{r:'K',s:'♥',c:'red',isBig:true},{r:'K',s:'♦',c:'red',isBig:true},{r:'K',s:'♣',c:'',isBig:true},
+ {r:'Q',s:'♠',c:'',isBig:false},{r:'Q',s:'♥',c:'red',isBig:false},{r:'Q',s:'♦',c:'red',isBig:false},{r:'Q',s:'♣',c:'',isBig:false},
+ {r:'J',s:'♠',c:'',isBig:false},{r:'J',s:'♥',c:'red',isBig:false},{r:'J',s:'♦',c:'red',isBig:false},{r:'J',s:'♣',c:'',isBig:false},
+ {r:'A',s:'ACE',c:'special',isBig:true}
+];
+
+const scatterSymbol={r:'SCATTER',s:'SCATTER',c:'scatter'};
+const wildSymbol={r:'WILD',s:'WILD',c:'wild'};
+
+function randomCard(){
+  let rand = Math.random();
+  if(rand < 0.03){
+    return scatterSymbol;
+  } else if(rand < 0.09){
+    return wildSymbol;
+  }
+  return normalSymbols[Math.floor(Math.random()*normalSymbols.length)];
+}
+
+function makeCard(data, i, isCascade = false){
+  const el=document.createElement('div');
+  if(data.r === 'SCATTER'){
+    el.className='card scatter' + (isCascade ? ' cascade-drop' : '');
+    el.innerHTML=`<div class="scatter-inner"><span class="coin-sign">$</span><span class="scatter-text">SCATTER</span></div>`;
+  } else if(data.r === 'WILD'){
+    el.className='card wild' + (isCascade ? ' cascade-drop' : '');
+    el.innerHTML=`<div class="wild-inner"><span class="wild-sign">★</span><span class="wild-text">WILD CARD</span></div>`;
+  } else {
+    el.className='card '+(data.c||'') + (isCascade ? ' cascade-drop' : '');
+    el.innerHTML=data.s==='ACE'
+      ? '<span class="symbol ace-logo">♠ ACE ♠</span>'
+      : `<span class="rank">${data.r}</span><span class="symbol">${data.s}</span>`;
+  }
+  el.dataset.i=i;
+  return el;
+}
+
+function updateMoney(){
+  balanceEl.textContent='৳'+balance.toFixed(2);
+  profileBalance.textContent='৳'+balance.toFixed(2);
+  betEl.textContent=bet;
+  // মূল অ্যাপের লোকাল স্টোরেজে ব্যালেন্স আপডেট করে রাখা
+  localStorage.setItem('app_balance', balance);
+}
+
+function updateMultipliersUI(){
+  multiElements.forEach((el, idx)=>{
+    if(idx === currentMultiplierIndex){
+      el.classList.add('active');
+    } else {
+      el.classList.remove('active');
+    }
+  });
+}
+
+function showMessage(txt){
+  message.textContent=txt;
+  message.classList.remove('show');
+  void message.offsetWidth;
+  message.classList.add('show');
+}
+
+function checkScatterCount(cardsData){
+  let count = 0;
+  cardsData.forEach(c => {
+    if(c.r === 'SCATTER') count++;
+  });
+  return count;
+}
+
+function findAndMarkWins(cardsData){
+  const cards=[...board.children];
+  cards.forEach(c=>{
+    c.classList.remove('winner');
+    c.classList.remove('mega-winner');
+    const oldBadge = c.querySelector('.match-badge');
+    if(oldBadge) oldBadge.remove();
+  });
+  
+  const map={};
+  let wildIndices = [];
+
+  cardsData.forEach((data, index)=>{
+    if(data.r === 'SCATTER') return;
+    if(data.r === 'WILD'){
+      wildIndices.push(index);
+    } else {
+      const key = data.r;
+      map[key]=(map[key]||[]); 
+      map[key].push(index);
+    }
+  });
+  
+  let keys = Object.keys(map);
+  if(keys.length > 0 && wildIndices.length > 0){
+    keys.sort((a,b)=>map[b].length - map[a].length);
+    let bestKey = keys[0];
+    wildIndices.forEach(wIdx => {
+      map[bestKey].push(wIdx);
+    });
+  }
+
+  let bestGroupIndices = [];
+  let bestKeyName = '';
+  for(let k in map){
+    if(map[k].length > bestGroupIndices.length){
+      bestGroupIndices = map[k];
+      bestKeyName = k;
+    }
+  }
+  
+  let winningIndices = [];
+  let isBigCardMatch = (bestKeyName === 'A' || bestKeyName === 'K');
+
+  if(bestGroupIndices.length >= 3){
+    winningIndices = bestGroupIndices;
+    let matchCountNumber = Math.min(winningIndices.length, 5);
+
+    winningIndices.forEach(idx=>{
+      const itemEl = cards[idx];
+      if(isBigCardMatch) {
+        itemEl.classList.add('mega-winner');
+      } else {
+        itemEl.classList.add('winner');
+      }
+
+      const badge = document.createElement('div');
+      badge.className = 'match-badge';
+      badge.textContent = matchCountNumber;
+      itemEl.appendChild(badge);
+    });
+  }
+
+  return winningIndices;
+}
+
+async function doSpin(){
+  if(spinning) return;
+
+  if(freeSpinsRemaining <= 0){
+    if(balance<bet){
+      showMessage('INSUFFICIENT BALANCE');
+      stopAutoPlay();
+      return;
+    }
+    balance-=bet;
+  }
+
+  currentMultiplierIndex = 0;
+  updateMultipliersUI();
+
+  spinning=true; spin.classList.add('spinning');
+  updateMoney();
+  
+  if(freeSpinsRemaining > 0){
+    statusEl.textContent=`FREE SPINS: ${freeSpinsRemaining}`;
+  } else {
+    statusEl.textContent='DEALING CARDS...';
+  }
+  
+  lastWinEl.textContent='৳0.00';
+  board.innerHTML='';
+  
+  currentCardsData=[];
+  for(let i=0; i<16; i++){
+    currentCardsData.push(randomCard());
+  }
+
+  for(let i=0; i<currentCardsData.length; i++){
+    const el = makeCard(currentCardsData[i], i, false);
+    board.appendChild(el);
+    setTimeout(()=>{
+      if(currentCardsData[i].r === 'SCATTER'){
+        el.classList.add('drop-scatter-heavy');
+      } else {
+        el.classList.add('drop-serial');
+      }
+    }, i * 35);
+  }
+
+  await new Promise(r=>setTimeout(r, 16 + 35 * 16 + 250));
+
+  const scatterCount = checkScatterCount(currentCardsData);
+  if(scatterCount >= 3 && freeSpinsRemaining === 0){
+    freeSpinsRemaining += 10; 
+    playScatterSound();
+    showMessage('৩টি স্ক্যাটার! ১০টি ফ্রি মার চালু!');
+    statusEl.textContent=`FREE SPINS ACTIVATED!`;
+    await new Promise(r=>setTimeout(r, 1000));
+  }
+
+  let totalCascadeWin = 0;
+  let cascadeCount = 0;
+
+  while(true){
+    const winningIndices = findAndMarkWins(currentCardsData);
+    let scatterWin = 0;
+    if(cascadeCount === 0 && scatterCount >= 3){
+      let scatterMultiplier = 5 + Math.floor(Math.random() * 6);
+      scatterWin = bet * scatterMultiplier;
+    }
+
+    if(winningIndices.length >= 3 || scatterWin > 0){
+      let isBigMatch = winningIndices.some(idx => currentCardsData[idx].r === 'A' || currentCardsData[idx].r === 'K');
+      
+      let baseWinRate = isBigMatch ? 0.08 : 0.03; 
+      let matchCountNumber = Math.min(winningIndices.length, 5);
+      let baseWin = winningIndices.length >= 3 ? (bet * baseWinRate * matchCountNumber) : 0;
+      
+      let currentMult = multiplierValues[currentMultiplierIndex];
+      let stepWin = (baseWin * currentMult) + scatterWin;
+
+      if(isBigMatch){
+        stepWin *= 1.05; 
+      }
+
+      totalCascadeWin += stepWin;
+      lastWinEl.textContent='৳'+totalCascadeWin.toFixed(2);
+
+      if(currentMultiplierIndex < multiplierValues.length - 1){
+        currentMultiplierIndex++;
+      }
+      updateMultipliersUI();
+
+      if(winningIndices.length >= 3){
+        statusEl.textContent = `CASCADE WIN! x${currentMult}`;
+        showMessage(`⚡ উইন ৳${stepWin.toFixed(2)} ⚡`);
+      } else if(scatterWin > 0){
+        statusEl.textContent = `SCATTER WIN!`;
+        showMessage(`🚀 স্ক্যাটার ৳${scatterWin.toFixed(2)} 🚀`);
+      }
+
+      await new Promise(r => setTimeout(r, 900));
+
+      winningIndices.forEach(idx => {
+        currentCardsData[idx] = randomCard();
+      });
+
+      board.innerHTML = '';
+      currentCardsData.forEach((data, i) => {
+        const isNew = winningIndices.includes(i);
+        const el = makeCard(data, i, isNew);
+        board.appendChild(el);
+        if(!isNew){
+          el.style.opacity = '1';
+          el.style.transform = 'none';
+        }
+      });
+
+      await new Promise(r => setTimeout(r, 500));
+      cascadeCount++;
+    } else {
+      break;
+    }
+  }
+
+  if(totalCascadeWin > 0){
+    balance += totalCascadeWin;
+    const hasMega = board.querySelector('.mega-winner');
+    if(hasMega){
+      statusEl.textContent=`MEGA WIN BURST!`;
+      showMessage(`🔥 মেগা উইন মোট ৳${totalCascadeWin.toFixed(2)} 🔥`);
+    } else {
+      statusEl.textContent=freeSpinsRemaining > 0 ? `FREE SPIN WIN!` : `WIN!`;
+    }
+  } else {
+    currentMultiplierIndex = 0;
+    updateMultipliersUI();
+    if(scatterCount < 3){
+      statusEl.textContent=freeSpinsRemaining > 0 ? `FREE SPINS LEFT: ${freeSpinsRemaining}` : 'MISS! TRY AGAIN';
+      showMessage('MISS!');
+    }
+  }
+
+  if(freeSpinsRemaining > 0){
+    freeSpinsRemaining--;
+  }
+
+  updateMoney();
+  spin.classList.remove('spinning');
+  spinning=false;
+
+  if(freeSpinsRemaining > 0 && !autoPlayActive){
+    setTimeout(doSpin, 700);
+  }
+
+  if(autoPlayActive && !spinning){
+    autoPlayTimer = setTimeout(doSpin, 800);
+  }
+}
+
+function startAutoPlay(){
+  autoPlayActive = true;
+  autoBtn.textContent = 'AUTO: ON';
+  autoBtn.classList.add('active');
+  profileAutoStatus.textContent = 'চলমান আছে (Active)';
+  if(!spinning) {
+    doSpin();
+  }
+}
+
+function stopAutoPlay(){
+  autoPlayActive = false;
+  autoBtn.textContent = 'AUTO: OFF';
+  autoBtn.classList.remove('active');
+  profileAutoStatus.textContent = 'বন্ধ আছে';
+  clearTimeout(autoPlayTimer);
+}
+
+autoBtn.onclick = () => {
+  if(autoPlayActive){
+    stopAutoPlay();
+  } else {
+    startAutoPlay();
+  }
+};
+
+spin.addEventListener('click',()=>{
+  if(autoPlayActive) {
+    stopAutoPlay();
+  } else {
+    doSpin();
+  }
+});
+
+document.getElementById('minus').onclick = () => {
+  if(!spinning && freeSpinsRemaining === 0) {
+    if(bet > 5) bet -= 5;
+    else bet = Math.max(1, bet - 1);
+    updateMoney();
+  }
+};
+
+document.getElementById('plus').onclick = () => {
+  if(!spinning && freeSpinsRemaining === 0) {
+    if(bet >= 5) bet = Math.min(200, bet + 5);
+    else bet = Math.min(200, bet + 1);
+    updateMoney();
+  }
+};
+
+function initial(){
+  board.innerHTML='';
+  currentCardsData = [];
+  for(let i=0;i<16;i++){
+    let cData = normalSymbols[Math.floor(Math.random()*normalSymbols.length)];
+    currentCardsData.push(cData);
+    const cardEl = makeCard(cData, i, false);
+    cardEl.style.opacity = '1';
+    cardEl.style.transform = 'none';
+    board.appendChild(cardEl);
+  }
+  currentMultiplierIndex=0;
+  updateMultipliersUI();
+}
+
+initial();
+updateMoney();
+</script>
+</body>
+</html>
