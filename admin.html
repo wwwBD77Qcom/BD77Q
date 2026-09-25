@@ -34,6 +34,13 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 .banner-on{color:#7ed6a7;font-weight:800}
 .banner-off{color:#ff7888;font-weight:800}
 @media(max-width:520px){.banner-grid{grid-template-columns:1fr}.banner-table img{width:90px;height:45px}}
+/* Entry Announcement Admin */
+.announcement-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.announcement-slide-admin{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:10px;margin-top:10px}
+.announcement-slide-admin h4{margin:0 0 8px;color:#ffcf72;font-size:13px}
+.announcement-admin-grid input{margin-bottom:8px}
+@media(max-width:520px){.announcement-admin-grid{grid-template-columns:1fr}}
+
 </style>
 
 <!-- Firebase SDKs & Config (Modular CDN) -->
@@ -97,97 +104,6 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       document.getElementById('adminLoginScreen').classList.add('active');
   }
 
-  // ================== Daily Loss Cashback (15%) ==================
-  // User App-এর cashbackState-এর সঙ্গে মিল রেখে Firebase users ডাটায় কাজ করবে।
-  function cashbackDateKey(date = new Date()){
-      return date.toDateString();
-  }
-
-  async function processDailyLossCashbackAdmin(showAlert = false){
-      try{
-          const snap = await get(child(ref(db), 'users'));
-          if(!snap.exists()){
-              if(showAlert) alert('কোনো ইউজার পাওয়া যায়নি।');
-              return {processed:0, paid:0, total:0};
-          }
-
-          const users = snap.val() || {};
-          const today = cashbackDateKey();
-          const updates = {};
-          let processed = 0, paid = 0, total = 0;
-
-          Object.keys(users).forEach(phone => {
-              const user = users[phone] || {};
-              const currentBalance = Number(user.balance || 0);
-
-              if(!user.cashbackState){
-                  updates[`users/${phone}/cashbackState`] = {
-                      date: today,
-                      dayStartBalance: currentBalance,
-                      lastProcessedDate: null,
-                      totalCashback: 0
-                  };
-                  return;
-              }
-
-              const state = user.cashbackState || {};
-              if(state.date !== today){
-                  const startBalance = Number(state.dayStartBalance || 0);
-                  const loss = Math.max(0, startBalance - currentBalance);
-                  const cashback = Number((loss * 0.15).toFixed(2));
-                  let newBalance = currentBalance;
-                  let inbox = Array.isArray(user.inboxSms) ? [...user.inboxSms] : [];
-
-                  if(cashback > 0 && state.lastProcessedDate !== today){
-                      newBalance = Number((currentBalance + cashback).toFixed(2));
-                      paid += 1;
-                      total += cashback;
-                      inbox.unshift({
-                          id: Date.now() + paid,
-                          title: '🎁 ১৫% Daily Loss Cashback',
-                          text: `গত দিনের ক্ষতির ১৫% Cashback হিসেবে ৳${cashback.toFixed(2)} আপনার ব্যালেন্সে যোগ হয়েছে।`,
-                          time: 'আজ'
-                      });
-                  }
-
-                  processed += 1;
-                  updates[`users/${phone}/balance`] = newBalance;
-                  updates[`users/${phone}/cashbackState`] = {
-                      date: today,
-                      dayStartBalance: newBalance,
-                      lastProcessedDate: today,
-                      totalCashback: Number((Number(state.totalCashback || 0) + cashback).toFixed(2))
-                  };
-                  updates[`users/${phone}/lastCashbackAmount`] = cashback;
-                  updates[`users/${phone}/lastCashbackDate`] = today;
-                  updates[`users/${phone}/inboxSms`] = inbox;
-              }
-          });
-
-          if(Object.keys(updates).length) await update(ref(db), updates);
-          document.getElementById('cashbackLastRun').textContent = new Date().toLocaleString('bn-BD');
-          document.getElementById('cashbackPaidCount').textContent = paid;
-          document.getElementById('cashbackPaidTotal').textContent = '৳' + total.toFixed(2);
-
-          if(showAlert){
-              alert(`Cashback প্রসেস সম্পন্ন!\n${paid} জন ইউজারকে মোট ৳${total.toFixed(2)} Cashback দেওয়া হয়েছে।`);
-          }
-          return {processed, paid, total};
-      }catch(e){
-          console.error('Daily Loss Cashback failed:', e);
-          if(showAlert) alert('Cashback প্রসেস করা যায়নি। Firebase Connection/Rules পরীক্ষা করুন।');
-          return {processed:0, paid:0, total:0};
-      }
-  }
-
-  window.runDailyLossCashback = async function(){
-      const btn = document.getElementById('cashbackRunButton');
-      if(btn){ btn.disabled = true; btn.textContent = '⏳ প্রসেস হচ্ছে...'; }
-      await processDailyLossCashbackAdmin(true);
-      if(btn){ btn.disabled = false; btn.textContent = '🎁 এখন Cashback প্রসেস করুন'; }
-  };
-  // ================== End Daily Loss Cashback ==================
-
   window.loadAdminDashboard = async function() {
       document.getElementById('adminLoginScreen').classList.remove('active');
       document.getElementById('adminDashboardScreen').classList.add('active');
@@ -200,8 +116,6 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       } else {
           document.getElementById('totalUsersCount').textContent = '0';
       }
-
-      await processDailyLossCashbackAdmin(false);
 
       const numSnap = await get(child(ref(db), 'settings/numbers'));
       if(numSnap.exists()){
@@ -708,6 +622,70 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       document.getElementById('bannerCancelButton').style.display = 'none';
       document.getElementById('bannerMsg').textContent = '';
   };
+
+  // ==================== Entry Announcement Control ====================
+  window.loadEntryAnnouncement = async function(){
+      try{
+          const snap = await get(ref(db, 'settings/entryAnnouncement'));
+          if(!snap.exists()) return;
+          const a = snap.val() || {};
+          document.getElementById('entryAnnActive').checked = a.active !== false;
+          document.getElementById('entryAnnTitle').value = a.title || 'Announcement';
+          document.getElementById('entryAnnLead').value = a.lead || '';
+          document.getElementById('entryAnnInterval').value = a.interval || 5;
+          for(let i=1;i<=6;i++){
+              const sl=(a.slides&&a.slides[i])||{};
+              document.getElementById('entryAnnSlide'+i+'Title').value=sl.title||'';
+              document.getElementById('entryAnnSlide'+i+'Image').value=sl.image||'';
+              document.getElementById('entryAnnSlide'+i+'Info').value=sl.info||'';
+          }
+          document.getElementById('entryAnnMsg').textContent='বর্তমান Announcement সেটিংস লোড হয়েছে।';
+      }catch(e){console.error('Announcement load failed:',e)}
+  };
+
+  window.saveEntryAnnouncement = async function(){
+      const data={
+          active:document.getElementById('entryAnnActive').checked,
+          title:document.getElementById('entryAnnTitle').value.trim()||'Announcement',
+          lead:document.getElementById('entryAnnLead').value.trim(),
+          interval:Math.max(2,Number(document.getElementById('entryAnnInterval').value)||5),
+          updatedAt:Date.now(),
+          slides:{}
+      };
+      for(let i=1;i<=6;i++){
+          data.slides[i]={
+              title:document.getElementById('entryAnnSlide'+i+'Title').value.trim(),
+              image:document.getElementById('entryAnnSlide'+i+'Image').value.trim(),
+              info:document.getElementById('entryAnnSlide'+i+'Info').value.trim()
+          };
+      }
+      const msg=document.getElementById('entryAnnMsg');
+      try{
+          await set(ref(db,'settings/entryAnnouncement'),data);
+          msg.style.color='#7ed6a7';
+          msg.textContent='Announcement সফলভাবে Firebase-এ সেভ হয়েছে।';
+      }catch(e){
+          console.error(e);
+          msg.style.color='#ff7888';
+          msg.textContent='Announcement সেভ করা যায়নি। Firebase Rules/Connection পরীক্ষা করুন।';
+      }
+  };
+
+  window.resetEntryAnnouncement = function(){
+      document.getElementById('entryAnnActive').checked=true;
+      document.getElementById('entryAnnTitle').value='Announcement';
+      document.getElementById('entryAnnLead').value='';
+      document.getElementById('entryAnnInterval').value='5';
+      for(let i=1;i<=6;i++){
+          document.getElementById('entryAnnSlide'+i+'Title').value='';
+          document.getElementById('entryAnnSlide'+i+'Image').value='';
+          document.getElementById('entryAnnSlide'+i+'Info').value='';
+      }
+      document.getElementById('entryAnnMsg').textContent='';
+  };
+
+  // ================== End Entry Announcement Control ==================
+
   // ================== End Banner Advertisement Control ==================[span_3](start_span)[span_3](end_span)
 
   window.saveAdminNumbers = async function() {
@@ -818,6 +796,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   }
 
   window.addEventListener('DOMContentLoaded', initAdmin);
+  setTimeout(()=>window.loadEntryAnnouncement && window.loadEntryAnnouncement(), 500);
 </script>
 </head>
 <body>
@@ -855,20 +834,6 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       <input id="targetUserAmount" type="number" placeholder="পরিমাণ লিখুন">
       <button class="cash" type="button" onclick="giveUserTurnover()">টাকা অ্যাড করুন</button>
       <div id="turnoverMsg" class="modal-note" style="margin-top:5px"></div>
-    </div>
-
-    <div class="card">
-      <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">🎁 ১৫% Daily Loss Cashback</div>
-      <div class="modal-note" style="margin-bottom:10px">
-        প্রতিটি নতুন দিনে আগের দিনের Start Balance ও Current Balance-এর পার্থক্য থেকে ১৫% Cashback হিসাব হবে।
-        Cashback সরাসরি ইউজারের Firebase Balance-এ যোগ হবে এবং Inbox-এ নোটিফিকেশন যাবে।
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px">
-        <div class="stat-box" style="margin:0"><div style="font-size:11px;color:#9da7b6">এই রান-এ ইউজার</div><div class="stat-value" id="cashbackPaidCount">0</div></div>
-        <div class="stat-box" style="margin:0"><div style="font-size:11px;color:#9da7b6">এই রান-এ মোট</div><div class="stat-value" id="cashbackPaidTotal">৳0.00</div></div>
-      </div>
-      <button id="cashbackRunButton" class="cash" type="button" onclick="runDailyLossCashback()">🎁 এখন Cashback প্রসেস করুন</button>
-      <div class="modal-note" style="margin-top:8px">শেষ প্রসেস: <span id="cashbackLastRun">এখনও হয়নি</span></div>
     </div>
 
     <div class="card">
@@ -910,6 +875,45 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
     </div>
 
     <!-- Banner Advertisement Control -->
+
+
+    <div class="card" id="entryAnnouncementCard">
+      <div style="font-size:16px;font-weight:900;margin-bottom:6px;color:#ffcf72">📢 Entry Announcement Popup Control</div>
+      <div class="modal-note" style="margin-bottom:12px">User App-এ লগইন/প্রবেশের পর যে Announcement Popup আসে সেটি এখান থেকে নিয়ন্ত্রণ করুন। Data Firebase-এর <b>settings/entryAnnouncement</b>-এ থাকবে।</div>
+
+      <div class="announcement-admin-grid">
+        <div>
+          <label>Popup Title</label>
+          <input id="entryAnnTitle" type="text" value="Announcement" placeholder="Announcement">
+        </div>
+        <div>
+          <label>Auto Slide Interval (seconds)</label>
+          <input id="entryAnnInterval" type="number" min="2" value="5">
+        </div>
+      </div>
+
+      <label>উপরের বড় লেখা / Lead Text</label>
+      <textarea id="entryAnnLead" placeholder="যেমন: কীভাবে FAST PAYMENT ব্যবহার করে পেমেন্ট করবেন"></textarea>
+
+      <label style="display:flex;align-items:center;gap:8px;color:#fff;margin:5px 0 10px">
+        <input id="entryAnnActive" type="checkbox" checked style="width:auto;margin:0"> User App-এ Popup Active রাখুন
+      </label>
+
+      <div class="announcement-slide-admin"><h4>Slide 1</h4><input id="entryAnnSlide1Title" placeholder="Slide title"><input id="entryAnnSlide1Image" placeholder="Image URL (optional)"><textarea id="entryAnnSlide1Info" placeholder="নিচের ছোট তথ্য (optional)"></textarea></div>
+      <div class="announcement-slide-admin"><h4>Slide 2</h4><input id="entryAnnSlide2Title" placeholder="Slide title"><input id="entryAnnSlide2Image" placeholder="Image URL (optional)"><textarea id="entryAnnSlide2Info" placeholder="নিচের ছোট তথ্য (optional)"></textarea></div>
+      <div class="announcement-slide-admin"><h4>Slide 3</h4><input id="entryAnnSlide3Title" placeholder="Slide title"><input id="entryAnnSlide3Image" placeholder="Image URL (optional)"><textarea id="entryAnnSlide3Info" placeholder="নিচের ছোট তথ্য (optional)"></textarea></div>
+      <div class="announcement-slide-admin"><h4>Slide 4</h4><input id="entryAnnSlide4Title" placeholder="Slide title"><input id="entryAnnSlide4Image" placeholder="Image URL (optional)"><textarea id="entryAnnSlide4Info" placeholder="নিচের ছোট তথ্য (optional)"></textarea></div>
+      <div class="announcement-slide-admin"><h4>Slide 5</h4><input id="entryAnnSlide5Title" placeholder="Slide title"><input id="entryAnnSlide5Image" placeholder="Image URL (optional)"><textarea id="entryAnnSlide5Info" placeholder="নিচের ছোট তথ্য (optional)"></textarea></div>
+      <div class="announcement-slide-admin"><h4>Slide 6</h4><input id="entryAnnSlide6Title" placeholder="Slide title"><input id="entryAnnSlide6Image" placeholder="Image URL (optional)"><textarea id="entryAnnSlide6Info" placeholder="নিচের ছোট তথ্য (optional)"></textarea></div>
+
+      <div class="banner-row" style="margin-top:12px">
+        <button class="cash" type="button" onclick="saveEntryAnnouncement()">📢 Announcement Save</button>
+        <button type="button" onclick="loadEntryAnnouncement()" style="background:#252b35;color:#fff">↻ Load</button>
+        <button type="button" onclick="resetEntryAnnouncement()" style="background:#252b35;color:#fff">Reset Form</button>
+      </div>
+      <div id="entryAnnMsg" class="modal-note" style="margin-top:8px"></div>
+    </div>
+
     <div class="card" id="bannerCard">
       <div style="font-size:16px;font-weight:900;margin-bottom:10px;color:#ffcf72">🖼️ Banner & Advertisement Control</div>
       <div class="modal-note" style="margin-bottom:12px">
