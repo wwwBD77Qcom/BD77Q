@@ -48,6 +48,9 @@
 .reward-btn.received{background:#1f7a49;color:#7ed6a7;cursor:default}
 
 /* Leaderboard Styles */
+
+/* Invite Friends - Earnings UI */
+.earn-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;background:#11161e;padding:4px;border-radius:10px;margin-bottom:14px;overflow-x:auto}.earn-tab{background:transparent;color:#9da7b6;padding:9px 4px;border-radius:8px;font-weight:800;font-size:11px;cursor:pointer;white-space:nowrap}.earn-tab.active{background:#202733;color:#fff}.earn-summary{background:#f1f5f9;color:#334155;border-radius:14px;padding:15px;margin-bottom:12px}.earn-summary-title{text-align:center;font-size:16px;font-weight:900;margin-bottom:10px}.earn-summary-title strong{color:#4338a0;font-size:22px}.earn-divider{height:1px;background:#dbe2ea;margin:10px 0}.earn-box{background:#e8f0f7;border-radius:10px;padding:12px}.earn-row{display:flex;justify-content:space-between;gap:10px;padding:7px 2px;font-size:13px;font-weight:800}.earn-row span:first-child{color:#596579}.earn-row strong{color:#4338a0;text-align:right}.earn-note{font-size:11px;color:#7f8999;line-height:1.5;margin-top:10px}.earn-record{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:11px;margin-bottom:8px}.earn-record-top{display:flex;justify-content:space-between;gap:8px;font-weight:800}.earn-record-sub{font-size:11px;color:#8994a4;margin-top:5px}.earn-link-card{background:linear-gradient(135deg,#171e29,#11161e);border:1px solid #303846;border-radius:12px;padding:12px}.earn-mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px}.earn-mini{background:#11161e;border:1px solid #2a303b;border-radius:9px;padding:9px 5px;text-align:center}.earn-mini b{display:block;font-size:16px;color:#fff}.earn-mini span{font-size:10px;color:#8f99a8;display:block;margin-top:3px}.earn-empty{text-align:center;padding:20px 10px;color:#8994a4;font-size:13px}.earn-share-btn{background:#202733;color:#fff;width:100%;margin-top:9px}
 .leaderboard-card { background: #191f29; border: 1px solid #2a303b; border-radius: 12px; padding: 12px; margin-top: 10px; }
 .leaderboard-user-card { display: flex; justify-content: space-between; align-items: center; background: #11161e; padding: 10px 12px; margin-bottom: 8px; border-radius: 8px; border-left: 4px solid #ffc107; }
 .leaderboard-user-card:nth-child(2) { border-left-color: #6c757d; }
@@ -122,126 +125,10 @@
 #authScreen .cash{background:linear-gradient(135deg,#00c9ff,#1265ff)!important;box-shadow:0 8px 22px rgba(0,174,247,.25);border-radius:12px;padding:13px}
 #authScreen .modal-note{color:#9db1c9}
 @media(max-width:520px){#authScreen .auth-container{padding:0 11px 22px}#authScreen .auth-card{margin-top:155px!important;padding:17px!important;border-radius:20px!important}#authScreen .auth-visual-brand{top:20px}#authScreen .auth-visual-logo{font-size:29px}#authScreen .auth-visual-sub{font-size:9px;letter-spacing:1.5px}}
-
-/* APP ENTRY ANNOUNCEMENT — added without changing existing UI */
-.announcement-overlay{display:none;position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:14px}
-.announcement-overlay.show{display:flex}
-.announcement-card{width:min(700px,100%);max-height:90vh;overflow:hidden;background:#1b1b1b;border:1px solid #292929;border-radius:24px;box-shadow:0 25px 70px rgba(0,0,0,.75);position:relative;color:#fff}
-.announcement-head{display:flex;align-items:center;justify-content:center;padding:25px 58px 10px;position:relative}
-.announcement-title{font-family:Georgia,serif;font-size:34px;font-weight:900;text-align:center}
-.announcement-close{position:absolute;right:15px;top:12px;width:50px;height:50px;border-radius:14px;background:transparent;color:#fff;font-size:44px;line-height:1;padding:0;font-weight:300}
-.announcement-close:hover{background:#292929}
-.announcement-body{padding:10px 24px 18px;overflow:auto;max-height:70vh}
-.announcement-lead{text-align:center;font-size:25px;font-weight:900;line-height:1.45;margin:8px auto 18px;max-width:620px}
-.announcement-slide{display:none;background:#f8f8f8;color:#151515;border-radius:17px;padding:18px;min-height:310px}
-.announcement-slide.active{display:block;animation:announcementFade .25s ease}
-@keyframes announcementFade{from{opacity:.2;transform:translateX(8px)}to{opacity:1;transform:none}}
-.announcement-step-title{font-size:21px;font-weight:900;text-align:center;color:#173b87;margin-bottom:14px}
-.announcement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.announcement-step{background:#eef3fb;border:2px solid #c7d3e7;border-radius:12px;padding:12px;text-align:center;min-height:155px;display:flex;flex-direction:column;justify-content:center}
-.announcement-num{width:30px;height:30px;border-radius:8px;background:#3448c9;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;margin:0 auto 7px}
-.announcement-step b{font-size:13px;line-height:1.35}.announcement-step span{font-size:28px;margin-bottom:5px}
-.announcement-info{margin-top:13px;background:#fff4d6;border:1px solid #f0c45d;color:#5b4100;border-radius:12px;padding:11px;text-align:center;font-size:12px;font-weight:800;line-height:1.5}
-.announcement-nav{display:flex;align-items:center;justify-content:center;gap:11px;padding:4px 10px 22px}
-.announcement-dot{width:18px;height:18px;border-radius:50%;border:0;background:#4b4b4b;padding:0;transition:.2s}.announcement-dot.active{width:44px;border-radius:20px;background:#fff}
-.announcement-counter{position:absolute;left:15px;top:14px;color:#9da7b6;font-size:11px;font-weight:800}
-.remote-announcement-image{width:100%;max-height:420px;object-fit:contain;border-radius:12px;display:block;margin:0 auto 12px;background:#fff}
-@media(max-width:520px){.announcement-overlay{padding:8px}.announcement-card{border-radius:20px;max-height:92vh}.announcement-head{padding:21px 55px 7px}.announcement-title{font-size:29px}.announcement-close{width:44px;height:44px;font-size:38px;right:10px;top:8px}.announcement-body{padding:8px 12px 14px;max-height:73vh}.announcement-lead{font-size:20px;margin:7px auto 13px}.announcement-slide{padding:12px;min-height:0}.announcement-step-title{font-size:17px;margin-bottom:10px}.announcement-grid{gap:7px}.announcement-step{padding:8px;min-height:112px}.announcement-num{width:25px;height:25px;font-size:11px}.announcement-step b{font-size:10px}.announcement-step span{font-size:22px}.announcement-info{font-size:10px;padding:9px}.announcement-nav{padding-bottom:15px;gap:9px}.announcement-dot{width:14px;height:14px}.announcement-dot.active{width:38px}}
 </style>
 </head>
 <body>
 
-
-
-<!-- APP ENTRY ANNOUNCEMENT -->
-<div id="announcementOverlay" class="announcement-overlay" aria-hidden="true">
-  <div class="announcement-card" role="dialog" aria-modal="true" aria-label="Announcement">
-    <div class="announcement-head">
-      <div class="announcement-counter" id="announcementCounter">1 / 6</div>
-      <div class="announcement-title">Announcement</div>
-      <button class="announcement-close" type="button" onclick="closeEntryAnnouncement()" aria-label="Close">×</button>
-    </div>
-    <div class="announcement-body" id="announcementBody">
-      <div class="announcement-lead">কীভাবে FAST PAYMENT ব্যবহার করে পেমেন্ট করবেন</div>
-
-      <div class="announcement-slide active">
-        <div class="announcement-step-title">বিকাশ অ্যাকাউন্ট থেকে Cash Out / Payment</div>
-        <div class="announcement-grid">
-          <div class="announcement-step"><span>📱</span><div class="announcement-num">1</div><b>আপনার পেমেন্টের জন্য ওয়ালেট নির্বাচন করুন</b></div>
-          <div class="announcement-step"><span>💳</span><div class="announcement-num">2</div><b>প্রয়োজনীয় পেমেন্ট অপশন নির্বাচন করুন</b></div>
-          <div class="announcement-step"><span>🔢</span><div class="announcement-num">3</div><b>দেওয়া ওয়ালেট নম্বরটি সঠিকভাবে লিখুন</b></div>
-          <div class="announcement-step"><span>🔐</span><div class="announcement-num">4</div><b>আপনার OTP / প্রয়োজনীয় কোড লিখুন</b></div>
-          <div class="announcement-step"><span>🔑</span><div class="announcement-num">5</div><b>আপনার ওয়ালেট PIN লিখে নিশ্চিত করুন</b></div>
-          <div class="announcement-step"><span>✅</span><div class="announcement-num">6</div><b>পেমেন্ট সফল হলে অ্যাপে ফিরে আসুন</b></div>
-        </div>
-        <div class="announcement-info">পেমেন্ট করার আগে নম্বর ও পরিমাণ ভালোভাবে যাচাই করুন।</div>
-      </div>
-
-      <div class="announcement-slide">
-        <div class="announcement-step-title">নগদ অ্যাকাউন্ট থেকে Payment</div>
-        <div class="announcement-grid">
-          <div class="announcement-step"><span>📱</span><div class="announcement-num">1</div><b>আপনার পেমেন্ট ওয়ালেট নির্বাচন করুন</b></div>
-          <div class="announcement-step"><span>💰</span><div class="announcement-num">2</div><b>পেমেন্ট অপশন নির্বাচন করুন</b></div>
-          <div class="announcement-step"><span>🔢</span><div class="announcement-num">3</div><b>সঠিক ওয়ালেট নম্বর লিখুন</b></div>
-          <div class="announcement-step"><span>🔐</span><div class="announcement-num">4</div><b>OTP / যাচাইকরণ কোড দিন</b></div>
-          <div class="announcement-step"><span>🔑</span><div class="announcement-num">5</div><b>নগদ PIN দিয়ে নিশ্চিত করুন</b></div>
-          <div class="announcement-step"><span>✅</span><div class="announcement-num">6</div><b>সফল মেসেজ পাওয়ার পর অ্যাপে ফিরুন</b></div>
-        </div>
-        <div class="announcement-info">ভুল নম্বরে পেমেন্ট না করতে আগে নম্বর মিলিয়ে নিন।</div>
-      </div>
-
-      <div class="announcement-slide">
-        <div class="announcement-step-title">পেমেন্ট দেওয়ার আগে যা যাচাই করবেন</div>
-        <div class="announcement-grid">
-          <div class="announcement-step"><span>1️⃣</span><b>Payment Method সঠিক কি না দেখুন</b></div>
-          <div class="announcement-step"><span>2️⃣</span><b>ওয়ালেট নম্বর মিলিয়ে নিন</b></div>
-          <div class="announcement-step"><span>3️⃣</span><b>পরিমাণ সঠিক আছে কি না দেখুন</b></div>
-          <div class="announcement-step"><span>4️⃣</span><b>Transaction ID সংরক্ষণ করুন</b></div>
-          <div class="announcement-step"><span>5️⃣</span><b>পেমেন্টের স্ক্রিনশট রাখুন</b></div>
-          <div class="announcement-step"><span>6️⃣</span><b>সমস্যা হলে Help Care ব্যবহার করুন</b></div>
-        </div>
-      </div>
-
-      <div class="announcement-slide">
-        <div class="announcement-step-title">Payment সফল হয়েছে কি না বুঝবেন যেভাবে</div>
-        <div class="announcement-grid">
-          <div class="announcement-step"><span>📨</span><b>ওয়ালেটের confirmation দেখুন</b></div>
-          <div class="announcement-step"><span>🧾</span><b>Transaction ID সংরক্ষণ করুন</b></div>
-          <div class="announcement-step"><span>⏳</span><b>অ্যাপে status আপডেট দেখুন</b></div>
-          <div class="announcement-step"><span>💬</span><b>প্রয়োজনে Help Care-এ জানান</b></div>
-          <div class="announcement-step"><span>🚫</span><b>একই payment বারবার করবেন না</b></div>
-          <div class="announcement-step"><span>📸</span><b>প্রমাণ হিসেবে screenshot রাখুন</b></div>
-        </div>
-      </div>
-
-      <div class="announcement-slide">
-        <div class="announcement-step-title">Help Care ব্যবহার করুন</div>
-        <div class="announcement-grid">
-          <div class="announcement-step"><span>🆘</span><b>Deposit সমস্যা</b></div>
-          <div class="announcement-step"><span>🔄</span><b>Turnover সমস্যা</b></div>
-          <div class="announcement-step"><span>💸</span><b>Withdraw সমস্যা</b></div>
-          <div class="announcement-step"><span>🔐</span><b>Password / Account সমস্যা</b></div>
-          <div class="announcement-step"><span>🖼️</span><b>প্রয়োজনে ছবি পাঠাতে পারবেন</b></div>
-          <div class="announcement-step"><span>💬</span><b>Support-এর সঙ্গে চ্যাট করুন</b></div>
-        </div>
-      </div>
-
-      <div class="announcement-slide">
-        <div class="announcement-step-title">গুরুত্বপূর্ণ ঘোষণা</div>
-        <div class="announcement-grid">
-          <div class="announcement-step"><span>🔎</span><b>সব তথ্য যাচাই করে পেমেন্ট করুন</b></div>
-          <div class="announcement-step"><span>🔒</span><b>OTP/PIN কারও সঙ্গে শেয়ার করবেন না</b></div>
-          <div class="announcement-step"><span>📱</span><b>শুধু নিজের ওয়ালেট ব্যবহার করুন</b></div>
-          <div class="announcement-step"><span>🧾</span><b>Transaction তথ্য সংরক্ষণ করুন</b></div>
-          <div class="announcement-step"><span>🆘</span><b>সমস্যায় Help Care-এ যোগাযোগ করুন</b></div>
-          <div class="announcement-step"><span>👑</span><b>অ্যাপ ব্যবহারের আগে ঘোষণা পড়ুন</b></div>
-        </div>
-        <div class="announcement-info">এই Announcement-টি বন্ধ করতে উপরের × বাটনে চাপুন।</div>
-      </div>
-    </div>
-    <div class="announcement-nav" id="announcementNav"></div>
-  </div>
-</div>
 
 <!-- APP START SPLASH -->
 <div id="appSplash" class="app-splash">
@@ -524,14 +411,16 @@
   <div id="referModal" class="profile-modal" onclick="modalBackdrop(event,'referModal')">
     <div class="card profile-modal-card">
       <div class="modal-top">
-        <div style="font-size:21px;font-weight:900">🎁 Invite Friends & Rewards</div>
+        <div style="font-size:21px;font-weight:900">Invite Friends</div>
         <button class="modal-close" type="button" onclick="closeProfileModal('referModal')">×</button>
       </div>
 
       <!-- Refer Tabs -->
-      <div class="refer-tabs">
-        <button id="referTabLinkBtn" class="refer-tab active" type="button" onclick="switchReferTab('link')">🔗 Invite Link</button>
-        <button id="referTabRewardsBtn" class="refer-tab" type="button" onclick="switchReferTab('rewards')">🏆 Rewards</button>
+      <div class="earn-tabs">
+        <button id="referTabLinkBtn" class="earn-tab active" type="button" onclick="switchReferTab('link')">🔗 Invite</button>
+        <button id="referTabRewardsBtn" class="earn-tab" type="button" onclick="switchReferTab('rewards')">🏆 Rewards</button>
+        <button id="referTabEarningsBtn" class="earn-tab" type="button" onclick="switchReferTab('earnings')">💰 Earnings</button>
+        <button id="referTabRecordsBtn" class="earn-tab" type="button" onclick="switchReferTab('records')">📋 Records</button>
       </div>
 
       <!-- Tab 1: Invite Link Content -->
@@ -566,8 +455,45 @@
       <!-- Tab 2: Rewards Milestone Content -->
       <div id="referRewardsSection" style="display:none">
         <div class="modal-note" style="margin-bottom:10px;">নির্দিষ্ট সংখ্যক সফল রেফার পূর্ণ হলে নিচে রিওয়ার্ড ক্লেইম করুন (no expiration):</div>
-        
         <div id="rewardsListContainer"></div>
+      </div>
+
+      <!-- Tab 3: Earnings -->
+      <div id="referEarningsSection" style="display:none">
+        <div class="earn-summary">
+          <div class="earn-summary-title">Today's Income: <strong id="todayReferralIncome">৳ 0.00</strong></div>
+          <div class="earn-divider"></div>
+          <div class="earn-box">
+            <div class="earn-row"><span>Invitation Rewards</span><strong id="todayInvitationRewards">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Achievement Rewards</span><strong id="todayAchievementRewards">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Deposit Rebate</span><strong id="todayDepositRebate">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Activity Reward</span><strong id="todayActivityReward">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Registers</span><strong id="todayRegisters">0</strong></div>
+            <div class="earn-row"><span>Valid Referral</span><strong id="todayValidReferral">0</strong></div>
+            <div class="earn-row"><span>Depositors</span><strong id="todayDepositors">0</strong></div>
+          </div>
+        </div>
+
+        <div class="earn-summary">
+          <div class="earn-summary-title">Total Income: <strong id="totalReferralIncome">৳ 0.00</strong></div>
+          <div class="earn-divider"></div>
+          <div class="earn-box">
+            <div class="earn-row"><span>Invitation Rewards</span><strong id="totalInvitationRewards">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Achievement Rewards</span><strong id="totalAchievementRewards">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Deposit Rebate</span><strong id="totalDepositRebate">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Activity Reward</span><strong id="totalActivityReward">৳ 0.00</strong></div>
+            <div class="earn-row"><span>Registers</span><strong id="totalRegisters">0</strong></div>
+            <div class="earn-row"><span>Valid Referral</span><strong id="totalValidReferral">0</strong></div>
+            <div class="earn-row"><span>Depositors</span><strong id="totalDepositors">0</strong></div>
+          </div>
+        </div>
+        <div class="earn-note">Deposit Rebate: রেফার করা ইউজারের অনুমোদিত ডিপোজিটের প্রতি ৳1,000-এ ৳30 (3%) হিসেবে হিসাব করা হচ্ছে। Pending/Rejected ডিপোজিট গণনা হবে না।</div>
+      </div>
+
+      <!-- Tab 4: Records -->
+      <div id="referRecordsSection" style="display:none">
+        <div style="font-size:15px;font-weight:900;margin-bottom:9px">📋 Referral Earnings Records</div>
+        <div id="referralRecordsList"></div>
       </div>
 
       <!-- Top 3 Referrers Leaderboard Section -->
@@ -709,16 +635,6 @@
                   localStorage.setItem('aviator_users_db', JSON.stringify(window.usersDb));
                   if(typeof window.renderInboxSms === 'function') window.renderInboxSms();
               }
-          }
-      }
-  });
-
-  // Admin-controlled Entry Announcement Popup
-  onValue(ref(db, 'settings/entryAnnouncement'), (snapshot) => {
-      if(snapshot.exists()){
-          window.pendingEntryAnnouncementConfig = snapshot.val() || {};
-          if(typeof window.applyEntryAnnouncementConfig === 'function'){
-              window.applyEntryAnnouncementConfig(window.pendingEntryAnnouncementConfig);
           }
       }
   });
@@ -1223,27 +1139,89 @@ function syncAppBalance(){
         if(pCurrent) pCurrent.textContent = '৳' + fmt(user.turnoverCurrent || 0);
 
         renderRewardsList();
+        renderReferralEarnings();
     }
 }
 
 function switchReferTab(tab){
-    const linkSec = document.getElementById('referLinkSection');
-    const rewardsSec = document.getElementById('referRewardsSection');
-    const btnLink = document.getElementById('referTabLinkBtn');
-    const btnRewards = document.getElementById('referTabRewardsBtn');
+    const sections = {
+        link: document.getElementById('referLinkSection'),
+        rewards: document.getElementById('referRewardsSection'),
+        earnings: document.getElementById('referEarningsSection'),
+        records: document.getElementById('referRecordsSection')
+    };
+    const buttons = {
+        link: document.getElementById('referTabLinkBtn'),
+        rewards: document.getElementById('referTabRewardsBtn'),
+        earnings: document.getElementById('referTabEarningsBtn'),
+        records: document.getElementById('referTabRecordsBtn')
+    };
+    Object.keys(sections).forEach(k => { if(sections[k]) sections[k].style.display = (k === tab ? 'block' : 'none'); });
+    Object.keys(buttons).forEach(k => { if(buttons[k]) buttons[k].classList.toggle('active', k === tab); });
+    if(tab === 'rewards') renderRewardsList();
+    if(tab === 'earnings') renderReferralEarnings();
+    if(tab === 'records') renderReferralRecords();
+}
 
-    if(tab === 'link'){
-        linkSec.style.display = 'block';
-        rewardsSec.style.display = 'none';
-        btnLink.classList.add('active');
-        btnRewards.classList.remove('active');
-    } else {
-        linkSec.style.display = 'none';
-        rewardsSec.style.display = 'block';
-        btnLink.classList.remove('active');
-        btnRewards.classList.add('active');
-        renderRewardsList();
-    }
+function getReferralDepositData(){
+    if(!currentUserPhone || !usersDb[currentUserPhone]) return {referredPhones:[], approved:[]};
+    const referredPhones = Object.keys(usersDb).filter(phone => usersDb[phone] && usersDb[phone].referredBy === currentUserPhone);
+    let freshDb = JSON.parse(localStorage.getItem('aviator_full_db')) || globalDb || {};
+    const allRequests = Array.isArray(freshDb.requests) ? freshDb.requests : [];
+    const approved = allRequests.filter(req => referredPhones.includes(req.userPhone) && ['Approved','Success'].includes(req.status));
+    return {referredPhones, approved};
+}
+
+function renderReferralEarnings(){
+    if(!currentUserPhone || !usersDb[currentUserPhone]) return;
+    const user = usersDb[currentUserPhone];
+    const data = getReferralDepositData();
+    const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
+    const todayReqs = data.approved.filter(r => Number(r.createdAt || 0) >= startOfDay.getTime());
+    const amountOf = r => Number(r.baseAmount || r.amount || 0);
+    const totalDeposit = data.approved.reduce((sum,r)=>sum+amountOf(r),0);
+    const todayDeposit = todayReqs.reduce((sum,r)=>sum+amountOf(r),0);
+    const totalDepositRebate = +(totalDeposit * 0.03).toFixed(2);
+    const todayDepositRebate = +(todayDeposit * 0.03).toFixed(2);
+    const registers = data.referredPhones.length;
+    const validReferral = data.referredPhones.filter(phone => Number(usersDb[phone]?.totalDeposit || 0) > 0 || data.approved.some(r=>r.userPhone===phone)).length;
+    const depositorSet = new Set(data.approved.map(r=>r.userPhone));
+    const todayDepositorSet = new Set(todayReqs.map(r=>r.userPhone));
+    const invitationRewards = Number(user.referStats?.bonusEarned || 0);
+    const totalIncome = +(invitationRewards + totalDepositRebate).toFixed(2);
+    const todayIncome = todayDepositRebate;
+    const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+    const money=v=>'৳ '+Number(v||0).toFixed(2);
+    set('todayReferralIncome',money(todayIncome));
+    set('todayInvitationRewards','৳ 0.00');
+    set('todayAchievementRewards','৳ 0.00');
+    set('todayDepositRebate',money(todayDepositRebate));
+    set('todayActivityReward','৳ 0.00');
+    set('todayRegisters',todayReqs.length ? new Set(todayReqs.map(r=>r.userPhone)).size : 0);
+    set('todayValidReferral',todayDepositorSet.size);
+    set('todayDepositors',todayDepositorSet.size);
+    set('totalReferralIncome',money(totalIncome));
+    set('totalInvitationRewards',money(invitationRewards));
+    set('totalAchievementRewards','৳ 0.00');
+    set('totalDepositRebate',money(totalDepositRebate));
+    set('totalActivityReward','৳ 0.00');
+    set('totalRegisters',registers);
+    set('totalValidReferral',validReferral);
+    set('totalDepositors',depositorSet.size);
+}
+
+function renderReferralRecords(){
+    const box=document.getElementById('referralRecordsList'); if(!box) return;
+    const data=getReferralDepositData();
+    if(!data.approved.length){ box.innerHTML='<div class="earn-empty">এখনও কোনো approved referral deposit record নেই।</div>'; return; }
+    const records=data.approved.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).slice(0,30);
+    box.innerHTML=records.map(r=>{
+        const amt=Number(r.baseAmount||r.amount||0);
+        const rebate=+(amt*0.03).toFixed(2);
+        const phone=r.userPhone||'User';
+        const date=r.createdAt?new Date(r.createdAt).toLocaleString('bn-BD'):'';
+        return `<div class="earn-record"><div class="earn-record-top"><span>Deposit Rebate</span><strong style="color:#7ed6a7">+৳${rebate.toFixed(2)}</strong></div><div class="earn-record-sub">Referral User: ${phone} • Deposit: ৳${amt.toFixed(2)}</div><div class="earn-record-sub">${date}</div></div>`;
+    }).join('');
 }
 
 function renderRewardsList(){
@@ -1660,124 +1638,6 @@ document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','deposi
     if(pct)pct.textContent=value+'%';
     if(value>=100){clearInterval(timer);setTimeout(()=>splash.classList.add('hide'),180);}
   },50);
-})();
-</script>
-
-
-<script>
-/* APP ENTRY ANNOUNCEMENT LOGIC — additive only */
-(function(){
-  let slideIndex=0;
-  let autoTimer=null;
-  let touchStartX=0;
-  let remoteConfig=window.pendingEntryAnnouncementConfig||null;
-  const overlay=()=>document.getElementById('announcementOverlay');
-  const slides=()=>Array.from(document.querySelectorAll('#announcementBody .announcement-slide'));
-
-  function applyConfig(config){
-    if(!config || typeof config!=='object') return;
-    remoteConfig=config;
-    const title=document.querySelector('.announcement-title');
-    const lead=document.querySelector('.announcement-lead');
-    if(title && config.title) title.textContent=config.title;
-    if(lead && config.lead) lead.textContent=config.lead;
-    const list=slides();
-    list.forEach((el,i)=>{
-      const sl=config.slides && config.slides[i+1];
-      if(!sl) return;
-      const st=el.querySelector('.announcement-step-title');
-      const info=el.querySelector('.announcement-info');
-      if(st && sl.title) st.textContent=sl.title;
-      if(info && sl.info) info.textContent=sl.info;
-      const old=el.querySelector('.remote-announcement-image');
-      if(old) old.remove();
-      if(sl.image){
-        const img=document.createElement('img');
-        img.className='remote-announcement-image';
-        img.src=sl.image;
-        img.alt=sl.title||'Announcement';
-        img.onerror=()=>img.remove();
-        const anchor=st || el.firstElementChild;
-        if(anchor) el.insertBefore(img,anchor); else el.prepend(img);
-      }
-    });
-  }
-
-  window.applyEntryAnnouncementConfig=function(config){
-    applyConfig(config);
-    if(config && config.active===false){
-      const el=overlay();
-      if(el){el.classList.remove('show');el.setAttribute('aria-hidden','true');}
-      clearInterval(autoTimer);
-    }
-  };
-
-  if(remoteConfig) applyConfig(remoteConfig);
-
-  function renderEntryAnnouncement(){
-    const list=slides(), nav=document.getElementById('announcementNav'), counter=document.getElementById('announcementCounter');
-    if(!list.length || !nav) return;
-    list.forEach((el,i)=>el.classList.toggle('active',i===slideIndex));
-    nav.innerHTML=list.map((_,i)=>`<button type="button" class="announcement-dot ${i===slideIndex?'active':''}" onclick="goEntryAnnouncement(${i})" aria-label="Slide ${i+1}"></button>`).join('');
-    if(counter) counter.textContent=(slideIndex+1)+' / '+list.length;
-  }
-
-  window.goEntryAnnouncement=function(index){
-    const total=slides().length;
-    if(!total)return;
-    slideIndex=(index+total)%total;
-    renderEntryAnnouncement();
-    startAnnouncementAuto();
-  };
-
-  function startAnnouncementAuto(){
-    clearInterval(autoTimer);
-    const seconds=Math.max(2,Number(remoteConfig&&remoteConfig.interval)||5);
-    autoTimer=setInterval(()=>window.goEntryAnnouncement(slideIndex+1),seconds*1000);
-  }
-
-  window.closeEntryAnnouncement=function(){
-    const el=overlay();
-    if(!el)return;
-    el.classList.remove('show');
-    el.setAttribute('aria-hidden','true');
-    clearInterval(autoTimer);
-    sessionStorage.setItem('bd77q_entry_announcement_seen','1');
-  };
-
-  function openEntryAnnouncement(){
-    const el=overlay();
-    if(!el || !window.currentUserPhone)return;
-    if(remoteConfig && remoteConfig.active===false)return;
-    if(sessionStorage.getItem('bd77q_entry_announcement_seen')==='1')return;
-    slideIndex=0;
-    renderEntryAnnouncement();
-    el.classList.add('show');
-    el.setAttribute('aria-hidden','false');
-    startAnnouncementAuto();
-  }
-
-  function maybeOpen(){
-    const home=document.getElementById('homeScreen');
-    const splash=document.getElementById('appSplash');
-    if(!window.currentUserPhone || !home || !home.classList.contains('active'))return;
-    if(remoteConfig && remoteConfig.active===false)return;
-    if(splash && !splash.classList.contains('hide'))return;
-    if(sessionStorage.getItem('bd77q_entry_announcement_seen')==='1')return;
-    openEntryAnnouncement();
-  }
-
-  const body=document.getElementById('announcementBody');
-  if(body){
-    body.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX},{passive:true});
-    body.addEventListener('touchend',e=>{
-      const dx=e.changedTouches[0].screenX-touchStartX;
-      if(Math.abs(dx)>45) window.goEntryAnnouncement(slideIndex+(dx<0?1:-1));
-    },{passive:true});
-  }
-
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')window.closeEntryAnnouncement();});
-  setTimeout(()=>{maybeOpen();setInterval(maybeOpen,700);},1200);
 })();
 </script>
 
