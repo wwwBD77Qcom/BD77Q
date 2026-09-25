@@ -125,6 +125,34 @@
 #authScreen .cash{background:linear-gradient(135deg,#00c9ff,#1265ff)!important;box-shadow:0 8px 22px rgba(0,174,247,.25);border-radius:12px;padding:13px}
 #authScreen .modal-note{color:#9db1c9}
 @media(max-width:520px){#authScreen .auth-container{padding:0 11px 22px}#authScreen .auth-card{margin-top:155px!important;padding:17px!important;border-radius:20px!important}#authScreen .auth-visual-brand{top:20px}#authScreen .auth-visual-logo{font-size:29px}#authScreen .auth-visual-sub{font-size:9px;letter-spacing:1.5px}}
+
+/* VIP HOME REDESIGN — existing functionality preserved */
+.vip-home-head{height:72px;background:#171717;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #272727;position:sticky;top:0;z-index:90}
+.vip-brand{font-size:23px;font-weight:1000;white-space:nowrap}.vip-menu-icon{color:#777;font-size:25px;margin-right:10px}.brand-gold{color:#ffe000}.brand-yellow{color:#dfff00}.brand-white{color:#eee;margin:0 3px}.brand-green{color:#18e66d}
+.vip-head-actions{display:flex;align-items:center;gap:7px}.vip-balance-pill{height:44px;border:1px solid #ff8b16;border-radius:24px;padding:0 7px 0 13px;display:flex;align-items:center;gap:4px;font-weight:1000;font-size:18px;background:#1c1c1c}.vip-balance-pill button{background:transparent;color:#aaa;padding:2px;font-size:22px}.vip-circle-action{width:44px;height:44px;border-radius:50%;padding:0;font-size:23px;color:#fff;border:1px solid #555;background:#292929}.vip-circle-action.deposit{background:#ff8a17;border-color:#ff8a17}.vip-circle-action.withdraw{background:#292929}
+.vip-hero-banner{margin:12px;border-radius:18px;height:210px;position:relative;overflow:hidden;background:radial-gradient(circle at 78% 50%,rgba(255,197,72,.7),transparent 28%),radial-gradient(circle at 18% 40%,rgba(255,0,72,.45),transparent 30%),linear-gradient(135deg,#65001e,#d20a16 52%,#4d0019);border:1px solid #f08b36;box-shadow:0 10px 30px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;text-align:center}.vip-hero-banner:before,.vip-hero-banner:after{content:'✦';position:absolute;color:#ffd65a;font-size:36px;opacity:.75}.vip-hero-banner:before{left:12%;top:12%}.vip-hero-banner:after{right:12%;bottom:10%}.vip-hero-copy{position:relative;z-index:2;text-shadow:0 3px 5px #000}.hero-brand{font-size:35px;font-weight:1000;color:#ffed00}.hero-line{font-size:21px;font-weight:1000;color:#caff00}.hero-amount{font-size:23px;font-weight:1000;color:#fff000;margin-top:8px}.hero-small{font-size:18px;font-weight:1000;color:#fff;margin-top:6px}.hero-gift,.hero-star{position:absolute;font-size:60px;filter:drop-shadow(0 4px 7px #000);opacity:.85}.hero-gift{left:10px;bottom:15px}.hero-star{right:12px;top:18px;font-size:90px;color:#ffbd3d}
+.vip-promo-row{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 12px}.vip-promo-card{height:118px;border-radius:17px;border:1px solid rgba(255,255,255,.18);padding:12px 9px;text-align:left;color:#fff;position:relative;overflow:hidden;text-shadow:0 2px 5px #000;box-shadow:0 8px 18px rgba(0,0,0,.25)}.vip-promo-card:after{content:'✦';position:absolute;right:5px;top:-12px;font-size:70px;opacity:.22}.vip-promo-card span{display:block;font-family:Georgia,serif;font-size:17px;font-weight:1000}.vip-promo-card small{display:block;margin-top:9px;font-size:10px;font-weight:900}.vip-promo-card b{position:absolute;bottom:9px;right:13px;border:2px solid #fff;border-radius:50%;width:22px;height:22px;text-align:center;line-height:18px}.vip-promo-card.p1{background:linear-gradient(135deg,#ffbd54,#ed6a0c)}.vip-promo-card.p2{background:linear-gradient(135deg,#f20d19,#a90013)}.vip-promo-card.p3{background:linear-gradient(135deg,#9b45ff,#5a10a4)}
+.vip-ribbon{margin:12px;width:calc(100% - 24px);height:62px;border-radius:34px;border:1px solid #f0a04b;background:linear-gradient(120deg,#202020,#080808 45%,#242424);color:#ffd34d;font-size:34px;font-weight:1000;box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);position:relative;overflow:hidden}.vip-ribbon span{font-size:35px}.vip-ribbon i{position:absolute;right:-15px;top:6px;width:90px;height:40px;border-top:7px solid #ff3d2e;transform:rotate(12deg)}
+.vip-notice-bar{display:flex;align-items:center;gap:8px;padding:9px 12px;color:#eee;font-family:Georgia,serif;font-size:15px}.vip-bell{color:#ff9d26;font-size:27px}.vip-notice-text{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}.vip-notice-bar button{width:48px;height:40px;border-radius:22px;background:#ff8614;color:#fff;padding:0;font-size:20px}.vip-search-wrap{margin:2px 12px 12px;border:2px solid #2d2d2d;border-radius:14px;height:58px;display:flex;align-items:center;padding:0 13px;background:#141414}.vip-search-wrap span{font-size:38px;color:#777;line-height:1}.vip-search-wrap input{border:0;background:transparent;font-size:20px;padding:8px;color:#fff}.vip-search-wrap input:focus{border:0}
+.vip-category-tabs{display:grid;grid-template-columns:1.35fr 1fr 1fr .9fr;background:#141414;border-radius:28px;margin:0 12px 17px;padding:3px;overflow:hidden}.vip-category-tabs button{background:transparent;color:#9b9b9b;border-radius:25px;padding:11px 5px;font-family:Georgia,serif;font-size:14px;white-space:nowrap}.vip-category-tabs button.active{background:linear-gradient(180deg,#ff9a20,#ff6f00);color:#fff;box-shadow:0 4px 12px rgba(255,126,0,.35)}
+.vip-section-title{display:flex;align-items:center;gap:9px;padding:0 15px 10px;font-family:Georgia,serif}.vip-section-title>span{font-size:35px;color:#ff7f17}.vip-section-title b{font-size:24px}.vip-section-title button{margin-left:auto;background:#ff8614;color:#fff;border-radius:20px;padding:7px 13px;font-family:Georgia,serif}.vip-section-title strong{margin-left:4px}.vip-games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 12px}.vip-games-grid .game-card-item{min-height:174px;padding:6px;border-radius:15px}.vip-games-grid .game-card-title{font-size:12px}.vip-games-grid .game-card-image{opacity:.9}.vip-games-grid .game-card-item.hidden-vip{display:none}.vip-fav-btn{position:absolute!important;z-index:8!important;right:7px;top:7px;width:31px;height:31px;padding:0;border-radius:50%;background:rgba(0,0,0,.58);color:#fff;font-size:21px;line-height:29px;border:1px solid rgba(255,255,255,.35)}
+.vip-quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;padding:14px 12px}.vip-quick-grid button{background:linear-gradient(145deg,#1c1c1c,#101010);border:1px solid #343434;color:#fff;text-align:left;padding:12px;border-radius:13px}.vip-quick-grid span{font-size:23px;margin-right:7px}.vip-quick-grid b{font-size:13px}.vip-quick-grid small{display:block;color:#929292;margin-top:5px;font-size:10px}.vip-legacy-card{margin:0 12px 12px;background:#191919;border:1px solid #2d2d2d;border-radius:14px;padding:12px}.vip-legacy-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.vip-legacy-head button{background:#272727;color:#ffb14a;padding:7px 10px;font-size:11px}.vip-legacy-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.vip-legacy-row button{background:#232323;color:#ddd;padding:9px 3px;font-size:11px}
+.vip-bottom-nav{grid-template-columns:repeat(5,1fr);padding:5px 3px;background:#101010;border-top:1px solid #2a2a2a}.vip-bottom-nav button{font-family:Georgia,serif;padding:6px 2px;color:#777;border-radius:10px}.vip-bottom-nav button span{display:block;font-size:23px;line-height:25px}.vip-bottom-nav button small{display:block;font-size:11px;font-weight:900}.vip-bottom-nav button.active{color:#ff9b2e;background:transparent}
+.vip-promo-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;align-items:center;justify-content:center;padding:14px}.vip-promo-modal.show{display:flex}.vip-promo-box{width:min(460px,100%);background:#181818;border:1px solid #8a5b2c;border-radius:18px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}.vip-promo-box h2{margin:0 0 12px;color:#ffd34d;font-family:Georgia,serif}.vip-offer{background:linear-gradient(135deg,#45101a,#171717);border:1px solid #633b2a;border-radius:12px;padding:13px;margin:8px 0}.vip-offer strong{display:block;font-size:17px}.vip-offer small{color:#aaa;display:block;margin-top:4px}
+@media(max-width:420px){.vip-home-head{height:66px}.vip-brand{font-size:20px}.vip-menu-icon{font-size:22px}.vip-balance-pill{height:40px;font-size:16px}.vip-circle-action{width:40px;height:40px}.vip-hero-banner{height:195px}.hero-brand{font-size:31px}.hero-line{font-size:17px}.hero-amount{font-size:19px}.hero-small{font-size:15px}.hero-gift{font-size:48px}.hero-star{font-size:70px}.vip-promo-card{height:108px}.vip-promo-card span{font-size:14px}.vip-games-grid{grid-template-columns:repeat(3,1fr);gap:7px}.vip-games-grid .game-card-item{min-height:145px}.vip-category-tabs button{font-size:12px;padding:10px 3px}.vip-section-title b{font-size:21px}.vip-bottom-nav button span{font-size:21px}.vip-bottom-nav button small{font-size:10px}}
+</style>
+
+<style id="myAccountVipStyle">
+.my-account-wrap{background:#fff;color:#4a4a4a;min-height:calc(100vh - 62px);padding-bottom:24px}
+.my-account-hero{margin:10px 12px 14px;border-radius:22px;padding:20px 14px 18px;background:linear-gradient(135deg,#f1d0b7,#efc29f);position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.my-account-title{font-family:Georgia,serif;color:#fff;text-align:center;font-size:31px;font-weight:900;margin:0 0 14px}
+.my-account-profile{display:grid;grid-template-columns:92px 1fr;gap:14px;align-items:center}
+.my-account-avatar{width:92px;height:92px;border-radius:50%;border:6px solid #fff;background:linear-gradient(135deg,#5b6470,#202631);display:flex;align-items:center;justify-content:center;color:#fff;font-size:31px;font-weight:900;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.my-account-info{font-family:Georgia,serif;color:#4d4d4d}.my-account-vip{display:inline-block;background:#62656a;color:#fff;border-radius:25px;padding:8px 20px;font-weight:900;font-size:18px;margin-bottom:9px}.my-account-phone{font-size:25px;font-weight:900}.my-account-name{font-size:18px;font-weight:900;margin-top:9px}.my-account-joined{font-size:16px;font-weight:800;margin-top:8px}.my-account-balance{font-family:Georgia,serif;font-size:30px;font-weight:900;margin:18px 0 12px;color:#3f4650}.my-account-top-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.my-account-top-actions button{background:linear-gradient(#fff7ef,#f3dfce);color:#4d4d4d;border-radius:22px;padding:11px 5px;font-family:Georgia,serif;font-size:15px;box-shadow:0 4px 9px rgba(91,64,42,.18)}
+.member-label{display:inline-block;background:#dedede;border-radius:22px;padding:7px 20px;font-family:Georgia,serif;font-size:18px;color:#222;margin:6px 0 12px}.member-line{height:1px;background:#ddd;flex:1}.member-head{display:flex;align-items:center;padding:0 12px}
+.account-menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px 8px;padding:0 8px 8px}.account-menu-item{background:transparent;color:#555;padding:0 2px;font-family:Georgia,serif;font-size:14px;min-height:112px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start}.account-menu-icon{width:66px;height:66px;border-radius:50%;background:#fff3d8;border:2px solid #f2d59d;display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.6);margin-bottom:8px}.account-menu-text{text-align:center;line-height:1.12;font-weight:800}.account-quick-note{text-align:center;color:#777;font-size:11px;padding:6px 18px 0}
+@media(max-width:380px){.my-account-profile{grid-template-columns:78px 1fr}.my-account-avatar{width:78px;height:78px;font-size:26px}.my-account-phone{font-size:20px}.my-account-name{font-size:15px}.my-account-title{font-size:27px}.account-menu-grid{gap:15px 4px}.account-menu-icon{width:58px;height:58px;font-size:25px}.account-menu-item{font-size:12px;min-height:100px}}
+.feature-list{display:grid;gap:8px}.feature-row{background:#11161e;border:1px solid #29313d;border-radius:10px;padding:11px;display:flex;justify-content:space-between;gap:10px}.feature-row strong{color:#7ed6a7}.bank-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.bank-method-btn{background:#202733;color:#fff}.bank-method-btn.active{background:#fff;color:#111}
 </style>
 </head>
 <body>
@@ -204,60 +232,45 @@
 
   <!-- HOME SCREEN -->
   <div id="homeScreen" class="screen">
-    <div class="header">
-      <div class="logo"><span>👑</span> BD77Q</div>
-      <div style="display:flex;align-items:center;gap:8px">
-<div class="balance">💰 ৳ <span id="homeBalance">0</span></div>
-        <button onclick="handleLogout()" style="background:#252b35;color:#ff7888;padding:6px 10px;font-size:11px;border-radius:8px">লগআউট</button>
-      </div>
+  <div class="vip-home-head">
+    <div class="vip-brand"><span class="vip-menu-icon">▣</span><span class="brand-gold">BD</span><span class="brand-yellow">77Q</span></div>
+    <div class="vip-head-actions">
+      <div class="vip-balance-pill">৳<span id="homeBalance">0</span><button type="button" onclick="syncAppBalance()">⟳</button></div>
+      <button class="vip-circle-action deposit" type="button" onclick="openProfileModal('depositModal')">⇩</button>
+      <button class="vip-circle-action withdraw" type="button" onclick="openProfileModal('moneyModal')">▣</button>
     </div>
-    
-    <!-- VIP Announcement Ticker Bar -->
-    <div class="vip-ticker-box">
-      <div class="vip-ticker-icon">👑</div>
-      <div class="vip-ticker-content">
-        <span id="vipTickerText" class="vip-ticker-text">অ্যাডমিন প্যানেল থেকে ভিআইপি নোটিশ লোড হচ্ছে... নিয়মিত খেলুন এবং বোনাস জিতুন!</span>
-      </div>
-    </div>
-    
-    <!-- HELP CARE -->
-    <div class="help-care-card">
-      <div class="help-care-head">
-        <div><div class="help-care-title">🆘 Help Care</div><div class="help-care-sub">অ্যাকাউন্ট, ডিপোজিট, টার্নওভার ও উইথড্র সমস্যায় সরাসরি সাপোর্ট</div></div>
-        <button class="help-care-open" type="button" onclick="openHelpCare()">💬 Chat</button>
-      </div>
-    </div>
+  </div>
 
-    <div class="card" style="background:linear-gradient(135deg,#1e2636,#111722);border:1px solid #ffcf72">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:14px;color:#ffcf72;font-weight:900">🎁 REFERRAL PROGRAM</div>
-          <div style="font-size:18px;font-weight:900;margin:4px 0">রেফার করুন, পান রিওয়ার্ড ও বোনাস!</div>
-          <div style="font-size:12px;color:#aeb7c6">বন্ধুকে ইনভাইট করুন এবং মাইলফলক পূরণ করে রিওয়ার্ড ক্লেইম করুন।</div>
-        </div>
-        <div style="font-size:32px">🤝</div>
-      </div>
-      <button class="cash" style="margin-top:12px;background:linear-gradient(135deg,#ffb300,#f57c00)" type="button" onclick="openProfileModal('referModal')">REFER & REWARDS</button>
-    </div>
+  <div class="vip-hero-banner">
+    <div class="vip-hero-glow"></div>
+    <div class="vip-hero-copy"><div class="hero-brand">BD77Q</div><div class="hero-line">প্রতিদিন ৮ টি লাল খামের বৃষ্টি</div><div class="hero-amount">বোনাসের পরিমাণ: ৯,০০,০০০ টাকা</div><div class="hero-small">সংগ্রহ করতে ভুলবেন না!</div></div>
+    <div class="hero-gift">🎁</div><div class="hero-star">✦</div>
+  </div>
 
-    <div class="card" style="background:linear-gradient(135deg,#1f2937,#111827);border:1px solid #7ed6a7">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:14px;color:#7ed6a7;font-weight:900">🥚 WEEKLY & MONTHLY BONUS</div>
-          <div style="font-size:16px;font-weight:900;margin:4px 0">নিয়মিত খেলুন এবং বোনাস জিতুন!</div>
-          <div style="font-size:12px;color:#aeb7c6">সাপ্তাহিক বোনাস নেওয়ার জন্য অ্যাপটি উপভোগ করুন এবং বন্ধুদেরকে রেফার করুন।</div>
-        </div>
-        <div style="font-size:32px">🎁</div>
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 12px;">
-          <button class="small" style="flex: 1; background: #26303c; color: #7ed6a7;" type="button" onclick="alert('সাপ্তাহিক ডিম বোনাস ও অন্যান্য বোনাস পেতে নিয়মিত অ্যাপটি উপভোগ করুন এবং বন্ধুদের রেফার করুন!')">সাপ্তাহিক বোনাস</button>
-          <button class="small" style="flex: 1; background: #26303c; color: #ffcf72;" type="button" onclick="alert('মাসিক বোনাসের জন্য আপনার অ্যাকাউন্ট সক্রিয় রাখুন!')">মাসিক বোনাস</button>
-      </div>
-    </div>
+  <div class="vip-promo-row">
+    <button class="vip-promo-card p1" type="button" onclick="openProfileModal('depositModal')"><span>DEPOSIT<br>NOW!</span><small>GET MORE BONUS</small><b>→</b></button>
+    <button class="vip-promo-card p2" type="button" onclick="openProfileModal('referModal')"><span>INVITE<br>FRIENDS</span><small>GET MORE BONUS</small><b>→</b></button>
+    <button class="vip-promo-card p3" type="button" onclick="openPromotionCenter()"><span>PROMO<br>CODE</span><small>CLAIM & PLAY</small><b>→</b></button>
+  </div>
 
-    <div class="card">
-      <div style="font-size:16px;font-weight:900;margin-bottom:8px">🎮 All Games</div>
-      <div class="game-cards-grid">
+  <button class="vip-ribbon" type="button" onclick="openPromotionCenter()"><span>♛</span> VIP <i></i></button>
+
+  <div class="vip-notice-bar">
+    <span class="vip-bell">♟</span><div id="vipTickerText" class="vip-notice-text">অ্যাডমিন প্যানেল থেকে ভিআইপি নোটিশ লোড হচ্ছে... নিয়মিত খেলুন এবং বোনাস জিতুন!</div>
+    <button type="button" onclick="openProfileModal('internationalSmsModal')">✉</button>
+  </div>
+
+  <div class="vip-search-wrap"><span>⌕</span><input id="homeGameSearch" type="search" placeholder="Search" oninput="filterVipGames()"></div>
+
+  <div class="vip-category-tabs" id="vipCategoryTabs">
+    <button class="active" data-filter="all" onclick="setVipGameFilter('all',this)">🧩 Games lobby</button>
+    <button data-filter="favorites" onclick="setVipGameFilter('favorites',this)">♥ Favorites</button>
+    <button data-filter="slots" onclick="setVipGameFilter('slots',this)">▥ Slots</button>
+    <button data-filter="live" onclick="setVipGameFilter('live',this)">♠ Live</button>
+  </div>
+
+  <div class="vip-section-title"><span>♨</span><b>Hot</b><button type="button" onclick="setVipGameFilter('all',document.querySelector('#vipCategoryTabs button[data-filter=all]'))">All <strong id="vipGameCount">0</strong></button></div>
+  <div class="vip-games-grid" id="vipGamesGrid">
         <a href="super_ace.html" target="_blank" class="game-card-item" style="background: linear-gradient(135deg, #4a00e0, #8e2de2);">
           <img class="game-card-image" alt="Super Ace Slot" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%2317004d%22%2F%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%236d18c8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff3cac%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22155%22%20r%3D%22110%22%20fill%3D%22%23ffd43b%22%20opacity%3D%22.15%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2292%22%3E%E2%99%9B%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22220%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffe36e%22%20font-size%3D%2238%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3ESUPER%20ACE%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22265%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2220%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EROYAL%20SLOT%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">👑</div>
           <div class="game-card-title">Super Ace Slot</div>
@@ -294,12 +307,22 @@
           <div style="font-size: 10px; color: #6ee7b7; margin-top:2px;">Realistic Edition</div>
         </a>
       </div>
-    </div>
 
-    <div class="card"><div style="font-size:17px;font-weight:900;margin-bottom:10px">📊 Recent Crash</div><div id="homeHistory" class="list"><div class="item"><span>Round</span><strong>Waiting...</strong></div></div></div>
+  <div class="vip-quick-grid">
+    <button onclick="openProfileModal('referModal')"><span>♙</span><b>Invite Friends</b><small>Referral & 3% Rebate</small></button>
+    <button onclick="openPromotionCenter()"><span>🎁</span><b>Promotion</b><small>Bonus & Offers</small></button>
+    <button onclick="openProfileModal('referModal')"><span>🏆</span><b>Reward</b><small>Rewards Center</small></button>
+    <button onclick="openHelpCare()"><span>🎧</span><b>Customer Service</b><small>24/7 Help Care</small></button>
   </div>
 
-  <!-- GAME SCREEN -->
+  <div class="vip-legacy-card">
+    <div class="vip-legacy-head"><b>More Account Features</b><button onclick="showScreen('profileScreen')">My Account →</button></div>
+    <div class="vip-legacy-row"><button onclick="openProfileModal('depositModal')">Deposit</button><button onclick="openProfileModal('moneyModal')">Withdrawal</button><button onclick="openPasswordModal()">Security</button><button onclick="openProfileModal('internationalSmsModal')">Messages</button></div>
+  </div>
+
+  <div class="card"><div style="font-size:17px;font-weight:900;margin-bottom:10px">📊 Recent Crash</div><div id="homeHistory" class="list"><div class="item"><span>Round</span><strong>Waiting...</strong></div>
+</div>
+<!-- GAME SCREEN -->
   <div id="gameScreen" class="screen">
     <div class="header">
       <div class="logo"><span>👑</span> BD77Q</div>
@@ -323,41 +346,76 @@
     </div>
   </div>
 
-  <!-- PROFILE SCREEN -->
+  <!-- PROFILE SCREEN / MY ACCOUNT -->
   <div id="profileScreen" class="screen">
-    <div class="header">
-      <div class="logo">👤 Profile</div>
-      <div style="display:flex; align-items:center; gap:8px;">
-<div class="balance">💰 ৳ <span id="profileBalance">0</span></div>
+    <div class="header"><div class="logo">👤 My Account</div><div class="balance">💰 ৳ <span id="profileBalance">0</span></div></div>
+    <div class="my-account-wrap">
+      <div class="my-account-hero">
+        <h1 class="my-account-title">My Account</h1>
+        <div class="my-account-profile">
+          <div class="my-account-avatar" id="accountAvatar">U</div>
+          <div class="my-account-info">
+            <div class="my-account-vip" id="accountVip">🏅 VIP1</div>
+            <div class="my-account-phone" id="profilePhone">01XXXXXXXXX</div>
+            <div class="my-account-name">Nickname: <span id="profileNickname">Not set</span> ✎</div>
+            <div class="my-account-joined">Joined: <span id="accountJoined">—</span></div>
+          </div>
+        </div>
+        <div class="my-account-balance">৳ <span id="profileBalance2">0</span></div>
+        <div class="my-account-top-actions">
+          <button type="button" onclick="openProfileModal('depositModal')">Deposit</button>
+          <button type="button" onclick="openProfileModal('moneyModal')">Withdrawal</button>
+          <button type="button" onclick="openBankAccountModal()">Bank<br>Account</button>
+        </div>
       </div>
-    </div>
-    
-    <div class="card"><div class="stat"><span>Mobile Number</span><strong id="profilePhone">01XXXXXXXXX</strong></div><div class="stat"><span>Balance</span><strong>৳ <span id="profileBalance2">0</span></strong></div></div>
-    
-    <div class="card" style="background:#11161e;border:1px solid #2a303b;">
-      <div style="font-size:14px;font-weight:900;color:#ffcf72;margin-bottom:8px">📊 টার্নওভার স্ট্যাটাস (Turnover)</div>
-      <div class="bonus-row"><span>প্রয়োজনীয় বাজি (Target):</span><strong id="profileTurnoverTarget">৳0</strong></div>
-      <div class="bonus-row"><span>খেলা হয়েছে (Completed):</span><strong id="profileTurnoverCurrent">৳0</strong></div>
-      <div class="modal-note" style="margin-top:8px">শর্ত পূরণ হলে আপনি সহজেই টাকা উইথড্র করতে পারবেন।</div>
-    </div>
 
-    <div class="card"><div class="nickname-box"><div class="nickname-head"><div><div class="nickname-title">✨ Nickname</div><div class="nickname-value" id="profileNickname">Not set</div></div><button class="nickname-edit" type="button" onclick="toggleNicknameForm()">✏️ Edit</button></div><div id="nicknameForm" class="nickname-form"><label>Your Nickname</label><input id="nicknameInput" type="text" maxlength="30" placeholder="Enter your nickname"><div class="row" style="margin-top:9px"><button class="small" style="flex:1" type="button" onclick="toggleNicknameForm()">Cancel</button><button class="cash" style="flex:1;margin:0" type="button" onclick="saveNickname()">Save</button></div><div id="nicknameMsg" class="nickname-msg"></div></div></div></div>
-    
-    <div class="card" style="margin-bottom:10px;"><button type="button" onclick="openHelpCare()" style="width:100%;background:linear-gradient(135deg,#20b56b,#0f8f52);color:#fff;padding:14px;border-radius:12px;font-weight:900;font-size:15px;">🆘 Help Care — Support Chat</button></div>
-        <div class="profile-action-grid">
-      <button class="profile-action-btn deposit-btn" type="button" onclick="openProfileModal('depositModal')">📥 Deposit<span>Deposit + 20% Bonus</span></button>
-      <button class="profile-action-btn money-btn" type="button" onclick="openProfileModal('moneyModal')">💰 Money<span>Balance + Withdraw</span></button>
+      <div class="member-head"><span class="member-label">Member Center</span><span class="member-line"></span></div>
+      <div class="account-menu-grid">
+        <button class="account-menu-item" onclick="openAccountFeature('reward')"><span class="account-menu-icon">🏆</span><span class="account-menu-text">Reward<br>Center</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('betting')"><span class="account-menu-icon">⚡</span><span class="account-menu-text">Betting<br>Record</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('profit')"><span class="account-menu-icon">🧾</span><span class="account-menu-text">Profit And<br>Loss</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('depositRecord')"><span class="account-menu-icon">📋</span><span class="account-menu-text">Deposit<br>Record</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('withdrawRecord')"><span class="account-menu-icon">📥</span><span class="account-menu-text">Withdrawal<br>Record</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('accountRecord')"><span class="account-menu-icon">📊</span><span class="account-menu-text">Account<br>Record</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('myAccount')"><span class="account-menu-icon">👤</span><span class="account-menu-text">My<br>Account</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('security')"><span class="account-menu-icon">🛡️</span><span class="account-menu-text">Security<br>Center</span></button>
+        <button class="account-menu-item" onclick="openProfileModal('referModal');switchReferTab('link')"><span class="account-menu-icon">👥</span><span class="account-menu-text">Invite<br>Friends</span></button>
+        <button class="account-menu-item" onclick="openProfileModal('referModal');switchReferTab('earnings')"><span class="account-menu-icon">🪙</span><span class="account-menu-text">Rebate</span></button>
+        <button class="account-menu-item" onclick="openProfileModal('internationalSmsModal')"><span class="account-menu-icon">@</span><span class="account-menu-text">Internal<br>Message</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('suggestion')"><span class="account-menu-icon">💬</span><span class="account-menu-text">Suggestion</span></button>
+        <button class="account-menu-item" onclick="openHelpCare()"><span class="account-menu-icon">☎️</span><span class="account-menu-text">Customer<br>Service</span></button>
+        <button class="account-menu-item" onclick="handleLogout()"><span class="account-menu-icon">↪</span><span class="account-menu-text">Logout</span></button>
+      </div>
+      <div class="account-quick-note">আপনার Deposit, Withdrawal, Referral Rebate এবং Account তথ্য Firebase-এর সঙ্গে সংযুক্ত।</div>
     </div>
-
-    <div class="card" style="margin-top:0;">
-      <button class="small" style="width:100%; background:linear-gradient(135deg,#0088cc,#005580); color:#fff; padding:14px; font-weight:900; font-size:15px; border-radius:12px;" type="button" onclick="openProfileModal('internationalSmsModal')">🌐 ইন্টারন্যাশনাল এসএমএস (ইনবক্স)</button>
-    </div>
-
-    <div class="card"><div style="font-size:18px;font-weight:900;margin-bottom:10px">⚙️ Settings</div><button class="small" style="width:100%" onclick="openPasswordModal()">🔐 Transaction Password</button><div id="passwordStatus" style="font-size:12px;color:#9da7b6;margin-top:9px">Password not set</div></div>
   </div>
 
 
 
+  <!-- MY ACCOUNT FEATURE MODAL -->
+  <div id="accountFeatureModal" class="profile-modal" onclick="modalBackdrop(event,'accountFeatureModal')">
+    <div class="card profile-modal-card">
+      <div class="modal-top"><div id="accountFeatureTitle" style="font-size:21px;font-weight:900">Account</div><button class="modal-close" type="button" onclick="closeProfileModal('accountFeatureModal')">×</button></div>
+      <div id="accountFeatureBody"></div>
+    </div>
+  </div>
+
+  <!-- BANK ACCOUNT MODAL -->
+  <div id="bankAccountModal" class="profile-modal" onclick="modalBackdrop(event,'bankAccountModal')">
+    <div class="card profile-modal-card">
+      <div class="modal-top"><div style="font-size:21px;font-weight:900">🏦 Bank Account</div><button class="modal-close" type="button" onclick="closeProfileModal('bankAccountModal')">×</button></div>
+      <div class="modal-note" style="margin-bottom:10px">আপনার Withdraw-এর জন্য payment account সংরক্ষণ করুন।</div>
+      <div class="bank-method-grid">
+        <button id="bankBkash" class="bank-method-btn active" onclick="selectBankMethod('bKash')">bKash</button>
+        <button id="bankNagad" class="bank-method-btn" onclick="selectBankMethod('Nagad')">Nagad</button>
+        <button id="bankRocket" class="bank-method-btn" onclick="selectBankMethod('Rocket')">Rocket</button>
+      </div>
+      <label style="margin-top:12px">Account Number</label><input id="bankAccountNumber" type="tel" placeholder="01XXXXXXXXX">
+      <label style="margin-top:10px">Account Holder Name</label><input id="bankAccountName" type="text" placeholder="Account holder name">
+      <div id="bankAccountMsg" class="modal-note" style="margin-top:10px;min-height:18px"></div>
+      <button class="cash" onclick="saveBankAccount()">💾 Save Bank Account</button>
+    </div>
+  </div>
   <!-- HELP CARE WELCOME LOADING -->
   <div id="helpCareWelcomeLoading" class="help-care-welcome" aria-hidden="true">
     <div class="help-care-welcome-icon">🆘</div>
@@ -569,11 +627,16 @@
 
   <div id="passwordModal" class="profile-modal" onclick="modalBackdrop(event,'passwordModal')"><div class="card profile-modal-card"><div class="modal-top"><div style="font-size:21px;font-weight:900">🔐 Transaction Password</div><button class="modal-close" onclick="closePasswordModal()">×</button></div><label>Current Password</label><input id="oldPw" type="password" placeholder="Old password"><label style="margin-top:10px">New Password</label><input id="newPw" type="password" placeholder="Minimum 6 characters"><label style="margin-top:10px">Confirm New Password</label><input id="confirmPw" type="password" placeholder="Confirm password"><div id="pwMsg" class="modal-note" style="margin-top:10px;min-height:18px"></div><div class="row" style="margin-top:12px"><button class="small" style="flex:1" onclick="closePasswordModal()">Cancel</button><button class="cash" style="flex:1;margin:0" onclick="saveTransactionPassword()">Save Password</button></div></div></div>
 
+
+  <div id="vipPromotionModal" class="vip-promo-modal" onclick="if(event.target===this)closePromotionCenter()"><div class="vip-promo-box"><div style="display:flex;justify-content:space-between;align-items:center"><h2>🎁 Promotion Center</h2><button onclick="closePromotionCenter()" style="background:#2b2b2b;color:#fff;padding:7px 12px">×</button></div><div class="vip-offer"><strong>💰 Deposit Bonus</strong><small>Deposit খুলে আপনার বর্তমান bonus/offer দেখতে পারবেন।</small><button onclick="closePromotionCenter();openProfileModal('depositModal')" class="cash" style="margin-top:8px">Deposit Now</button></div><div class="vip-offer"><strong>👥 Invite Friends</strong><small>Referral link/code থেকে বন্ধু invite করুন। Approved referral deposit-এর rebate আপনার account-এ যোগ হবে।</small><button onclick="closePromotionCenter();openProfileModal('referModal')" class="cash" style="margin-top:8px;background:#ff8a17">Invite Friends</button></div><div class="vip-offer"><strong>🏆 Reward Center</strong><small>Referral milestone ও available rewards দেখুন।</small><button onclick="closePromotionCenter();openProfileModal('referModal')" class="cash" style="margin-top:8px;background:#7c4dff">Open Rewards</button></div></div></div>
+
   <!-- NAVIGATION BAR -->
-  <div class="nav">
-    <button id="navHome" class="active" onclick="showScreen('homeScreen')">⌂<br>Home</button>
-    <button id="navGame" onclick="showScreen('gameScreen')">✈️<br>Game</button>
-    <button id="navProfile" onclick="showScreen('profileScreen')">👤<br>Profile</button>
+  <div class="nav vip-bottom-nav">
+    <button id="navHome" class="active" onclick="showScreen('homeScreen')"><span>⌂</span><small>Home</small></button>
+    <button id="navPromotion" onclick="openPromotionCenter()"><span>🎁</span><small>Promotion</small></button>
+    <button id="navInvite" onclick="openProfileModal('referModal')"><span>♙</span><small>Invite</small></button>
+    <button id="navReward" onclick="openProfileModal('referModal')"><span>🏆</span><small>Reward</small></button>
+    <button id="navProfile" onclick="showScreen('profileScreen')"><span>♙</span><small>Profile</small></button>
   </div>
 </div>
 
@@ -648,6 +711,38 @@
       }
   });
 
+  // Keep Firebase requests and actual referral rebate records in sync with the User App.
+  // Admin is the source of truth for approval/rebate amounts.
+  window.referralRebatesCache = {};
+  onValue(ref(db, 'requests'), (snapshot) => {
+      const data = snapshot.exists() ? snapshot.val() : {};
+      const list = Object.keys(data).map(k => ({...data[k], firebaseKey:k}));
+      const fresh = JSON.parse(localStorage.getItem('aviator_full_db')) || {};
+      fresh.requests = list;
+      localStorage.setItem('aviator_full_db', JSON.stringify(fresh));
+      if(typeof window.renderReferralEarnings === 'function') window.renderReferralEarnings();
+      if(typeof window.renderReferralRecords === 'function') window.renderReferralRecords();
+      if(typeof window.renderMyAccount === 'function') window.renderMyAccount();
+  });
+  onValue(ref(db, 'withdrawRequests'), (snapshot) => {
+      const data = snapshot.exists() ? snapshot.val() : {};
+      const list = Object.keys(data).map(k => ({...data[k], firebaseKey:k}));
+      const fresh = JSON.parse(localStorage.getItem('aviator_full_db')) || {};
+      fresh.withdrawRequests = list;
+      localStorage.setItem('aviator_full_db', JSON.stringify(fresh));
+      if(typeof window.renderWithdrawHistory === 'function') window.renderWithdrawHistory();
+      if(typeof window.renderMyAccount === 'function') window.renderMyAccount();
+  });
+  onValue(ref(db, 'referralRebates'), (snapshot) => {
+      window.referralRebatesCache = snapshot.exists() ? (snapshot.val() || {}) : {};
+      const mine = Object.keys(window.referralRebatesCache).some(k => String(window.referralRebatesCache[k]?.referrerPhone) === String(window.currentUserPhone || ''));
+      if(mine || window.currentUserPhone){
+          if(typeof window.renderReferralEarnings === 'function') window.renderReferralEarnings();
+          if(typeof window.renderReferralRecords === 'function') window.renderReferralRecords();
+          if(typeof window.renderMyAccount === 'function') window.renderMyAccount();
+      }
+  });
+
   window.initLiveUserSync = function(phone) {
       if(!phone) return;
       const userRef = ref(db, 'users/' + phone);
@@ -658,8 +753,16 @@
               balance = liveBalance;
               if(usersDb[phone]) {
                   usersDb[phone].balance = liveBalance;
+                  usersDb[phone].name = userData.name || usersDb[phone].name;
                   usersDb[phone].referStats = userData.referStats || usersDb[phone].referStats;
+                  usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
                   usersDb[phone].claimedRewards = userData.claimedRewards || usersDb[phone].claimedRewards;
+                  usersDb[phone].bankAccounts = userData.bankAccounts || usersDb[phone].bankAccounts || {};
+                  if(userData.transactionPassword){
+                      transactionPassword = String(userData.transactionPassword);
+                      localStorage.setItem('aviator_demo_tx_password', transactionPassword);
+                  }
+                  localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
               }
               updateBalance();
           }
@@ -915,7 +1018,8 @@ function handleRegister(){
             inboxSms: [
                 { id: 1, title: "🎁 স্বাগতম বোনাস ও ঘোষণা", text: "আমাদের BD77Q প্ল্যাটফর্মে স্বাগতম! নিয়মিত অ্যাপটি উপভোগ করুন এবং বন্ধুদের রেফার করুন।", time: "আজ" }
             ],
-            lastActive: Date.now()
+            lastActive: Date.now(),
+            joinedAt: Date.now()
         };
         window.usersDb = usersDb;
 
@@ -1091,6 +1195,7 @@ function syncAppBalance(){
     ['homeBalance','profileBalance','profileBalance2','moneyBalance'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(balance)});
     const h=document.getElementById('homeHistory');if(h)h.innerHTML=history.length?history.slice(0,6).map(x=>`<div class="item"><span>Crash</span><strong>${x.toFixed(2)}×</strong></div>`).join(''):'<div class="item"><span>Round</span><strong>Waiting...</strong></div>';
     updateDepositNumberDisplay();
+    if(typeof renderMyAccount==='function') renderMyAccount();
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
@@ -1164,12 +1269,14 @@ function switchReferTab(tab){
 }
 
 function getReferralDepositData(){
-    if(!currentUserPhone || !usersDb[currentUserPhone]) return {referredPhones:[], approved:[]};
+    if(!currentUserPhone || !usersDb[currentUserPhone]) return {referredPhones:[], approved:[], rebates:[]};
     const referredPhones = Object.keys(usersDb).filter(phone => usersDb[phone] && usersDb[phone].referredBy === currentUserPhone);
     let freshDb = JSON.parse(localStorage.getItem('aviator_full_db')) || globalDb || {};
     const allRequests = Array.isArray(freshDb.requests) ? freshDb.requests : [];
-    const approved = allRequests.filter(req => referredPhones.includes(req.userPhone) && ['Approved','Success'].includes(req.status));
-    return {referredPhones, approved};
+    const approved = allRequests.filter(req => referredPhones.includes(req.userPhone) && ['Approved','Success'].includes(String(req.status)));
+    const rebateMap = window.referralRebatesCache || {};
+    const rebates = Object.keys(rebateMap).map(k => rebateMap[k]).filter(r => String(r.referrerPhone) === String(currentUserPhone));
+    return {referredPhones, approved, rebates};
 }
 
 function renderReferralEarnings(){
@@ -1181,8 +1288,9 @@ function renderReferralEarnings(){
     const amountOf = r => Number(r.baseAmount || r.amount || 0);
     const totalDeposit = data.approved.reduce((sum,r)=>sum+amountOf(r),0);
     const todayDeposit = todayReqs.reduce((sum,r)=>sum+amountOf(r),0);
-    const totalDepositRebate = +(totalDeposit * 0.03).toFixed(2);
-    const todayDepositRebate = +(todayDeposit * 0.03).toFixed(2);
+    const actualRebates = data.rebates || [];
+    const totalDepositRebate = actualRebates.reduce((sum,r)=>sum+Number(r.rebateAmount||0),0);
+    const todayDepositRebate = actualRebates.filter(r=>Number(r.createdAt||0)>=startOfDay.getTime()).reduce((sum,r)=>sum+Number(r.rebateAmount||0),0);
     const registers = data.referredPhones.length;
     const validReferral = data.referredPhones.filter(phone => Number(usersDb[phone]?.totalDeposit || 0) > 0 || data.approved.some(r=>r.userPhone===phone)).length;
     const depositorSet = new Set(data.approved.map(r=>r.userPhone));
@@ -1217,7 +1325,7 @@ function renderReferralRecords(){
     const records=data.approved.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).slice(0,30);
     box.innerHTML=records.map(r=>{
         const amt=Number(r.baseAmount||r.amount||0);
-        const rebate=+(amt*0.03).toFixed(2);
+        const rebate=Number(r.referralRebateAmount || 0);
         const phone=r.userPhone||'User';
         const date=r.createdAt?new Date(r.createdAt).toLocaleString('bn-BD'):'';
         return `<div class="earn-record"><div class="earn-record-top"><span>Deposit Rebate</span><strong style="color:#7ed6a7">+৳${rebate.toFixed(2)}</strong></div><div class="earn-record-sub">Referral User: ${phone} • Deposit: ৳${amt.toFixed(2)}</div><div class="earn-record-sub">${date}</div></div>`;
@@ -1382,7 +1490,7 @@ function showScreen(id){if(!currentUserPhone){checkAuthStatus();return;}document
 let transactionPassword=localStorage.getItem('aviator_demo_tx_password')||'';
 function openPasswordModal(){const m=document.getElementById('passwordModal');m.classList.add('show');document.getElementById('oldPw').value='';document.getElementById('newPw').value='';document.getElementById('confirmPw').value='';document.getElementById('pwMsg').textContent=''}
 function closePasswordModal(){document.getElementById('passwordModal').classList.remove('show')}
-function saveTransactionPassword(){const oldPw=document.getElementById('oldPw').value,newPw=document.getElementById('newPw').value,confirm=document.getElementById('confirmPw').value,msg=document.getElementById('pwMsg');if(!newPw||newPw.length<6){msg.textContent='কমপক্ষে ৬ অক্ষরের password দিন।';return}if(newPw!==confirm){msg.textContent='New password এবং confirm password মিলছে না।';return}if(transactionPassword&&oldPw!==transactionPassword){msg.textContent='পুরাতন password সঠিক নয়।';return}transactionPassword=newPw;localStorage.setItem('aviator_demo_tx_password',transactionPassword);document.getElementById('passwordStatus').textContent='Password is set ✓';msg.textContent='Password successfully updated ✓';setTimeout(closePasswordModal,700)}
+async function saveTransactionPassword(){const oldPw=document.getElementById('oldPw').value,newPw=document.getElementById('newPw').value,confirm=document.getElementById('confirmPw').value,msg=document.getElementById('pwMsg');if(!newPw||newPw.length<6){msg.textContent='কমপক্ষে ৬ অক্ষরের password দিন।';return}if(newPw!==confirm){msg.textContent='New password এবং confirm password মিলছে না।';return}if(transactionPassword&&oldPw!==transactionPassword){msg.textContent='পুরাতন password সঠিক নয়।';return}transactionPassword=newPw;localStorage.setItem('aviator_demo_tx_password',transactionPassword);if(currentUserPhone&&window.fbDb&&window.fbRef&&window.fbUpdate){try{await window.fbUpdate(window.fbRef(window.fbDb,'users/'+currentUserPhone),{transactionPassword:newPw,transactionPasswordUpdatedAt:Date.now()});}catch(e){console.error(e);msg.textContent='Firebase sync failed — আবার চেষ্টা করুন।';return;}}if(currentUserPhone&&usersDb[currentUserPhone]){usersDb[currentUserPhone].transactionPassword=newPw;localStorage.setItem('aviator_users_db',JSON.stringify(usersDb));}document.getElementById('passwordStatus').textContent='Password is set ✓';msg.textContent='Password successfully updated ✓';setTimeout(closePasswordModal,700)}
 </script>
 
 <!-- DEPOSIT & WITHDRAW MODALS SCRIPT -->
@@ -1472,21 +1580,10 @@ function submitDemoDeposit(){
     
     let currentUser = usersDb[currentUserPhone];
     if(currentUser){
-        currentUser.totalDeposit = (currentUser.totalDeposit || 0) + amount;
+        // Deposit is only counted as approved after Admin accepts the Firebase request.
+        // This prevents totalDeposit/turnover/referral rewards from being credited twice.
         const bonus=Math.round(amount*.20),total=amount+bonus;
-        currentUser.turnoverTarget = (currentUser.turnoverTarget || 0) + total;
-
-        if(currentUser.referredBy && !currentUser.referBonusGiven){
-            if(currentUser.totalDeposit >= 2000 && (currentUser.turnoverCurrent || 0) >= 5000){
-                currentUser.referBonusGiven = true;
-                let referrer = usersDb[currentUser.referredBy];
-                if(referrer){
-                    if(!referrer.referStats) referrer.referStats = { count: 0, bonusEarned: 0 };
-                    referrer.referStats.bonusEarned += 399;
-                    referrer.balance += 399;
-                }
-            }
-        }
+        currentUser.pendingDepositTotal = Number(currentUser.pendingDepositTotal || 0) + amount;
         localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
     }
 
@@ -1624,7 +1721,7 @@ function saveNickname(){
     setTimeout(()=>document.getElementById('nicknameForm').classList.remove('show'),700)
 }
 
-document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','depositModal','depositSuccessModal','moneyModal','withdrawSuccessModal','passwordModal','internationalSmsModal','helpLineModal'].forEach(id=>closeProfileModal(id)),closePasswordModal(),closeHelpLineModal())})
+document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','depositModal','depositSuccessModal','moneyModal','withdrawSuccessModal','passwordModal','internationalSmsModal','helpLineModal','accountFeatureModal','bankAccountModal'].forEach(id=>closeProfileModal(id)),closePasswordModal(),closeHelpLineModal())})
 </script>
 
 <script>
@@ -1641,5 +1738,90 @@ document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','deposi
 })();
 </script>
 
+
+<script id="myAccountFunctions">
+let selectedBankMethod='bKash';
+function getAccountUser(){return currentUserPhone&&usersDb[currentUserPhone]?usersDb[currentUserPhone]:null}
+function getVipLevel(user){const d=Number(user?.totalDeposit||0);return d>=100000?10:d>=50000?9:d>=30000?8:d>=20000?7:d>=10000?6:d>=5000?5:d>=2000?4:d>=1000?3:d>=500?2:1}
+function renderMyAccount(){
+ const u=getAccountUser(); if(!u)return;
+ const name=u.name||'User';
+ const initials=name.trim().split(/\s+/).map(x=>x[0]).join('').slice(0,2).toUpperCase()||'U';
+ const avatar=document.getElementById('accountAvatar'); if(avatar)avatar.textContent=initials;
+ const vip=document.getElementById('accountVip'); if(vip)vip.textContent='🏅 VIP'+getVipLevel(u);
+ const phone=document.getElementById('profilePhone'); if(phone)phone.textContent=currentUserPhone||'—';
+ const nick=document.getElementById('profileNickname'); if(nick)nick.textContent=name;
+ const joined=document.getElementById('accountJoined'); if(joined){const d=u.joinedAt?new Date(u.joinedAt):null;joined.textContent=d&&!isNaN(d)?d.toISOString().slice(0,10):(u.joinDate||'—')}
+ const pb=document.getElementById('profileBalance2');if(pb)pb.textContent=fmt(balance);
+}
+function accountData(){
+ const db=JSON.parse(localStorage.getItem('aviator_full_db'))||globalDb||{};
+ return {requests:Array.isArray(db.requests)?db.requests:[],withdraws:Array.isArray(db.withdrawRequests)?db.withdrawRequests:[]};
+}
+function userDepositRecords(){return accountData().requests.filter(x=>String(x.userPhone)===String(currentUserPhone)).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0))}
+function userWithdrawRecords(){return accountData().withdraws.filter(x=>String(x.userPhone)===String(currentUserPhone)).sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0))}
+function rowHtml(label,value,cls=''){return `<div class="feature-row"><span>${label}</span><strong class="${cls}">${value}</strong></div>`}
+function money2(v){return '৳'+Number(v||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}
+function openAccountFeature(type){
+ const u=getAccountUser(); if(!u)return;
+ const title=document.getElementById('accountFeatureTitle'),body=document.getElementById('accountFeatureBody'); if(!title||!body)return;
+ let html='';
+ if(type==='reward'){title.textContent='🏆 Reward Center';html=`<div class="bonus-box"><div class="bonus-title">Referral & Achievement Rewards</div>${rowHtml('Successful Referrals',String(u.referStats?.count||0)+' জন')}${rowHtml('Invitation/Bonus Earned',money2(u.referStats?.bonusEarned||0))}${rowHtml('Deposit Rebate Earned',money2(u.referStats?.depositRebateEarned||0))}</div><button class="cash" onclick="closeProfileModal('accountFeatureModal');openProfileModal('referModal');switchReferTab('rewards')">Open Reward Details</button>`}
+ else if(type==='betting'){title.textContent='⚡ Betting Record';const hs=(history||[]).slice(0,20);html=`<div class="modal-note">বর্তমান গেমের completed crash round history এবং turnover summary।</div><div class="feature-list">${rowHtml('Turnover Completed',money2(u.turnoverCurrent||0))}${rowHtml('Turnover Target',money2(u.turnoverTarget||0))}${hs.length?hs.map((x,i)=>rowHtml('Round '+(i+1),Number(x).toFixed(2)+'×')).join(''):'<div class="modal-note">এখনও কোনো completed round নেই।</div>'}</div>`}
+ else if(type==='profit'){title.textContent='🧾 Profit And Loss';const deps=userDepositRecords().filter(x=>String(x.status).toLowerCase()==='success');const wds=userWithdrawRecords().filter(x=>String(x.status).toLowerCase()==='success');const dep=deps.reduce((s,x)=>s+Number(x.baseAmount||x.amount||0),0);const wd=wds.reduce((s,x)=>s+Number(x.amount||0),0);html=`<div class="feature-list">${rowHtml('Approved Deposits',money2(dep))}${rowHtml('Approved Withdrawals',money2(wd))}${rowHtml('Current Balance',money2(balance))}${rowHtml('Referral Rebate',money2(u.referStats?.depositRebateEarned||0))}</div><div class="modal-note" style="margin-top:10px">এটি account-level summary; game-by-game P/L আলাদা server-side game ledger না থাকলে নির্ভুল betting P/L হিসেবে গণ্য হবে না।</div>`}
+ else if(type==='depositRecord'){title.textContent='📋 Deposit Record';const rs=userDepositRecords();html=rs.length?`<div class="feature-list">${rs.map(x=>rowHtml(money2(x.baseAmount||x.amount)+' • '+(x.method||'Deposit'),String(x.status||'Pending'))).join('')}</div>`:'<div class="modal-note" style="padding:20px;text-align:center">কোনো Deposit Record নেই।</div>'}
+ else if(type==='withdrawRecord'){title.textContent='📥 Withdrawal Record';const rs=userWithdrawRecords();html=rs.length?`<div class="feature-list">${rs.map(x=>rowHtml(money2(x.amount)+' • '+(x.method||'Withdraw'),String(x.status||'Pending'))).join('')}</div>`:'<div class="modal-note" style="padding:20px;text-align:center">কোনো Withdrawal Record নেই।</div>'}
+ else if(type==='accountRecord'){title.textContent='📊 Account Record';const rs=userDepositRecords(),ws=userWithdrawRecords();html=`<div class="feature-list">${rowHtml('Account',currentUserPhone)}${rowHtml('VIP Level','VIP'+getVipLevel(u))}${rowHtml('Total Deposit',money2(u.totalDeposit||0))}${rowHtml('Balance',money2(balance))}${rowHtml('Deposit Requests',String(rs.length))}${rowHtml('Withdrawal Requests',String(ws.length))}${rowHtml('Referral Count',String(u.referStats?.count||0))}</div>`}
+ else if(type==='myAccount'){title.textContent='👤 My Account';html=`<div class="feature-list">${rowHtml('Nickname',u.name||'Not set')}${rowHtml('Mobile',currentUserPhone)}${rowHtml('VIP','VIP'+getVipLevel(u))}${rowHtml('Joined',u.joinedAt?new Date(u.joinedAt).toLocaleDateString('en-CA'):'—')}${rowHtml('Balance',money2(balance))}</div><div style="margin-top:10px"><button class="small" style="width:100%" onclick="closeProfileModal('accountFeatureModal');toggleNicknameForm()">✏️ Edit Nickname</button></div>`}
+ else if(type==='security'){title.textContent='🛡️ Security Center';html=`<div class="feature-list">${rowHtml('Transaction Password',transactionPassword?'Set ✓':'Not Set')}${rowHtml('Account Login','Password protected')}${rowHtml('Firebase Sync',window.fbDb?'Connected':'Local mode')}</div><button class="cash" onclick="closeProfileModal('accountFeatureModal');openPasswordModal()">🔐 Change Transaction Password</button><div class="modal-note" style="margin-top:9px">Withdraw করার আগে Transaction Password যাচাই করা হয়।</div>`}
+ else if(type==='suggestion'){title.textContent='💬 Suggestion';html=`<label>আপনার পরামর্শ</label><textarea id="suggestionText" style="width:100%;min-height:110px;background:#0e1218;color:#fff;border:1px solid #303846;border-radius:8px;padding:12px;resize:vertical" placeholder="আপনার পরামর্শ লিখুন..."></textarea><div id="suggestionMsg" class="modal-note" style="margin-top:8px;min-height:18px"></div><button class="cash" onclick="submitSuggestion()">📨 Submit Suggestion</button>`}
+ body.innerHTML=html;openProfileModal('accountFeatureModal');
+}
+function selectBankMethod(method){selectedBankMethod=method;document.querySelectorAll('.bank-method-btn').forEach(b=>b.classList.remove('active'));const el=document.getElementById('bank'+method.charAt(0).toUpperCase()+method.slice(1).toLowerCase());if(el)el.classList.add('active');}
+function openBankAccountModal(){const u=getAccountUser();if(!u)return;const a=u.bankAccounts?.[selectedBankMethod]||{};document.getElementById('bankAccountNumber').value=a.number||'';document.getElementById('bankAccountName').value=a.name||u.name||'';document.getElementById('bankAccountMsg').textContent='';openProfileModal('bankAccountModal')}
+function saveBankAccount(){const u=getAccountUser();const number=document.getElementById('bankAccountNumber').value.trim();const name=document.getElementById('bankAccountName').value.trim();const msg=document.getElementById('bankAccountMsg');if(!number){msg.textContent='Account Number দিন।';return}if(number.length<8){msg.textContent='সঠিক Account Number দিন।';return}if(!name){msg.textContent='Account Holder Name দিন।';return}if(!u.bankAccounts)u.bankAccounts={};u.bankAccounts[selectedBankMethod]={number,name,updatedAt:Date.now()};usersDb[currentUserPhone]=u;localStorage.setItem('aviator_users_db',JSON.stringify(usersDb));if(window.fbDb&&window.fbRef&&window.fbUpdate)window.fbUpdate(window.fbRef(window.fbDb,'users/'+currentUserPhone),{bankAccounts:u.bankAccounts});msg.style.color='#7ed6a7';msg.textContent='Bank Account saved ✓';setTimeout(()=>closeProfileModal('bankAccountModal'),700)}
+function submitSuggestion(){const u=getAccountUser(),t=(document.getElementById('suggestionText')?.value||'').trim(),msg=document.getElementById('suggestionMsg');if(!t){msg.textContent='পরামর্শ লিখুন।';return}const item={id:Date.now(),userPhone:currentUserPhone,name:u?.name||'',text:t,createdAt:Date.now(),status:'Pending'};const db=JSON.parse(localStorage.getItem('aviator_full_db'))||globalDb||{};if(!Array.isArray(db.suggestions))db.suggestions=[];db.suggestions.unshift(item);localStorage.setItem('aviator_full_db',JSON.stringify(db));if(window.fbDb&&window.fbRef&&window.fbPush)window.fbPush(window.fbRef(window.fbDb,'suggestions'),item);msg.style.color='#7ed6a7';msg.textContent='Suggestion submitted ✓';setTimeout(()=>closeProfileModal('accountFeatureModal'),700)}
+// Keep the existing profile functions and add the My Account renderer without replacing them.
+const _oldLoadUserData=loadUserData;
+loadUserData=function(){_oldLoadUserData();renderMyAccount();};
+</script>
+
+<script>
+let vipGameFilter='all';
+function openPromotionCenter(){const m=document.getElementById('vipPromotionModal');if(m)m.classList.add('show')}
+function closePromotionCenter(){const m=document.getElementById('vipPromotionModal');if(m)m.classList.remove('show')}
+function setVipGameFilter(filter,btn){vipGameFilter=filter;document.querySelectorAll('#vipCategoryTabs button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');filterVipGames()}
+function filterVipGames(){
+ const q=(document.getElementById('homeGameSearch')?.value||'').trim().toLowerCase();
+ const cards=[...document.querySelectorAll('#vipGamesGrid .game-card-item')]; let shown=0;
+ cards.forEach((card,i)=>{
+   const title=(card.querySelector('.game-card-title')?.textContent||'').toLowerCase();
+   const isSlot=/slot|casino|ace|52 cards|mahjong/.test(title);
+   const isLive=/live|crash|lobby/.test(title);
+   let ok=!q||title.includes(q);
+   if(vipGameFilter==='slots')ok=ok&&isSlot;
+   if(vipGameFilter==='live')ok=ok&&isLive;
+   if(vipGameFilter==='favorites')ok=ok&&!!card.dataset.favorite;
+   card.classList.toggle('hidden-vip',!ok); if(ok)shown++;
+ });
+ const c=document.getElementById('vipGameCount');if(c)c.textContent=shown;
+}
+function initVipFavorites(){
+ const cards=[...document.querySelectorAll('#vipGamesGrid .game-card-item')];
+ cards.forEach((card,i)=>{
+   if(card.querySelector('.vip-fav-btn'))return;
+   const title=card.querySelector('.game-card-title')?.textContent?.trim()||('game-'+i);
+   const key='vip_favorite_'+btoa(unescape(encodeURIComponent(title))).replace(/[^a-zA-Z0-9]/g,'');
+   const saved=localStorage.getItem(key)==='1';
+   card.dataset.favorite=saved?'1':'';
+   const b=document.createElement('button');
+   b.type='button'; b.className='vip-fav-btn'; b.textContent=saved?'♥':'♡'; b.title='Favorite';
+   b.onclick=(e)=>{e.preventDefault();e.stopPropagation();const on=b.textContent==='♥';b.textContent=on?'♡':'♥';card.dataset.favorite=on?'':'1';localStorage.setItem(key,on?'0':'1');if(vipGameFilter==='favorites')filterVipGames();};
+   card.appendChild(b);
+ });
+}
+function initVipHome(){initVipFavorites();filterVipGames();}
+window.addEventListener('load',()=>setTimeout(initVipHome,300));
+</script>
 </body>
 </html>
