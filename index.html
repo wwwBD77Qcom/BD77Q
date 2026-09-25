@@ -862,6 +862,12 @@ function handleRegister(){
             name,
             password,
             balance: 0,
+            cashbackState: {
+                date: new Date().toDateString(),
+                dayStartBalance: 0,
+                lastProcessedDate: null,
+                totalCashback: 0
+            },
             turnoverTarget: 0,
             turnoverCurrent: 0,
             myReferCode: assignedReferCode,
@@ -934,6 +940,74 @@ function handleLogout(){
     });
 }
 
+/* Daily Loss Cashback — 15% */
+function getCashbackDateKey(date = new Date()){
+    return date.toDateString();
+}
+
+function processDailyLossCashback(){
+    if(!currentUserPhone || !usersDb[currentUserPhone]) return;
+
+    const user = usersDb[currentUserPhone];
+    const today = getCashbackDateKey();
+    const currentBalance = Number(user.balance || 0);
+
+    if(!user.cashbackState){
+        user.cashbackState = {
+            date: today,
+            dayStartBalance: currentBalance,
+            lastProcessedDate: null,
+            totalCashback: 0
+        };
+        localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+        return;
+    }
+
+    /* নতুন দিন শুরু হলে আগের দিনের ক্ষতি ১৫% হিসেবে হিসাব হবে। */
+    if(user.cashbackState.date !== today){
+        const startBalance = Number(user.cashbackState.dayStartBalance || 0);
+        const loss = Math.max(0, startBalance - currentBalance);
+        const cashback = Number((loss * 0.15).toFixed(2));
+
+        if(cashback > 0 && user.cashbackState.lastProcessedDate !== today){
+            user.balance = currentBalance + cashback;
+            user.cashbackState.totalCashback = Number(user.cashbackState.totalCashback || 0) + cashback;
+            user.lastCashbackAmount = cashback;
+            user.lastCashbackDate = today;
+
+            if(!user.inboxSms) user.inboxSms = [];
+            user.inboxSms.unshift({
+                id: Date.now(),
+                title: '🎁 ১৫% Daily Loss Cashback',
+                text: `গত দিনের ক্ষতির ১৫% Cashback হিসেবে ৳${cashback.toFixed(2)} আপনার ব্যালেন্সে যোগ হয়েছে।`,
+                time: 'আজ'
+            });
+        }else{
+            user.lastCashbackAmount = 0;
+            user.lastCashbackDate = today;
+        }
+
+        user.cashbackState.lastProcessedDate = today;
+        user.cashbackState.date = today;
+        user.cashbackState.dayStartBalance = Number(user.balance || 0);
+
+        balance = Number(user.balance || 0);
+        localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+        updateBalance();
+        renderInboxSms();
+    }
+}
+
+function initDailyLossCashback(){
+    processDailyLossCashback();
+}
+
+function scheduleDailyLossCashback(){
+    initDailyLossCashback();
+    /* প্রতি মিনিটে চেক করবে; অ্যাপ খোলা থাকলে রাত ১২টার পর স্বয়ংক্রিয়ভাবে সেটেল হবে। */
+    setInterval(initDailyLossCashback, 60 * 1000);
+}
+
 function checkAuthStatus(){
     if(!currentUserPhone){
         document.getElementById('authScreen').classList.add('active');
@@ -944,6 +1018,7 @@ function checkAuthStatus(){
         document.getElementById('authScreen').classList.remove('active');
         showScreen('homeScreen');
         loadUserData();
+        initDailyLossCashback();
         checkDailyBonusNotification();
         if(window.initLiveUserSync) window.initLiveUserSync(currentUserPhone);
     }
@@ -1535,6 +1610,9 @@ document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','deposi
     if(value>=100){clearInterval(timer);setTimeout(()=>splash.classList.add('hide'),180);}
   },50);
 })();
+
+// Daily Loss Cashback scheduler
+setTimeout(scheduleDailyLossCashback, 700);
 </script>
 
 </body>
