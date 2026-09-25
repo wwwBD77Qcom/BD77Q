@@ -41,6 +41,17 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 .announcement-admin-grid input{margin-bottom:8px}
 @media(max-width:520px){.announcement-admin-grid{grid-template-columns:1fr}}
 
+
+/* Referral & Earnings Admin */
+.referral-admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.referral-admin-stat{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:12px}
+.referral-admin-stat span{display:block;color:#9da7b6;font-size:11px}
+.referral-admin-stat strong{display:block;color:#20b56b;font-size:20px;margin-top:4px}
+.referral-admin-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.referral-admin-table th,.referral-admin-table td{border:1px solid #2a303b;padding:7px;text-align:left;vertical-align:top}
+.referral-admin-table th{background:#161c27;color:#9da7b6}
+.referral-admin-table-wrap{overflow:auto;max-height:420px}
+@media(max-width:520px){.referral-admin-grid{grid-template-columns:1fr 1fr}.referral-admin-table{min-width:650px}}
 </style>
 
 <!-- Firebase SDKs & Config (Modular CDN) -->
@@ -195,6 +206,102 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   };
   // ================== End Daily Loss Cashback ==================
 
+
+  // ================== Referral & Earnings Management ==================
+  async function getReferralAdminData(){
+      const usersSnap = await get(child(ref(db), 'users'));
+      const reqSnap = await get(child(ref(db), 'requests'));
+      const users = usersSnap.exists() ? (usersSnap.val() || {}) : {};
+      const requestsObj = reqSnap.exists() ? (reqSnap.val() || {}) : {};
+      const requests = Object.keys(requestsObj).map(k => ({id:k, ...(requestsObj[k] || {})}));
+      const approved = requests.filter(r => ['Approved','Success'].includes(String(r.status || '')));
+      const rateEl = document.getElementById('adminDepositRebateRate');
+      const rate = Number(rateEl?.value || 3) / 100;
+      const rows = [];
+      let totalDeposits = 0, totalRebate = 0, totalRegistered = 0, totalDepositors = 0;
+      const depositorPhones = new Set();
+
+      Object.keys(users).forEach(phone => {
+          const u = users[phone] || {};
+          const referrer = u.referredBy;
+          if(referrer && users[referrer]){
+              totalRegistered++;
+              const deps = approved.filter(r => String(r.userPhone || '') === String(phone));
+              const depositTotal = deps.reduce((sum,r)=>sum + Number(r.baseAmount || r.amount || 0),0);
+              if(depositTotal > 0) depositorPhones.add(String(referrer));
+          }
+      });
+
+      const byReferrer = {};
+      Object.keys(users).forEach(phone => {
+          const u = users[phone] || {};
+          if(!u.referredBy || !users[u.referredBy]) return;
+          const ref = String(u.referredBy);
+          if(!byReferrer[ref]) byReferrer[ref] = {phone:ref, registered:0, depositors:0, deposit:0, rebate:0};
+          byReferrer[ref].registered += 1;
+          const deps = approved.filter(r => String(r.userPhone || '') === String(phone));
+          const dep = deps.reduce((sum,r)=>sum + Number(r.baseAmount || r.amount || 0),0);
+          if(dep > 0) byReferrer[ref].depositors += 1;
+          byReferrer[ref].deposit += dep;
+          byReferrer[ref].rebate += dep * rate;
+      });
+
+      Object.values(byReferrer).forEach(row=>{
+          row.deposit = Number(row.deposit.toFixed(2));
+          row.rebate = Number(row.rebate.toFixed(2));
+          totalDeposits += row.deposit;
+          totalRebate += row.rebate;
+          rows.push(row);
+      });
+      rows.sort((a,b)=>b.rebate-a.rebate);
+      return {users, rows, totalRegistered, totalDepositors:rows.reduce((n,r)=>n+r.depositors,0), totalDeposits, totalRebate};
+  }
+
+  window.loadReferralEarningsAdmin = async function(){
+      const btn = document.getElementById('referralAdminRefreshBtn');
+      if(btn){btn.disabled=true;btn.textContent='⏳ হিসাব হচ্ছে...';}
+      try{
+          const data = await getReferralAdminData();
+          const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
+          set('refAdminRegistered', data.totalRegistered);
+          set('refAdminDepositors', data.totalDepositors);
+          set('refAdminDepositTotal', '৳'+data.totalDeposits.toFixed(2));
+          set('refAdminRebateTotal', '৳'+data.totalRebate.toFixed(2));
+          const body=document.getElementById('referralAdminTableBody');
+          if(body){
+              body.innerHTML=data.rows.length ? data.rows.slice(0,50).map(r=>`<tr><td>${r.phone}</td><td>${r.registered}</td><td>${r.depositors}</td><td>৳${r.deposit.toFixed(2)}</td><td>৳${r.rebate.toFixed(2)}</td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center">কোনো referral data পাওয়া যায়নি</td></tr>';
+          }
+          set('refAdminLastRun', new Date().toLocaleString('bn-BD'));
+      }catch(e){
+          console.error('Referral admin load failed:',e);
+          alert('Referral/Earnings data লোড করা যায়নি। Firebase Connection/Rules পরীক্ষা করুন।');
+      }finally{
+          if(btn){btn.disabled=false;btn.textContent='↻ Referral হিসাব Refresh';}
+      }
+  };
+
+  window.saveReferralRewardSettings = async function(){
+      const rate = Number(document.getElementById('adminDepositRebateRate').value);
+      const min = Number(document.getElementById('adminReferralMinDeposit').value);
+      if(!Number.isFinite(rate) || rate < 0 || rate > 100){ alert('Rebate rate 0–100 এর মধ্যে দিন।'); return; }
+      if(!Number.isFinite(min) || min < 0){ alert('Minimum deposit সঠিকভাবে দিন।'); return; }
+      await set(ref(db,'settings/referralRewards'), {depositRebatePercent:rate, minimumDeposit:min, updatedAt:Date.now()});
+      document.getElementById('referralSettingsMsg').textContent='Referral settings সফলভাবে সেভ হয়েছে।';
+      loadReferralEarningsAdmin();
+  };
+
+  async function loadReferralRewardSettings(){
+      try{
+          const snap=await get(child(ref(db),'settings/referralRewards'));
+          if(snap.exists()){
+              const v=snap.val()||{};
+              if(v.depositRebatePercent !== undefined) document.getElementById('adminDepositRebateRate').value=v.depositRebatePercent;
+              if(v.minimumDeposit !== undefined) document.getElementById('adminReferralMinDeposit').value=v.minimumDeposit;
+          }
+      }catch(e){console.error('Referral settings load failed:',e)}
+  }
+  // ================== End Referral & Earnings Management ==================
+
   window.loadAdminDashboard = async function() {
       document.getElementById('adminLoginScreen').classList.remove('active');
       document.getElementById('adminDashboardScreen').classList.add('active');
@@ -231,6 +338,8 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       fetchRequests();
       fetchSupportTickets();
       fetchBanners();
+      loadReferralRewardSettings();
+      loadReferralEarningsAdmin();
   }
 
   window.giveUserTurnover = async function() {
@@ -983,6 +1092,37 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 
     <!-- Banner Advertisement Control -->
 
+
+
+
+    <div class="card" id="referralEarningsAdminCard">
+      <div style="font-size:16px;font-weight:900;margin-bottom:6px;color:#ffcf72">👥 Referral & Earnings Management</div>
+      <div class="modal-note" style="margin-bottom:12px">User App-এর Invite Friends → Earnings অংশের Referral/Deposit Rebate data এখানে দেখা যাবে। বর্তমান User App হিসাব অনুযায়ী Deposit Rebate 3% অর্থাৎ প্রতি ৳1,000-এ ৳30।</div>
+
+      <div class="referral-admin-grid">
+        <div class="referral-admin-stat"><span>Registered via Referral</span><strong id="refAdminRegistered">0</strong></div>
+        <div class="referral-admin-stat"><span>Referral Depositors</span><strong id="refAdminDepositors">0</strong></div>
+        <div class="referral-admin-stat"><span>Referral Deposit Total</span><strong id="refAdminDepositTotal">৳0.00</strong></div>
+        <div class="referral-admin-stat"><span>Total Deposit Rebate</span><strong id="refAdminRebateTotal">৳0.00</strong></div>
+      </div>
+
+      <label>Deposit Rebate Rate (%)</label>
+      <input id="adminDepositRebateRate" type="number" min="0" max="100" step="0.01" value="3">
+      <label>Minimum Deposit for Referral Rebate (৳)</label>
+      <input id="adminReferralMinDeposit" type="number" min="0" step="1" value="0">
+      <button class="cash" type="button" onclick="saveReferralRewardSettings()">💾 Referral Settings Save</button>
+      <div id="referralSettingsMsg" class="modal-note" style="margin-top:8px;color:#7ed6a7"></div>
+
+      <button id="referralAdminRefreshBtn" type="button" onclick="loadReferralEarningsAdmin()" style="background:#252b35;color:#fff;margin-top:8px">↻ Referral হিসাব Refresh</button>
+      <div class="modal-note" style="margin-top:8px">Last Refresh: <span id="refAdminLastRun">—</span></div>
+
+      <div class="referral-admin-table-wrap">
+        <table class="referral-admin-table">
+          <thead><tr><th>Referrer</th><th>Registers</th><th>Depositors</th><th>Deposit Total</th><th>Rebate</th></tr></thead>
+          <tbody id="referralAdminTableBody"><tr><td colspan="5" style="text-align:center">লোড হচ্ছে...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
 
     <div class="card" id="entryAnnouncementCard">
       <div style="font-size:16px;font-weight:900;margin-bottom:6px;color:#ffcf72">📢 Entry Announcement Popup Control</div>
