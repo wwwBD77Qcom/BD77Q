@@ -243,7 +243,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
           const dep = deps.reduce((sum,r)=>sum + Number(r.baseAmount || r.amount || 0),0);
           if(dep > 0) byReferrer[ref].depositors += 1;
           byReferrer[ref].deposit += dep;
-          byReferrer[ref].rebate += dep * rate;
+          byReferrer[ref].rebate += deps.reduce((sum,r)=>sum + Number(r.referralRebateAmount || 0),0) || dep * rate;
       });
 
       Object.values(byReferrer).forEach(row=>{
@@ -947,17 +947,94 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       if(req.status !== 'Pending') return;
 
       if(action === 'Accept'){
+          if(req.referralRebateProcessed){
+              alert('এই Deposit ইতিমধ্যে process করা হয়েছে।');
+              return;
+          }
+          const depositAmount = Number(req.baseAmount || req.amount || amount || 0);
+          if(!Number.isFinite(depositAmount) || depositAmount <= 0){
+              alert('ডিপোজিটের পরিমাণ সঠিক নয়।');
+              return;
+          }
+
           const userRef = ref(db, 'users/' + phone);
           const userSnap = await get(userRef);
-          let currentBal = 0;
-          if(userSnap.exists()){
-              currentBal = userSnap.val().balance || 0;
+          if(!userSnap.exists()){
+              alert('ইউজার পাওয়া যায়নি।');
+              return;
           }
-          await update(userRef, { balance: currentBal + Number(amount) });
-          await update(reqRef, { status: 'Success' });
-          
-          await sendUserInboxSms(phone, "💰 ডিপোজিট সফল", `আপনার অ্যাকাউন্টে সফলভাবে ${amount} টাকা জমা হয়েছে।`);
-          alert('ডিপোজিট সফলভাবে Accept করা হয়েছে!');
+          const userData = userSnap.val() || {};
+          const currentBal = Number(userData.balance || 0);
+
+          // Deposit approval + referral rebate are linked to the same request key.
+          // This prevents the same approved deposit from paying the 3% rebate twice.
+          const updates = {};
+          updates['users/' + phone + '/balance'] = Number((currentBal + depositAmount).toFixed(2));
+          updates['users/' + phone + '/totalDeposit'] = Number((Number(userData.totalDeposit || 0) + depositAmount).toFixed(2));
+          updates['requests/' + reqKey + '/status'] = 'Success';
+          updates['requests/' + reqKey + '/approvedAt'] = Date.now();
+          updates['requests/' + reqKey + '/referralRebateProcessed'] = false;
+          updates['requests/' + reqKey + '/referralRebateAmount'] = 0;
+
+          let rebateAmount = 0;
+          const referrerPhone = userData.referredBy ? String(userData.referredBy) : '';
+
+          if(referrerPhone && referrerPhone !== String(phone)){
+              const referrerRef = ref(db, 'users/' + referrerPhone);
+              const referrerSnap = await get(referrerRef);
+              if(referrerSnap.exists()){
+                  const referrerData = referrerSnap.val() || {};
+                  const settingsSnap = await get(child(ref(db), 'settings/referralRewards'));
+                  const settings = settingsSnap.exists() ? (settingsSnap.val() || {}) : {};
+                  const rate = Number(settings.depositRebatePercent !== undefined ? settings.depositRebatePercent : 3);
+                  const minimumDeposit = Number(settings.minimumDeposit || 0);
+
+                  if(Number.isFinite(rate) && rate > 0 && depositAmount >= minimumDeposit){
+                      rebateAmount = Number((depositAmount * rate / 100).toFixed(2));
+                  }
+
+                  if(rebateAmount > 0){
+                      const refCurrentBal = Number(referrerData.balance || 0);
+                      const refStats = referrerData.referStats || {count:0, bonusEarned:0};
+                      const depositRebateEarned = Number(refStats.depositRebateEarned || 0);
+
+                      updates['users/' + referrerPhone + '/balance'] = Number((refCurrentBal + rebateAmount).toFixed(2));
+                      updates['users/' + referrerPhone + '/referStats'] = {
+                          ...refStats,
+                          depositRebateEarned: Number((depositRebateEarned + rebateAmount).toFixed(2)),
+                          bonusEarned: Number(refStats.bonusEarned || 0)
+                      };
+                      updates['users/' + referrerPhone + '/lastReferralRebate'] = rebateAmount;
+                      updates['users/' + referrerPhone + '/lastReferralRebateAt'] = Date.now();
+
+                      const rebateRecord = {
+                          requestId: reqKey,
+                          referrerPhone: referrerPhone,
+                          referredUserPhone: String(phone),
+                          depositAmount: depositAmount,
+                          ratePercent: rate,
+                          rebateAmount: rebateAmount,
+                          createdAt: Date.now()
+                      };
+                      updates['referralRebates/' + reqKey] = rebateRecord;
+                      updates['requests/' + reqKey + '/referralRebateProcessed'] = true;
+                      updates['requests/' + reqKey + '/referralRebateAmount'] = rebateAmount;
+                      updates['requests/' + reqKey + '/referrerPhone'] = referrerPhone;
+                  }
+              }
+          }
+
+          // A single multi-location update keeps the depositor balance, request status
+          // and referral payment in the same Firebase write operation.
+          await update(ref(db), updates);
+
+          await sendUserInboxSms(phone, "💰 ডিপোজিট সফল", `আপনার অ্যাকাউন্টে সফলভাবে ${depositAmount} টাকা জমা হয়েছে।`);
+          if(rebateAmount > 0){
+              await sendUserInboxSms(referrerPhone, "🎁 Referral Deposit Rebate", `আপনার referral user ${phone} ৳${depositAmount.toFixed(2)} deposit করেছে। ${rebateAmount.toFixed(2)} টাকা Referral Rebate হিসেবে আপনার ব্যালেন্সে যোগ হয়েছে।`);
+          }
+          alert(rebateAmount > 0
+              ? `ডিপোজিট সফল। Referrer-কে ৳${rebateAmount.toFixed(2)} Referral Rebate দেওয়া হয়েছে।`
+              : 'ডিপোজিট সফলভাবে Accept করা হয়েছে!');
       } else {
           await update(reqRef, { status: 'Rejected' });
           await sendUserInboxSms(phone, "❌ ডিপোজিট ব্যর্থ", `আপনার ডিপোজিট রিকোয়েস্টটি গ্রহণ করা সম্ভব হয়নি। সঠিক ট্রানজেকশন আইডি দিয়ে আবার চেষ্টা করুন।`);
