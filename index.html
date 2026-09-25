@@ -4,47 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BD77Q - Auth & Game & Helpline</title>
-
-<!-- কেউ রেফার লিংক শেয়ার করলে প্রিভিউতে এই ছবিটি ফুল ক্লিয়ার দেখাবে -->
-<meta property="og:title" content="BD77Q - Cash Earning & Gaming Platform">
-<meta property="og:description" content="আমাদের প্ল্যাটফর্মে যোগ দিন এবং নিয়মিত খেলে দারুণ বোনাস ও রিওয়ার্ড জিতুন!">
-<meta property="og:image" content="https://i.postimg.cc/k5vpsGNw/file-000000001e4c8211a155cb7a18f1465e.png">
-<meta property="og:type" content="website">
-
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080a0f;color:#fff;font-family:Arial,sans-serif}body{padding:0}
-.app{width:100%;max-width:520px;margin:auto;min-height:100vh;background:#11151d;box-shadow:0 0 40px rgba(0,0,0,.45);padding-bottom:74px;position:relative}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080a0f;color:#fff;font-family:Arial,sans-serif}body{padding:0}.app{width:100%;max-width:520px;margin:auto;min-height:100vh;background:#11151d;box-shadow:0 0 40px rgba(0,0,0,.45);padding-bottom:74px}.screen{display:none}.screen.active{display:block}.header{height:62px;background:#171c26;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #292f3b}.logo{font-size:23px;font-weight:900}.logo span{font-size:27px}.balance{background:#242b37;padding:9px 12px;border-radius:20px;font-weight:900}.card{margin:12px;background:#191f29;border:1px solid #2a303b;border-radius:14px;padding:16px}.hero{padding:20px 16px;background:linear-gradient(135deg,#191f29,#10151d)}.stat{display:flex;justify-content:space-between;gap:12px;margin:10px 0;color:#aeb7c6}.stat strong{color:#fff;text-align:right}.row{display:flex;gap:8px}.field{flex:1;min-width:0}.field label,label{display:block;color:#9da7b6;font-size:12px;margin-bottom:6px}input{width:100%;background:#0e1218;border:1px solid #303846;color:#fff;padding:12px;border-radius:8px;font-size:16px;outline:none}input:focus{border-color:#6d7788}button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cursor:pointer}.bet{background:#2a303b;color:#fff;width:100%}.cash{background:#20b56b;color:#fff;width:100%;margin-top:8px}.cash:disabled{opacity:.35;cursor:not-allowed}.small{background:#252c37;color:#dce2eb}.note{font-size:11px;color:#7f8999;text-align:center;margin:12px;line-height:1.5}.game{margin:12px;border-radius:12px;overflow:hidden;background:#080b10;border:1px solid #272e39}.sky{height:410px;position:relative;overflow:hidden;background:linear-gradient(#101a2a,#0a0d13)}.mult{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:55px;font-weight:900;color:#fff;text-shadow:0 2px 12px #000;z-index:4}.status{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;z-index:5;color:#aeb7c6;font-size:13px}.grid{position:absolute;inset:0;opacity:.18;background-image:linear-gradient(#72809a 1px,transparent 1px),linear-gradient(90deg,#72809a 1px,transparent 1px);background-size:45px 45px;transform:skewY(-10deg) scale(1.4);transform-origin:bottom}.plane{position:absolute;left:12%;bottom:13%;font-size:48px;z-index:6;filter:drop-shadow(0 5px 8px #000)}.line{position:absolute;left:-20%;bottom:10%;width:150%;height:4px;background:#ff334f;transform:rotate(-16deg);transform-origin:left;box-shadow:0 0 15px #ff334f;z-index:3}.crashed .mult{color:#ff4961}.panel{padding:0 12px}.box{background:#191f29;border-radius:12px;padding:12px;margin-bottom:10px}.history{display:flex;gap:7px;overflow:hidden;margin-top:10px;padding:0 10px 10px}.pill{padding:6px 9px;border-radius:15px;background:#26303c;font-size:12px;color:#7ed6a7}.pill.hot{color:#ffcf72}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#151a23;border-top:1px solid #2a303b;display:grid;grid-template-columns:repeat(3,1fr);padding:7px 8px;z-index:200}.nav button{background:transparent;color:#8e98a8;padding:9px 4px;font-size:12px}.nav button.active{color:#fff;background:#222936}.list{display:grid;gap:8px}.item{background:#11161e;padding:12px;border-radius:10px;display:flex;justify-content:space-between}.nickname-box{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:12px}.nickname-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.nickname-title{font-size:18px;font-weight:900}.nickname-value{font-size:14px;color:#dce2eb;margin-top:4px}.nickname-edit{background:#252c37;color:#fff;padding:9px 12px}.nickname-form{display:none;margin-top:10px}.nickname-form.show{display:block}.nickname-msg{font-size:12px;color:#9da7b6;margin-top:8px;min-height:18px}.profile-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px}.profile-action-btn{border:0;border-radius:14px;padding:15px 10px;color:#fff;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2)}.deposit-btn{background:linear-gradient(135deg,#00c853,#00a844)}.money-btn{background:linear-gradient(135deg,#ffb300,#f57c00)}.profile-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;align-items:center;justify-content:center;padding:14px;overflow:auto}.profile-modal.show{display:flex}.profile-modal-card{width:min(470px,100%);max-height:92vh;overflow:auto;margin:0}.modal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.modal-close{background:#252b35;color:#fff;border-radius:9px;width:38px;height:38px;padding:0;font-size:22px}.payment-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 0 12px}.payment-logo{border:1px solid #303744;background:#11161e;border-radius:12px;padding:10px 5px;text-align:center;color:#fff;font-weight:900;transition:.15s}.payment-logo.active{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.08);transform:translateY(-1px)}.payment-logo .logo{display:inline-flex;align-items:center;justify-content:center;width:42px;height:38px;border-radius:10px;margin-bottom:5px;font-size:10px}.bkash-logo{background:#e2136e}.nagad-logo{background:#f58220}.rocket-logo{background:#6b2fa3}.quick-amounts{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}.quick-amount{flex:1 1 calc(33.333% - 7px);min-width:72px;background:#202733;color:#fff;border:1px solid #303846;padding:9px 7px;font-size:13px}.quick-amount.active{border-color:#fff;background:#2d3542}.bonus-box{background:#10261b;border:1px solid #1f7a49;border-radius:12px;padding:11px;margin:10px 0}.bonus-title{font-size:14px;font-weight:900;margin-bottom:6px}.bonus-row{display:flex;justify-content:space-between;gap:8px;margin:5px 0;font-size:13px}.bonus-row strong{color:#7ed6a7}.demo-number{margin-top:10px;background:#11161e;border-radius:10px;padding:12px}.demo-number-value{font-size:18px;font-weight:900;margin-top:4px}.money-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}.money-tab{background:#202733;color:#aeb7c6}.money-tab.active{background:#fff;color:#111}.history-list{display:grid;gap:8px}.history-item{background:#11161e;border:1px solid #252c37;border-radius:10px;padding:11px}.history-item-top{display:flex;justify-content:space-between;gap:8px}.pending{color:#ffd166}.modal-note{font-size:11px;color:#7f8999;line-height:1.5}.success-box{background:#10261b;border:1px solid #1f7a49;border-radius:12px;padding:15px;text-align:center}.success-icon{font-size:42px}.success-title{font-size:20px;font-weight:900;margin:5px 0}.danger{color:#ff7888}.info{color:#8fd3ff}
 
-/* অ্যাপের মূল স্প্ল্যাশ/লোডিং স্ক্রিন স্টাইল (পিক সহ) */
-#splashScreen{display:flex;position:fixed;inset:0;background:linear-gradient(rgba(8,10,15,0.85),rgba(8,10,15,0.92)),url('https://i.postimg.cc/k5vpsGNw/file-000000001e4c8211a155cb7a18f1465e.png') no-repeat center center;background-size:cover;z-index:9999;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px;transition:opacity 0.5s ease}
-.splash-logo-img{width:90px;height:90px;border-radius:50%;object-fit:cover;border:3px solid #20b56b;box-shadow:0 0 30px rgba(32,181,107,0.5);margin-bottom:18px;animation:splashPulse 1.5s ease-in-out infinite}
-.splash-title{font-size:28px;font-weight:900;letter-spacing:1px;margin-bottom:6px;color:#fff}
-.splash-sub{font-size:13px;color:#aeb7c6;margin-bottom:24px}
-.splash-spinner{width:42px;height:42px;border:4px solid #303846;border-top-color:#20b56b;border-radius:50%;animation:spin 0.8s linear infinite}
-
-@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-
-/* রেজিস্ট্রেশন এবং হোমপেজে ছবিটিকে একদম ফুল স্ক্রিন ও ক্লিয়ার ব্যাকগ্রাউন্ড থিম হিসেবে সেট করা হলো */
-#authScreen, #homeScreen {
-  position: relative;
-  min-height: 100vh;
-}
-#authScreen::before, #homeScreen::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(rgba(17, 21, 29, 0.75), rgba(17, 21, 29, 0.75)), url('https://i.postimg.cc/k5vpsGNw/file-000000001e4c8211a155cb7a18f1465e.png') no-repeat center center;
-  background-size: cover;
-  z-index: 0;
-}
-#authScreen > *, #homeScreen > * {
-  position: relative;
-  z-index: 1;
-}
-
-.screen{display:none}.screen.active{display:block}.header{height:62px;background:rgba(23,28,38,0.9);backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #292f3b}.logo{font-size:23px;font-weight:900}.logo span{font-size:27px}.balance{background:#242b37;padding:9px 12px;border-radius:20px;font-weight:900}.card{margin:12px;background:rgba(25,31,41,0.9);backdrop-filter:blur(5px);border:1px solid #2a303b;border-radius:14px;padding:16px}.hero{padding:20px 16px;background:linear-gradient(135deg,#191f29,#10151d)}.stat{display:flex;justify-content:space-between;gap:12px;margin:10px 0;color:#aeb7c6}.stat strong{color:#fff;text-align:right}.row{display:flex;gap:8px}.field{flex:1;min-width:0}.field label,label{display:block;color:#9da7b6;font-size:12px;margin-bottom:6px}input{width:100%;background:#0e1218;border:1px solid #303846;color:#fff;padding:12px;border-radius:8px;font-size:16px;outline:none}input:focus{border-color:#6d7788}button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cursor:pointer}.bet{background:#2a303b;color:#fff;width:100%}.cash{background:#20b56b;color:#fff;width:100%;margin-top:8px}.cash:disabled{opacity:.35;cursor:not-allowed}.small{background:#252c37;color:#dce2eb}.note{font-size:11px;color:#7f8999;text-align:center;margin:12px;line-height:1.5}.game{margin:12px;border-radius:12px;overflow:hidden;background:#080b10;border:1px solid #272e39}.sky{height:410px;position:relative;overflow:hidden;background:linear-gradient(#101a2a,#0a0d13)}.mult{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:55px;font-weight:900;color:#fff;text-shadow:0 2px 12px #000;z-index:4}.status{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;z-index:5;color:#aeb7c6;font-size:13px}.grid{position:absolute;inset:0;opacity:.18;background-image:linear-gradient(#72809a 1px,transparent 1px),linear-gradient(90deg,#72809a 1px,transparent 1px);background-size:45px 45px;transform:skewY(-10deg) scale(1.4);transform-origin:bottom}.plane{position:absolute;left:12%;bottom:13%;font-size:48px;z-index:6;filter:drop-shadow(0 5px 8px #000)}.line{position:absolute;left:-20%;bottom:10%;width:150%;height:4px;background:#ff334f;transform:rotate(-16deg);transform-origin:left;box-shadow:0 0 15px #ff334f;z-index:3}.crashed .mult{color:#ff4961}.panel{padding:0 12px}.box{background:#191f29;border-radius:12px;padding:12px;margin-bottom:10px}.history{display:flex;gap:7px;overflow:hidden;margin-top:10px;padding:0 10px 10px}.pill{padding:6px 9px;border-radius:15px;background:#26303c;font-size:12px;color:#7ed6a7}.pill.hot{color:#ffcf72}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#151a23;border-top:1px solid #2a303b;display:grid;grid-template-columns:repeat(3,1fr);padding:7px 8px;z-index:200}.nav button{background:transparent;color:#8e98a8;padding:9px 4px;font-size:12px}.nav button.active{color:#fff;background:#222936}.list{display:grid;gap:8px}.item{background:#11161e;padding:12px;border-radius:10px;display:flex;justify-content:space-between}.nickname-box{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:12px}.nickname-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.nickname-title{font-size:18px;font-weight:900}.nickname-value{font-size:14px;color:#dce2eb;margin-top:4px}.nickname-edit{background:#252c37;color:#fff;padding:9px 12px}.nickname-form{display:none;margin-top:10px}.nickname-form.show{display:block}.nickname-msg{font-size:12px;color:#9da7b6;margin-top:8px;min-height:18px}.profile-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px}.profile-action-btn{border:0;border-radius:14px;padding:15px 10px;color:#fff;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2)}.deposit-btn{background:linear-gradient(135deg,#00c853,#00a844)}.money-btn{background:linear-gradient(135deg,#ffb300,#f57c00)}.profile-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;align-items:center;justify-content:center;padding:14px;overflow:auto}.profile-modal.show{display:flex}.profile-modal-card{width:min(470px,100%);max-height:92vh;overflow:auto;margin:0}.modal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.modal-close{background:#252b35;color:#fff;border-radius:9px;width:38px;height:38px;padding:0;font-size:22px}.payment-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 0 12px}.payment-logo{border:1px solid #303744;background:#11161e;border-radius:12px;padding:10px 5px;text-align:center;color:#fff;font-weight:900;transition:.15s}.payment-logo.active{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.08);transform:translateY(-1px)}.payment-logo .logo{display:inline-flex;align-items:center;justify-content:center;width:42px;height:38px;border-radius:10px;margin-bottom:5px;font-size:10px}.bkash-logo{background:#e2136e}.nagad-logo{background:#f58220}.rocket-logo{background:#6b2fa3}.quick-amounts{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}.quick-amount{flex:1 1 calc(33.333% - 7px);min-width:72px;background:#202733;color:#fff;border:1px solid #303846;padding:9px 7px;font-size:13px}.quick-amount.active{border-color:#fff;background:#2d3542}.bonus-box{background:#10261b;border:1px solid #1f7a49;border-radius:12px;padding:11px;margin:10px 0}.bonus-title{font-size:14px;font-weight:900;margin-bottom:6px}.bonus-row{display:flex;justify-content:space-between;gap:8px;margin:5px 0;font-size:13px}.bonus-row strong{color:#7ed6a7}.demo-number{margin-top:10px;background:#11161e;border-radius:10px;padding:12px}.demo-number-value{font-size:18px;font-weight:900;margin-top:4px}.money-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}.money-tab{background:#202733;color:#aeb7c6}.money-tab.active{background:#fff;color:#111}.history-list{display:grid;gap:8px}.history-item{background:#11161e;border:1px solid #252c37;border-radius:10px;padding:11px}.history-item-top{display:flex;justify-content:space-between;gap:8px}.pending{color:#ffd166}.modal-note{font-size:11px;color:#7f8999;line-height:1.5}.success-box{background:#10261b;border:1px solid #1f7a49;border-radius:12px;padding:15px;text-align:center}.success-icon{font-size:42px}.success-title{font-size:20px;font-weight:900;margin:5px 0}.danger{color:#ff7888}.info{color:#8fd3ff}
-
-.auth-container{max-width:420px;margin:40px auto;padding:20px}.auth-card{background:rgba(25,31,41,0.92);backdrop-filter:blur(6px);border:1px solid #2a303b;border-radius:16px;padding:24px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;background:#11161e;padding:4px;border-radius:10px}.auth-tab{background:transparent;color:#9da7b6;padding:10px;border-radius:8px;font-weight:bold;cursor:pointer}.auth-tab.active{background:#202733;color:#fff}
+.auth-container{max-width:420px;margin:40px auto;padding:20px}.auth-card{background:#191f29;border:1px solid #2a303b;border-radius:16px;padding:24px}.auth-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:20px;background:#11161e;padding:4px;border-radius:10px}.auth-tab{background:transparent;color:#9da7b6;padding:10px;border-radius:8px;font-weight:bold;cursor:pointer}.auth-tab.active{background:#202733;color:#fff}
 .loading-overlay{display:none;position:fixed;inset:0;background:rgba(8,10,15,0.85);z-index:999;align-items:center;justify-content:center;flex-direction:column}.loading-overlay.show{display:flex}.spinner{width:50px;height:50px;border:4px solid #303846;border-top-color:#20b56b;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:15px}@keyframes spin{to{transform:rotate(360deg)}}.loading-text{font-size:16px;font-weight:bold;color:#fff;letter-spacing:1px}
 
 .social-share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
@@ -55,10 +18,10 @@
 .facebook-share{background:#1877f2}
 
 .game-cards-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:10px}
-.game-card-item{background:linear-gradient(135deg,#1e2636,#111722);border:1px solid #2a303b;border-radius:12px;padding:14px;text-align:center;cursor:pointer;text-decoration:none;color:#fff;transition:0.2s}
+.game-card-item{background:linear-gradient(135deg,#1e2636,#111722);border:1px solid #2a303b;border-radius:12px;padding:10px;text-align:center;cursor:pointer;text-decoration:none;color:#fff;transition:0.2s;overflow:hidden;position:relative;min-height:150px;display:flex;flex-direction:column;justify-content:flex-end} .game-card-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.82;z-index:0}.game-card-item:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.78));z-index:1;pointer-events:none}.game-card-item>*:not(.game-card-image){position:relative;z-index:2}
 .game-card-item:hover{border-color:#ffcf72;transform:translateY(-2px)}
 .game-card-icon{font-size:28px;margin-bottom:6px}
-.game-card-title{font-size:13px;font-weight:900}
+.game-card-title{font-size:13px;font-weight:900;text-shadow:0 2px 5px #000}.game-card-icon{display:none}.game-card-image{transition:transform .35s ease,opacity .35s ease}.game-card-item:hover .game-card-image{transform:scale(1.04);opacity:.9}
 
 /* VIP Announcement Ticker */
 .vip-ticker-box{background:linear-gradient(90deg,#2b1d0c,#3b270e,#2b1d0c);border:1px solid #ffb300;border-radius:10px;padding:10px 14px;margin:12px;display:flex;align-items:center;gap:10px;box-shadow:0 0 15px rgba(255,179,0,0.2)}
@@ -108,6 +71,7 @@
 .help-care-input-row{display:flex;gap:7px;align-items:center}.help-care-attach{width:42px;height:42px;padding:0;background:#252e3d;color:#ffcf72;font-size:18px}.help-care-text{flex:1;min-width:0}.help-care-send{width:48px;height:42px;padding:0;background:#20b56b;color:#fff}.help-care-status{font-size:11px;color:#8fd3ff;min-height:16px;margin-top:5px}
 @media(max-width:420px){.help-care-card{margin:10px}.help-care-chat{height:280px}.help-care-cats{max-height:155px}}
 
+
 /* Help Care Welcome Loading */
 .help-care-welcome{display:none;position:fixed;inset:0;background:linear-gradient(145deg,rgba(8,10,15,.98),rgba(17,21,29,.98));z-index:1200;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:24px}
 .help-care-welcome.show{display:flex}
@@ -118,16 +82,60 @@
 .help-care-progress i{display:block;width:35%;height:100%;background:#20b56b;border-radius:10px;animation:helpCareLoad 1.15s ease-in-out infinite}
 @keyframes helpCarePulse{0%,100%{transform:scale(1);box-shadow:0 0 25px rgba(32,181,107,.25)}50%{transform:scale(1.08);box-shadow:0 0 40px rgba(32,181,107,.5)}}
 @keyframes helpCareLoad{0%{transform:translateX(-120%)}100%{transform:translateX(400%)}}
+/* APP SPLASH + AUTH VISUAL */
+.app-splash{position:fixed;inset:0;z-index:3000;background:#050914;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:1;visibility:visible;transition:opacity .55s ease,visibility .55s ease}
+.app-splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+.app-splash img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.app-splash:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(2,5,15,.08),rgba(2,5,15,.28) 55%,rgba(2,5,15,.82));pointer-events:none}
+.app-splash-content{position:absolute;z-index:2;left:0;right:0;bottom:6.5%;display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 20px}
+.app-splash-title{font-size:25px;font-weight:1000;color:#fff;text-shadow:0 3px 14px #000;margin-bottom:9px}
+.app-splash-sub{font-size:12px;color:#e9f5ff;text-shadow:0 2px 8px #000;margin-bottom:13px}
+.app-splash-bar{width:min(300px,78vw);height:7px;border-radius:20px;background:rgba(255,255,255,.22);overflow:hidden;border:1px solid rgba(255,255,255,.3);box-shadow:0 0 18px rgba(0,190,255,.35)}
+.app-splash-bar i{display:block;height:100%;width:0;border-radius:20px;background:linear-gradient(90deg,#00d9ff,#fff,#00d9ff);box-shadow:0 0 16px #00d9ff;animation:appSplashProgress 2.35s cubic-bezier(.2,.8,.2,1) forwards}
+.app-splash-percent{font-size:12px;font-weight:900;margin-top:8px;color:#fff;text-shadow:0 2px 8px #000}
+@keyframes appSplashProgress{0%{width:0}25%{width:24%}55%{width:61%}80%{width:86%}100%{width:100%}}
+.auth-visual{height:205px;margin:-4px -4px 18px;border-radius:14px;overflow:hidden;position:relative;background-image:url("https://i.postimg.cc/k5vpsGNw/file-000000001e4c8211a155cb7a18f1465e.png");background-size:cover;background-position:center 20%;border:1px solid #2e6aa0;box-shadow:0 8px 28px rgba(0,0,0,.3)}
+.auth-visual:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,9,22,.08),rgba(3,9,22,.82))}
+.auth-visual-brand{position:absolute;z-index:2;left:14px;right:14px;bottom:13px;display:flex;align-items:end;justify-content:space-between;gap:10px}
+.auth-visual-logo{font-size:27px;font-weight:1000;color:#ffd34d;text-shadow:0 2px 10px #000}
+.auth-visual-sub{font-size:10px;color:#fff;font-weight:800;text-shadow:0 2px 8px #000}
+.auth-card{overflow:hidden}
+@media(max-width:420px){.app-splash-content{bottom:5%}.app-splash-title{font-size:22px}.auth-visual{height:185px}}
+
+
+/* FULL-SCREEN AUTH THEME — LOGIN + REGISTRATION */
+#authScreen{position:fixed!important;inset:0;z-index:2500;width:100vw;min-height:100vh!important;overflow-y:auto;background:#030714!important}
+#authScreen .auth-container{position:relative;z-index:3;width:100%;max-width:100%;min-height:100vh;margin:0;padding:0 14px 34px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#authScreen .auth-container>div:first-child{display:none!important}
+#authScreen .auth-visual{position:fixed;inset:0;width:100vw;height:100vh!important;margin:0!important;border:0!important;border-radius:0!important;z-index:0;box-shadow:none;background-position:center center!important}
+#authScreen .auth-visual:after{background:linear-gradient(180deg,rgba(1,5,18,.18) 0%,rgba(1,5,18,.34) 35%,rgba(1,5,18,.82) 72%,rgba(1,5,18,.96) 100%)!important}
+#authScreen .auth-visual-brand{top:28px;bottom:auto;left:20px;right:20px;align-items:center}
+#authScreen .auth-visual-logo{font-size:34px;color:#ffd34d;text-shadow:0 3px 18px #000,0 0 18px rgba(0,217,255,.35)}
+#authScreen .auth-visual-sub{font-size:11px;letter-spacing:2px}
+#authScreen .auth-card{position:relative;z-index:5;width:min(450px,100%);margin:170px 0 0!important;padding:20px!important;border:1px solid rgba(87,181,255,.65)!important;border-radius:22px!important;background:linear-gradient(180deg,rgba(5,16,36,.86),rgba(4,10,24,.94))!important;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 55px rgba(0,0,0,.6),0 0 35px rgba(0,145,255,.16)}
+#authScreen .auth-tabs{background:rgba(4,10,23,.76);border:1px solid rgba(93,153,210,.22);border-radius:13px;padding:5px}
+#authScreen .auth-tab{padding:12px;color:#b9c8dc}
+#authScreen .auth-tab.active{background:linear-gradient(135deg,#00aef7,#1265ff);color:#fff;box-shadow:0 5px 18px rgba(0,174,247,.28)}
+#authScreen label{color:#d5e2f2;font-weight:700}
+#authScreen input{background:rgba(4,10,22,.72);border-color:rgba(91,151,211,.42);border-radius:11px;padding:13px 14px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03)}
+#authScreen input:focus{border-color:#00c9ff;box-shadow:0 0 0 2px rgba(0,201,255,.1),0 0 16px rgba(0,201,255,.12)}
+#authScreen .cash{background:linear-gradient(135deg,#00c9ff,#1265ff)!important;box-shadow:0 8px 22px rgba(0,174,247,.25);border-radius:12px;padding:13px}
+#authScreen .modal-note{color:#9db1c9}
+@media(max-width:520px){#authScreen .auth-container{padding:0 11px 22px}#authScreen .auth-card{margin-top:155px!important;padding:17px!important;border-radius:20px!important}#authScreen .auth-visual-brand{top:20px}#authScreen .auth-visual-logo{font-size:29px}#authScreen .auth-visual-sub{font-size:9px;letter-spacing:1.5px}}
 </style>
 </head>
 <body>
 
-<!-- অ্যাপ ওপেন হওয়ার সময়ের স্প্ল্যাশ/লোডিং স্ক্রিন (পিক সহ) -->
-<div id="splashScreen">
-  <img src="https://i.postimg.cc/k5vpsGNw/file-000000001e4c8211a155cb7a18f1465e.png" alt="Splash Logo" class="splash-logo-img">
-  <div class="splash-title">BD77Q Platform</div>
-  <div class="splash-sub">অ্যাপ লোড হচ্ছে, দয়া করে অপেক্ষা করুন...</div>
-  <div class="splash-spinner"></div>
+
+<!-- APP START SPLASH -->
+<div id="appSplash" class="app-splash">
+  <img src="https://i.postimg.cc/k5vpsGNw/file-000000001e4c8211a155cb7a18f1465e.png" alt="BD77Q App Loading">
+  <div class="app-splash-content">
+    <div class="app-splash-title">👑 BD77Q-এ আপনাকে স্বাগতম</div>
+    <div class="app-splash-sub">আপনার গেমিং অ্যাপ প্রস্তুত হচ্ছে... একটু অপেক্ষা করুন</div>
+    <div class="app-splash-bar"><i></i></div>
+    <div class="app-splash-percent" id="appSplashPercent">0%</div>
+  </div>
 </div>
 
 <div id="loadingOverlay" class="loading-overlay">
@@ -138,15 +146,22 @@
 <div class="app">
   
   <!-- AUTH SCREEN -->
-  <div id="authScreen" class="screen">
+  <div id="authScreen" class="screen active">
     <div class="auth-container">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
         <div>
           <div style="font-size:32px">👑</div>
           <div style="font-size:22px;font-weight:900;margin-top:2px">BD77Q</div>
         </div>
-      </div>
+</div>
       
+      <div class="auth-visual">
+        <div class="auth-visual-brand">
+          <div><div class="auth-visual-logo">🍎 BD77Q</div><div class="auth-visual-sub">PLAY • WIN • EARN</div></div>
+          <div style="font-size:24px">👑</div>
+        </div>
+      </div>
+
       <div class="auth-card">
         <div class="auth-tabs">
           <button id="tabLoginBtn" class="auth-tab active" type="button" onclick="switchAuthTab('login')">লগইন</button>
@@ -189,7 +204,7 @@
     <div class="header">
       <div class="logo"><span>👑</span> BD77Q</div>
       <div style="display:flex;align-items:center;gap:8px">
-        <div class="balance">💰 ৳ <span id="homeBalance">0</span></div>
+<div class="balance">💰 ৳ <span id="homeBalance">0</span></div>
         <button onclick="handleLogout()" style="background:#252b35;color:#ff7888;padding:6px 10px;font-size:11px;border-radius:8px">লগআউট</button>
       </div>
     </div>
@@ -199,17 +214,6 @@
       <div class="vip-ticker-icon">👑</div>
       <div class="vip-ticker-content">
         <span id="vipTickerText" class="vip-ticker-text">অ্যাডমিন প্যানেল থেকে ভিআইপি নোটিশ লোড হচ্ছে... নিয়মিত খেলুন এবং বোনাস জিতুন!</span>
-      </div>
-    </div>
-
-    <!-- Admin Banner Container -->
-    <div id="userBannerContainer" style="width:100%; max-width:520px; margin: 12px auto; padding: 0 12px; display:none;">
-      <div style="border-radius: 14px; overflow: hidden; background: #061b1e; border: 1px solid #19575d; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-        <img id="userBannerImg" src="" alt="Banner" style="width:100%; aspect-ratio:3/1; object-fit:cover; display:none;">
-        <div style="padding: 10px 12px; background: rgba(7,39,44,0.9);">
-          <b id="userBannerName" style="color: #28f0d0; font-size: 14px; display: block; margin-bottom: 3px;"></b>
-          <div id="userBannerText" style="font-size: 12px; color: #9fc4c1;"></div>
-        </div>
       </div>
     </div>
     
@@ -251,51 +255,40 @@
     <div class="card">
       <div style="font-size:16px;font-weight:900;margin-bottom:8px">🎮 All Games</div>
       <div class="game-cards-grid">
-        <!-- Lucky Roulette Spin Game Card (24h hide feature added with id="luckyRouletteCard") -->
-        <a href="lucky_roulette.html" id="luckyRouletteCard" class="game-card-item" style="background: linear-gradient(135deg, #b45309, #d97706); border-color:#ffcc00;">
-          <div class="game-card-icon">🎡</div>
-          <div class="game-card-title">Lucky Roulette</div>
-          <div style="font-size: 10px; color: #fff5cc; margin-top:2px;">ঘুরিয়ে জিতুন!</div>
-        </a>
         <a href="super_ace.html" target="_blank" class="game-card-item" style="background: linear-gradient(135deg, #4a00e0, #8e2de2);">
-          <div class="game-card-icon">👑</div>
+          <img class="game-card-image" alt="Super Ace Slot" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%2317004d%22%2F%3E%3Cstop%20offset%3D%22.55%22%20stop-color%3D%22%236d18c8%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23ff3cac%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22url(%23g)%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22155%22%20r%3D%22110%22%20fill%3D%22%23ffd43b%22%20opacity%3D%22.15%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2292%22%3E%E2%99%9B%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22220%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffe36e%22%20font-size%3D%2238%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3ESUPER%20ACE%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22265%22%20text-anchor%3D%22middle%22%20fill%3D%22white%22%20font-size%3D%2220%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3EROYAL%20SLOT%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">👑</div>
           <div class="game-card-title">Super Ace Slot</div>
           <div style="font-size: 10px; color: #ffd700; margin-top:2px;">খেলুন এবং বাড়ান!</div>
         </a>
         <a href="cny_slot.html" target="_blank" class="game-card-item">
-          <div class="game-card-icon">🧧</div>
+          <img class="game-card-image" alt="Chinese New Year" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22%237f1018%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22150%22%20r%3D%22105%22%20fill%3D%22%23dcae32%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22150%22%20r%3D%2282%22%20fill%3D%22%23b50f1c%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22185%22%20text-anchor%3D%22middle%22%20font-size%3D%2295%22%3E%F0%9F%A7%A7%3C%2Ftext%3E%3Ccircle%20cx%3D%2295%22%20cy%3D%2280%22%20r%3D%2222%22%20fill%3D%22%23ffd447%22%2F%3E%3Ccircle%20cx%3D%22505%22%20cy%3D%2280%22%20r%3D%2222%22%20fill%3D%22%23ffd447%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22285%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffe58a%22%20font-size%3D%2235%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3ECHINESE%20NEW%20YEAR%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">🧧</div>
           <div class="game-card-title">Chinese New Year</div>
         </a>
         <a href="slot.html" target="_blank" class="game-card-item">
-          <div class="game-card-icon">🎰</div>
+          <img class="game-card-image" alt="VIP Slot Game" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x2%3D%220%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%2328002f%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238d176f%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22url(%23g)%22%2F%3E%3Crect%20x%3D%22100%22%20y%3D%2265%22%20width%3D%22400%22%20height%3D%22175%22%20rx%3D%2224%22%20fill%3D%22%23111%22%20stroke%3D%22%23ffd34d%22%20stroke-width%3D%228%22%2F%3E%3Crect%20x%3D%22125%22%20y%3D%2290%22%20width%3D%22105%22%20height%3D%22125%22%20rx%3D%2212%22%20fill%3D%22%23eee%22%2F%3E%3Crect%20x%3D%22247%22%20y%3D%2290%22%20width%3D%22105%22%20height%3D%22125%22%20rx%3D%2212%22%20fill%3D%22%23eee%22%2F%3E%3Crect%20x%3D%22369%22%20y%3D%2290%22%20width%3D%22105%22%20height%3D%22125%22%20rx%3D%2212%22%20fill%3D%22%23eee%22%2F%3E%3Ctext%20x%3D%22177%22%20y%3D%22175%22%20text-anchor%3D%22middle%22%20font-size%3D%2265%22%3E7%3C%2Ftext%3E%3Ctext%20x%3D%22299%22%20y%3D%22175%22%20text-anchor%3D%22middle%22%20font-size%3D%2265%22%3E%E2%98%85%3C%2Ftext%3E%3Ctext%20x%3D%22421%22%20y%3D%22175%22%20text-anchor%3D%22middle%22%20font-size%3D%2265%22%3E7%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22295%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffd34d%22%20font-size%3D%2238%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3EVIP%20SLOT%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">🎰</div>
           <div class="game-card-title">VIP Slot Game</div>
         </a>
         <a href="game.html" target="_blank" class="game-card-item">
-          <div class="game-card-icon">🃏</div>
+          <img class="game-card-image" alt="Super Ace" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%2307111f%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23123d73%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20transform%3D%22translate(155%2050)%20rotate(-12)%22%3E%3Crect%20width%3D%22150%22%20height%3D%22220%22%20rx%3D%2214%22%20fill%3D%22white%22%2F%3E%3Ctext%20x%3D%2218%22%20y%3D%2255%22%20font-size%3D%2238%22%20fill%3D%22%23c1121f%22%3EA%3C%2Ftext%3E%3Ctext%20x%3D%2275%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2282%22%20fill%3D%22%23c1121f%22%3E%E2%99%A5%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(295%2042)%20rotate(8)%22%3E%3Crect%20width%3D%22150%22%20height%3D%22220%22%20rx%3D%2214%22%20fill%3D%22white%22%2F%3E%3Ctext%20x%3D%2218%22%20y%3D%2255%22%20font-size%3D%2238%22%3EK%3C%2Ftext%3E%3Ctext%20x%3D%2275%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2282%22%3E%E2%99%A0%3C%2Ftext%3E%3C%2Fg%3E%3Ctext%20x%3D%22300%22%20y%3D%22320%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffd75a%22%20font-size%3D%2240%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3ESUPER%20ACE%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">🃏</div>
           <div class="game-card-title">Super Ace</div>
         </a>
         <div class="game-card-item" onclick="showScreen('gameScreen')">
-          <div class="game-card-icon">✈️</div>
+          <img class="game-card-image" alt="Crash Game" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%230b2c55%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%2307101e%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22url(%23g)%22%2F%3E%3Cpath%20d%3D%22M0%20300%20Q170%20250%20290%20210%20T600%2070%22%20fill%3D%22none%22%20stroke%3D%22%23ff405b%22%20stroke-width%3D%228%22%2F%3E%3Cpath%20d%3D%22M0%20315%20Q170%20265%20290%20225%20T600%2085%22%20fill%3D%22none%22%20stroke%3D%22%23ff405b%22%20stroke-width%3D%2225%22%20opacity%3D%22.15%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%22105%22%3E%E2%9C%88%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22315%22%20text-anchor%3D%22middle%22%20fill%3D%22%23fff%22%20font-size%3D%2242%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3ECRASH%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">✈️</div>
           <div class="game-card-title">Crash Game</div>
         </div>
         <div class="game-card-item" onclick="alert('লুডু লবি শীঘ্রই আসছে!')">
-          <div class="game-card-icon">🎲</div>
+          <img class="game-card-image" alt="Ludo" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22%230b5b38%22%2F%3E%3Crect%20x%3D%22135%22%20y%3D%2240%22%20width%3D%22330%22%20height%3D%22280%22%20rx%3D%2224%22%20fill%3D%22%23fff%22%2F%3E%3Crect%20x%3D%22155%22%20y%3D%2260%22%20width%3D%22125%22%20height%3D%22100%22%20rx%3D%2216%22%20fill%3D%22%23ef4444%22%2F%3E%3Crect%20x%3D%22320%22%20y%3D%2260%22%20width%3D%22125%22%20height%3D%22100%22%20rx%3D%2216%22%20fill%3D%22%2322c55e%22%2F%3E%3Crect%20x%3D%22155%22%20y%3D%22200%22%20width%3D%22125%22%20height%3D%22100%22%20rx%3D%2216%22%20fill%3D%22%23facc15%22%2F%3E%3Crect%20x%3D%22320%22%20y%3D%22200%22%20width%3D%22125%22%20height%3D%22100%22%20rx%3D%2216%22%20fill%3D%22%233b82f6%22%2F%3E%3Ccircle%20cx%3D%22300%22%20cy%3D%22180%22%20r%3D%2243%22%20fill%3D%22%23f8fafc%22%20stroke%3D%22%23333%22%20stroke-width%3D%225%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22200%22%20text-anchor%3D%22middle%22%20font-size%3D%2255%22%3E%F0%9F%8E%B2%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22345%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffe27a%22%20font-size%3D%2230%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3ELUDO%20LOBBY%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">🎲</div>
           <div class="game-card-title">লুডু লবি</div>
         </div>
         <a href="super_ace_52.html" target="_blank" class="game-card-item" style="background: linear-gradient(135deg, #7c2d12, #b45309);">
-          <div class="game-card-icon">🪙</div>
+          <img class="game-card-image" alt="Super Ace 52 Cards VIP" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22%23421306%22%2F%3E%3Cg%20transform%3D%22translate(155%2055)%20rotate(-12)%22%3E%3Crect%20width%3D%22150%22%20height%3D%22220%22%20rx%3D%2214%22%20fill%3D%22%23fff%22%2F%3E%3Ctext%20x%3D%2218%22%20y%3D%2252%22%20font-size%3D%2238%22%3EA%3C%2Ftext%3E%3Ctext%20x%3D%2275%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2282%22%3E%E2%99%A0%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(300%2045)%20rotate(3)%22%3E%3Crect%20width%3D%22150%22%20height%3D%22220%22%20rx%3D%2214%22%20fill%3D%22%23fff%22%2F%3E%3Ctext%20x%3D%2218%22%20y%3D%2252%22%20font-size%3D%2238%22%20fill%3D%22%23c1121f%22%3EK%3C%2Ftext%3E%3Ctext%20x%3D%2275%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2282%22%20fill%3D%22%23c1121f%22%3E%E2%99%A5%3C%2Ftext%3E%3C%2Fg%3E%3Cg%20transform%3D%22translate(220%2072)%20rotate(20)%22%3E%3Crect%20width%3D%22150%22%20height%3D%22220%22%20rx%3D%2214%22%20fill%3D%22%23fff%22%20opacity%3D%22.92%22%2F%3E%3Ctext%20x%3D%2218%22%20y%3D%2252%22%20font-size%3D%2238%22%20fill%3D%22%23c1121f%22%3EQ%3C%2Ftext%3E%3Ctext%20x%3D%2275%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2282%22%20fill%3D%22%23c1121f%22%3E%E2%99%A6%3C%2Ftext%3E%3C%2Fg%3E%3Ctext%20x%3D%22300%22%20y%3D%22335%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffe047%22%20font-size%3D%2230%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3E52%20CARDS%20%E2%80%A2%20VIP%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">🪙</div>
           <div class="game-card-title">Super Ace 52 Cards VIP</div>
           <div style="font-size: 10px; color: #fde047; margin-top:2px;">VIP Casino</div>
         </a>
         <a href="mahjong.html" target="_blank" class="game-card-item" style="background: linear-gradient(135deg, #065f46, #047857);">
-          <div class="game-card-icon">🀄</div>
+          <img class="game-card-image" alt="Mahjong Ways" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22g%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23064e3b%22%2F%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23022c22%22%2F%3E%3C%2FlinearGradient%3E%3C%2Fdefs%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22url(%23g)%22%2F%3E%3Cg%20fill%3D%22%23f8f5e8%22%20stroke%3D%22%23c6a85b%22%20stroke-width%3D%225%22%3E%3Crect%20x%3D%22135%22%20y%3D%2280%22%20width%3D%2280%22%20height%3D%22120%22%20rx%3D%2210%22%2F%3E%3Crect%20x%3D%22235%22%20y%3D%2255%22%20width%3D%2280%22%20height%3D%22120%22%20rx%3D%2210%22%2F%3E%3Crect%20x%3D%22335%22%20y%3D%2280%22%20width%3D%2280%22%20height%3D%22120%22%20rx%3D%2210%22%2F%3E%3Crect%20x%3D%22185%22%20y%3D%22190%22%20width%3D%2280%22%20height%3D%22120%22%20rx%3D%2210%22%2F%3E%3Crect%20x%3D%22285%22%20y%3D%22175%22%20width%3D%2280%22%20height%3D%22120%22%20rx%3D%2210%22%2F%3E%3C%2Fg%3E%3Ctext%20x%3D%22175%22%20y%3D%22165%22%20text-anchor%3D%22middle%22%20font-size%3D%2258%22%3E%F0%9F%80%84%3C%2Ftext%3E%3Ctext%20x%3D%22275%22%20y%3D%22140%22%20text-anchor%3D%22middle%22%20font-size%3D%2258%22%3E%F0%9F%80%84%3C%2Ftext%3E%3Ctext%20x%3D%22375%22%20y%3D%22165%22%20text-anchor%3D%22middle%22%20font-size%3D%2258%22%3E%F0%9F%80%84%3C%2Ftext%3E%3Ctext%20x%3D%22225%22%20y%3D%22275%22%20text-anchor%3D%22middle%22%20font-size%3D%2258%22%3E%F0%9F%80%84%3C%2Ftext%3E%3Ctext%20x%3D%22325%22%20y%3D%22260%22%20text-anchor%3D%22middle%22%20font-size%3D%2258%22%3E%F0%9F%80%84%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22340%22%20text-anchor%3D%22middle%22%20fill%3D%22%236ee7b7%22%20font-size%3D%2230%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3EMAHJONG%20WAYS%3C%2Ftext%3E%3C%2Fsvg%3E"><div class="game-card-icon">🀄</div>
           <div class="game-card-title">Mahjong Ways</div>
           <div style="font-size: 10px; color: #6ee7b7; margin-top:2px;">Realistic Edition</div>
-        </a>
-        <a href="Casino.html" class="game-card-item" style="background: linear-gradient(135deg, #4c1d95, #7c3aed); border-color:#c084fc;">
-          <div class="game-card-icon">👑</div>
-          <div class="game-card-title">Super Ace VIP - Royal Casino</div>
-          <div style="font-size: 10px; color: #f5d0fe; margin-top:2px;">VIP Casino • Play</div>
         </a>
       </div>
     </div>
@@ -332,7 +325,7 @@
     <div class="header">
       <div class="logo">👤 Profile</div>
       <div style="display:flex; align-items:center; gap:8px;">
-        <div class="balance">💰 ৳ <span id="profileBalance">0</span></div>
+<div class="balance">💰 ৳ <span id="profileBalance">0</span></div>
       </div>
     </div>
     
@@ -359,6 +352,8 @@
 
     <div class="card"><div style="font-size:18px;font-weight:900;margin-bottom:10px">⚙️ Settings</div><button class="small" style="width:100%" onclick="openPasswordModal()">🔐 Transaction Password</button><div id="passwordStatus" style="font-size:12px;color:#9da7b6;margin-top:9px">Password not set</div></div>
   </div>
+
+
 
   <!-- HELP CARE WELCOME LOADING -->
   <div id="helpCareWelcomeLoading" class="help-care-welcome" aria-hidden="true">
@@ -652,15 +647,6 @@ let depositInterval = null;
 let depositTimeLeft = 300;
 
 window.addEventListener('DOMContentLoaded',()=>{
-    // স্প্ল্যাশ স্ক্রিন ১.৫ সেকেন্ড পর স্মুথলি হাইড করা হবে
-    setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
-        if(splash){
-            splash.style.opacity = '0';
-            setTimeout(() => splash.style.display = 'none', 500);
-        }
-    }, 1500);
-
     const urlParams = new URLSearchParams(window.location.search);
     const refFromUrl = urlParams.get('ref');
     if(refFromUrl){
@@ -676,69 +662,9 @@ window.addEventListener('DOMContentLoaded',()=>{
     updateDepositPreview();
     renderWithdrawHistory();
     renderTopReferrers(usersDb);
-    checkRouletteCardVisibility();
-    renderHomeBanner();
 });
 
-// হোমপেজে ব্যানার রেন্ডার করার ফাংশন (LocalStorage থেকে Active ব্যানার ফেচ করবে)
-function renderHomeBanner() {
-    let savedBanners = JSON.parse(localStorage.getItem("adminBanners") || "[]");
-    let activeBanners = savedBanners.filter(b => b.active);
-    let bannerContainer = document.getElementById("userBannerContainer");
-    
-    if (!bannerContainer) return;
 
-    if (activeBanners.length > 0) {
-        // Priority অনুযায়ী সর্ট করা
-        activeBanners.sort((a, b) => a.priority - b.priority);
-        let currentBanner = activeBanners[0];
-        
-        let imgElement = document.getElementById("userBannerImg");
-        let nameElement = document.getElementById("userBannerName");
-        let textElement = document.getElementById("userBannerText");
-        
-        imgElement.src = currentBanner.image;
-        imgElement.style.display = "block";
-        nameElement.textContent = currentBanner.name;
-        textElement.textContent = currentBanner.description || '';
-        
-        bannerContainer.style.display = "block";
-        
-        // লিংকে ক্লিক করলে রিডাইরেক্ট করা
-        if (currentBanner.link) {
-            imgElement.style.cursor = "pointer";
-            imgElement.onclick = function() {
-                window.open(currentBanner.link, '_blank');
-            };
-        } else {
-            imgElement.style.cursor = "default";
-            imgElement.onclick = null;
-        }
-    } else {
-        bannerContainer.style.display = "none";
-    }
-}
-
-// লাকি রুলেট কার্ড ২৪ ঘণ্টা লুকিয়ে রাখার বা দেখানোর ফাংশন
-function checkRouletteCardVisibility() {
-    const phone = localStorage.getItem('aviator_current_user') || '';
-    const lastSpinTime = localStorage.getItem('lastSpinTime_' + phone);
-    const COOLDOWN_TIME = 24 * 60 * 60 * 1000; // ২৪ ঘণ্টা
-    const rouletteCard = document.getElementById('luckyRouletteCard');
-
-    if (!rouletteCard) return;
-
-    if (lastSpinTime) {
-        const elapsed = Date.now() - parseInt(lastSpinTime);
-        if (elapsed < COOLDOWN_TIME) {
-            rouletteCard.style.display = 'none'; // ২৪ ঘণ্টা পূর্ণ না হলে কার্ড হাইড থাকবে
-        } else {
-            rouletteCard.style.display = 'block'; // ২৪ ঘণ্টা পার হলে আবার শো করবে
-        }
-    } else {
-        rouletteCard.style.display = 'block';
-    }
-}
 
 /* HELP CARE - AI Assistant + Firebase supportTickets + 24H AUTO CLEANUP */
 let helpCareCategory='Account Problem';
@@ -765,6 +691,8 @@ function previewHelpCareImage(e){const f=e.target.files&&e.target.files[0];if(!f
 function removeHelpCareImage(){helpCareSelectedImage='';const i=document.getElementById('helpCareImage');const img=document.getElementById('helpCarePreviewImg');const box=document.getElementById('helpCareImagePreview');if(i)i.value='';if(img)img.src='';if(box)box.classList.remove('show');}
 function addHelpCareBubble(type,text,image,time,label){const box=document.getElementById('helpCareChat');if(!box)return;const d=document.createElement('div');d.className='help-care-msg '+type;if(label){const lb=document.createElement('div');lb.style.cssText='font-size:10px;font-weight:900;margin-bottom:4px;opacity:.8';lb.textContent=label;d.appendChild(lb);}const tx=document.createElement('div');tx.innerHTML=escapeHelpCareHtml(text||'');d.appendChild(tx);if(image){const im=document.createElement('img');im.className='help-care-img';im.src=image;im.alt='Support image';d.appendChild(im);}if(time){const tm=document.createElement('div');tm.style.cssText='font-size:9px;opacity:.65;margin-top:4px';tm.textContent=time;d.appendChild(tm);}box.appendChild(d);}
 
+/* Local AI Assistant: common Help Care questions are answered instantly.
+   For unknown/complex questions the ticket stays Pending for Admin. */
 function getHelpCareAIReply(category,message){
   const q=String(message||'').toLowerCase();
   if(/password|পাসওয়ার্ড|পাসওয়ার্ড|security/.test(q)||/password/i.test(category))
@@ -1121,8 +1049,6 @@ function syncAppBalance(){
     ['homeBalance','profileBalance','profileBalance2','moneyBalance'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(balance)});
     const h=document.getElementById('homeHistory');if(h)h.innerHTML=history.length?history.slice(0,6).map(x=>`<div class="item"><span>Crash</span><strong>${x.toFixed(2)}×</strong></div>`).join(''):'<div class="item"><span>Round</span><strong>Waiting...</strong></div>';
     updateDepositNumberDisplay();
-    checkRouletteCardVisibility();
-    renderHomeBanner();
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
@@ -1596,5 +1522,20 @@ function saveNickname(){
 
 document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','depositModal','depositSuccessModal','moneyModal','withdrawSuccessModal','passwordModal','internationalSmsModal','helpLineModal'].forEach(id=>closeProfileModal(id)),closePasswordModal(),closeHelpLineModal())})
 </script>
+
+<script>
+(function(){
+  const splash=document.getElementById('appSplash');
+  const pct=document.getElementById('appSplashPercent');
+  if(!splash)return;
+  const started=Date.now();
+  const timer=setInterval(()=>{
+    const value=Math.min(100,Math.round(((Date.now()-started)/2350)*100));
+    if(pct)pct.textContent=value+'%';
+    if(value>=100){clearInterval(timer);setTimeout(()=>splash.classList.add('hide'),180);}
+  },50);
+})();
+</script>
+
 </body>
 </html>
