@@ -823,25 +823,30 @@ let depositInterval = null;
 let depositTimeLeft = 300;
 
 window.addEventListener('DOMContentLoaded',()=>{
-    // Referral link: ?ref=CODE — registration-এ কোড নিজে থেকেই বসবে।
-    const urlParams = new URLSearchParams(window.location.search);
-    const refFromUrl = String(urlParams.get('ref') || '').trim().toUpperCase();
-    if(refFromUrl){
-        sessionStorage.setItem('aviator_auto_ref_code', refFromUrl);
-        const regReferInput = document.getElementById('regReferCode');
-        if(regReferInput){
-            regReferInput.value = refFromUrl;
-            regReferInput.readOnly = true;
+    // AUTO REFERRAL LINK: ?ref=CODE থেকে Referral Code নিজে থেকেই ধরবে।
+    // পুরোনো referral/manual system অপরিবর্তিত রাখা হয়েছে।
+    try{
+        const urlParams = new URLSearchParams(window.location.search);
+        const refFromUrl = String(urlParams.get('ref') || '').trim();
+        if(refFromUrl){
+            localStorage.setItem('aviator_pending_referral_code', refFromUrl.toUpperCase());
+            const regReferInput = document.getElementById('regReferCode');
+            if(regReferInput){
+                regReferInput.value = refFromUrl.toUpperCase();
+                regReferInput.readOnly = true;
+                regReferInput.style.opacity = '0.85';
+            }
+            if(typeof switchAuthTab === 'function') switchAuthTab('register');
+        }else{
+            const savedRef = localStorage.getItem('aviator_pending_referral_code');
+            const regReferInput = document.getElementById('regReferCode');
+            if(savedRef && regReferInput && !regReferInput.value.trim()){
+                regReferInput.value = savedRef;
+                regReferInput.readOnly = true;
+                regReferInput.style.opacity = '0.85';
+            }
         }
-        switchAuthTab('register');
-    } else {
-        const savedRef = String(sessionStorage.getItem('aviator_auto_ref_code') || '').trim().toUpperCase();
-        const regReferInput = document.getElementById('regReferCode');
-        if(savedRef && regReferInput){
-            regReferInput.value = savedRef;
-            regReferInput.readOnly = true;
-        }
-    }
+    }catch(e){ console.warn('Auto referral link setup:', e); }
 
     checkAuthStatus();
     startCountdown();
@@ -1008,14 +1013,12 @@ function switchAuthTab(tab){
     }
 }
 
-async async function handleRegister(){
+async function handleRegister(){
     const name = document.getElementById('regName').value.trim();
     const phone = document.getElementById('regPhone').value.trim();
     const password = document.getElementById('regPassword').value;
-    // URL referral code has priority; manual entry is only a fallback.
-    const urlRefCode = String(new URLSearchParams(window.location.search).get('ref') || '').trim().toUpperCase();
-    const savedRefCode = String(sessionStorage.getItem('aviator_auto_ref_code') || '').trim().toUpperCase();
-    const inputReferCode = urlRefCode || savedRefCode || document.getElementById('regReferCode').value.trim().toUpperCase();
+    const inputEl = document.getElementById('regReferCode');
+    const inputReferCode = (inputEl && inputEl.value.trim()) || localStorage.getItem('aviator_pending_referral_code') || '';
     const msg = document.getElementById('regMsg');
 
     if(!name){ msg.textContent = 'দয়া করে আপনার নাম লিখুন।'; return; }
@@ -1114,6 +1117,7 @@ async async function handleRegister(){
         currentUserPhone = phone;
         window.currentUserPhone = phone;
         localStorage.setItem('aviator_current_user', phone);
+        localStorage.removeItem('aviator_pending_referral_code');
         balance = 0;
         
         if(window.fbDb && window.fbRef){
@@ -1130,9 +1134,6 @@ async async function handleRegister(){
         }
 
         msg.textContent = '';
-        sessionStorage.removeItem('aviator_auto_ref_code');
-        const regReferInput = document.getElementById('regReferCode');
-        if(regReferInput) regReferInput.readOnly = false;
         checkAuthStatus();
     });
 }
