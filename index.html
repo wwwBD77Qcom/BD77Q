@@ -140,6 +140,13 @@
 .vip-bottom-nav{grid-template-columns:repeat(5,1fr);padding:5px 3px;background:#101010;border-top:1px solid #2a2a2a}.vip-bottom-nav button{font-family:Georgia,serif;padding:6px 2px;color:#777;border-radius:10px}.vip-bottom-nav button span{display:block;font-size:23px;line-height:25px}.vip-bottom-nav button small{display:block;font-size:11px;font-weight:900}.vip-bottom-nav button.active{color:#ff9b2e;background:transparent}
 .vip-promo-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;align-items:center;justify-content:center;padding:14px}.vip-promo-modal.show{display:flex}.vip-promo-box{width:min(460px,100%);background:#181818;border:1px solid #8a5b2c;border-radius:18px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}.vip-promo-box h2{margin:0 0 12px;color:#ffd34d;font-family:Georgia,serif}.vip-offer{background:linear-gradient(135deg,#45101a,#171717);border:1px solid #633b2a;border-radius:12px;padding:13px;margin:8px 0}.vip-offer strong{display:block;font-size:17px}.vip-offer small{color:#aaa;display:block;margin-top:4px}
 @media(max-width:420px){.vip-home-head{height:66px}.vip-brand{font-size:20px}.vip-menu-icon{font-size:22px}.vip-balance-pill{height:40px;font-size:16px}.vip-circle-action{width:40px;height:40px}.vip-hero-banner{height:195px}.hero-brand{font-size:31px}.hero-line{font-size:17px}.hero-amount{font-size:19px}.hero-small{font-size:15px}.hero-gift{font-size:48px}.hero-star{font-size:70px}.vip-promo-card{height:108px}.vip-promo-card span{font-size:14px}.vip-games-grid{grid-template-columns:repeat(3,1fr);gap:7px}.vip-games-grid .game-card-item{min-height:145px}.vip-category-tabs button{font-size:12px;padding:10px 3px}.vip-section-title b{font-size:21px}.vip-bottom-nav button span{font-size:21px}.vip-bottom-nav button small{font-size:10px}}
+
+/* Admin Dynamic Games */
+.dynamic-admin-games-title{margin:12px 12px 8px;font-size:16px;font-weight:900;color:#ffcf72}
+.game-card-item.admin-dynamic-game{display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.admin-dynamic-game .game-card-image{display:block}
+.admin-dynamic-game .game-card-icon{display:none}
+.admin-dynamic-game .dynamic-game-badge{position:absolute;left:7px;top:7px;z-index:4;background:rgba(0,0,0,.62);padding:3px 6px;border-radius:8px;font-size:9px;font-weight:900}
 </style>
 
 <style id="myAccountVipStyle">
@@ -154,37 +161,7 @@
 @media(max-width:380px){.my-account-profile{grid-template-columns:78px 1fr}.my-account-avatar-wrap{width:78px;height:78px}.my-account-avatar{width:78px;height:78px;font-size:26px}.profile-avatar-edit{width:28px;height:28px;font-size:13px}.vip-level-topline>#accountVipLabel{font-size:15px}.my-account-phone{font-size:20px}.my-account-name{font-size:15px}.my-account-title{font-size:27px}.account-menu-grid{gap:15px 4px}.account-menu-icon{width:58px;height:58px;font-size:25px}.account-menu-item{font-size:12px;min-height:100px}}
 .feature-list{display:grid;gap:8px}.feature-row{background:#11161e;border:1px solid #29313d;border-radius:10px;padding:11px;display:flex;justify-content:space-between;gap:10px}.feature-row strong{color:#7ed6a7}.bank-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.bank-method-btn{background:#202733;color:#fff}.bank-method-btn.active{background:#fff;color:#111}
 </style>
-
-<style id="global-back-button-style">
-#globalBackButton{
-  position:fixed;
-  top:12px;
-  left:12px;
-  z-index:99999;
-  display:none;
-  align-items:center;
-  gap:6px;
-  border:0;
-  border-radius:12px;
-  padding:8px 12px;
-  background:rgba(15,23,42,.92);
-  color:#fff;
-  font-size:13px;
-  font-weight:700;
-  box-shadow:0 4px 14px rgba(0,0,0,.22);
-  cursor:pointer;
-  backdrop-filter:blur(6px);
-}
-#globalBackButton.show{display:flex}
-#globalBackButton i{font-size:13px}
-</style>
-
 </head>
-
-<button id="globalBackButton" type="button" aria-label="Back" onclick="history.back()">
-  <i class="fa-solid fa-arrow-left"></i><span>ব্যাক</span>
-</button>
-
 <body>
 
 
@@ -337,6 +314,8 @@
           <div style="font-size: 10px; color: #6ee7b7; margin-top:2px;">Realistic Edition</div>
         </a>
       </div>
+      <div id="adminDynamicGamesTitle" class="dynamic-admin-games-title" style="display:none">🎮 Admin Games</div>
+      <div class="vip-games-grid" id="adminDynamicGamesGrid"></div>
 
   <div class="vip-quick-grid">
     <button onclick="openProfileModal('referModal')"><span>♙</span><b>Invite Friends</b><small>Referral & 3% Rebate</small></button>
@@ -2134,6 +2113,30 @@ function openProfileLevelRules(){
 })();
 </script>
 
+
+<script>
+(function(){
+  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+  window.renderAdminDynamicGames=function(value){
+    const grid=document.getElementById('adminDynamicGamesGrid');const title=document.getElementById('adminDynamicGamesTitle');if(!grid)return;
+    const games=value||{};const items=Object.keys(games).map(id=>({id,...games[id]})).filter(g=>g.active!==false && g.url).sort((a,b)=>Number(a.order||1)-Number(b.order||1));
+    if(!items.length){grid.innerHTML='';if(title)title.style.display='none';try{filterVipGames();}catch(e){}return;}
+    if(title)title.style.display='block';
+    grid.innerHTML=items.map(g=>{
+      const safeUrl=esc(g.url);const img=g.image?`<img class="game-card-image" alt="${esc(g.name||'Game')}" src="${esc(g.image)}" onerror="this.style.opacity=.25">`:'';
+      return `<a class="game-card-item admin-dynamic-game" href="${safeUrl}" target="_blank" rel="noopener"><span class="dynamic-game-badge">ADMIN</span>${img}<div class="game-card-icon">🎮</div><div class="game-card-title">${esc(g.name||'Game')}</div>${g.description?`<div style="font-size:9px;opacity:.85;margin-top:2px">${esc(g.description)}</div>`:''}</a>`;
+    }).join('');
+    try{filterVipGames();}catch(e){}
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    try{
+      const cached=window.adminLiveGames;
+      if(cached)window.renderAdminDynamicGames(cached);
+    }catch(e){}
+  });
+})();
+</script>
+
 <!-- REALTIME SYNC BRIDGE: existing features untouched; only adds live Firebase listeners. -->
 <script type="module">
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -2164,6 +2167,10 @@ function openProfileLevelRules(){
     bind('supportTickets','adminLiveSupportTickets',v=>{
       window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'supportTickets',value:v}}));
     });
+    bind('games','adminLiveGames',v=>{
+      try { window.renderAdminDynamicGames && window.renderAdminDynamicGames(v); } catch(e) { console.warn('Dynamic games render:',e); }
+      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'games',value:v}}));
+    });
   } catch(e) { console.warn('Realtime sync bridge unavailable:', e); }
 </script>
 
@@ -2188,30 +2195,6 @@ function openProfileLevelRules(){
       }
     }
   } catch(e) { console.warn('Auto referral setup:', e); }
-})();
-</script>
-
-
-<script id="global-back-button-script">
-(function(){
-  function updateBackButton(){
-    var btn=document.getElementById('globalBackButton');
-    if(!btn) return;
-    var screens=document.querySelectorAll('.screen.active');
-    var active=screens.length ? screens[0] : null;
-    var id=active ? active.id : '';
-    // Keep the main Home screen clean; show Back on inner screens/pages.
-    var isHome=(id==='homeScreen' || id==='loginScreen' || id==='registerScreen');
-    btn.classList.toggle('show', !isHome);
-  }
-  document.addEventListener('DOMContentLoaded',function(){
-    updateBackButton();
-    var observer=new MutationObserver(updateBackButton);
-    observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
-  });
-  window.addEventListener('popstate',function(){
-    setTimeout(updateBackButton,50);
-  });
 })();
 </script>
 
