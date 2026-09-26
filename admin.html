@@ -57,7 +57,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 <!-- Firebase SDKs & Config (Modular CDN) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, get, set, update, child, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, get, set, update, child, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
@@ -1074,6 +1074,70 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       fetchRequests();
   }
 
+
+  // ================= REALTIME ADMIN SYNC BRIDGE =================
+  // Existing admin functions are preserved. These listeners only refresh
+  // the existing dashboard when the User App/Admin changes shared Firebase data.
+  function adminDashboardOpen(){
+      const el=document.getElementById('adminDashboardScreen');
+      return !!(el && el.classList.contains('active'));
+  }
+  onValue(ref(db,'users'), snapshot=>{
+      if(!snapshot.exists()) return;
+      const usersData=snapshot.val()||{};
+      const countEl=document.getElementById('totalUsersCount');
+      if(countEl) countEl.textContent=Object.keys(usersData).length;
+      window.adminLiveUsers=usersData;
+      if(adminDashboardOpen() && typeof loadReferralEarningsAdmin==='function') loadReferralEarningsAdmin();
+  });
+  onValue(ref(db,'requests'), ()=>{
+      if(adminDashboardOpen() && typeof fetchRequests==='function') fetchRequests();
+  });
+  onValue(ref(db,'withdrawRequests'), ()=>{
+      if(adminDashboardOpen() && typeof fetchRequests==='function') fetchRequests();
+  });
+  onValue(ref(db,'supportTickets'), ()=>{
+      if(adminDashboardOpen() && typeof fetchSupportTickets==='function') fetchSupportTickets();
+  });
+  onValue(ref(db,'settings/numbers'), snapshot=>{
+      if(!snapshot.exists()) return;
+      const v=snapshot.val()||{};
+      window.adminLiveNumbers=v;
+      if(adminDashboardOpen()){
+        const b=document.getElementById('adminBkash'), n=document.getElementById('adminNagad'), r=document.getElementById('adminRocket');
+        if(b && document.activeElement!==b) b.value=v.bKash||'';
+        if(n && document.activeElement!==n) n.value=v.Nagad||'';
+        if(r && document.activeElement!==r) r.value=v.Rocket||'';
+      }
+  });
+  onValue(ref(db,'settings/officialNotice'), snapshot=>{
+      const v=snapshot.exists()?snapshot.val():''; window.adminLiveOfficialNotice=v;
+      if(adminDashboardOpen()){ const e=document.getElementById('adminNoticeText'); if(e && document.activeElement!==e) e.value=v||''; }
+  });
+  onValue(ref(db,'settings/vipAnnouncement'), snapshot=>{
+      const v=snapshot.exists()?snapshot.val():''; window.adminLiveVipAnnouncement=v;
+      if(adminDashboardOpen()){ const e=document.getElementById('adminVipNoticeText'); if(e && document.activeElement!==e) e.value=v||''; }
+  });
+  onValue(ref(db,'settings/referralRewards'), snapshot=>{
+      const v=snapshot.exists()?snapshot.val():{}; window.adminLiveReferralRewards=v;
+      if(adminDashboardOpen()){
+        const rate=document.getElementById('adminDepositRebateRate'), min=document.getElementById('adminReferralMinDeposit');
+        if(rate && document.activeElement!==rate && v.depositRebatePercent!==undefined) rate.value=v.depositRebatePercent;
+        if(min && document.activeElement!==min && v.minimumDeposit!==undefined) min.value=v.minimumDeposit;
+      }
+  });
+  onValue(ref(db,'settings/banners'), snapshot=>{
+      window.adminLiveBanners=snapshot.exists()?(snapshot.val()||{}):{};
+      if(adminDashboardOpen() && typeof fetchBanners==='function') fetchBanners();
+  });
+  onValue(ref(db,'settings/entryAnnouncement'), snapshot=>{
+      window.adminLiveEntryAnnouncement=snapshot.exists()?snapshot.val():null;
+  });
+  onValue(ref(db,'suggestions'), snapshot=>{
+      window.adminLiveSuggestions=snapshot.exists()?(snapshot.val()||{}):{};
+  });
+  // ================================================================
+
   window.addEventListener('DOMContentLoaded', initAdmin);
   setTimeout(()=>window.loadEntryAnnouncement && window.loadEntryAnnouncement(), 500);
 </script>
@@ -1364,6 +1428,100 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
     </div>
   </div>
 </div>
+
+<!-- Dynamic Game Management: added without removing existing admin features -->
+<style>
+#dynamicGameManagerCard{margin-top:16px}
+.dgm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.dgm-grid .full{grid-column:1/-1}
+.dgm-input{width:100%;box-sizing:border-box;padding:10px 12px;border:1px solid #394150;border-radius:10px;background:#111722;color:#fff;outline:none}
+.dgm-input:focus{border-color:#ffcf72}
+.dgm-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.dgm-btn{border:0;border-radius:10px;padding:9px 13px;font-weight:800;cursor:pointer}
+.dgm-primary{background:#ffcf72;color:#111}
+.dgm-secondary{background:#273142;color:#fff}
+.dgm-danger{background:#ef4444;color:#fff}
+.dgm-list{display:grid;gap:9px;margin-top:14px}
+.dgm-item{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:center;background:#111722;border:1px solid #2d3748;border-radius:12px;padding:9px}
+.dgm-thumb{width:62px;height:50px;object-fit:cover;border-radius:8px;background:#202938}
+.dgm-meta{min-width:0}.dgm-title{font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dgm-url{font-size:11px;color:#9da7b6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dgm-status{font-size:11px;font-weight:800}.dgm-on{color:#4ade80}.dgm-off{color:#f87171}
+@media(max-width:600px){.dgm-grid{grid-template-columns:1fr}.dgm-item{grid-template-columns:50px 1fr}.dgm-item .dgm-item-actions{grid-column:1/-1}.dgm-thumb{width:50px;height:45px}}
+</style>
+<div id="dynamicGameManagerCard" class="card">
+  <div style="font-size:17px;font-weight:900;margin-bottom:5px;color:#ffcf72">🎮 গেম ম্যানেজমেন্ট</div>
+  <div style="font-size:12px;color:#9da7b6;margin-bottom:12px">এখান থেকে নতুন গেম যোগ করলে Firebase-এর <b>games</b> তালিকায় সংরক্ষণ হবে। User App-এ Dynamic Game Listener যুক্ত থাকলে নতুন গেম স্বয়ংক্রিয়ভাবে দেখাবে।</div>
+  <div class="dgm-grid">
+    <input id="dgmName" class="dgm-input" placeholder="গেমের নাম">
+    <input id="dgmOrder" class="dgm-input" type="number" min="0" placeholder="Serial / Order (যেমন 1)">
+    <input id="dgmUrl" class="dgm-input full" placeholder="Game Link / URL (https://...)" type="url">
+    <input id="dgmImage" class="dgm-input full" placeholder="Thumbnail Image URL (https://...)" type="url">
+    <input id="dgmDescription" class="dgm-input full" placeholder="গেমের সংক্ষিপ্ত বর্ণনা (ঐচ্ছিক)">
+  </div>
+  <div class="dgm-actions">
+    <button id="dgmSaveBtn" class="dgm-btn dgm-primary" type="button">➕ গেম যোগ করুন</button>
+    <button id="dgmCancelBtn" class="dgm-btn dgm-secondary" type="button" style="display:none">✖ বাতিল</button>
+    <button id="dgmRefreshBtn" class="dgm-btn dgm-secondary" type="button">↻ Refresh</button>
+  </div>
+  <div id="dgmMsg" style="margin-top:8px;font-size:12px"></div>
+  <div id="dgmList" class="dgm-list"><div style="color:#9da7b6;text-align:center;padding:12px">গেম লোড হচ্ছে...</div></div>
+</div>
+
+<script type="module">
+import { getApps, getApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const dgmApp = getApps().length ? getApp() : null;
+if(dgmApp){
+  const dgmDb = getDatabase(dgmApp);
+  const $ = id => document.getElementById(id);
+  let editingId = null;
+  let gamesCache = {};
+
+  function msg(text, ok=false){
+    const el=$('dgmMsg'); if(!el)return;
+    el.textContent=text; el.style.color=ok?'#4ade80':'#f87171';
+    clearTimeout(window.__dgmMsgTimer); window.__dgmMsgTimer=setTimeout(()=>el.textContent='',3500);
+  }
+  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function clearForm(){
+    ['dgmName','dgmOrder','dgmUrl','dgmImage','dgmDescription'].forEach(id=>{if($(id))$(id).value='';});
+    editingId=null; $('dgmSaveBtn').textContent='➕ গেম যোগ করুন'; $('dgmCancelBtn').style.display='none';
+  }
+  function editGame(id){
+    const g=gamesCache[id]; if(!g)return;
+    $('dgmName').value=g.name||''; $('dgmOrder').value=g.order??''; $('dgmUrl').value=g.url||''; $('dgmImage').value=g.image||''; $('dgmDescription').value=g.description||'';
+    editingId=id; $('dgmSaveBtn').textContent='💾 পরিবর্তন সংরক্ষণ'; $('dgmCancelBtn').style.display='inline-block'; window.scrollTo({top:$('dynamicGameManagerCard').offsetTop-20,behavior:'smooth'});
+  }
+  async function saveGame(){
+    const name=$('dgmName').value.trim(), url=$('dgmUrl').value.trim(), image=$('dgmImage').value.trim(), description=$('dgmDescription').value.trim();
+    const order=Number($('dgmOrder').value||0);
+    if(!name)return msg('গেমের নাম দিন।');
+    if(!url)return msg('Game Link / URL দিন।');
+    try{new URL(url);}catch(e){return msg('সঠিক Game URL দিন।');}
+    if(image){try{new URL(image);}catch(e){return msg('Thumbnail URL সঠিক নয়।');}}
+    const data={name,url,image,description,order,active:true,updatedAt:Date.now()};
+    if(editingId){await update(ref(dgmDb,'games/'+editingId),data);msg('গেম আপডেট হয়েছে।',true);}
+    else {const n=push(ref(dgmDb,'games')); data.createdAt=Date.now(); await set(n,data);msg('নতুন গেম যোগ হয়েছে।',true);}
+    clearForm();
+  }
+  async function toggleGame(id){const g=gamesCache[id];if(!g)return;try{await update(ref(dgmDb,'games/'+id),{active:g.active===false});msg('গেমের Active/Disable স্ট্যাটাস পরিবর্তন হয়েছে।',true);}catch(e){msg('স্ট্যাটাস পরিবর্তন করা যায়নি।');}}
+  async function deleteGame(id){const g=gamesCache[id];if(!g)return;if(!confirm('এই গেমটি মুছে ফেলবেন?'))return;try{await remove(ref(dgmDb,'games/'+id));msg('গেম মুছে ফেলা হয়েছে।',true);}catch(e){msg('গেম মুছতে সমস্যা হয়েছে।');}}
+  function render(){
+    const list=$('dgmList'); if(!list)return;
+    const arr=Object.entries(gamesCache).map(([id,g])=>({id,...g})).sort((a,b)=>Number(a.order||0)-Number(b.order||0)||Number(a.createdAt||0)-Number(b.createdAt||0));
+    if(!arr.length){list.innerHTML='<div style="color:#9da7b6;text-align:center;padding:14px">এখনো কোনো Dynamic Game যোগ করা হয়নি।</div>';return;}
+    list.innerHTML=arr.map(g=>`<div class="dgm-item">
+      <img class="dgm-thumb" src="${esc(g.image||'')}" onerror="this.style.visibility='hidden'" alt="">
+      <div class="dgm-meta"><div class="dgm-title">${esc(g.name)} <span class="dgm-status ${g.active===false?'dgm-off':'dgm-on'}">• ${g.active===false?'Disabled':'Active'}</span></div><div class="dgm-url">${esc(g.url)}</div><div style="font-size:11px;color:#7f8a9b">Serial: ${Number(g.order||0)}${g.description?' · '+esc(g.description):''}</div></div>
+      <div class="dgm-item-actions dgm-actions" style="margin-top:0"><button class="dgm-btn dgm-secondary" onclick="window.dgmEdit('${g.id}')">✏️</button><button class="dgm-btn dgm-secondary" onclick="window.dgmToggle('${g.id}')">${g.active===false?'▶️':'⏸️'}</button><button class="dgm-btn dgm-danger" onclick="window.dgmDelete('${g.id}')">🗑️</button></div>
+    </div>`).join('');
+  }
+  onValue(ref(dgmDb,'games'),snap=>{gamesCache=snap.exists()?(snap.val()||{}):{};render();});
+  $('dgmSaveBtn')?.addEventListener('click',saveGame); $('dgmCancelBtn')?.addEventListener('click',clearForm); $('dgmRefreshBtn')?.addEventListener('click',()=>render());
+  window.dgmEdit=editGame; window.dgmToggle=toggleGame; window.dgmDelete=deleteGame;
+}
+</script>
+
 </body>
 </html>
 
