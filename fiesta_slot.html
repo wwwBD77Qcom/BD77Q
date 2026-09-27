@@ -44,7 +44,6 @@
             padding: 20px;
         }
 
-        /* গেম প্রিভিউ ব্যানার বা থিম কার্ড */
         .game-preview-card {
             width: 100%;
             max-width: 320px;
@@ -236,7 +235,7 @@
         }
 
         .reel-column {
-            height: 260px;
+            height: 240px;
             background: #fff;
             border-radius: 6px;
             overflow: hidden;
@@ -257,31 +256,39 @@
         }
 
         .symbol-cell {
-            height: 85px;
+            height: 80px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 38px;
+            font-size: 36px;
             background: radial-gradient(circle, #fff3e0 0%, #ffe0b2 100%);
             border-bottom: 1px solid #ffd54f;
             width: 100%;
         }
 
-        .buy-feature-section {
-            padding: 6px;
-            background: #1e0433;
+        /* কন্ট্রোল ও অ্যাকশন প্যানেল (বোর্ডের নিচে সাজানো) */
+        .controls-middle-panel {
+            background: linear-gradient(to bottom, #1e0433, #11011f);
+            padding: 10px 12px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
+            border-top: 2px solid #7b1fa2;
+            border-bottom: 2px solid #7b1fa2;
+        }
+
+        .top-action-row {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            border-top: 1px solid #4a1578;
         }
 
         .buy-feature-btn {
             background: linear-gradient(to bottom, #d32f2f, #9a0007);
             color: #fff;
             border: 2px solid #ffeb3b;
-            padding: 6px 20px;
-            font-size: 14px;
+            padding: 6px 14px;
+            font-size: 12px;
             font-weight: 900;
             border-radius: 20px;
             cursor: pointer;
@@ -289,78 +296,11 @@
             text-transform: uppercase;
         }
 
-        .win-display-bar {
-            background: #280547;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-top: 2px solid #7b1fa2;
-            border-bottom: 2px solid #7b1fa2;
-        }
-
-        .win-text {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffcc00;
-        }
-
-        .win-amount {
-            color: #00e676;
-            margin-left: 10px;
-        }
-
-        .control-panel {
-            background: linear-gradient(to top, #0d011a, #2a0747);
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 3px solid #ffcc00;
-        }
-
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 10px;
-            color: #b39ddb;
-            font-weight: bold;
-        }
-
-        .control-value {
-            background: #0d011a;
-            border: 2px solid #7b1fa2;
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: bold;
-            margin-top: 2px;
-            min-width: 65px;
-            text-align: center;
-        }
-
-        .circle-btn {
-            width: 30px;
-            height: 30px;
-            background: #7b1fa2;
-            border: 2px solid #ffcc00;
-            color: #fff;
-            border-radius: 50%;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .spin-btn {
-            width: 64px;
-            height: 64px;
+            width: 52px;
+            height: 52px;
             background: radial-gradient(circle, #ffea00 0%, #ff8f00 100%);
-            border: 4px solid #fff;
+            border: 3px solid #fff;
             border-radius: 50%;
             cursor: pointer;
             display: flex;
@@ -370,7 +310,74 @@
         }
 
         .spin-icon {
-            font-size: 24px;
+            font-size: 20px;
+        }
+
+        .bottom-stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #0d011a;
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 1px solid #7b1fa2;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 9px;
+            color: #b39ddb;
+            font-weight: bold;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 1px;
+        }
+
+        .bet-adjust-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .circle-btn {
+            width: 26px;
+            height: 26px;
+            background: #7b1fa2;
+            border: 1px solid #ffcc00;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .win-display-bar {
+            background: #280547;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 2px solid #7b1fa2;
+        }
+
+        .win-text {
+            font-size: 15px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .win-amount {
+            color: #00e676;
+            margin-left: 8px;
         }
 
         .big-win-overlay {
@@ -414,7 +421,7 @@
 </head>
 <body>
 
-    <!-- লোডিং স্ক্রিন যাতে সুন্দর থিম কার্ড ও ছবি সদৃশ গ্রাফিক্স দেখতে পাবেন -->
+    <!-- লোডিং স্ক্রিন -->
     <div class="loading-screen" id="loadingScreen">
         <div class="game-preview-card">
             <div class="preview-badge">★ VIP FIESTA EDITION ★</div>
@@ -451,32 +458,34 @@
             <div class="reels-grid" id="reelsGrid"></div>
         </div>
 
-        <div class="buy-feature-section">
-            <button class="buy-feature-btn" onclick="triggerBuyFeature()">BUY FEATURE 15x</button>
+        <!-- ব্যালেন্স, বেট, বাই ফিচার ও স্পিন বাটন একসাথে উপরের দিকে (বোর্ডের নিচে) -->
+        <div class="controls-middle-panel">
+            <div class="top-action-row">
+                <button class="buy-feature-btn" onclick="triggerBuyFeature()">BUY FEATURE 15x</button>
+                <button class="spin-btn" id="spinBtn" onclick="startSpin()">
+                    <span class="spin-icon">🔄</span>
+                </button>
+            </div>
+            
+            <div class="bottom-stats-row">
+                <div class="stat-box">
+                    <span>BALANCE</span>
+                    <div class="stat-value" id="balanceVal">0.00</div>
+                </div>
+
+                <div class="stat-box">
+                    <span>BET</span>
+                    <div class="bet-adjust-container" style="margin-top: 2px;">
+                        <button class="circle-btn" onclick="adjustBet(-0.1)">-</button>
+                        <div class="stat-value" id="betVal" style="min-width: 45px; text-align: center;">0.50</div>
+                        <button class="circle-btn" onclick="adjustBet(0.1)">+</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="win-display-bar">
             <div class="win-text">WIN <span class="win-amount" id="winAmountVal">0.00</span></div>
-        </div>
-
-        <div class="control-panel">
-            <div class="control-group">
-                <span>BALANCE</span>
-                <div class="control-value" id="balanceVal">0.00</div>
-            </div>
-
-            <div class="control-group">
-                <span>BET</span>
-                <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
-                    <button class="circle-btn" onclick="adjustBet(-0.1)">-</button>
-                    <div class="control-value" id="betVal" style="min-width: 45px;">0.50</div>
-                    <button class="circle-btn" onclick="adjustBet(0.1)">+</button>
-                </div>
-            </div>
-
-            <button class="spin-btn" id="spinBtn" onclick="startSpin()">
-                <span class="spin-icon">🔄</span>
-            </button>
         </div>
 
         <div class="big-win-overlay" id="bigWinOverlay" onclick="closeBigWin()">
@@ -672,7 +681,7 @@
 
                 setTimeout(() => {
                     strip.style.transition = `transform ${0.6 + index * 0.2}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
-                    strip.style.transform = 'translateY(-255px)';
+                    strip.style.transform = 'translateY(-240px)';
                 }, 50);
             });
 
@@ -713,7 +722,7 @@
             startSpin();
         }
 
-        function showBigWy(amount) {
+        function showBigWin(amount) {
             const overlay = document.getElementById('bigWinOverlay');
             document.getElementById('overlayWinVal').textContent = `$${amount.toFixed(2)}`;
             overlay.classList.add('active');
