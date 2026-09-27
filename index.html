@@ -140,6 +140,13 @@
 .vip-bottom-nav{grid-template-columns:repeat(5,1fr);padding:5px 3px;background:#101010;border-top:1px solid #2a2a2a}.vip-bottom-nav button{font-family:Georgia,serif;padding:6px 2px;color:#777;border-radius:10px}.vip-bottom-nav button span{display:block;font-size:23px;line-height:25px}.vip-bottom-nav button small{display:block;font-size:11px;font-weight:900}.vip-bottom-nav button.active{color:#ff9b2e;background:transparent}
 .vip-promo-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;align-items:center;justify-content:center;padding:14px}.vip-promo-modal.show{display:flex}.vip-promo-box{width:min(460px,100%);background:#181818;border:1px solid #8a5b2c;border-radius:18px;padding:16px;box-shadow:0 20px 60px rgba(0,0,0,.6)}.vip-promo-box h2{margin:0 0 12px;color:#ffd34d;font-family:Georgia,serif}.vip-offer{background:linear-gradient(135deg,#45101a,#171717);border:1px solid #633b2a;border-radius:12px;padding:13px;margin:8px 0}.vip-offer strong{display:block;font-size:17px}.vip-offer small{color:#aaa;display:block;margin-top:4px}
 @media(max-width:420px){.vip-home-head{height:66px}.vip-brand{font-size:20px}.vip-menu-icon{font-size:22px}.vip-balance-pill{height:40px;font-size:16px}.vip-circle-action{width:40px;height:40px}.vip-hero-banner{height:195px}.hero-brand{font-size:31px}.hero-line{font-size:17px}.hero-amount{font-size:19px}.hero-small{font-size:15px}.hero-gift{font-size:48px}.hero-star{font-size:70px}.vip-promo-card{height:108px}.vip-promo-card span{font-size:14px}.vip-games-grid{grid-template-columns:repeat(3,1fr);gap:7px}.vip-games-grid .game-card-item{min-height:145px}.vip-category-tabs button{font-size:12px;padding:10px 3px}.vip-section-title b{font-size:21px}.vip-bottom-nav button span{font-size:21px}.vip-bottom-nav button small{font-size:10px}}
+
+/* Admin Dynamic Games */
+.dynamic-admin-games-title{margin:12px 12px 8px;font-size:16px;font-weight:900;color:#ffcf72}
+.game-card-item.admin-dynamic-game{display:flex;flex-direction:column;justify-content:flex-end;position:relative}
+.admin-dynamic-game .game-card-image{display:block}
+.admin-dynamic-game .game-card-icon{display:none}
+.admin-dynamic-game .dynamic-game-badge{position:absolute;left:7px;top:7px;z-index:4;background:rgba(0,0,0,.62);padding:3px 6px;border-radius:8px;font-size:9px;font-weight:900}
 </style>
 
 <style id="myAccountVipStyle">
@@ -307,6 +314,8 @@
           <div style="font-size: 10px; color: #6ee7b7; margin-top:2px;">Realistic Edition</div>
         </a>
       </div>
+      <div id="adminDynamicGamesTitle" class="dynamic-admin-games-title" style="display:none">🎮 Admin Games</div>
+      <div class="vip-games-grid" id="adminDynamicGamesGrid"></div>
 
   <div class="vip-quick-grid">
     <button onclick="openProfileModal('referModal')"><span>♙</span><b>Invite Friends</b><small>Referral & 3% Rebate</small></button>
@@ -735,18 +744,8 @@
 
   onValue(ref(db, 'users'), (snapshot) => {
       if (snapshot.exists()) {
-          const allUsers = snapshot.val() || {};
-          // Firebase is the live source for referral relationships.
-          // Merge it into the local cache without removing any existing local-only fields.
-          Object.keys(allUsers).forEach(phone => {
-              usersDb[phone] = { ...(usersDb[phone] || {}), ...(allUsers[phone] || {}) };
-          });
-          window.usersDb = usersDb;
-          localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
-          renderTopReferrers(usersDb);
-          if(typeof window.renderReferralEarnings === 'function') window.renderReferralEarnings();
-          if(typeof window.renderReferralRecords === 'function') window.renderReferralRecords();
-          if(typeof window.renderRewardsList === 'function') window.renderRewardsList();
+          const allUsers = snapshot.val();
+          renderTopReferrers(allUsers);
       } else {
           renderTopReferrers(window.usersDb);
       }
@@ -813,6 +812,8 @@
 
 <!-- MAIN APP LOGIC SCRIPT -->
 <script>
+const BD77Q_REFERRAL_SHARE_TEXT = 'BD77Q.COM বাংলাদেশ গেমিং | .কম #১ অফিসিয়াল\n\nBD77Q.comবাংলাদেশের আইনসম্মত গেমিং প্ল্যাটফর্ম (নিবন্ধন নম্বর:\n\nBD-GAME-2025-BD77Q)। একমাত্র অফিসিয়াল ওয়েবসাইট BD77Q, ১২,০০০+ গেম এবং ৯ লক্ষ+ সক্রিয় খেলোয়াড়।';
+
 let globalDb = JSON.parse(localStorage.getItem('aviator_full_db')) || {
     numbers: { bKash: '01811223344', Nagad: '01711223344', Rocket: '01911223344' },
     requests: [],
@@ -833,30 +834,15 @@ let depositInterval = null;
 let depositTimeLeft = 300;
 
 window.addEventListener('DOMContentLoaded',()=>{
-    // AUTO REFERRAL LINK: ?ref=CODE থেকে Referral Code নিজে থেকেই ধরবে।
-    // পুরোনো referral/manual system অপরিবর্তিত রাখা হয়েছে।
-    try{
-        const urlParams = new URLSearchParams(window.location.search);
-        const refFromUrl = String(urlParams.get('ref') || '').trim();
-        if(refFromUrl){
-            localStorage.setItem('aviator_pending_referral_code', refFromUrl.toUpperCase());
-            const regReferInput = document.getElementById('regReferCode');
-            if(regReferInput){
-                regReferInput.value = refFromUrl.toUpperCase();
-                regReferInput.readOnly = true;
-                regReferInput.style.opacity = '0.85';
-            }
-            if(typeof switchAuthTab === 'function') switchAuthTab('register');
-        }else{
-            const savedRef = localStorage.getItem('aviator_pending_referral_code');
-            const regReferInput = document.getElementById('regReferCode');
-            if(savedRef && regReferInput && !regReferInput.value.trim()){
-                regReferInput.value = savedRef;
-                regReferInput.readOnly = true;
-                regReferInput.style.opacity = '0.85';
-            }
+    const urlParams = new URLSearchParams(window.location.search);
+    const refFromUrl = urlParams.get('ref');
+    if(refFromUrl){
+        const regReferInput = document.getElementById('regReferCode');
+        if(regReferInput){
+            regReferInput.value = refFromUrl;
         }
-    }catch(e){ console.warn('Auto referral link setup:', e); }
+        switchAuthTab('register');
+    }
 
     checkAuthStatus();
     startCountdown();
@@ -1027,8 +1013,7 @@ async function handleRegister(){
     const name = document.getElementById('regName').value.trim();
     const phone = document.getElementById('regPhone').value.trim();
     const password = document.getElementById('regPassword').value;
-    const inputEl = document.getElementById('regReferCode');
-    const inputReferCode = (inputEl && inputEl.value.trim()) || localStorage.getItem('aviator_pending_referral_code') || '';
+    const inputReferCode = document.getElementById('regReferCode').value.trim().toUpperCase();
     const msg = document.getElementById('regMsg');
 
     if(!name){ msg.textContent = 'দয়া করে আপনার নাম লিখুন।'; return; }
@@ -1040,7 +1025,7 @@ async function handleRegister(){
         return;
     }
 
-    let assignedReferCode = 'AVIATOR-' + Math.floor(1000 + Math.random() * 9000);
+    let assignedReferCode = 'aviator-' + Math.floor(1000 + Math.random() * 9000);
     let referredBy = null;
 
     if(inputReferCode){
@@ -1127,7 +1112,6 @@ async function handleRegister(){
         currentUserPhone = phone;
         window.currentUserPhone = phone;
         localStorage.setItem('aviator_current_user', phone);
-        localStorage.removeItem('aviator_pending_referral_code');
         balance = 0;
         
         if(window.fbDb && window.fbRef){
@@ -1321,7 +1305,7 @@ function syncAppBalance(){
         let twelveHoursAgo = Date.now() - (12 * 60 * 60 * 1000);
 
         allRequests.forEach(req => {
-            if(referredPhones.includes(String(req.userPhone)) && ['Pending','Approved','Success'].includes(String(req.status))){
+            if(referredPhones.includes(req.userPhone) && req.status === 'Pending' || req.status === 'Approved' || req.status === 'Success'){
                 let depAmount = req.baseAmount || req.amount || 0;
                 totalReferredDeposits += depAmount;
                 if(req.createdAt >= twelveHoursAgo){
@@ -1373,20 +1357,12 @@ function switchReferTab(tab){
 
 function getReferralDepositData(){
     if(!currentUserPhone || !usersDb[currentUserPhone]) return {referredPhones:[], approved:[], rebates:[]};
-    const referredPhones = Object.keys(usersDb).filter(phone =>
-        usersDb[phone] && String(usersDb[phone].referredBy || '') === String(currentUserPhone)
-    );
+    const referredPhones = Object.keys(usersDb).filter(phone => usersDb[phone] && usersDb[phone].referredBy === currentUserPhone);
     let freshDb = JSON.parse(localStorage.getItem('aviator_full_db')) || globalDb || {};
     const allRequests = Array.isArray(freshDb.requests) ? freshDb.requests : [];
-    const approved = allRequests.filter(req =>
-        referredPhones.includes(String(req.userPhone)) &&
-        ['Approved','Success'].includes(String(req.status))
-    );
+    const approved = allRequests.filter(req => referredPhones.includes(req.userPhone) && ['Approved','Success'].includes(String(req.status)));
     const rebateMap = window.referralRebatesCache || {};
-    const rebates = Object.keys(rebateMap).map(k => ({
-        ...(rebateMap[k] || {}),
-        firebaseKey: k
-    })).filter(r => String(r.referrerPhone) === String(currentUserPhone));
+    const rebates = Object.keys(rebateMap).map(k => rebateMap[k]).filter(r => String(r.referrerPhone) === String(currentUserPhone));
     return {referredPhones, approved, rebates};
 }
 
@@ -1395,115 +1371,54 @@ function renderReferralEarnings(){
     const user = usersDb[currentUserPhone];
     const data = getReferralDepositData();
     const startOfDay = new Date(); startOfDay.setHours(0,0,0,0);
-    const amountOf = r => Number(r.baseAmount || r.depositAmount || r.amount || 0);
-
-    // Approved referral deposits only.
-    const todayReqs = data.approved.filter(r => Number(r.approvedAt || r.createdAt || 0) >= startOfDay.getTime());
-    const totalDepositRebate = (data.rebates || []).reduce((sum,r)=>sum+Number(r.rebateAmount||0),0);
-    const todayDepositRebate = (data.rebates || [])
-        .filter(r=>Number(r.createdAt || 0) >= startOfDay.getTime())
-        .reduce((sum,r)=>sum+Number(r.rebateAmount||0),0);
-
-    // Reward Center milestones are stored in claimedRewards.
-    const milestoneRewards = [
-        {id:3,reward:30},{id:7,reward:40},{id:12,reward:50},
-        {id:20,reward:100},{id:50,reward:300},{id:100,reward:500},{id:200,reward:1000}
-    ];
-    const achievementRewards = milestoneRewards.reduce((sum,m)=>{
-        return sum + (user.claimedRewards && user.claimedRewards[m.id] ? Number(m.reward) : 0);
-    },0);
-
-    const totalBonusEarned = Number(user.referStats?.bonusEarned || 0);
-    // bonusEarned contains milestone claims plus the existing successful-referral bonus.
-    const invitationRewards = Math.max(0, totalBonusEarned - achievementRewards);
-    const activityReward = Number(user.activityReward || user.referStats?.activityReward || 0);
-
-    const rewardRecords = Array.isArray(user.rewardRecords) ? user.rewardRecords : [];
-    const todayRewardRecords = rewardRecords.filter(r=>Number(r.createdAt||0) >= startOfDay.getTime());
-    const todayInvitationRewards = todayRewardRecords
-        .filter(r=>String(r.type||'') === 'invitation')
-        .reduce((sum,r)=>sum+Number(r.amount||0),0);
-    const todayAchievementRewards = todayRewardRecords
-        .filter(r=>String(r.type||'') === 'achievement')
-        .reduce((sum,r)=>sum+Number(r.amount||0),0);
-    const todayActivityReward = todayRewardRecords
-        .filter(r=>String(r.type||'') === 'activity')
-        .reduce((sum,r)=>sum+Number(r.amount||0),0);
-
-    // Registration/valid-referral/depositor counts are calculated from the live Firebase user data.
-    const todayReferredPhones = data.referredPhones.filter(phone =>
-        Number(usersDb[phone]?.joinedAt || 0) >= startOfDay.getTime()
-    );
+    const todayReqs = data.approved.filter(r => Number(r.createdAt || 0) >= startOfDay.getTime());
+    const amountOf = r => Number(r.baseAmount || r.amount || 0);
+    const totalDeposit = data.approved.reduce((sum,r)=>sum+amountOf(r),0);
+    const todayDeposit = todayReqs.reduce((sum,r)=>sum+amountOf(r),0);
+    const actualRebates = data.rebates || [];
+    const totalDepositRebate = actualRebates.reduce((sum,r)=>sum+Number(r.rebateAmount||0),0);
+    const todayDepositRebate = actualRebates.filter(r=>Number(r.createdAt||0)>=startOfDay.getTime()).reduce((sum,r)=>sum+Number(r.rebateAmount||0),0);
     const registers = data.referredPhones.length;
-    const todayRegisters = todayReferredPhones.length;
-
-    const depositorSet = new Set(data.approved.map(r=>String(r.userPhone)));
-    const todayDepositorSet = new Set(todayReqs.map(r=>String(r.userPhone)));
-    const validReferral = data.referredPhones.filter(phone =>
-        Number(usersDb[phone]?.totalDeposit || 0) > 0 ||
-        data.approved.some(r=>String(r.userPhone)===String(phone))
-    ).length;
-    const todayValidReferral = todayReferredPhones.filter(phone =>
-        Number(usersDb[phone]?.totalDeposit || 0) > 0 ||
-        todayReqs.some(r=>String(r.userPhone)===String(phone))
-    ).length;
-
-    const totalIncome = +(invitationRewards + achievementRewards + totalDepositRebate + activityReward).toFixed(2);
-    const todayIncome = +(todayInvitationRewards + todayAchievementRewards + todayDepositRebate + todayActivityReward).toFixed(2);
-
+    const validReferral = data.referredPhones.filter(phone => Number(usersDb[phone]?.totalDeposit || 0) > 0 || data.approved.some(r=>r.userPhone===phone)).length;
+    const depositorSet = new Set(data.approved.map(r=>r.userPhone));
+    const todayDepositorSet = new Set(todayReqs.map(r=>r.userPhone));
+    const invitationRewards = Number(user.referStats?.bonusEarned || 0);
+    const totalIncome = +(invitationRewards + totalDepositRebate).toFixed(2);
+    const todayIncome = todayDepositRebate;
     const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
     const money=v=>'৳ '+Number(v||0).toFixed(2);
-
     set('todayReferralIncome',money(todayIncome));
-    set('todayInvitationRewards',money(todayInvitationRewards));
-    set('todayAchievementRewards',money(todayAchievementRewards));
+    set('todayInvitationRewards','৳ 0.00');
+    set('todayAchievementRewards','৳ 0.00');
     set('todayDepositRebate',money(todayDepositRebate));
-    set('todayActivityReward',money(todayActivityReward));
-    set('todayRegisters',todayRegisters);
-    set('todayValidReferral',todayValidReferral);
+    set('todayActivityReward','৳ 0.00');
+    set('todayRegisters',todayReqs.length ? new Set(todayReqs.map(r=>r.userPhone)).size : 0);
+    set('todayValidReferral',todayDepositorSet.size);
     set('todayDepositors',todayDepositorSet.size);
-
     set('totalReferralIncome',money(totalIncome));
     set('totalInvitationRewards',money(invitationRewards));
-    set('totalAchievementRewards',money(achievementRewards));
+    set('totalAchievementRewards','৳ 0.00');
     set('totalDepositRebate',money(totalDepositRebate));
-    set('totalActivityReward',money(activityReward));
+    set('totalActivityReward','৳ 0.00');
     set('totalRegisters',registers);
     set('totalValidReferral',validReferral);
     set('totalDepositors',depositorSet.size);
 }
+
 function renderReferralRecords(){
     const box=document.getElementById('referralRecordsList'); if(!box) return;
-    if(!currentUserPhone || !usersDb[currentUserPhone]) return;
     const data=getReferralDepositData();
-    const user=usersDb[currentUserPhone];
-    const depositRecords=(data.approved||[]).map(r=>{
-        const amt=Number(r.baseAmount||r.depositAmount||r.amount||0);
-        const rebateFromRequest=Number(r.referralRebateAmount||0);
-        const rebateRecord=(data.rebates||[]).find(x=>String(x.requestId||x.firebaseKey||'')===String(r.firebaseKey||''));
-        const rebate=Number(rebateRecord?.rebateAmount ?? rebateFromRequest ?? 0);
+    if(!data.approved.length){ box.innerHTML='<div class="earn-empty">এখনও কোনো approved referral deposit record নেই।</div>'; return; }
+    const records=data.approved.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).slice(0,30);
+    box.innerHTML=records.map(r=>{
+        const amt=Number(r.baseAmount||r.amount||0);
+        const rebate=Number(r.referralRebateAmount || 0);
         const phone=r.userPhone||'User';
-        const date=r.approvedAt||r.createdAt;
-        return {createdAt:Number(date||0), html:`<div class="earn-record">
-          <div class="earn-record-top"><span>💰 Deposit Rebate</span><strong style="color:#7ed6a7">+৳${rebate.toFixed(2)}</strong></div>
-          <div class="earn-record-sub">Referral User: ${phone} • Deposit: ৳${amt.toFixed(2)}</div>
-          <div class="earn-record-sub">${date?new Date(date).toLocaleString('bn-BD'):''}</div>
-        </div>`};
-    });
-
-    const rewardRecords=(Array.isArray(user.rewardRecords)?user.rewardRecords:[]).map(r=>({
-        createdAt:Number(r.createdAt||0),
-        html:`<div class="earn-record">
-          <div class="earn-record-top"><span>${r.type==='achievement'?'🏆 Achievement Reward':r.type==='activity'?'⚡ Activity Reward':'🎁 Invitation Reward'}</span><strong style="color:#7ed6a7">+৳${Number(r.amount||0).toFixed(2)}</strong></div>
-          <div class="earn-record-sub">${r.title||'Reward received'}</div>
-          <div class="earn-record-sub">${r.createdAt?new Date(r.createdAt).toLocaleString('bn-BD'):''}</div>
-        </div>`
-    }));
-
-    const records=[...depositRecords,...rewardRecords].sort((a,b)=>b.createdAt-a.createdAt).slice(0,50);
-    if(!records.length){ box.innerHTML='<div class="earn-empty">এখনও কোনো referral deposit বা bonus record নেই।</div>'; return; }
-    box.innerHTML=records.map(x=>x.html).join('');
+        const date=r.createdAt?new Date(r.createdAt).toLocaleString('bn-BD'):'';
+        return `<div class="earn-record"><div class="earn-record-top"><span>Deposit Rebate</span><strong style="color:#7ed6a7">+৳${rebate.toFixed(2)}</strong></div><div class="earn-record-sub">Referral User: ${phone} • Deposit: ৳${amt.toFixed(2)}</div><div class="earn-record-sub">${date}</div></div>`;
+    }).join('');
 }
+
 function renderRewardsList(){
     const container = document.getElementById('rewardsListContainer');
     if(!container) return;
@@ -1566,24 +1481,8 @@ function claimReward(milestoneId, rewardAmount){
     balance += rewardAmount;
     if(!user.referStats) user.referStats = { count: 0, bonusEarned: 0 };
     user.referStats.bonusEarned += rewardAmount;
-    if(!Array.isArray(user.rewardRecords)) user.rewardRecords = [];
-    user.rewardRecords.unshift({
-        id: 'achievement_' + milestoneId + '_' + Date.now(),
-        type: 'achievement',
-        title: 'Referral milestone ' + milestoneId,
-        amount: Number(rewardAmount),
-        createdAt: Date.now()
-    });
 
     localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
-    if(window.fbDb && window.fbRef && window.fbUpdate){
-        window.fbUpdate(window.fbRef(window.fbDb), {
-            ['users/' + currentUserPhone + '/claimedRewards']: user.claimedRewards,
-            ['users/' + currentUserPhone + '/referStats']: user.referStats,
-            ['users/' + currentUserPhone + '/rewardRecords']: user.rewardRecords,
-            ['users/' + currentUserPhone + '/balance']: Number(balance)
-        }).catch(err=>console.warn('Reward Firebase sync failed:', err));
-    }
     updateBalance();
     renderRewardsList();
     alert(`অভিনন্দন! আপনি সফলভাবে ৳${rewardAmount} রিওয়ার্ড ক্লেইম করেছেন!`);
@@ -1654,23 +1553,6 @@ function placeBet(slot){
                     if(!referrer.referStats) referrer.referStats = { count: 0, bonusEarned: 0 };
                     referrer.referStats.bonusEarned += 399;
                     referrer.balance += 399;
-                    if(!Array.isArray(referrer.rewardRecords)) referrer.rewardRecords = [];
-                    referrer.rewardRecords.unshift({
-                        id: 'invitation_' + currentUserPhone + '_' + Date.now(),
-                        type: 'invitation',
-                        title: 'Successful referral bonus',
-                        amount: 399,
-                        referredUserPhone: currentUserPhone,
-                        createdAt: Date.now()
-                    });
-                    if(window.fbDb && window.fbRef && window.fbUpdate){
-                        const bonusUpdates = {};
-                        bonusUpdates['users/' + currentUserPhone + '/referBonusGiven'] = true;
-                        bonusUpdates['users/' + user.referredBy + '/balance'] = Number(referrer.balance || 0);
-                        bonusUpdates['users/' + user.referredBy + '/referStats'] = referrer.referStats;
-                        bonusUpdates['users/' + user.referredBy + '/rewardRecords'] = referrer.rewardRecords;
-                        window.fbUpdate(window.fbRef(window.fbDb), bonusUpdates).catch(err=>console.warn('Invitation bonus Firebase sync failed:', err));
-                    }
                 }
             }
         }
@@ -2231,7 +2113,46 @@ function openProfileLevelRules(){
 })();
 </script>
 
-<!-- REALTIME SYNC BRIDGE: existing features untouched; only adds live Firebase listeners. -->
+
+<script>
+(function(){
+  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+  window.renderAdminDynamicGames=function(value){
+    const grid=document.getElementById('adminDynamicGamesGrid');
+    const title=document.getElementById('adminDynamicGamesTitle');
+    if(!grid)return;
+    const games=value||{};
+    const items=Object.keys(games).map(id=>({id,...(games[id]||{})}))
+      .filter(g=>g.active!==false && String(g.url||'').trim())
+      .sort((a,b)=>Number(a.order||1)-Number(b.order||1)||Number(a.createdAt||0)-Number(b.createdAt||0));
+    if(!items.length){
+      grid.innerHTML='';
+      if(title)title.style.display='none';
+      return;
+    }
+    if(title)title.style.display='block';
+    grid.innerHTML=items.map(g=>{
+      const safeUrl=esc(String(g.url||''));
+      const img=g.image?`<img class="game-card-image" alt="${esc(g.name||'Game')}" src="${esc(g.image)}" onerror="this.style.opacity=.25">`:'';
+      return `<a class="game-card-item admin-dynamic-game" href="${safeUrl}" target="_blank" rel="noopener noreferrer">
+        <span class="dynamic-game-badge">ADMIN</span>${img}
+        <div class="game-card-icon">🎮</div>
+        <div class="game-card-title">${esc(g.name||'Game')}</div>
+        ${g.description?`<div style="font-size:9px;opacity:.85;margin-top:2px">${esc(g.description)}</div>`:''}
+        <div style="margin-top:6px;font-size:10px;font-weight:800;color:#ffd36b">▶ PLAY GAME</div>
+      </a>`;
+    }).join('');
+  };
+  document.addEventListener('DOMContentLoaded',function(){
+    try{
+      const cached=window.adminLiveGames;
+      if(cached)window.renderAdminDynamicGames(cached);
+    }catch(e){}
+  });
+})();
+</script>
+
+<!-- REALTIME SYNC BRIDGE: existing features untouched; adds a direct live Firebase games listener. -->
 <script type="module">
   import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
   try {
@@ -2241,7 +2162,7 @@ function openProfileLevelRules(){
         const value = snap.exists() ? snap.val() : null;
         window[key] = value;
         try { handler && handler(value); } catch(e) { console.warn("Realtime sync handler:", path, e); }
-      });
+      }, err => console.warn("Firebase realtime listener error:", path, err));
     };
     bind('settings/officialNotice','adminLiveOfficialNotice',v=>{
       window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'settings/officialNotice',value:v}}));
@@ -2261,7 +2182,36 @@ function openProfileLevelRules(){
     bind('supportTickets','adminLiveSupportTickets',v=>{
       window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'supportTickets',value:v}}));
     });
+    bind('games','adminLiveGames',v=>{
+      try { window.renderAdminDynamicGames && window.renderAdminDynamicGames(v); } catch(e) { console.warn('Dynamic games render:',e); }
+      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'games',value:v}}));
+    });
   } catch(e) { console.warn('Realtime sync bridge unavailable:', e); }
 </script>
+
+<script>
+(function(){
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const refCode = (params.get('ref') || params.get('refer') || params.get('referral') || '').trim();
+    if (refCode) {
+      localStorage.setItem('bd77q_pending_referral', refCode);
+      const input = document.getElementById('regReferCode');
+      if (input) {
+        input.value = refCode;
+        input.readOnly = true;
+      }
+    } else {
+      const saved = (localStorage.getItem('bd77q_pending_referral') || '').trim();
+      const input = document.getElementById('regReferCode');
+      if (saved && input && !input.value) {
+        input.value = saved;
+        input.readOnly = true;
+      }
+    }
+  } catch(e) { console.warn('Auto referral setup:', e); }
+})();
+</script>
+
 </body>
 </html>
