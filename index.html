@@ -313,15 +313,18 @@
           <div class="game-card-title">Mahjong Ways</div>
           <div style="font-size: 10px; color: #6ee7b7; margin-top:2px;">Realistic Edition</div>
         </a>
+        <!-- নতুন দুটি গেম যুক্ত করা হলো -->
+        <a href="fiesta_slot.html" target="_blank" class="game-card-item" style="background: linear-gradient(135deg, #be185d, #831843);">
+          <div class="game-card-icon">🎉</div>
+          <div class="game-card-title">VIP Fiesta Slot Game</div>
+          <div style="font-size: 10px; color: #fce7f3; margin-top:2px;">New Addition</div>
+        </a>
+        <a href="royal_casino.html" target="_blank" class="game-card-item" style="background: linear-gradient(135deg, #581c87, #3b0764);">
+          <div class="game-card-icon">👑</div>
+          <div class="game-card-title">Super Ace VIP - Royal Casino</div>
+          <div style="font-size: 10px; color: #fde047; margin-top:2px;">Royal Edition</div>
+        </a>
       </div>
-<!-- VIP Fiesta Slot Game Card -->
-<div class="game-card-item" onclick="showScreen('vipFiestaScreen')" style="background: linear-gradient(135deg, #4a0e4e, #8e24aa);">
-  <img class="game-card-image" alt="VIP Fiesta Slot" src="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20360%22%3E%3Crect%20width%3D%22600%22%20height%3D%22360%22%20fill%3D%22%232c0b4e%22%2F%3E%3Ctext%20x%3D%22300%22%20y%3D%22145%22%20text-anchor%3D%22middle%22%20font-size%3D%2295%22%3E%F0%9F%8E%AD%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22225%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffcc00%22%20font-size%3D%2235%22%20font-family%3D%22Arial%22%20font-weight%3D%22900%22%3EVIP%20FIESTA%3C%2Ftext%3E%3Ctext%20x%3D%22300%22%20y%3D%22265%22%20text-anchor%3D%22middle%22%20fill%3D%22%23ffffff%22%20font-size%3D%2218%22%20font-family%3D%22Arial%22%20font-weight%3D%22700%22%3ESLOT%20FESTIVAL%3C%2Ftext%3E%3C%2Fsvg%3E">
-  <div class="game-card-icon">🪅</div>
-  <div class="game-card-title">VIP Fiesta Slot</div>
-  <div style="font-size: 10px; color: #ffcc00; margin-top:2px;">VIP উৎসব স্লট</div>
-</div>
-
       <div id="adminDynamicGamesTitle" class="dynamic-admin-games-title" style="display:none">🎮 Admin Games</div>
       <div class="vip-games-grid" id="adminDynamicGamesGrid"></div>
 
@@ -759,8 +762,6 @@
       }
   });
 
-  // Keep Firebase requests and actual referral rebate records in sync with the User App.
-  // Admin is the source of truth for approval/rebate amounts.
   window.referralRebatesCache = {};
   onValue(ref(db, 'requests'), (snapshot) => {
       const data = snapshot.exists() ? snapshot.val() : {};
@@ -859,9 +860,6 @@ window.addEventListener('DOMContentLoaded',()=>{
     renderTopReferrers(usersDb);
 });
 
-
-
-/* HELP CARE - AI Assistant + Firebase supportTickets + 24H AUTO CLEANUP */
 let helpCareCategory='Account Problem';
 let helpCareSelectedImage='';
 let helpCareListenerStarted=false;
@@ -886,8 +884,6 @@ function previewHelpCareImage(e){const f=e.target.files&&e.target.files[0];if(!f
 function removeHelpCareImage(){helpCareSelectedImage='';const i=document.getElementById('helpCareImage');const img=document.getElementById('helpCarePreviewImg');const box=document.getElementById('helpCareImagePreview');if(i)i.value='';if(img)img.src='';if(box)box.classList.remove('show');}
 function addHelpCareBubble(type,text,image,time,label){const box=document.getElementById('helpCareChat');if(!box)return;const d=document.createElement('div');d.className='help-care-msg '+type;if(label){const lb=document.createElement('div');lb.style.cssText='font-size:10px;font-weight:900;margin-bottom:4px;opacity:.8';lb.textContent=label;d.appendChild(lb);}const tx=document.createElement('div');tx.innerHTML=escapeHelpCareHtml(text||'');d.appendChild(tx);if(image){const im=document.createElement('img');im.className='help-care-img';im.src=image;im.alt='Support image';d.appendChild(im);}if(time){const tm=document.createElement('div');tm.style.cssText='font-size:9px;opacity:.65;margin-top:4px';tm.textContent=time;d.appendChild(tm);}box.appendChild(d);}
 
-/* Local AI Assistant: common Help Care questions are answered instantly.
-   For unknown/complex questions the ticket stays Pending for Admin. */
 function getHelpCareAIReply(category,message){
   const q=String(message||'').toLowerCase();
   if(/password|পাসওয়ার্ড|পাসওয়ার্ড|security/.test(q)||/password/i.test(category))
@@ -1041,7 +1037,6 @@ async function handleRegister(){
         let foundReferrerPhone = null;
         let firebaseReferrerData = null;
 
-        // আগে বর্তমান device-এর local usersDb-তে খুঁজবে
         for(let p in usersDb){
             const code = String(usersDb[p]?.myReferCode || '').trim().toUpperCase();
             if(code === normalizedReferCode){
@@ -1050,8 +1045,6 @@ async function handleRegister(){
             }
         }
 
-        // local-এ না থাকলে Firebase-এর সব users থেকে খুঁজবে।
-        // তাই অন্য mobile/laptop থেকেও referral code দিয়ে registration হবে।
         if(!foundReferrerPhone && window.fbDb && window.fbRef && window.fbGet){
             try{
                 const snap = await window.fbGet(window.fbRef(window.fbDb, 'users'));
@@ -1675,8 +1668,6 @@ function submitDemoDeposit(){
     
     let currentUser = usersDb[currentUserPhone];
     if(currentUser){
-        // Deposit is only counted as approved after Admin accepts the Firebase request.
-        // This prevents totalDeposit/turnover/referral rewards from being credited twice.
         const bonus=Math.round(amount*.20),total=amount+bonus;
         currentUser.pendingDepositTotal = Number(currentUser.pendingDepositTotal || 0) + amount;
         localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
@@ -1833,7 +1824,6 @@ document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','deposi
 })();
 </script>
 
-
 <script id="myAccountFunctions">
 let selectedBankMethod='bKash';
 function getAccountUser(){return currentUserPhone&&usersDb[currentUserPhone]?usersDb[currentUserPhone]:null}
@@ -1923,7 +1913,6 @@ function selectBankMethod(method){selectedBankMethod=method;document.querySelect
 function openBankAccountModal(){const u=getAccountUser();if(!u)return;const a=u.bankAccounts?.[selectedBankMethod]||{};document.getElementById('bankAccountNumber').value=a.number||'';document.getElementById('bankAccountName').value=a.name||u.name||'';document.getElementById('bankAccountMsg').textContent='';openProfileModal('bankAccountModal')}
 function saveBankAccount(){const u=getAccountUser();const number=document.getElementById('bankAccountNumber').value.trim();const name=document.getElementById('bankAccountName').value.trim();const msg=document.getElementById('bankAccountMsg');if(!number){msg.textContent='Account Number দিন।';return}if(number.length<8){msg.textContent='সঠিক Account Number দিন।';return}if(!name){msg.textContent='Account Holder Name দিন।';return}if(!u.bankAccounts)u.bankAccounts={};u.bankAccounts[selectedBankMethod]={number,name,updatedAt:Date.now()};usersDb[currentUserPhone]=u;localStorage.setItem('aviator_users_db',JSON.stringify(usersDb));if(window.fbDb&&window.fbRef&&window.fbUpdate)window.fbUpdate(window.fbRef(window.fbDb,'users/'+currentUserPhone),{bankAccounts:u.bankAccounts});msg.style.color='#7ed6a7';msg.textContent='Bank Account saved ✓';setTimeout(()=>closeProfileModal('bankAccountModal'),700)}
 function submitSuggestion(){const u=getAccountUser(),t=(document.getElementById('suggestionText')?.value||'').trim(),msg=document.getElementById('suggestionMsg');if(!t){msg.textContent='পরামর্শ লিখুন।';return}const item={id:Date.now(),userPhone:currentUserPhone,name:u?.name||'',text:t,createdAt:Date.now(),status:'Pending'};const db=JSON.parse(localStorage.getItem('aviator_full_db'))||globalDb||{};if(!Array.isArray(db.suggestions))db.suggestions=[];db.suggestions.unshift(item);localStorage.setItem('aviator_full_db',JSON.stringify(db));if(window.fbDb&&window.fbRef&&window.fbPush)window.fbPush(window.fbRef(window.fbDb,'suggestions'),item);msg.style.color='#7ed6a7';msg.textContent='Suggestion submitted ✓';setTimeout(()=>closeProfileModal('accountFeatureModal'),700)}
-// Keep the existing profile functions and add the My Account renderer without replacing them.
 const _oldLoadUserData=loadUserData;
 loadUserData=function(){_oldLoadUserData();renderMyAccount();renderProfileLevel();};
 </script>
@@ -1938,7 +1927,7 @@ function filterVipGames(){
  const cards=[...document.querySelectorAll('#vipGamesGrid .game-card-item')]; let shown=0;
  cards.forEach((card,i)=>{
    const title=(card.querySelector('.game-card-title')?.textContent||'').toLowerCase();
-   const isSlot=/slot|casino|ace|52 cards|mahjong/.test(title);
+   const isSlot=/slot|casino|ace|52 cards|mahjong|fiesta/.test(title);
    const isLive=/live|crash|lobby/.test(title);
    let ok=!q||title.includes(q);
    if(vipGameFilter==='slots')ok=ok&&isSlot;
@@ -1975,7 +1964,6 @@ window.addEventListener('load',()=>setTimeout(initVipHome,300));
 </style>
 <script id="profileLevelFunctions">
 const PROFILE_LEVEL_BONUS = 10;
-// Lower-cost level system: every approved ৳100 total deposit = 1 profile level.
 const PROFILE_LEVEL_STEP_DEPOSIT = 100;
 function getProfileLevelTarget(user){
   const dep=Number(user?.totalDeposit||0);
@@ -2064,7 +2052,6 @@ function openProfileLevelRules(){
 }
 </script>
 <style id="profileNavigationFinalFix">
-/* Final Profile / My Account navigation fix — phone, tablet, laptop & desktop */
 #profileScreen.profile-force-visible{display:block!important;min-height:calc(100vh - 74px);width:100%;}
 #homeScreen.screen,#gameScreen.screen,#profileScreen.screen,#authScreen.screen{width:100%;}
 .vip-bottom-nav{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
@@ -2119,67 +2106,6 @@ function openProfileLevelRules(){
     });
   });
 })();
-</script>
-
-
-<script>
-(function(){
-  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
-  window.renderAdminDynamicGames=function(value){
-    const grid=document.getElementById('adminDynamicGamesGrid');const title=document.getElementById('adminDynamicGamesTitle');if(!grid)return;
-    const games=value||{};const items=Object.keys(games).map(id=>({id,...games[id]})).filter(g=>g.active!==false && g.url).sort((a,b)=>Number(a.order||1)-Number(b.order||1));
-    if(!items.length){grid.innerHTML='';if(title)title.style.display='none';try{filterVipGames();}catch(e){}return;}
-    if(title)title.style.display='block';
-    grid.innerHTML=items.map(g=>{
-      const safeUrl=esc(g.url);const img=g.image?`<img class="game-card-image" alt="${esc(g.name||'Game')}" src="${esc(g.image)}" onerror="this.style.opacity=.25">`:'';
-      return `<a class="game-card-item admin-dynamic-game" href="${safeUrl}" target="_blank" rel="noopener"><span class="dynamic-game-badge">ADMIN</span>${img}<div class="game-card-icon">🎮</div><div class="game-card-title">${esc(g.name||'Game')}</div>${g.description?`<div style="font-size:9px;opacity:.85;margin-top:2px">${esc(g.description)}</div>`:''}</a>`;
-    }).join('');
-    try{filterVipGames();}catch(e){}
-  };
-  document.addEventListener('DOMContentLoaded',function(){
-    try{
-      const cached=window.adminLiveGames;
-      if(cached)window.renderAdminDynamicGames(cached);
-    }catch(e){}
-  });
-})();
-</script>
-
-<!-- REALTIME SYNC BRIDGE: existing features untouched; only adds live Firebase listeners. -->
-<script type="module">
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-  try {
-    const syncDb = getDatabase();
-    const bind = (path, key, handler) => {
-      onValue(ref(syncDb, path), snap => {
-        const value = snap.exists() ? snap.val() : null;
-        window[key] = value;
-        try { handler && handler(value); } catch(e) { console.warn("Realtime sync handler:", path, e); }
-      });
-    };
-    bind('settings/officialNotice','adminLiveOfficialNotice',v=>{
-      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'settings/officialNotice',value:v}}));
-    });
-    bind('settings/referralRewards','adminLiveReferralRewards',v=>{
-      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'settings/referralRewards',value:v}}));
-    });
-    bind('settings/banners','adminLiveBanners',v=>{
-      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'settings/banners',value:v}}));
-    });
-    bind('settings/entryAnnouncement','adminLiveEntryAnnouncement',v=>{
-      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'settings/entryAnnouncement',value:v}}));
-    });
-    bind('suggestions','adminLiveSuggestions',v=>{
-      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'suggestions',value:v}}));
-    });
-    bind('supportTickets','adminLiveSupportTickets',v=>{
-      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'supportTickets',value:v}}));
-    });
-    bind('games','adminLiveGames',v=>{
-      try { window.renderAdminDynamicGames && window.renderAdminDynamicGames(v); } catch(e) { console.warn('Dynamic games render:',e); }
-      window.dispatchEvent(new CustomEvent('admin-data-updated',{detail:{path:'games',value:v}}));
-    });
-  } catch(e) { console.warn('Realtime sync bridge unavailable:', e); }
 </script>
 
 <script>
