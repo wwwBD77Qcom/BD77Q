@@ -1453,7 +1453,9 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   <div class="dgm-grid">
     <input id="dgmName" class="dgm-input" placeholder="গেমের নাম">
     <input id="dgmOrder" class="dgm-input" type="number" min="0" placeholder="Serial / Order (যেমন 1)">
-    <input id="dgmUrl" class="dgm-input full" placeholder="Game Link / URL (https://...)" type="url">
+    <input id="dgmUrl" class="dgm-input full" placeholder="Game Link / URL (ঐচ্ছিক — HTML File দিলে লাগবে না)" type="url">
+    <input id="dgmFile" class="dgm-input full" type="file" accept=".html,.htm,text/html">
+    <div id="dgmUploadStatus" class="full" style="font-size:12px;color:#9da7b6">HTML File দিলে Admin Panel নিজেই Firebase Storage-এ আপলোড করে Game Link তৈরি করবে।</div>
     <input id="dgmImage" class="dgm-input full" placeholder="Thumbnail Image URL (https://...)" type="url">
     <input id="dgmDescription" class="dgm-input full" placeholder="গেমের সংক্ষিপ্ত বর্ণনা (ঐচ্ছিক)">
   </div>
@@ -1469,10 +1471,12 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 <script type="module">
 import { getApps, getApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 const dgmApp = getApps().length ? getApp() : null;
 if(dgmApp){
   const dgmDb = getDatabase(dgmApp);
+  const dgmStorage = getStorage(dgmApp);
   const $ = id => document.getElementById(id);
   let editingId = null;
   let gamesCache = {};
@@ -1484,7 +1488,8 @@ if(dgmApp){
   }
   function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function clearForm(){
-    ['dgmName','dgmOrder','dgmUrl','dgmImage','dgmDescription'].forEach(id=>{if($(id))$(id).value='';});
+    ['dgmName','dgmOrder','dgmUrl','dgmImage','dgmDescription','dgmFile'].forEach(id=>{if($(id))$(id).value='';});
+    if($('dgmUploadStatus')) $('dgmUploadStatus').textContent='HTML File দিলে Admin Panel নিজেই Firebase Storage-এ আপলোড করে Game Link তৈরি করবে।';
     editingId=null; $('dgmSaveBtn').textContent='➕ গেম যোগ করুন'; $('dgmCancelBtn').style.display='none';
   }
   function editGame(id){
@@ -1493,16 +1498,36 @@ if(dgmApp){
     editingId=id; $('dgmSaveBtn').textContent='💾 পরিবর্তন সংরক্ষণ'; $('dgmCancelBtn').style.display='inline-block'; window.scrollTo({top:$('dynamicGameManagerCard').offsetTop-20,behavior:'smooth'});
   }
   async function saveGame(){
-    const name=$('dgmName').value.trim(), url=$('dgmUrl').value.trim(), image=$('dgmImage').value.trim(), description=$('dgmDescription').value.trim();
+    const name=$('dgmName').value.trim(), typedUrl=$('dgmUrl').value.trim(), image=$('dgmImage').value.trim(), description=$('dgmDescription').value.trim();
     const order=Number($('dgmOrder').value||0);
+    const file=$('dgmFile')?.files?.[0] || null;
     if(!name)return msg('গেমের নাম দিন।');
-    if(!url)return msg('Game Link / URL দিন।');
-    try{new URL(url);}catch(e){return msg('সঠিক Game URL দিন।');}
+    if(!typedUrl && !file && !editingId)return msg('Game HTML File নির্বাচন করুন অথবা Game Link দিন।');
+    try{ if(typedUrl) new URL(typedUrl); }catch(e){return msg('সঠিক Game URL দিন।');}
     if(image){try{new URL(image);}catch(e){return msg('Thumbnail URL সঠিক নয়।');}}
-    const data={name,url,image,description,order,active:true,updatedAt:Date.now()};
-    if(editingId){await update(ref(dgmDb,'games/'+editingId),data);msg('গেম আপডেট হয়েছে।',true);}
-    else {const n=push(ref(dgmDb,'games')); data.createdAt=Date.now(); await set(n,data);msg('নতুন গেম যোগ হয়েছে।',true);}
-    clearForm();
+    const btn=$('dgmSaveBtn'); if(btn) btn.disabled=true;
+    try{
+      let url=typedUrl;
+      if(file){
+        if(!/\.(html?|HTML?)$/.test(file.name)) throw new Error('শুধু HTML file আপলোড করুন।');
+        if($('dgmUploadStatus')) $('dgmUploadStatus').textContent='⏳ HTML File Firebase Storage-এ আপলোড হচ্ছে...';
+        const safeName=file.name.replace(/[^a-zA-Z0-9._-]/g,'_');
+        const path='games/'+Date.now()+'_'+safeName;
+        const snap=await uploadBytes(storageRef(dgmStorage,path),file,{contentType:'text/html'});
+        url=await getDownloadURL(snap.ref);
+        if($('dgmUploadStatus')) $('dgmUploadStatus').textContent='✅ File Upload হয়েছে। Game Link স্বয়ংক্রিয়ভাবে তৈরি হয়েছে।';
+      }
+      if(!url) throw new Error('Game Link তৈরি হয়নি।');
+      const data={name,url,image,description,order,active:true,updatedAt:Date.now(),fileName:file?.name||gamesCache[editingId]?.fileName||''};
+      if(editingId){
+        if(gamesCache[editingId]?.active===false) data.active=false;
+        await update(ref(dgmDb,'games/'+editingId),data); msg('গেম আপডেট হয়েছে।',true);
+      } else {
+        const n=push(ref(dgmDb,'games')); data.createdAt=Date.now(); await set(n,data); msg('নতুন গেম যোগ হয়েছে।',true);
+      }
+      clearForm();
+    }catch(e){ console.error(e); msg(e?.message || 'Game upload/save করা যায়নি। Firebase Storage Rules পরীক্ষা করুন।'); if($('dgmUploadStatus')) $('dgmUploadStatus').textContent='❌ Upload ব্যর্থ হয়েছে।'; }
+    finally{ if(btn) btn.disabled=false; }
   }
   async function toggleGame(id){const g=gamesCache[id];if(!g)return;try{await update(ref(dgmDb,'games/'+id),{active:g.active===false});msg('গেমের Active/Disable স্ট্যাটাস পরিবর্তন হয়েছে।',true);}catch(e){msg('স্ট্যাটাস পরিবর্তন করা যায়নি।');}}
   async function deleteGame(id){const g=gamesCache[id];if(!g)return;if(!confirm('এই গেমটি মুছে ফেলবেন?'))return;try{await remove(ref(dgmDb,'games/'+id));msg('গেম মুছে ফেলা হয়েছে।',true);}catch(e){msg('গেম মুছতে সমস্যা হয়েছে।');}}
