@@ -161,6 +161,36 @@
 @media(max-width:380px){.my-account-profile{grid-template-columns:78px 1fr}.my-account-avatar-wrap{width:78px;height:78px}.my-account-avatar{width:78px;height:78px;font-size:26px}.profile-avatar-edit{width:28px;height:28px;font-size:13px}.vip-level-topline>#accountVipLabel{font-size:15px}.my-account-phone{font-size:20px}.my-account-name{font-size:15px}.my-account-title{font-size:27px}.account-menu-grid{gap:15px 4px}.account-menu-icon{width:58px;height:58px;font-size:25px}.account-menu-item{font-size:12px;min-height:100px}}
 .feature-list{display:grid;gap:8px}.feature-row{background:#11161e;border:1px solid #29313d;border-radius:10px;padding:11px;display:flex;justify-content:space-between;gap:10px}.feature-row strong{color:#7ed6a7}.bank-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.bank-method-btn{background:#202733;color:#fff}.bank-method-btn.active{background:#fff;color:#111}
 </style>
+
+<style id="security-center-vip-upgrade">
+/* Security Center + My Account: additive UI only */
+.security-center-vip{background:#f7f7fa;color:#4b4b50;border-radius:18px;overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.16)}
+.security-center-vip .sc-head{background:#171516;color:#fff;padding:17px 16px;display:flex;align-items:center;gap:10px}
+.security-center-vip .sc-head .sc-title{font:900 25px Georgia,serif;flex:1;text-align:center}
+.security-center-vip .sc-score{margin:16px;background:#fff;border-radius:15px;padding:18px;display:flex;align-items:center;gap:18px;box-shadow:0 5px 18px rgba(0,0,0,.08)}
+.sc-ring{width:104px;height:104px;border-radius:50%;padding:7px;background:conic-gradient(#4fc3f7 0 52%,#a86cff 52% 100%);flex:none}
+.sc-ring-inner{width:100%;height:100%;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;color:#8d79ea;font-size:30px;font-weight:900}
+.sc-score-text h3{margin:0 0 12px;font:900 20px Georgia,serif}.sc-bolts{color:#ffd500;font-size:28px;letter-spacing:4px}
+.sc-list{margin:0 12px 16px;background:#fff;border-radius:13px;overflow:hidden}.sc-item{display:flex;align-items:center;gap:13px;padding:15px 12px;border-bottom:1px solid #ddd;cursor:pointer}.sc-item:last-child{border-bottom:0}.sc-icon{width:58px;text-align:center;font-size:36px}.sc-main{flex:1}.sc-main strong{display:block;font:900 17px Georgia,serif;color:#555}.sc-main span{display:block;margin-top:4px;color:#aaa;font:15px Georgia,serif;line-height:1.25}.sc-check{color:#00d66b;font-size:25px}.sc-arrow{font-size:34px;color:#aaa}
+.my-account-vip{background:#fff;border-radius:18px;overflow:hidden;color:#333}.my-account-vip .ma-head{background:#171516;color:#fff;padding:17px 15px;font:900 27px Georgia,serif;text-align:center}.ma-body{padding:18px 14px}.ma-user{font:22px Georgia,serif;margin:0 0 18px}.ma-field{background:#f0f0f2;border-radius:15px;padding:16px 15px;margin:10px 0;display:flex;align-items:center;gap:14px}.ma-field .ma-ico{width:40px;text-align:center;font-size:27px;color:#888}.ma-field .ma-val{font:20px Georgia,serif;color:#444;word-break:break-word}.ma-field.muted .ma-val{color:#aaa}.ma-privacy{margin:18px 0 4px;color:#3f9bf0;font:21px Georgia,serif}.ma-note{color:#999;font:16px Georgia,serif;margin-bottom:18px}.ma-submit{width:100%;border:0;border-radius:14px;padding:15px;background:linear-gradient(135deg,#ff3d47,#ff202d);color:#fff;font:900 22px Georgia,serif;box-shadow:0 8px 20px rgba(255,45,55,.25);cursor:pointer}
+.login-pw-box{padding:6px}.login-pw-box input{width:100%;box-sizing:border-box;margin:7px 0;padding:13px;border-radius:11px;border:1px solid #333;background:#10141b;color:#fff}.login-pw-msg{min-height:20px;color:#ffd36b;font-size:13px;margin:4px 0}
+</style>
+
+
+<style id="withdraw-profile-verification-style">
+.personal-complete-box{background:linear-gradient(145deg,#171022,#0d0b15);border:1px solid rgba(255,210,80,.28);border-radius:18px;padding:14px;margin-bottom:12px}
+.personal-complete-title{font-weight:900;color:#ffd45a;font-size:17px;margin-bottom:5px}
+.personal-complete-note{font-size:12px;color:#bdb6ca;line-height:1.5}
+.personal-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.personal-grid .full{grid-column:1/-1}
+.personal-grid label{font-size:12px;font-weight:800;color:#ddd;margin-bottom:4px;display:block}
+.personal-grid input{width:100%;box-sizing:border-box;border-radius:12px!important;padding:12px!important;background:#11141b!important;color:#fff!important;border:1px solid #303846!important}
+.personal-grid input:focus{border-color:#ffd45a!important;outline:none;box-shadow:0 0 0 2px rgba(255,212,90,.1)}
+.profile-required-badge{display:inline-block;padding:4px 8px;border-radius:999px;background:rgba(255,193,7,.12);color:#ffd45a;font-size:10px;font-weight:900;margin-left:6px}
+.withdraw-profile-lock{background:linear-gradient(135deg,rgba(255,193,7,.12),rgba(255,77,109,.08));border:1px solid rgba(255,193,7,.25);padding:10px;border-radius:12px;font-size:12px;line-height:1.5;color:#eee}
+@media(max-width:420px){.personal-grid{grid-template-columns:1fr}.personal-grid .full{grid-column:auto}}
+</style>
+
 </head>
 <body>
 
@@ -451,6 +481,29 @@
     </div>
   </div>
 
+
+  <!-- PERSONAL INFORMATION / WITHDRAW VERIFICATION MODAL -->
+  <div id="personalInfoModal" class="profile-modal" onclick="modalBackdrop(event,'personalInfoModal')">
+    <div class="card profile-modal-card">
+      <div class="modal-top"><div style="font-size:21px;font-weight:900">👤 Personal Information</div><button class="modal-close" type="button" onclick="closeProfileModal('personalInfoModal')">×</button></div>
+      <div class="personal-complete-box">
+        <div class="personal-complete-title">Withdrawal Verification <span class="profile-required-badge">REQUIRED</span></div>
+        <div class="personal-complete-note">টাকা Withdraw করার আগে প্রয়োজনীয় তথ্য সম্পূর্ণ করতে হবে। Facebook ID ও Profile Link দেওয়া ঐচ্ছিক। একবার Save করলে আপনার Account-এ সংরক্ষিত থাকবে।</div>
+      </div>
+      <div class="personal-grid">
+        <div><label>নাম *</label><input id="personalName" type="text" placeholder="আপনার নাম"></div>
+        <div><label>Nickname *</label><input id="personalNickname" type="text" placeholder="Nickname"></div>
+        <div><label>Gmail *</label><input id="personalGmail" type="email" placeholder="example@gmail.com"></div>
+        <div><label>WhatsApp *</label><input id="personalWhatsapp" type="tel" placeholder="01XXXXXXXXX"></div>
+        <div><label>Facebook ID <span style="opacity:.55;font-weight:500">(ঐচ্ছিক)</span></label><input id="personalFacebookId" type="text" placeholder="Facebook ID"></div>
+        <div><label>Google Name *</label><input id="personalGoogleName" type="text" placeholder="Google account name"></div>
+        <div class="full"><label>Facebook Profile Link <span style="opacity:.55;font-weight:500">(ঐচ্ছিক)</span></label><input id="personalFacebookLink" type="url" placeholder="https://facebook.com/yourprofile"></div>
+      </div>
+      <div id="personalInfoMsg" class="modal-note" style="margin-top:10px;min-height:18px"></div>
+      <button class="cash" onclick="savePersonalInformation()">💾 Save & Complete Information</button>
+    </div>
+  </div>
+
   <!-- BANK ACCOUNT MODAL -->
   <div id="bankAccountModal" class="profile-modal" onclick="modalBackdrop(event,'bankAccountModal')">
     <div class="card profile-modal-card">
@@ -467,6 +520,21 @@
       <button class="cash" onclick="saveBankAccount()">💾 Save Bank Account</button>
     </div>
   </div>
+  <!-- LOGIN PASSWORD MODAL: additive Security Center feature -->
+  <div id="loginPasswordModal" class="profile-modal" onclick="modalBackdrop(event,'loginPasswordModal')">
+    <div class="card profile-modal-card">
+      <div class="modal-top"><div style="font-size:21px;font-weight:900">🔒 Change Login Password</div><button class="modal-close" type="button" onclick="closeProfileModal('loginPasswordModal')">×</button></div>
+      <div class="login-pw-box">
+        <div class="modal-note">আপনার Login Password পরিবর্তন করুন।</div>
+        <input id="loginOldPw" type="password" placeholder="Old Login Password">
+        <input id="loginNewPw" type="password" placeholder="New Login Password">
+        <input id="loginConfirmPw" type="password" placeholder="Confirm New Password">
+        <div id="loginPwMsg" class="login-pw-msg"></div>
+        <button class="cash" onclick="saveLoginPassword()">🔐 Save Login Password</button>
+      </div>
+    </div>
+  </div>
+
   <!-- HELP CARE WELCOME LOADING -->
   <div id="helpCareWelcomeLoading" class="help-care-welcome" aria-hidden="true">
     <div class="help-care-welcome-icon">🆘</div>
@@ -792,6 +860,19 @@
       }
   });
 
+  window.refreshReferralUI = function(){
+    try{
+      const user = (window.usersDb || {})[window.currentUserPhone || currentUserPhone];
+      if(!user) return;
+      const count = Number(user.referStats?.count || 0);
+      ['refCount','referralCount','myReferralCount','totalReferralCount','totalRef','refCountEl','referralCountEl'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=count+' জন'; });
+      if(typeof window.renderRewardsList==='function') window.renderRewardsList();
+      if(typeof window.renderMyAccount==='function') window.renderMyAccount();
+      if(typeof window.renderReferralEarnings==='function') window.renderReferralEarnings();
+      if(typeof window.renderReferralRecords==='function') window.renderReferralRecords();
+    }catch(e){ console.warn('Referral UI refresh:',e); }
+  };
+
   window.initLiveUserSync = function(phone) {
       if(!phone) return;
       const userRef = ref(db, 'users/' + phone);
@@ -804,6 +885,10 @@
                   usersDb[phone].balance = liveBalance;
                   usersDb[phone].name = userData.name || usersDb[phone].name;
                   usersDb[phone].referStats = userData.referStats || usersDb[phone].referStats;
+                  usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
+                  window.usersDb = usersDb;
+                  localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                  if(typeof window.refreshReferralUI==='function') window.refreshReferralUI();
                   usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
                   usersDb[phone].claimedRewards = userData.claimedRewards || usersDb[phone].claimedRewards;
                   usersDb[phone].bankAccounts = userData.bankAccounts || usersDb[phone].bankAccounts || {};
@@ -1573,6 +1658,21 @@ function nextRound(){roundNo++;document.getElementById('round').textContent='ROU
 function showScreen(id){if(!currentUserPhone){checkAuthStatus();return;}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));const map={homeScreen:'navHome',gameScreen:'navGame',profileScreen:'navProfile'};const nav=document.getElementById(map[id]);if(nav)nav.classList.add('active');if(id==='profileScreen'){renderMyAccount();syncAppBalance();window.scrollTo(0,0);return;}syncAppBalance()}
 </script>
 
+<script id="login-password-security-script">
+function openLoginPasswordModal(){const m=document.getElementById('loginPasswordModal');if(!m)return;m.classList.add('show');['loginOldPw','loginNewPw','loginConfirmPw'].forEach(id=>{const e=document.getElementById(id);if(e)e.value=''});const msg=document.getElementById('loginPwMsg');if(msg)msg.textContent=''}
+async function saveLoginPassword(){
+ const oldPw=document.getElementById('loginOldPw').value,newPw=document.getElementById('loginNewPw').value,confirmPw=document.getElementById('loginConfirmPw').value,msg=document.getElementById('loginPwMsg');
+ const u=getAccountUser(); if(!u||!currentUserPhone){msg.textContent='Account পাওয়া যায়নি।';return}
+ if(!oldPw||oldPw!==u.password){msg.textContent='পুরাতন login password সঠিক নয়।';return}
+ if(!newPw||newPw.length<6){msg.textContent='নতুন password কমপক্ষে ৬ অক্ষরের হতে হবে।';return}
+ if(newPw!==confirmPw){msg.textContent='New password এবং confirm password মিলছে না।';return}
+ u.password=newPw;u.passwordUpdatedAt=Date.now();usersDb[currentUserPhone]=u;window.usersDb=usersDb;localStorage.setItem('aviator_users_db',JSON.stringify(usersDb));
+ try{if(window.fbDb&&window.fbRef&&window.fbUpdate)await window.fbUpdate(window.fbRef(window.fbDb,'users/'+currentUserPhone),{password:newPw,passwordUpdatedAt:u.passwordUpdatedAt});}
+ catch(e){console.error('Login password Firebase update failed:',e);msg.textContent='Local password updated, Firebase sync failed.';return}
+ msg.textContent='Login Password successfully updated ✓';setTimeout(()=>closeProfileModal('loginPasswordModal'),700);
+}
+</script>
+
 <!-- TRANSACTION PASSWORD SCRIPT -->
 <script>
 let transactionPassword=localStorage.getItem('aviator_demo_tx_password')||'';
@@ -1719,6 +1819,8 @@ function submitDemoWithdraw(){
     
     if(!Number.isFinite(amount)||amount<100||amount>20000){msg.textContent='Withdraw amount অবশ্যই ৳100 থেকে ৳20,000 হতে হবে।';return}
     if(!number){msg.textContent='Account number দিন।';return}
+    const profileCheck=getPersonalCompletion(usersDb[currentUserPhone]);
+    if(!profileCheck.complete){msg.textContent='Withdraw করার আগে Personal Information সম্পূর্ণ করুন।';closeProfileModal('moneyModal');openPersonalInfoModal();return}
     if(!transactionPassword){msg.textContent='প্রথমে Settings থেকে Transaction Password সেট করুন।';return}
     if(password!==transactionPassword){msg.textContent='Transaction Password সঠিক নয়।';return}
     if(amount>balance){msg.textContent='পর্যাপ্ত balance নেই।';return}
@@ -1807,7 +1909,7 @@ function saveNickname(){
     setTimeout(()=>document.getElementById('nicknameForm').classList.remove('show'),700)
 }
 
-document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','depositModal','depositSuccessModal','moneyModal','withdrawSuccessModal','passwordModal','internationalSmsModal','helpLineModal','accountFeatureModal','bankAccountModal'].forEach(id=>closeProfileModal(id)),closePasswordModal(),closeHelpLineModal())})
+document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','depositModal','depositSuccessModal','moneyModal','withdrawSuccessModal','passwordModal','internationalSmsModal','helpLineModal','accountFeatureModal','bankAccountModal','personalInfoModal'].forEach(id=>closeProfileModal(id)),closePasswordModal(),closeHelpLineModal())})
 </script>
 
 <script>
@@ -1822,6 +1924,64 @@ document.addEventListener('keydown',e=>{e.key==='Escape'&&(['referModal','deposi
     if(value>=100){clearInterval(timer);setTimeout(()=>splash.classList.add('hide'),180);}
   },50);
 })();
+</script>
+
+<script id="withdrawProfileVerificationFunctions">
+function getPersonalCompletion(user){
+  const u=user||getAccountUser()||{};
+  const fields={
+    name:String(u.name||'').trim(),
+    nickname:String(u.nickname||'').trim(),
+    gmail:String(u.googleEmail||u.gmail||'').trim(),
+    whatsapp:String(u.whatsapp||'').trim(),
+    facebookId:String(u.facebookId||'').trim(),
+    facebookLink:String(u.facebookLink||'').trim(),
+    googleName:String(u.googleName||'').trim()
+  };
+  const missing=[];
+  if(!fields.name)missing.push('নাম');
+  if(!fields.nickname)missing.push('Nickname');
+  if(!fields.gmail)missing.push('Gmail');
+  if(!fields.whatsapp)missing.push('WhatsApp');
+  if(!fields.googleName)missing.push('Google Name');
+  return {complete:missing.length===0,missing,fields};
+}
+function openPersonalInfoModal(){
+  const u=getAccountUser(); if(!u)return;
+  document.getElementById('personalName').value=u.name||'';
+  document.getElementById('personalNickname').value=u.nickname||'';
+  document.getElementById('personalGmail').value=u.googleEmail||u.gmail||'';
+  document.getElementById('personalWhatsapp').value=u.whatsapp||'';
+  document.getElementById('personalFacebookId').value=u.facebookId||'';
+  document.getElementById('personalFacebookLink').value=u.facebookLink||'';
+  document.getElementById('personalGoogleName').value=u.googleName||'';
+  document.getElementById('personalInfoMsg').textContent='';
+  openProfileModal('personalInfoModal');
+}
+async function savePersonalInformation(){
+  const u=getAccountUser(); if(!u)return;
+  const data={
+    name:document.getElementById('personalName').value.trim(),
+    nickname:document.getElementById('personalNickname').value.trim(),
+    googleEmail:document.getElementById('personalGmail').value.trim(),
+    whatsapp:document.getElementById('personalWhatsapp').value.trim(),
+    facebookId:document.getElementById('personalFacebookId').value.trim(),
+    facebookLink:document.getElementById('personalFacebookLink').value.trim(),
+    googleName:document.getElementById('personalGoogleName').value.trim(),
+    personalInfoUpdatedAt:Date.now()
+  };
+  const msg=document.getElementById('personalInfoMsg');
+  const missing=[];
+  Object.entries({name:'নাম',nickname:'Nickname',googleEmail:'Gmail',whatsapp:'WhatsApp',googleName:'Google Name'}).forEach(([k,label])=>{if(!data[k])missing.push(label)});
+  if(missing.length){msg.textContent='সব তথ্য পূরণ করুন: '+missing.join(', ');return}
+  if(data.facebookLink){try{new URL(data.facebookLink); }catch(e){msg.textContent='সঠিক Facebook Profile Link দিন।';return}}
+  Object.assign(u,data); usersDb[currentUserPhone]=u;
+  localStorage.setItem('aviator_users_db',JSON.stringify(usersDb));
+  if(window.fbDb&&window.fbRef&&window.fbUpdate){try{await window.fbUpdate(window.fbRef(window.fbDb,'users/'+currentUserPhone),data)}catch(e){console.error(e);msg.textContent='Firebase sync failed — আবার চেষ্টা করুন।';return}}
+  msg.style.color='#7ed6a7'; msg.textContent='সব Personal Information সম্পূর্ণ হয়েছে ✓';
+  renderMyAccount();
+  setTimeout(()=>closeProfileModal('personalInfoModal'),700);
+}
 </script>
 
 <script id="myAccountFunctions">
@@ -1904,8 +2064,8 @@ function openAccountFeature(type){
  else if(type==='depositRecord'){title.textContent='📋 Deposit Record';const rs=userDepositRecords();html=rs.length?`<div class="feature-list">${rs.map(x=>rowHtml(money2(x.baseAmount||x.amount)+' • '+(x.method||'Deposit'),String(x.status||'Pending'))).join('')}</div>`:'<div class="modal-note" style="padding:20px;text-align:center">কোনো Deposit Record নেই।</div>'}
  else if(type==='withdrawRecord'){title.textContent='📥 Withdrawal Record';const rs=userWithdrawRecords();html=rs.length?`<div class="feature-list">${rs.map(x=>rowHtml(money2(x.amount)+' • '+(x.method||'Withdraw'),String(x.status||'Pending'))).join('')}</div>`:'<div class="modal-note" style="padding:20px;text-align:center">কোনো Withdrawal Record নেই।</div>'}
  else if(type==='accountRecord'){title.textContent='📊 Account Record';const rs=userDepositRecords(),ws=userWithdrawRecords();html=`<div class="feature-list">${rowHtml('Account',currentUserPhone)}${rowHtml('VIP Level','VIP'+getVipLevel(u))}${rowHtml('Total Deposit',money2(u.totalDeposit||0))}${rowHtml('Balance',money2(balance))}${rowHtml('Deposit Requests',String(rs.length))}${rowHtml('Withdrawal Requests',String(ws.length))}${rowHtml('Referral Count',String(u.referStats?.count||0))}</div>`}
- else if(type==='myAccount'){title.textContent='👤 My Account';html=`<div class="feature-list">${rowHtml('Nickname',u.name||'Not set')}${rowHtml('Mobile',currentUserPhone)}${rowHtml('VIP','VIP'+getVipLevel(u))}${rowHtml('Joined',u.joinedAt?new Date(u.joinedAt).toLocaleDateString('en-CA'):'—')}${rowHtml('Balance',money2(balance))}</div><div style="margin-top:10px"><button class="small" style="width:100%" onclick="closeProfileModal('accountFeatureModal');toggleNicknameForm()">✏️ Edit Nickname</button></div>`}
- else if(type==='security'){title.textContent='🛡️ Security Center';html=`<div class="feature-list">${rowHtml('Transaction Password',transactionPassword?'Set ✓':'Not Set')}${rowHtml('Account Login','Password protected')}${rowHtml('Firebase Sync',window.fbDb?'Connected':'Local mode')}</div><button class="cash" onclick="closeProfileModal('accountFeatureModal');openPasswordModal()">🔐 Change Transaction Password</button><div class="modal-note" style="margin-top:9px">Withdraw করার আগে Transaction Password যাচাই করা হয়।</div>`}
+ else if(type==='myAccount'){title.textContent='👤 My Account';const hasWallet=!!(u.bankAccounts&&Object.keys(u.bankAccounts).length);html=`<div class="my-account-vip"><div class="ma-head">My Account</div><div class="ma-body"><div class="ma-user">Username: <strong>${escapeHtml(currentUserPhone||'—')}</strong></div><div class="ma-field"><div class="ma-ico">👤</div><div class="ma-val">${escapeHtml(u.name||'Not set')}</div></div><div class="ma-field ${u.nickname?'':'muted'}"><div class="ma-ico">✏️</div><div class="ma-val">${escapeHtml(u.nickname||'Please fill in Nickname')}</div></div><div class="ma-field"><div class="ma-ico">⭐</div><div class="ma-val">VIP${getVipLevel(u)} • Balance ${money2(balance)}</div></div><div class="ma-field ${u.facebookId?'':'muted'}"><div class="ma-ico">ⓕ</div><div class="ma-val">${escapeHtml(u.facebookId||'Please fill in Facebook ID')}</div></div><div class="ma-field ${u.googleEmail?'':'muted'}"><div class="ma-ico">G</div><div class="ma-val">${escapeHtml(u.googleEmail||'Please fill in Google')}</div></div><div class="ma-field ${u.whatsapp?'':'muted'}"><div class="ma-ico">☎</div><div class="ma-val">${escapeHtml(u.whatsapp||'Please fill in WhatsApp')}</div></div><div class="ma-field"><div class="ma-ico">✉</div><div class="ma-val">${escapeHtml((u.email||'Not linked'))}</div></div><div class="ma-field"><div class="ma-ico">📱</div><div class="ma-val">${escapeHtml(String(currentUserPhone||'').slice(0,6)+'****')}</div></div><div class="ma-privacy">We care about your privacy</div><div class="ma-note">All user data is encrypted to protect your privacy.</div><button class="ma-submit" style="background:linear-gradient(135deg,#ffd54f,#ff9f1a);color:#251600" onclick="closeProfileModal('accountFeatureModal');openPersonalInfoModal()">✏️ Complete / Edit Personal Information</button><div class="modal-note" style="margin-top:10px;text-align:center">Joined: ${escapeHtml(u.joinedAt?new Date(u.joinedAt).toLocaleDateString('en-CA'):'—')} • Wallet: ${hasWallet?'Linked ✓':'Not linked'}</div></div></div>`}
+ else if(type==='security'){const personalDone=getPersonalCompletion(u).complete;const walletDone=!!(u.bankAccounts&&Object.keys(u.bankAccounts).length);const loginDone=!!u.password;const txDone=!!transactionPassword;const score=Math.round(([personalDone,walletDone,loginDone,txDone].filter(Boolean).length/4)*100);const bolts=score>=100?'⚡ ⚡ ⚡ ⚡ ⚡':score>=75?'⚡ ⚡ ⚡ ⚡':score>=50?'⚡ ⚡ ⚡':'⚡ ⚡';title.textContent='🛡️ Security Center';html=`<div class="security-center-vip"><div class="sc-head"><span style="font-size:27px">‹</span><div class="sc-title">Security Center</div></div><div class="sc-score"><div class="sc-ring"><div class="sc-ring-inner">${score}%</div></div><div class="sc-score-text"><h3>Security Level: ${score>=75?'High':score>=50?'Medium':'Low'}</h3><div class="sc-bolts">${bolts}</div></div></div><div class="sc-list"><div class="sc-item" onclick="closeProfileModal('accountFeatureModal');openPersonalInfoModal()"><div class="sc-icon">👤</div><div class="sc-main"><strong>Personal information</strong><span>Complete personal information.</span></div><div class="sc-check">${personalDone?'✓':'○'}</div><div class="sc-arrow">›</div></div><div class="sc-item" onclick="closeProfileModal('accountFeatureModal');openProfileModal('bankAccountModal')"><div class="sc-icon">💳</div><div class="sc-main"><strong>Link E-wallet</strong><span>Link E-wallet for withdrawal.</span></div><div class="sc-check">${walletDone?'✓':'○'}</div><div class="sc-arrow">›</div></div><div class="sc-item" onclick="closeProfileModal('accountFeatureModal');openLoginPasswordModal()"><div class="sc-icon">🔒</div><div class="sc-main"><strong>Change login password</strong><span>Recommended letter and number combination</span></div><div class="sc-check">${loginDone?'✓':'○'}</div><div class="sc-arrow">›</div></div><div class="sc-item" onclick="closeProfileModal('accountFeatureModal');openPasswordModal()"><div class="sc-icon">🛡️</div><div class="sc-main"><strong>Transaction Password</strong><span>Set a fund password to improve the security of fund operations</span></div><div class="sc-check">${txDone?'✓':'○'}</div><div class="sc-arrow">›</div></div><div class="sc-item" onclick="closeProfileModal('accountFeatureModal');handleLogout()"><div class="sc-icon">⏻</div><div class="sc-main"><strong>Logout</strong><span>Logout safely</span></div><div class="sc-arrow">›</div></div></div></div>`}
  else if(type==='suggestion'){title.textContent='💬 Suggestion';html=`<label>আপনার পরামর্শ</label><textarea id="suggestionText" style="width:100%;min-height:110px;background:#0e1218;color:#fff;border:1px solid #303846;border-radius:8px;padding:12px;resize:vertical" placeholder="আপনার পরামর্শ লিখুন..."></textarea><div id="suggestionMsg" class="modal-note" style="margin-top:8px;min-height:18px"></div><button class="cash" onclick="submitSuggestion()">📨 Submit Suggestion</button>`}
  body.innerHTML=html;openProfileModal('accountFeatureModal');
 }
