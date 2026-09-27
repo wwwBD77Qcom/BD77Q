@@ -210,13 +210,14 @@
             font-weight: bold;
         }
 
+        /* স্লট বোর্ড */
         .slot-board {
             flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 5px;
             background: radial-gradient(circle, #380d59 0%, #150226 100%);
             position: relative;
         }
@@ -266,34 +267,71 @@
             width: 100%;
         }
 
-        /* কন্ট্রোল ও অ্যাকশন প্যানেল (বোর্ডের নিচে সাজানো) */
-        .controls-middle-panel {
+        /* গেম বোর্ডের ঠিক নিচে স্পিন, বেট এবং বাই ফিচার প্যানেল */
+        .bottom-action-panel {
             background: linear-gradient(to bottom, #1e0433, #11011f);
             padding: 10px 12px;
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            border-top: 2px solid #7b1fa2;
-            border-bottom: 2px solid #7b1fa2;
-        }
-
-        .top-action-row {
-            display: flex;
             justify-content: space-between;
             align-items: center;
+            border-top: 3px solid #ffcc00;
+            border-bottom: 2px solid #7b1fa2;
         }
 
         .buy-feature-btn {
             background: linear-gradient(to bottom, #d32f2f, #9a0007);
             color: #fff;
             border: 2px solid #ffeb3b;
-            padding: 6px 14px;
-            font-size: 12px;
+            padding: 6px 10px;
+            font-size: 11px;
             font-weight: 900;
             border-radius: 20px;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.6);
             text-transform: uppercase;
+        }
+
+        .bet-inline-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 9px;
+            color: #b39ddb;
+            font-weight: bold;
+        }
+
+        .bet-controls-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 2px;
+        }
+
+        .circle-btn {
+            width: 26px;
+            height: 26px;
+            background: #7b1fa2;
+            border: 1px solid #ffcc00;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .stat-value {
+            background: #0d011a;
+            border: 1px solid #7b1fa2;
+            color: #fff;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 45px;
+            text-align: center;
         }
 
         .spin-btn {
@@ -313,64 +351,42 @@
             font-size: 20px;
         }
 
-        .bottom-stats-row {
+        /* একদম নিচের উইন ও ব্যালেন্স বার */
+        .footer-info-bar {
+            background: #0d011a;
+            padding: 8px 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #0d011a;
-            padding: 6px 10px;
-            border-radius: 8px;
-            border: 1px solid #7b1fa2;
+            border-top: 2px solid #7b1fa2;
         }
 
-        .stat-box {
+        .info-group {
             display: flex;
             flex-direction: column;
-            align-items: center;
             font-size: 9px;
             color: #b39ddb;
             font-weight: bold;
         }
 
-        .stat-value {
-            color: #fff;
-            font-size: 13px;
+        .info-value {
+            color: #00e676;
+            font-size: 14px;
             font-weight: bold;
             margin-top: 1px;
         }
 
-        .bet-adjust-container {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .circle-btn {
-            width: 26px;
-            height: 26px;
-            background: #7b1fa2;
-            border: 1px solid #ffcc00;
-            color: #fff;
-            border-radius: 50%;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
         .win-display-bar {
             background: #280547;
-            height: 35px;
+            height: 32px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-bottom: 2px solid #7b1fa2;
+            border-top: 1px solid #7b1fa2;
         }
 
         .win-text {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             color: #ffcc00;
         }
@@ -458,39 +474,39 @@
             <div class="reels-grid" id="reelsGrid"></div>
         </div>
 
-        <!-- ব্যালেন্স, বেট, বাই ফিচার ও স্পিন বাটন একসাথে উপরের দিকে (বোর্ডের নিচে) -->
-        <div class="controls-middle-panel">
-            <div class="top-action-row">
-                <button class="buy-feature-btn" onclick="triggerBuyFeature()">BUY FEATURE 15x</button>
-                <button class="spin-btn" id="spinBtn" onclick="startSpin()">
-                    <span class="spin-icon">🔄</span>
-                </button>
-            </div>
+        <!-- গেম বোর্ডের ঠিক নিচে কন্ট্রোল প্যানেল (Buy, Bet এবং Spin বাটন পাশাপাশি) -->
+        <div class="bottom-action-panel">
+            <button class="buy-feature-btn" onclick="triggerBuyFeature()">BUY 15x</button>
             
-            <div class="bottom-stats-row">
-                <div class="stat-box">
-                    <span>BALANCE</span>
-                    <div class="stat-value" id="balanceVal">0.00</div>
-                </div>
-
-                <div class="stat-box">
-                    <span>BET</span>
-                    <div class="bet-adjust-container" style="margin-top: 2px;">
-                        <button class="circle-btn" onclick="adjustBet(-0.1)">-</button>
-                        <div class="stat-value" id="betVal" style="min-width: 45px; text-align: center;">0.50</div>
-                        <button class="circle-btn" onclick="adjustBet(0.1)">+</button>
-                    </div>
+            <div class="bet-inline-group">
+                <span>BET</span>
+                <div class="bet-controls-row">
+                    <button class="circle-btn" onclick="adjustBet(-0.1)">-</button>
+                    <div class="stat-value" id="betVal">0.50</div>
+                    <button class="circle-btn" onclick="adjustBet(0.1)">+</button>
                 </div>
             </div>
+
+            <button class="spin-btn" id="spinBtn" onclick="startSpin()">
+                <span class="spin-icon">🔄</span>
+            </button>
         </div>
 
         <div class="win-display-bar">
             <div class="win-text">WIN <span class="win-amount" id="winAmountVal">0.00</span></div>
         </div>
 
+        <!-- একদম নিচের বারে মেইন ড্যাশবোর্ডের সাথে সামঞ্জস্যপূর্ণ ব্যালেন্স -->
+        <div class="footer-info-bar">
+            <div class="info-group">
+                <span>BALANCE</span>
+                <div class="info-value" id="balanceVal">0.00</div>
+            </div>
+        </div>
+
         <div class="big-win-overlay" id="bigWinOverlay" onclick="closeBigWin()">
             <div class="big-win-title">BIG WIN!</div>
-            <div class="big-win-val" id="overlayWinVal">$0.00</div>
+            <div class="big-win-val" id="overlayWinVal">৳0.00</div>
             <div style="margin-top: 20px; font-size: 13px; color: #ffcc00; text-decoration: underline;">Tap to continue</div>
         </div>
     </div>
@@ -631,7 +647,7 @@
         }
 
         function updateUI() {
-            document.getElementById('balanceVal').textContent = balance.toFixed(2);
+            document.getElementById('balanceVal').textContent = '৳ ' + balance.toFixed(2);
             document.getElementById('betVal').textContent = bet.toFixed(2);
             document.getElementById('multiplierDisplay').textContent = `x${multiplier}`;
         }
@@ -724,7 +740,7 @@
 
         function showBigWin(amount) {
             const overlay = document.getElementById('bigWinOverlay');
-            document.getElementById('overlayWinVal').textContent = `$${amount.toFixed(2)}`;
+            document.getElementById('overlayWinVal').textContent = `৳${amount.toFixed(2)}`;
             overlay.classList.add('active');
         }
 
