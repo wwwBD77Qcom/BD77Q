@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIP Fiesta Slot Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background-color: #120524;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            color: #fff;
+        }
+
+        /* ভিআইপি লোডিং স্ক্রিন স্টাইল */
+        .loading-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #120524 0%, #2c0b4e 50%, #4a0e4e 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-logo {
+            font-size: 64px;
+            animation: vipBounce 1.2s infinite alternate;
+            filter: drop-shadow(0 0 20px #ffcc00);
+            margin-bottom: 15px;
+        }
+
+        @keyframes vipBounce {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+
+        .loading-title {
+            font-size: 26px;
+            font-weight: 900;
+            color: #ffcc00;
+            text-transform: uppercase;
+            text-shadow: 2px 2px #000, 0 0 15px #ff8f00;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .loading-bar-container {
+            width: 240px;
+            height: 16px;
+            background: #0d011a;
+            border: 2px solid #ffcc00;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+        }
+
+        .loading-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff8f00, #ffea00, #00e676);
+            border-radius: 8px;
+            transition: width 0.1s linear;
+        }
+
+        .loading-text {
+            font-size: 13px;
+            color: #b39ddb;
+            margin-top: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* মূল গেম কন্টেইনার */
+        .game-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 850px;
+            background: linear-gradient(to bottom, #4a0e4e, #2c0b4e, #17032c);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+            border: 4px solid #ffcc00;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .game-container.visible {
+            opacity: 1;
+        }
+
+        .game-top-decoration {
+            background: linear-gradient(to bottom, #6a1b9a, #3b0d5c);
+            padding: 10px;
+            text-align: center;
+            border-bottom: 3px solid #ffcc00;
+            position: relative;
+            box-shadow: inset 0 -5px 10px rgba(0,0,0,0.5);
+        }
+
+        .bunting-flags {
+            font-size: 18px;
+            letter-spacing: 4px;
+            margin-bottom: 2px;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5px;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .skeleton-title {
+            font-size: 14px;
+            font-weight: 900;
+            color: #ffcc00;
+            text-transform: uppercase;
+            text-shadow: 2px 2px #000;
+            letter-spacing: 1px;
+        }
+
+        .multiplier-badge {
+            background: linear-gradient(135deg, #ff9900, #ff3300);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 16px;
+            color: #fff;
+            box-shadow: 0 0 10px #ff6600;
+        }
+
+        .festive-banner {
+            background-color: #8e24aa;
+            height: 24px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-bottom: 2px solid #ffcc00;
+            border-top: 1px solid #ab47bc;
+            font-size: 11px;
+            color: #ffeb3b;
+            font-weight: bold;
+        }
+
+        .slot-board {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            background: radial-gradient(circle, #380d59 0%, #150226 100%);
+            position: relative;
+        }
+
+        .reels-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            background: #11011f;
+            padding: 10px;
+            border-radius: 12px;
+            border: 4px solid #ffcc00;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.8), 0 0 20px rgba(255, 204, 0, 0.4);
+            width: 100%;
+            max-width: 390px;
+        }
+
+        .reel-column {
+            height: 260px;
+            background: #fff;
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            border: 2px solid #d4af37;
+        }
+
+        .reel-strip {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            transition: transform 0.5s cubic-bezier(0.1, 0.7, 0.1, 1);
+        }
+
+        .symbol-cell {
+            height: 85px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            background: radial-gradient(circle, #fff3e0 0%, #ffe0b2 100%);
+            border-bottom: 1px solid #ffd54f;
+            width: 100%;
+        }
+
+        .buy-feature-section {
+            padding: 6px;
+            background: #1e0433;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid #4a1578;
+        }
+
+        .buy-feature-btn {
+            background: linear-gradient(to bottom, #d32f2f, #9a0007);
+            color: #fff;
+            border: 2px solid #ffeb3b;
+            padding: 6px 20px;
+            font-size: 14px;
+            font-weight: 900;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            text-transform: uppercase;
+        }
+
+        .win-display-bar {
+            background: #280547;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 2px solid #7b1fa2;
+            border-bottom: 2px solid #7b1fa2;
+        }
+
+        .win-text {
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
+
+        .win-amount {
+            color: #00e676;
+            margin-left: 10px;
+        }
+
+        .control-panel {
+            background: linear-gradient(to top, #0d011a, #2a0747);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 3px solid #ffcc00;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 10px;
+            color: #b39ddb;
+            font-weight: bold;
+        }
+
+        .control-value {
+            background: #0d011a;
+            border: 2px solid #7b1fa2;
+            color: #fff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 2px;
+            min-width: 65px;
+            text-align: center;
+        }
+
+        .circle-btn {
+            width: 30px;
+            height: 30px;
+            background: #7b1fa2;
+            border: 2px solid #ffcc00;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .spin-btn {
+            width: 64px;
+            height: 64px;
+            background: radial-gradient(circle, #ffea00 0%, #ff8f00 100%);
+            border: 4px solid #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 15px #ff9800;
+        }
+
+        .spin-icon {
+            font-size: 24px;
+        }
+
+        .big-win-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .big-win-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .big-win-title {
+            font-size: 40px;
+            font-weight: 900;
+            color: #ffea00;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px #ff6f00;
+        }
+
+        .big-win-val {
+            font-size: 44px;
+            font-weight: 900;
+            color: #00e676;
+            margin-top: 10px;
+            text-shadow: 0 0 15px #00c853;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-logo">👑💀🎸</div>
+        <div class="loading-title">VIP FIESTA SLOTS</div>
+        <div class="loading-bar-container">
+            <div class="loading-bar-fill" id="loadingBarFill"></div>
+        </div>
+        <div class="loading-text" id="loadingText">LOADING... 0%</div>
+    </div>
+
+    <div class="game-container" id="gameContainer">
+        <div class="game-top-decoration">
+            <div class="bunting-flags">🇲🇽 🎸 💀 🕯️ 🪅 🌵 🍸</div>
+            <div class="game-header">
+                <div class="header-left">
+                    <span style="font-size: 22px;">👑</span>
+                    <span class="skeleton-title">VIP FIESTA</span>
+                </div>
+                <div class="header-right">
+                    <div class="multiplier-badge" id="multiplierDisplay">x8</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="festive-banner">
+            <span>🎉 VIP DAY OF THE DEAD 🎉</span>
+            <span>★ LUCKY FIESTA ★</span>
+        </div>
+
+        <div class="slot-board">
+            <div class="reels-grid" id="reelsGrid"></div>
+        </div>
+
+        <div class="buy-feature-section">
+            <button class="buy-feature-btn" onclick="triggerBuyFeature()">BUY FEATURE 15x</button>
+        </div>
+
+        <div class="win-display-bar">
+            <div class="win-text">WIN <span class="win-amount" id="winAmountVal">0.00</span></div>
+        </div>
+
+        <div class="control-panel">
+            <div class="control-group">
+                <span>BALANCE</span>
+                <div class="control-value" id="balanceVal">169.99</div>
+            </div>
+
+            <div class="control-group">
+                <span>BET</span>
+                <div style="display: flex; align-items: center; gap: 4px; margin-top: 2px;">
+                    <button class="circle-btn" onclick="adjustBet(-0.1)">-</button>
+                    <div class="control-value" id="betVal" style="min-width: 45px;">0.50</div>
+                    <button class="circle-btn" onclick="adjustBet(0.1)">+</button>
+                </div>
+            </div>
+
+            <button class="spin-btn" id="spinBtn" onclick="startSpin()">
+                <span class="spin-icon">🔄</span>
+            </button>
+        </div>
+
+        <div class="big-win-overlay" id="bigWinOverlay" onclick="closeBigWin()">
+            <div class="big-win-title">BIG WIN!</div>
+            <div class="big-win-val" id="overlayWinVal">$0.00</div>
+            <div style="margin-top: 20px; font-size: 13px; color: #ffcc00; text-decoration: underline;">Tap to continue</div>
+        </div>
+    </div>
+
+    <script>
+        // লোডিং স্ক্রিন হ্যান্ডলার
+        let loadProgress = 0;
+        const loadingBarFill = document.getElementById('loadingBarFill');
+        const loadingText = document.getElementById('loadingText');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const gameContainer = document.getElementById('gameContainer');
+
+        const loadInterval = setInterval(() => {
+            loadProgress += Math.floor(Math.random() * 15) + 5;
+            if (loadProgress >= 100) {
+                loadProgress = 100;
+                clearInterval(loadInterval);
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        gameContainer.classList.add('visible');
+                        initGame();
+                    }, 500);
+                }, 300);
+            }
+            loadingBarFill.style.width = loadProgress + '%';
+            loadingText.textContent = `LOADING... ${loadProgress}%`;
+        }, 120);
+
+        // অডিও সিস্টেম
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                if (type === 'spin') {
+                    osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.15);
+                    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.15);
+                } else if (type === 'win') {
+                    osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(660, audioCtx.currentTime + 0.1);
+                    osc.frequency.setValueAtTime(880, audioCtx.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.35);
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        const symbols = ['🍸', '🎸', '💀', '⭐', '🌵', '🪅', '🕯️', '♠', '♥'];
+        const reelCount = 5;
+        const rowCount = 3;
+        
+        let balance = 169.99;
+        let bet = 0.50;
+        let multiplier = 8;
+        let isSpinning = false;
+
+        const reelsGrid = document.getElementById('reelsGrid');
+        let reelColumns = [];
+
+        function initGame() {
+            reelsGrid.innerHTML = '';
+            reelColumns = [];
+
+            for (let i = 0; i < reelCount; i++) {
+                const column = document.createElement('div');
+                column.className = 'reel-column';
+                
+                const strip = document.createElement('div');
+                strip.className = 'reel-strip';
+                
+                let stripHTML = '';
+                for (let j = 0; j < rowCount + 3; j++) {
+                    const randSym = symbols[Math.floor(Math.random() * symbols.length)];
+                    stripHTML += `<div class="symbol-cell">${randSym}</div>`;
+                }
+                strip.innerHTML = stripHTML;
+                column.appendChild(strip);
+                reelsGrid.appendChild(column);
+                reelColumns.push(strip);
+            }
+            updateUI();
+        }
+
+        function updateUI() {
+            document.getElementById('balanceVal').textContent = balance.toFixed(2);
+            document.getElementById('betVal').textContent = bet.toFixed(2);
+            document.getElementById('multiplierDisplay').textContent = `x${multiplier}`;
+        }
+
+        function adjustBet(amount) {
+            if (isSpinning) return;
+            bet += amount;
+            if (bet < 0.1) bet = 0.1;
+            if (bet > 10.0) bet = 10.0;
+            updateUI();
+        }
+
+        function startSpin() {
+            if (isSpinning) return;
+            if (balance < bet) {
+                alert("Insufficient balance!");
+                return;
+            }
+
+            balance -= bet;
+            isSpinning = true;
+            updateUI();
+            playSound('spin');
+            
+            document.getElementById('winAmountVal').textContent = "0.00";
+
+            reelColumns.forEach((strip, index) => {
+                let newHTML = '';
+                const finalSymbols = [];
+                for (let j = 0; j < rowCount; j++) {
+                    const sym = symbols[Math.floor(Math.random() * symbols.length)];
+                    finalSymbols.push(sym);
+                }
+
+                for(let k=0; k<5; k++) {
+                    newHTML += `<div class="symbol-cell">${symbols[Math.floor(Math.random() * symbols.length)]}</div>`;
+                }
+                finalSymbols.forEach(sym => {
+                    newHTML += `<div class="symbol-cell">${sym}</div>`;
+                });
+
+                strip.innerHTML = newHTML;
+                strip.style.transition = 'none';
+                strip.style.transform = 'translateY(0px)';
+
+                setTimeout(() => {
+                    strip.style.transition = `transform ${0.6 + index * 0.2}s cubic-bezier(0.1, 0.7, 0.1, 1)`;
+                    strip.style.transform = 'translateY(-255px)';
+                }, 50);
+            });
+
+            setTimeout(() => {
+                isSpinning = false;
+                evaluateWin();
+            }, 1800);
+        }
+
+        function evaluateWin() {
+            const randVal = Math.random();
+            if (randVal < 0.30) {
+                const winAmt = bet * (Math.floor(Math.random() * 3) + 1.2) * (multiplier / 4);
+                balance += winAmt;
+                document.getElementById('winAmountVal').textContent = winAmt.toFixed(2);
+                playSound('win');
+                updateUI();
+
+                if (winAmt > bet * 3) {
+                    showBigWin(winAmt);
+                }
+            } else {
+                document.getElementById('winAmountVal').textContent = "0.00";
+            }
+        }
+
+        function triggerBuyFeature() {
+            if (isSpinning) return;
+            const cost = bet * 15;
+            if (balance < cost) {
+                alert("Not enough balance for Buy Feature!");
+                return;
+            }
+            balance -= cost;
+            updateUI();
+            startSpin();
+        }
+
+        function showBigWin(amount) {
+            const overlay = document.getElementById('bigWinOverlay');
+            document.getElementById('overlayWinVal').textContent = `$${amount.toFixed(2)}`;
+            overlay.classList.add('active');
+        }
+
+        function closeBigWin() {
+            document.getElementById('bigWinOverlay').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
