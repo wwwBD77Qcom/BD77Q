@@ -191,6 +191,23 @@
 @media(max-width:420px){.personal-grid{grid-template-columns:1fr}.personal-grid .full{grid-column:auto}}
 </style>
 
+
+<style id="vip-reward-center-addon">
+.reward-center-modal{background:rgba(7,7,10,.88)!important}
+.reward-center-card{width:min(500px,100%);max-height:94vh;overflow:auto;padding:0!important;border:0!important;background:#f3f4f8!important;color:#4b4b4b!important;border-radius:24px!important;box-shadow:0 25px 80px rgba(0,0,0,.5)!important;overflow-x:hidden}
+.reward-center-head{position:relative;padding:24px 20px 72px;background:linear-gradient(135deg,#ff9b63,#ff4b35 62%,#ff2f1d);color:#fff;overflow:hidden}
+.reward-center-head:before{content:"REWARD";position:absolute;left:55px;top:72px;font:900 70px/1 Georgia,serif;color:rgba(255,255,255,.10);letter-spacing:2px}
+.reward-center-head:after{content:"";position:absolute;width:100px;height:100px;border-radius:50%;right:-18px;top:-18px;background:rgba(255,214,72,.28);box-shadow:-80px 120px 0 0 rgba(255,178,44,.18),-145px 195px 0 0 rgba(255,255,255,.12)}
+.reward-center-title{position:relative;z-index:2;text-align:center;font:900 31px/1.1 Georgia,serif;margin:0}
+.reward-center-close{position:absolute;left:14px;top:13px;z-index:5;background:transparent!important;color:#fff!important;font-size:34px!important;padding:0 8px!important}
+.reward-center-profile{position:relative;z-index:4;margin:-42px 18px 0;background:linear-gradient(135deg,#f2c39e,#e5b18b);border:1px solid rgba(112,76,45,.18);border-radius:22px;padding:18px;box-shadow:0 10px 28px rgba(94,64,40,.16);color:#4b3d35}
+.reward-center-user{display:flex;align-items:center;gap:13px}.reward-center-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#ffcf52,#8c5bff);border:5px solid rgba(255,255,255,.45);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#fff;overflow:hidden}.reward-center-avatar img{width:100%;height:100%;object-fit:cover}
+.reward-center-phone{font:900 24px Georgia,serif}.reward-center-name{font:800 17px Georgia,serif;margin-top:5px}.reward-center-balance{font:900 31px Georgia,serif;margin-top:12px}.reward-center-viprow{display:flex;justify-content:space-between;align-items:center;margin-top:13px;font:900 17px Georgia,serif}.reward-center-progress{height:9px;border-radius:99px;background:rgba(93,67,49,.25);overflow:hidden;margin-top:7px}.reward-center-progress i{display:block;height:100%;width:0;background:#fff;border-radius:99px;box-shadow:0 0 8px rgba(255,255,255,.7)}
+.reward-center-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px}.reward-center-tile{min-height:175px;border-radius:19px;padding:20px 12px;color:#fff;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 10px 22px rgba(0,0,0,.12);font-family:Georgia,serif}.reward-center-tile .tile-icon{width:62px;height:62px;border-radius:50%;background:rgba(255,255,255,.92);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:14px}.reward-center-tile strong{font-size:22px}.reward-center-tile small{font:700 12px Arial,sans-serif;margin-top:6px;opacity:.9}.reward-bonus{background:linear-gradient(145deg,#42dc9a,#08bf99)}.reward-invite{background:linear-gradient(145deg,#ff7b79,#d72261)}.reward-promo{background:linear-gradient(145deg,#20c7dc,#00b9d2)}
+.reward-center-stats{margin:0 18px 18px;background:#fff;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.06)}.reward-stat-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee;font:700 14px Arial,sans-serif}.reward-stat-row:last-child{border-bottom:0}.reward-stat-row strong{color:#e46c2d}
+.reward-promo-box{margin:0 18px 18px;background:#fff;border-radius:18px;padding:16px}.reward-promo-box input{background:#f4f5f7!important;color:#333!important;border:1px solid #ddd!important}.reward-promo-box button{margin-top:9px;width:100%;background:linear-gradient(135deg,#ff9a1f,#ff4a24);color:#fff}
+@media(max-width:420px){.reward-center-title{font-size:28px}.reward-center-phone{font-size:21px}.reward-center-grid{gap:10px;padding:14px}.reward-center-tile{min-height:155px}.reward-center-tile strong{font-size:19px}.reward-center-profile{margin:-38px 14px 0}.reward-center-head{padding-bottom:62px}}
+</style>
 </head>
 <body>
 
@@ -361,7 +378,7 @@
   <div class="vip-quick-grid">
     <button onclick="openProfileModal('referModal')"><span>♙</span><b>Invite Friends</b><small>Referral & 3% Rebate</small></button>
     <button onclick="openPromotionCenter()"><span>🎁</span><b>Promotion</b><small>Bonus & Offers</small></button>
-    <button onclick="openProfileModal('referModal')"><span>🏆</span><b>Reward</b><small>Rewards Center</small></button>
+    <button onclick="openRewardCenter()"><span>🏆</span><b>Reward</b><small>Rewards Center</small></button>
     <button onclick="openHelpCare()"><span>🎧</span><b>Customer Service</b><small>24/7 Help Care</small></button>
   </div>
 
@@ -684,6 +701,46 @@
     </div>
   </div>
 
+
+<!-- VIP REWARD CENTER -->
+<div id="rewardCenterModal" class="profile-modal reward-center-modal" onclick="if(event.target===this)closeRewardCenter()">
+  <div class="reward-center-card">
+    <div class="reward-center-head">
+      <button class="reward-center-close" type="button" onclick="closeRewardCenter()">‹</button>
+      <h2 class="reward-center-title">Reward Center</h2>
+    </div>
+    <div class="reward-center-profile">
+      <div class="reward-center-user">
+        <div class="reward-center-avatar" id="rewardCenterAvatar">U</div>
+        <div style="min-width:0">
+          <div class="reward-center-phone" id="rewardCenterPhone">01XXXXXXXXX</div>
+          <div class="reward-center-name">Nickname: <span id="rewardCenterName">Not set</span></div>
+        </div>
+      </div>
+      <div class="reward-center-balance">৳ <span id="rewardCenterBalance">0.00</span></div>
+      <div class="reward-center-viprow"><span>👑 <span id="rewardCenterVip">VIP1</span></span><span><span id="rewardCenterVipStep">1</span> / 100</span></div>
+      <div class="reward-center-progress"><i id="rewardCenterVipProgress"></i></div>
+    </div>
+    <div class="reward-center-grid">
+      <button class="reward-center-tile reward-bonus" type="button" onclick="openRewardBonus()"><div class="tile-icon">🎁</div><strong>Bonus</strong><small>Rewards & Milestones</small></button>
+      <button class="reward-center-tile reward-invite" type="button" onclick="closeRewardCenter();openProfileModal('referModal');switchReferTab('link')"><div class="tile-icon">👥</div><strong>Invite Friends</strong><small>Referral & Bonus</small></button>
+      <button class="reward-center-tile reward-promo" type="button" onclick="openRewardPromo()"><div class="tile-icon">%</div><strong>Promo Code</strong><small>Enter your promotion code</small></button>
+    </div>
+    <div class="reward-center-stats">
+      <div class="reward-stat-row"><span>Successful Referrals</span><strong id="rewardCenterRefs">0 জন</strong></div>
+      <div class="reward-stat-row"><span>Referral Rewards</span><strong id="rewardCenterReferralBonus">৳0</strong></div>
+      <div class="reward-stat-row"><span>Current Balance</span><strong>৳<span id="rewardCenterBalance2">0.00</span></strong></div>
+    </div>
+    <div id="rewardPromoBox" class="reward-promo-box" style="display:none">
+      <div style="font:900 17px Georgia,serif;margin-bottom:7px">🎟️ Promo Code</div>
+      <div style="font:12px Arial,sans-serif;color:#777;margin-bottom:8px">আপনার Promo Code এখানে লিখুন।</div>
+      <input id="rewardPromoCode" type="text" placeholder="Enter Promo Code" autocomplete="off">
+      <button type="button" onclick="submitRewardPromoCode()">Apply Promo Code</button>
+      <div id="rewardPromoMsg" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+    </div>
+  </div>
+</div>
+
   <div id="depositModal" class="profile-modal" onclick="modalBackdrop(event,'depositModal')">
     <div class="card profile-modal-card">
       <div class="modal-top"><div style="font-size:21px;font-weight:900">📥 Deposit</div><button class="modal-close" type="button" onclick="closeProfileModal('depositModal')">×</button></div>
@@ -747,14 +804,14 @@
   <div id="passwordModal" class="profile-modal" onclick="modalBackdrop(event,'passwordModal')"><div class="card profile-modal-card"><div class="modal-top"><div style="font-size:21px;font-weight:900">🔐 Transaction Password</div><button class="modal-close" onclick="closePasswordModal()">×</button></div><label>Current Password</label><input id="oldPw" type="password" placeholder="Old password"><label style="margin-top:10px">New Password</label><input id="newPw" type="password" placeholder="Minimum 6 characters"><label style="margin-top:10px">Confirm New Password</label><input id="confirmPw" type="password" placeholder="Confirm password"><div id="pwMsg" class="modal-note" style="margin-top:10px;min-height:18px"></div><div class="row" style="margin-top:12px"><button class="small" style="flex:1" onclick="closePasswordModal()">Cancel</button><button class="cash" style="flex:1;margin:0" onclick="saveTransactionPassword()">Save Password</button></div></div></div>
 
 
-  <div id="vipPromotionModal" class="vip-promo-modal" onclick="if(event.target===this)closePromotionCenter()"><div class="vip-promo-box"><div style="display:flex;justify-content:space-between;align-items:center"><h2>🎁 Promotion Center</h2><button onclick="closePromotionCenter()" style="background:#2b2b2b;color:#fff;padding:7px 12px">×</button></div><div class="vip-offer"><strong>💰 Deposit Bonus</strong><small>Deposit খুলে আপনার বর্তমান bonus/offer দেখতে পারবেন।</small><button onclick="closePromotionCenter();openProfileModal('depositModal')" class="cash" style="margin-top:8px">Deposit Now</button></div><div class="vip-offer"><strong>👥 Invite Friends</strong><small>Referral link/code থেকে বন্ধু invite করুন। Approved referral deposit-এর rebate আপনার account-এ যোগ হবে।</small><button onclick="closePromotionCenter();openProfileModal('referModal')" class="cash" style="margin-top:8px;background:#ff8a17">Invite Friends</button></div><div class="vip-offer"><strong>🏆 Reward Center</strong><small>Referral milestone ও available rewards দেখুন।</small><button onclick="closePromotionCenter();openProfileModal('referModal')" class="cash" style="margin-top:8px;background:#7c4dff">Open Rewards</button></div></div></div>
+  <div id="vipPromotionModal" class="vip-promo-modal" onclick="if(event.target===this)closePromotionCenter()"><div class="vip-promo-box"><div style="display:flex;justify-content:space-between;align-items:center"><h2>🎁 Promotion Center</h2><button onclick="closePromotionCenter()" style="background:#2b2b2b;color:#fff;padding:7px 12px">×</button></div><div class="vip-offer"><strong>💰 Deposit Bonus</strong><small>Deposit খুলে আপনার বর্তমান bonus/offer দেখতে পারবেন।</small><button onclick="closePromotionCenter();openProfileModal('depositModal')" class="cash" style="margin-top:8px">Deposit Now</button></div><div class="vip-offer"><strong>👥 Invite Friends</strong><small>Referral link/code থেকে বন্ধু invite করুন। Approved referral deposit-এর rebate আপনার account-এ যোগ হবে।</small><button onclick="closePromotionCenter();openProfileModal('referModal')" class="cash" style="margin-top:8px;background:#ff8a17">Invite Friends</button></div><div class="vip-offer"><strong>🏆 Reward Center</strong><small>Referral milestone ও available rewards দেখুন।</small><button onclick="closePromotionCenter();openRewardCenter()" class="cash" style="margin-top:8px;background:#7c4dff">Open Rewards</button></div></div></div>
 
   <!-- NAVIGATION BAR -->
   <div class="nav vip-bottom-nav">
     <button id="navHome" class="active" onclick="showScreen('homeScreen')"><span>⌂</span><small>Home</small></button>
     <button id="navPromotion" onclick="openPromotionCenter()"><span>🎁</span><small>Promotion</small></button>
     <button id="navInvite" onclick="openProfileModal('referModal')"><span>♙</span><small>Invite</small></button>
-    <button id="navReward" onclick="openProfileModal('referModal')"><span>🏆</span><small>Reward</small></button>
+    <button id="navReward" onclick="openRewardCenter()"><span>🏆</span><small>Reward</small></button>
     <button id="navProfile" onclick="showScreen('profileScreen')"><span>♙</span><small>Profile</small></button>
   </div>
 </div>
@@ -1336,6 +1393,13 @@ function loadUserData(){
             user.myReferCode = 'BD77Q-' + Math.floor(1000 + Math.random() * 9000);
             localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
         }
+        if(!user.myPromoCode){
+            user.myPromoCode = user.myReferCode;
+            localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+            if(window.fbDb && window.fbRef && window.fbUpdate){
+                window.fbUpdate(window.fbRef(window.fbDb,'users/' + currentUserPhone), {myPromoCode:user.myPromoCode}).catch(()=>{});
+            }
+        }
         const phoneEl = document.getElementById('profilePhone');
         if(phoneEl) phoneEl.textContent = currentUserPhone;
         const nickEl = document.getElementById('profileNickname');
@@ -1369,6 +1433,7 @@ function syncAppBalance(){
     const h=document.getElementById('homeHistory');if(h)h.innerHTML=history.length?history.slice(0,6).map(x=>`<div class="item"><span>Crash</span><strong>${x.toFixed(2)}×</strong></div>`).join(''):'<div class="item"><span>Round</span><strong>Waiting...</strong></div>';
     updateDepositNumberDisplay();
     if(typeof renderMyAccount==='function') renderMyAccount();
+    if(typeof renderRewardCenter==='function') renderRewardCenter();
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
@@ -2292,5 +2357,124 @@ function openProfileLevelRules(){
 })();
 </script>
 
+
+<script id="vip-reward-center-script">
+function openRewardCenter(){
+  const m=document.getElementById('rewardCenterModal'); if(!m)return;
+  m.classList.add('show');
+  renderRewardCenter();
+}
+function closeRewardCenter(){const m=document.getElementById('rewardCenterModal');if(m)m.classList.remove('show')}
+function openRewardBonus(){
+  closeRewardCenter();
+  openProfileModal('referModal');
+  setTimeout(()=>switchReferTab('rewards'),80);
+}
+function openRewardPromo(){
+  const b=document.getElementById('rewardPromoBox');
+  if(b)b.style.display=b.style.display==='none'?'block':'none';
+  if(b&&b.style.display==='block')document.getElementById('rewardPromoCode')?.focus();
+}
+function renderRewardCenter(){
+  if(!currentUserPhone || !usersDb[currentUserPhone]) return;
+  const u=usersDb[currentUserPhone]||{};
+  const refs=Number(u.referStats?.count||0);
+  const bonus=Number(u.referStats?.bonusEarned||0);
+  const vip=typeof getVipLevel==='function'?getVipLevel(u):1;
+  const vipStep=Math.min(100,Math.max(1,vip));
+  const avatar=document.getElementById('rewardCenterAvatar');
+  if(avatar){
+    if(u.avatar){avatar.innerHTML='<img src="'+escapeHtml(u.avatar)+'" alt="Profile">';}
+    else avatar.textContent=String(u.name||currentUserPhone||'U').trim().charAt(0).toUpperCase()||'U';
+  }
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('rewardCenterPhone',currentUserPhone||'—');
+  set('rewardCenterName',u.nickname||u.name||'Not set');
+  set('rewardCenterBalance',Number(balance||0).toFixed(2));
+  set('rewardCenterBalance2',Number(balance||0).toFixed(2));
+  set('rewardCenterVip','VIP'+vip);
+  set('rewardCenterVipStep',vipStep);
+  set('rewardCenterRefs',refs+' জন');
+  set('rewardCenterReferralBonus','৳'+bonus.toFixed(2));
+  const p=document.getElementById('rewardCenterVipProgress'); if(p)p.style.width=vipStep+'%';
+}
+async function submitRewardPromoCode(){
+  const input=document.getElementById('rewardPromoCode'),msg=document.getElementById('rewardPromoMsg');
+  const code=(input?.value||'').trim().toUpperCase();
+  if(!code){if(msg)msg.textContent='Promo Code লিখুন।';return;}
+  if(!currentUserPhone||!usersDb[currentUserPhone]){if(msg)msg.textContent='আগে লগইন করুন।';return;}
+
+  try{
+    /* PERSONAL PROMO/REFERRAL FUNCTION: প্রতিটি user-এর auto-generated myReferCode-ই personal Promo Code হিসেবেও কাজ করবে। */
+    const me=usersDb[currentUserPhone];
+    let referrerPhone=null;
+    let firebaseUsers=null;
+    for(const p in usersDb){
+      if(String(p)===String(currentUserPhone)) continue;
+      const personalCode=String(usersDb[p]?.myPromoCode || usersDb[p]?.myReferCode || '').trim().toUpperCase();
+      if(personalCode && personalCode===code){ referrerPhone=p; break; }
+    }
+
+    if(!referrerPhone && window.fbDb && window.fbRef && window.fbGet){
+      const allSnap=await window.fbGet(window.fbRef(window.fbDb,'users'));
+      if(allSnap.exists()){
+        firebaseUsers=allSnap.val()||{};
+        for(const p in firebaseUsers){
+          if(String(p)===String(currentUserPhone)) continue;
+          const personalCode=String(firebaseUsers[p]?.myPromoCode || firebaseUsers[p]?.myReferCode || '').trim().toUpperCase();
+          if(personalCode && personalCode===code){ referrerPhone=p; break; }
+        }
+      }
+    }
+
+    if(referrerPhone){
+      if(me.referredBy){
+        if(msg)msg.textContent='আপনার Referral ইতিমধ্যে সেট করা আছে।';
+        return;
+      }
+      const referrer=usersDb[referrerPhone] || (firebaseUsers&&firebaseUsers[referrerPhone]) || {};
+      if(!referrer.referStats) referrer.referStats={count:0,bonusEarned:0};
+      referrer.referStats.count=Number(referrer.referStats.count||0)+1;
+      me.referredBy=referrerPhone;
+      me.referredViaPromoCode=code;
+      me.myPromoCode=me.myPromoCode || me.myReferCode;
+      usersDb[referrerPhone]=referrer;
+      usersDb[currentUserPhone]=me;
+      localStorage.setItem('aviator_users_db',JSON.stringify(usersDb));
+      if(window.fbUpdate && window.fbRef && window.fbDb){
+        const updates={};
+        updates['users/'+currentUserPhone+'/referredBy']=referrerPhone;
+        updates['users/'+currentUserPhone+'/referredViaPromoCode']=code;
+        updates['users/'+currentUserPhone+'/myPromoCode']=me.myPromoCode;
+        updates['users/'+referrerPhone+'/referStats/count']=referrer.referStats.count;
+        await window.fbUpdate(window.fbRef(window.fbDb),updates);
+      }
+      if(typeof window.refreshReferralUI==='function') window.refreshReferralUI();
+      updateBalance();
+      renderRewardCenter();
+      if(msg)msg.textContent='✅ Promo Code সফল। আপনি এখন এই User-এর Referral-এ যুক্ত হয়েছেন।';
+      input.value='';
+      return;
+    }
+
+    /* Existing admin promo system remains unchanged. */
+    if(!window.fbDb||!window.fbRef||!window.fbGet){if(msg)msg.textContent='Promo Code যাচাই করা যাচ্ছে না।';return;}
+    const snap=await window.fbGet(window.fbRef(window.fbDb,'settings/promoCodes/'+code));
+    if(!snap.exists()){if(msg)msg.textContent='সঠিক Promo Code পাওয়া যায়নি।';return;}
+    const promo=snap.val()||{};
+    if(promo.active===false){if(msg)msg.textContent='এই Promo Code এখন সক্রিয় নয়।';return;}
+    const amount=Number(promo.amount||promo.bonus||0);
+    if(amount<=0){if(msg)msg.textContent='এই Promo Code-এর bonus সেট করা নেই।';return;}
+    const u=usersDb[currentUserPhone]; u.claimedPromoCodes=u.claimedPromoCodes||{};
+    if(u.claimedPromoCodes[code]){if(msg)msg.textContent='এই Promo Code আগে ব্যবহার করা হয়েছে।';return;}
+    u.claimedPromoCodes[code]=true; balance+=amount; u.balance=balance;
+    localStorage.setItem('aviator_users_db',JSON.stringify(usersDb));
+    if(window.fbUpdate) await window.fbUpdate(window.fbRef(window.fbDb,'users/'+currentUserPhone),{balance:balance,claimedPromoCodes:u.claimedPromoCodes});
+    updateBalance(); renderRewardCenter();
+    if(msg)msg.textContent='অভিনন্দন! ৳'+amount.toFixed(2)+' bonus balance-এ যোগ হয়েছে।';
+    input.value='';
+  }catch(e){console.error(e);if(msg)msg.textContent='Promo Code যাচাই করতে সমস্যা হয়েছে।';}
+}
+</script>
 </body>
 </html>
