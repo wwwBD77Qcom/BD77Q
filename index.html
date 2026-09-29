@@ -412,6 +412,12 @@
         <div class="bonus-row"><span>খেলা হয়েছে (Completed):</span><strong id="turnoverCurrent">৳0</strong></div>
         <div class="modal-note" style="margin-top:6px">শর্ত পূরণ না হলে উইথড্র করতে পারবেন না।</div>
       </div>
+      <div class="box" style="background:linear-gradient(135deg,#17120b,#24180b);border:1px solid #8a5a20;margin-top:10px">
+        <div style="font-size:13px;font-weight:900;color:#ffd36b;margin-bottom:6px">🎁 Referral Bonus ৳399</div>
+        <div class="bonus-row"><span>ডিপোজিট শর্ত:</span><strong>৳1,000</strong></div>
+        <div class="bonus-row"><span>বেট শর্ত:</span><strong>৳2,000</strong></div>
+        <div class="modal-note" style="margin-top:6px">রেফার করা ইউজার দুইটি শর্ত পূরণ করলে রেফারার একবার ৳399 বোনাস পাবেন।</div>
+      </div>
     </div>
   </div>
 
@@ -463,7 +469,7 @@
           <div><span>Next Level</span><b id="profileLevelNext">1</b></div>
           <div><span>Level Bonus</span><b id="profileLevelBonus">৳10</b></div>
         </div>
-        <div class="profile-level-note">প্রতি ৳100 approved deposit = ১ Level। Level 1–100 পর্যন্ত Level-Up হলে প্রতিটি নতুন Level-এর জন্য ৳10 bonus দেওয়া হবে। Level 100-এ মোট ৳1,000 পর্যন্ত level-up bonus পাওয়া যাবে।</div>
+        <div class="profile-level-note">প্রতি ৳1,000 approved deposit = ১ Level। Level 1–100 পর্যন্ত ধীরে ধীরে Level-Up হবে। প্রতিটি নতুন Level-এর জন্য ৳10 bonus দেওয়া হবে। Level 100-এ মোট ৳1,000 পর্যন্ত level-up bonus পাওয়া যাবে।</div>
         <button type="button" class="profile-level-rules-btn" onclick="openProfileLevelRules()">📋 Level 0–100 Rules</button>
       </section>
 
@@ -1241,11 +1247,15 @@ async function handleRegister(){
         window.usersDb = usersDb;
 
         let referrerCountUpdate = null;
+        let referrerSignupBonusUpdate = null;
         if(referredBy){
             const referrer = usersDb[referredBy] || {};
             if(!referrer.referStats) referrer.referStats = { count: 0, bonusEarned: 0 };
             referrer.referStats.count = Number(referrer.referStats.count || 0) + 1;
-            usersDb[referredBy] = referrer;
+
+            // Referral qualification: count the referral at signup, but ৳399 is paid only after
+            // the referred user reaches BOTH conditions: ৳1,000 approved deposit + ৳2,000 cumulative bet.
+            // The bonus is one-time per referred account.
             referrerCountUpdate = referrer.referStats.count;
         }
 
@@ -1263,6 +1273,11 @@ async function handleRegister(){
                 firebaseUpdates['users/' + phone] = usersDb[phone];
                 if(referredBy && referrerCountUpdate !== null){
                     firebaseUpdates['users/' + referredBy + '/referStats/count'] = referrerCountUpdate;
+                    firebaseUpdates['users/' + referredBy + '/referStats/bonusEarned'] = Number(usersDb[referredBy]?.referStats?.bonusEarned || 0);
+                    firebaseUpdates['users/' + referredBy + '/balance'] = Number(usersDb[referredBy]?.balance || 0);
+                    firebaseUpdates['users/' + referredBy + '/lastReferralSignupBonus'] = Number(referrerSignupBonusUpdate || 399);
+                    firebaseUpdates['users/' + referredBy + '/lastReferralSignupBonusAt'] = Number(usersDb[referredBy]?.lastReferralSignupBonusAt || Date.now());
+                    firebaseUpdates['users/' + referredBy + '/inboxSms'] = usersDb[referredBy]?.inboxSms || [];
                 }
                 window.fbUpdate(window.fbRef(window.fbDb), firebaseUpdates).catch(err => console.error('Firebase referral registration save failed:', err));
             }else if(window.fbSet){
@@ -1696,18 +1711,52 @@ function placeBet(slot){
         if(!user.turnoverCurrent) user.turnoverCurrent = 0;
         user.turnoverCurrent += amount;
 
+        // ৳399 Referral Bonus qualification:
+        // 1) referred user has at least ৳1,000 approved cumulative deposit
+        // 2) referred user has placed at least ৳2,000 cumulative bets
+        // 3) bonus is granted only once
         if(user.referredBy && !user.referBonusGiven){
-            if(user.totalDeposit >= 2000 && user.turnoverCurrent >= 5000){
-                user.referBonusGiven = true;
-                let referrer = usersDb[user.referredBy];
+            const approvedDeposit = Number(user.totalDeposit || 0);
+            const cumulativeBet = Number(user.turnoverCurrent || 0);
+            if(approvedDeposit >= 1000 && cumulativeBet >= 2000){
+                const referrer = usersDb[user.referredBy];
                 if(referrer){
                     if(!referrer.referStats) referrer.referStats = { count: 0, bonusEarned: 0 };
-                    referrer.referStats.bonusEarned += 399;
-                    referrer.balance += 399;
+                    const referralBonus = 399;
+                    referrer.balance = Number(referrer.balance || 0) + referralBonus;
+                    referrer.referStats.bonusEarned = Number(referrer.referStats.bonusEarned || 0) + referralBonus;
+                    referrer.lastReferralQualifiedBonus = referralBonus;
+                    referrer.lastReferralQualifiedBonusAt = Date.now();
+                    if(!Array.isArray(referrer.inboxSms)) referrer.inboxSms = [];
+                    referrer.inboxSms.unshift({
+                        id: Date.now(),
+                        title: '🎁 Referral Bonus ৳399',
+                        text: 'আপনার রেফার করা ইউজার ৳1,000 ডিপোজিট ও ৳2,000 বেটের শর্ত পূরণ করেছে। ৳399 বোনাস যোগ হয়েছে।',
+                        time: 'এখন'
+                    });
+                    usersDb[user.referredBy] = referrer;
+                    user.referBonusGiven = true;
+                    user.referBonusAmount = referralBonus;
+                    user.referBonusQualifiedAt = Date.now();
+
+                    if(window.fbDb && window.fbRef && window.fbUpdate){
+                        const referralUpdates = {};
+                        referralUpdates['users/' + currentUserPhone + '/referBonusGiven'] = true;
+                        referralUpdates['users/' + currentUserPhone + '/referBonusAmount'] = referralBonus;
+                        referralUpdates['users/' + currentUserPhone + '/referBonusQualifiedAt'] = user.referBonusQualifiedAt;
+                        referralUpdates['users/' + user.referredBy + '/balance'] = Number(referrer.balance || 0);
+                        referralUpdates['users/' + user.referredBy + '/referStats/bonusEarned'] = Number(referrer.referStats.bonusEarned || 0);
+                        referralUpdates['users/' + user.referredBy + '/lastReferralQualifiedBonus'] = referralBonus;
+                        referralUpdates['users/' + user.referredBy + '/lastReferralQualifiedBonusAt'] = referrer.lastReferralQualifiedBonusAt;
+                        referralUpdates['users/' + user.referredBy + '/inboxSms'] = referrer.inboxSms;
+                        window.fbUpdate(window.fbRef(window.fbDb), referralUpdates).catch(err => console.error('Referral qualification bonus save failed:', err));
+                    }
                 }
             }
         }
         localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+        updateBalance();
+        if(typeof window.refreshReferralUI === 'function') window.refreshReferralUI();
     }
 
     updateBalance();
@@ -2189,7 +2238,8 @@ window.addEventListener('load',()=>setTimeout(initVipHome,300));
 </style>
 <script id="profileLevelFunctions">
 const PROFILE_LEVEL_BONUS = 10;
-const PROFILE_LEVEL_STEP_DEPOSIT = 100;
+// Slow VIP level progression: every ৳1,000 of approved cumulative deposit = 1 level.
+const PROFILE_LEVEL_STEP_DEPOSIT = 1000;
 function getProfileLevelTarget(user){
   const dep=Number(user?.totalDeposit||0);
   return Math.max(0,Math.min(100,Math.floor(dep/PROFILE_LEVEL_STEP_DEPOSIT)));
@@ -2265,7 +2315,7 @@ function renderProfileLevel(){
   const lb=document.getElementById('profileLevelBonus');if(lb)lb.textContent='৳'+PROFILE_LEVEL_BONUS.toFixed(0);
 }
 function openProfileLevelRules(){
-  let html='<div class="modal-note" style="margin-bottom:10px">প্রতি ৳100 approved deposit-এ ১টি Profile Level। Level 1–100 পর্যন্ত নতুন Level পূর্ণ হলে ৳10 bonus একবার করে দেওয়া হবে।</div><div class="level-rules-grid">';
+  let html='<div class="modal-note" style="margin-bottom:10px">প্রতি ৳1,000 approved deposit-এ ১টি Profile Level। Level 1–100 পর্যন্ত ধীরে ধীরে নতুন Level পূর্ণ হলে ৳10 bonus একবার করে দেওয়া হবে।</div><div class="level-rules-grid">';
   const u=getAccountUser();const current=Math.max(0,Math.min(100,Number(u?.profileLevel)||0));
   for(let lv=0;lv<=100;lv++){
     const cls=lv===current?'current':(lv<current?'done':'');
