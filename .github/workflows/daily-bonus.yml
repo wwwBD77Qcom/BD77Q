@@ -1,0 +1,27 @@
+name: Daily Loss Bonus Automation
+
+on:
+  schedule:
+    - cron: '0 18 * * *' 
+  workflow_dispatch:
+
+jobs:
+  run-bonus-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install firebase-admin
+
+      - name: Run Loss Bonus Script
+        run: node loss-bonus.js
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          
