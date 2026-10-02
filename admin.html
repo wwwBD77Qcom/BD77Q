@@ -57,7 +57,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 <!-- Firebase SDKs & Config (Modular CDN) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getDatabase, ref, get, set, update, child, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, get, set, update, child, push, remove, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY",
@@ -257,10 +257,57 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       return {users, rows, totalRegistered, totalDepositors:rows.reduce((n,r)=>n+r.depositors,0), totalDeposits, totalRebate};
   }
 
+  window.processReferralQualifiedBonusesAdmin = async function(){
+      const msg=document.getElementById('referral399AdminMsg');
+      const setMsg=t=>{if(msg)msg.textContent=t;};
+      try{
+        setMsg('⏳ ৳399 qualified referral যাচাই হচ্ছে...');
+        const snap=await get(child(ref(db),'users'));
+        if(!snap.exists()){setMsg('কোনো user data নেই।');return 0;}
+        const users=snap.val()||{};
+        let qualified=0;
+        for(const phone of Object.keys(users)){
+          const u=users[phone]||{};
+          if(!u.referredBy || u.referBonusGiven) continue;
+          if(Number(u.totalDeposit||0)<1000 || Number(u.turnoverCurrent||0)<2000) continue;
+          const refPhone=String(u.referredBy);
+          if(!users[refPhone]) continue;
+          const refUserRef=ref(db,'users/'+refPhone);
+          const now=Date.now();
+          const tx=await runTransaction(refUserRef,current=>{
+            if(!current) return current;
+            const ledger=current.referralQualifiedBonuses||{};
+            if(ledger[phone]) return;
+            const next={...current};
+            next.balance=Number(current.balance||0)+399;
+            next.referStats={...(current.referStats||{count:0,bonusEarned:0})};
+            next.referStats.bonusEarned=Number(next.referStats.bonusEarned||0)+399;
+            next.lastReferralQualifiedBonus=399;
+            next.lastReferralQualifiedBonusAt=now;
+            next.referralQualifiedBonuses={...ledger,[phone]:{amount:399,at:now}};
+            next.inboxSms=Array.isArray(current.inboxSms)?current.inboxSms.slice():[];
+            next.inboxSms.unshift({id:now,title:'🎁 Referral Bonus ৳399',text:'আপনার রেফার করা ইউজার ৳1,000 ডিপোজিট ও ৳2,000 বেটের শর্ত পূরণ করেছে। ৳399 বোনাস যোগ হয়েছে।',time:'এখন'});
+            return next;
+          });
+          if(tx.committed){
+            await update(ref(db,'users/'+phone),{referBonusGiven:true,referBonusAmount:399,referBonusQualifiedAt:now});
+            qualified++;
+          }
+        }
+        setMsg(qualified?`✅ ${qualified}টি qualified referral-এর ৳399 bonus processed হয়েছে।`:'✓ নতুন qualified referral bonus পাওয়া যায়নি।');
+        return qualified;
+      }catch(e){
+        console.error('Referral ৳399 qualification admin processing failed:',e);
+        setMsg('⚠️ Qualification check ব্যর্থ হয়েছে। Firebase Rules/Connection পরীক্ষা করুন।');
+        return 0;
+      }
+  };
+
   window.loadReferralEarningsAdmin = async function(){
       const btn = document.getElementById('referralAdminRefreshBtn');
       if(btn){btn.disabled=true;btn.textContent='⏳ হিসাব হচ্ছে...';}
       try{
+          await window.processReferralQualifiedBonusesAdmin();
           const data = await getReferralAdminData();
           const set=(id,val)=>{const e=document.getElementById(id);if(e)e.textContent=val;};
           set('refAdminRegistered', data.totalRegistered);
@@ -339,6 +386,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       fetchSupportTickets();
       fetchBanners();
       loadReferralRewardSettings();
+      await window.processReferralQualifiedBonusesAdmin();
       loadReferralEarningsAdmin();
   }
 
@@ -1265,6 +1313,13 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       </div>
     </div>
 
+    <div class="card" id="referral399QualificationAdminCard">
+      <div style="font-size:16px;font-weight:900;margin-bottom:6px;color:#ffd36b">🎁 Referral Bonus ৳399 Qualification</div>
+      <div class="modal-note">রেফার করা ইউজারের <b>approved cumulative deposit ৳1,000</b> এবং <b>cumulative placed bet ৳2,000</b> পূরণ হলে একবার ৳399 bonus দেওয়া হবে। Signup-এর সময় কোনো ৳399 bonus দেওয়া হবে না।</div>
+      <button class="cash" type="button" onclick="processReferralQualifiedBonusesAdmin()" style="margin-top:10px">🔄 এখন Qualification Check করুন</button>
+      <div id="referral399AdminMsg" class="modal-note" style="margin-top:8px;color:#7ed6a7">—</div>
+    </div>
+
     <div class="card" id="entryAnnouncementCard">
       <div style="font-size:16px;font-weight:900;margin-bottom:6px;color:#ffcf72">📢 Entry Announcement Popup Control</div>
       <div class="modal-note" style="margin-bottom:12px">User App-এ লগইন/প্রবেশের পর যে Announcement Popup আসে সেটি এখান থেকে নিয়ন্ত্রণ করুন। Data Firebase-এর <b>settings/entryAnnouncement</b>-এ থাকবে।</div>
@@ -1449,7 +1504,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 </style>
 <div id="dynamicGameManagerCard" class="card">
   <div style="font-size:17px;font-weight:900;margin-bottom:5px;color:#ffcf72">🎮 গেম ম্যানেজমেন্ট</div>
-  <div style="font-size:12px;color:#9da7b6;margin-bottom:12px">এখান থেকে নতুন গেম যোগ করলে Firebase-এর <b>games</b> তালিকায় সংরক্ষণ হবে। User App-এ Dynamic Game Listener যুক্ত থাকলে নতুন গেম স্বয়ংক্রিয়ভাবে দেখাবে।</div>
+  <div style="font-size:12px;color:#9da7b6;margin-bottom:12px">এখান থেকে <b>যেকোনো single HTML game file</b> Upload করলে Firebase Storage-এ ফাইল এবং Realtime Database-এর <b>games</b> নোডে তথ্য একসাথে সেভ হবে। User App নতুন গেমটি Realtime-এ পেয়ে সরাসরি Play করবে। একই গেম Edit করে নতুন HTML দিলে পুরোনো Game Entry-এর Link আপডেট হবে।</div>
   <div class="dgm-grid">
     <input id="dgmName" class="dgm-input" placeholder="গেমের নাম">
     <input id="dgmOrder" class="dgm-input" type="number" min="0" placeholder="Serial / Order (যেমন 1)">
@@ -1471,7 +1526,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 <script type="module">
 import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 /* Dynamic Game Manager — existing Admin features remain untouched. */
 const DGM_THUMBNAIL = 'https://i.postimg.cc/2STpnBDP/1790492897623.jpg';
@@ -1537,11 +1592,12 @@ async function saveGame(){
       const path='games/'+Date.now()+'_'+safeName;
       const snap=await uploadBytes(storageRef(dgmStorage,path),file,{contentType:'text/html',cacheControl:'public,max-age=3600'});
       url=await getDownloadURL(snap.ref);
+      window.__dgmLastStoragePath=path;
       if($('dgmUploadStatus')) $('dgmUploadStatus').textContent='⏳ 2/2 — Game Database-এ যোগ হচ্ছে...';
     }
     if(!url) throw new Error('Game Link তৈরি হয়নি।');
 
-    const data={name,url,image,description,order,active:true,updatedAt:Date.now(),fileName:file?.name||gamesCache[editingId]?.fileName||''};
+    const data={name,url,image,description,order,active:true,updatedAt:Date.now(),fileName:file?.name||gamesCache[editingId]?.fileName||'',storagePath:file?window.__dgmLastStoragePath:(gamesCache[editingId]?.storagePath||''),playMode:'iframe',sourceType:file?'firebase-storage':(gamesCache[editingId]?.sourceType||'url')};
     if(editingId){
       if(gamesCache[editingId]?.active===false) data.active=false;
       await update(ref(dgmDb,'games/'+editingId),data);
@@ -1564,7 +1620,7 @@ async function saveGame(){
   }
 }
 async function toggleGame(id){const g=gamesCache[id];if(!g)return;try{await update(ref(dgmDb,'games/'+id),{active:g.active===false});msg('গেমের Active/Disable স্ট্যাটাস পরিবর্তন হয়েছে।',true);}catch(e){msg('স্ট্যাটাস পরিবর্তন করা যায়নি।');}}
-async function deleteGame(id){const g=gamesCache[id];if(!g)return;if(!confirm('এই গেমটি মুছে ফেলবেন?'))return;try{await remove(ref(dgmDb,'games/'+id));msg('গেম মুছে ফেলা হয়েছে।',true);}catch(e){msg('গেম মুছতে সমস্যা হয়েছে।');}}
+async function deleteGame(id){const g=gamesCache[id];if(!g)return;if(!confirm('এই গেমটি মুছে ফেলবেন?'))return;try{await remove(ref(dgmDb,'games/'+id));if(g.storagePath){try{await deleteObject(storageRef(dgmStorage,g.storagePath));}catch(e){console.warn('Storage cleanup:',e);}}msg('গেম মুছে ফেলা হয়েছে।',true);}catch(e){msg('গেম মুছতে সমস্যা হয়েছে।');}}
 function render(){
   const list=$('dgmList'); if(!list)return;
   const arr=Object.entries(gamesCache).map(([id,g])=>({id,...g})).sort((a,b)=>Number(a.order||0)-Number(b.order||0)||Number(a.createdAt||0)-Number(b.createdAt||0));
@@ -1588,6 +1644,88 @@ $('dgmSaveBtn')?.addEventListener('click',saveGame);
 $('dgmCancelBtn')?.addEventListener('click',clearForm);
 $('dgmRefreshBtn')?.addEventListener('click',()=>render());
 window.dgmEdit=editGame; window.dgmToggle=toggleGame; window.dgmDelete=deleteGame;
+</script>
+
+
+<style>
+/* ================= COMPLETE ADMIN CONTROL CENTER ================= */
+.complete-admin{margin:18px 0;font-family:Arial,sans-serif}.complete-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.complete-card{background:#11161e;border:1px solid #2a303b;border-radius:14px;padding:14px}.complete-card h3{margin:0 0 10px;color:#ffcf72;font-size:15px}
+.complete-card p{font-size:11px;color:#9da7b6;line-height:1.5}.complete-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}.complete-form input,.complete-form select,.complete-form button{width:100%;padding:10px;border-radius:9px;border:1px solid #303846;background:#0c1016;color:#fff}.complete-form button{background:#20b56b;border:0;font-weight:800;cursor:pointer}.complete-full{grid-column:1/-1}
+.complete-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.complete-stat{background:#0c1016;border:1px solid #252c38;border-radius:10px;padding:10px;text-align:center}.complete-stat span{display:block;color:#8f9bad;font-size:10px}.complete-stat strong{display:block;color:#20b56b;font-size:19px;margin-top:3px}.complete-msg{font-size:11px;color:#9da7b6;margin-top:8px;white-space:pre-wrap}.complete-table-wrap{overflow:auto;max-height:360px}.complete-table{width:100%;border-collapse:collapse;font-size:11px}.complete-table th,.complete-table td{border:1px solid #2a303b;padding:7px;text-align:left;white-space:nowrap}.complete-table th{color:#aeb7c5;background:#171c25}.mini-btn{border:0;border-radius:7px;padding:6px 8px;cursor:pointer;color:#fff;background:#265fd8;margin:2px}.mini-danger{background:#b4232f}.mini-green{background:#198754}
+@media(max-width:650px){.complete-grid{grid-template-columns:1fr}.complete-form{grid-template-columns:1fr}.complete-full{grid-column:auto}.complete-stats{grid-template-columns:1fr 1fr}}
+</style>
+
+<div class="complete-admin" id="completeAdminCenter">
+<div class="complete-card complete-full">
+<h3>🧭 Complete Admin Control Center</h3>
+<p>এটি বর্তমান Admin Panel-এর অতিরিক্ত control center। আগের Deposit, Withdraw, Referral, Cashback, Banner, Announcement, Help Care ও Dynamic Game সিস্টেম আলাদা রেখেই এই অংশ যোগ করা হয়েছে।</p>
+<div class="complete-stats">
+<div class="complete-stat"><span>Total Users</span><strong id="caUsers">0</strong></div>
+<div class="complete-stat"><span>Active</span><strong id="caActive">0</strong></div>
+<div class="complete-stat"><span>Balance</span><strong id="caBalance">৳0</strong></div>
+<div class="complete-stat"><span>Referral</span><strong id="caRefs">0</strong></div>
+</div><div class="complete-msg" id="caDashMsg">Dashboard data loading...</div>
+</div>
+
+<div class="complete-card">
+<h3>👥 User Management</h3>
+<div class="complete-form"><input id="caSearch" placeholder="Phone / Name search"><button onclick="caSearchUser()">🔎 Search</button></div>
+<div id="caUserResult" class="complete-msg">Search করলে এখানে user details দেখাবে।</div>
+</div>
+
+<div class="complete-card">
+<h3>💳 Payment Settings</h3>
+<div class="complete-form">
+<input id="caBkash" placeholder="bKash Number"><input id="caNagad" placeholder="Nagad Number">
+<input id="caRocket" placeholder="Rocket Number"><input id="caDepMin" type="number" placeholder="Min Deposit">
+<input id="caDepMax" type="number" placeholder="Max Deposit"><input id="caWithMin" type="number" placeholder="Min Withdraw">
+<input id="caWithMax" type="number" placeholder="Max Withdraw"><button onclick="caSavePayment()">💾 Save Payment</button>
+</div><div id="caPayMsg" class="complete-msg"></div>
+</div>
+
+<div class="complete-card">
+<h3>🎁 Cashback Control</h3>
+<p>বর্তমান Daily Loss Cashback সিস্টেমের পাশাপাশি rate ও minimum loss এখানে সংরক্ষণ করা যাবে।</p>
+<div class="complete-form"><input id="caCashRate" type="number" step="0.01" value="15" placeholder="Cashback %"><input id="caCashMin" type="number" step="0.01" value="0" placeholder="Minimum Loss"><select id="caCashActive"><option value="true">Cashback ON</option><option value="false">Cashback OFF</option></select><button onclick="caSaveCashback()">💾 Save Cashback</button></div>
+<div id="caCashMsg" class="complete-msg"></div>
+</div>
+
+<div class="complete-card">
+<h3>⭐ VIP & Turnover</h3>
+<div class="complete-form"><input id="caVipStep" type="number" value="1000" placeholder="Deposit per level"><input id="caVipBonus" type="number" value="10" placeholder="Level bonus"><input id="caTurnoverRate" type="number" value="2" placeholder="Turnover multiplier"><button onclick="caSaveVip()">💾 Save VIP/Turnover</button></div>
+<div id="caVipMsg" class="complete-msg"></div>
+</div>
+
+<div class="complete-card">
+<h3>🔐 Security & System</h3>
+<div class="complete-form"><input id="caAdminPin" type="password" placeholder="New Admin PIN"><select id="caRegMode"><option value="true">Registration ON</option><option value="false">Registration OFF</option></select><select id="caWithdrawMode"><option value="true">Withdraw ON</option><option value="false">Withdraw OFF</option></select><button onclick="caSaveSecurity()">🔐 Save Security</button></div>
+<div id="caSecMsg" class="complete-msg"></div>
+</div>
+
+<div class="complete-card complete-full">
+<h3>📊 User Table / Quick Controls</h3>
+<div class="complete-table-wrap"><table class="complete-table"><thead><tr><th>User</th><th>Name</th><th>Balance</th><th>VIP</th><th>Deposit</th><th>Referral</th><th>Status</th><th>Action</th></tr></thead><tbody id="caUserTable"><tr><td colspan="8">Loading...</td></tr></tbody></table></div>
+</div>
+</div>
+
+<script type="module">
+import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getDatabase,ref,get,update,onValue,set}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+const cfg={apiKey:"AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY",authDomain:"uk77-56f6d.firebaseapp.com",databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",projectId:"uk77-56f6d",storageBucket:"uk77-56f6d.firebasestorage.app",messagingSenderId:"1062783431056",appId:"1:1062783431056:web:c44fd51195cf4061998315",measurementId:"G-C0ST13Q8PJ"};
+const app=getApps().length?getApps()[0]:initializeApp(cfg);const db=getDatabase(app);let caUsers={};
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+async function loadSettings(){try{let s=await get(ref(db,'settings'));let v=s.val()||{};let p=v.payment||{};document.getElementById('caBkash').value=p.bkash||'';document.getElementById('caNagad').value=p.nagad||'';document.getElementById('caRocket').value=p.rocket||'';document.getElementById('caDepMin').value=p.depositMin??'';document.getElementById('caDepMax').value=p.depositMax??'';document.getElementById('caWithMin').value=p.withdrawMin??'';document.getElementById('caWithMax').value=p.withdrawMax??'';let c=v.cashback||{};document.getElementById('caCashRate').value=c.rate??15;document.getElementById('caCashMin').value=c.minimumLoss??0;document.getElementById('caCashActive').value=String(c.active!==false);let vip=v.vip||{};document.getElementById('caVipStep').value=vip.depositPerLevel??1000;document.getElementById('caVipBonus').value=vip.levelBonus??10;document.getElementById('caTurnoverRate').value=vip.turnoverMultiplier??2;let sec=v.security||{};document.getElementById('caRegMode').value=String(sec.registration!==false);document.getElementById('caWithdrawMode').value=String(sec.withdrawal!==false)}catch(e){document.getElementById('caDashMsg').textContent='Settings load error: '+e.message}}
+function render(){let a=Object.entries(caUsers);let bal=0,refs=0,active=0;a.forEach(([p,u])=>{bal+=Number(u.balance||0);refs+=Number(u.referStats?.count||0);if(u.blocked!==true)active++});document.getElementById('caUsers').textContent=a.length;document.getElementById('caActive').textContent=active;document.getElementById('caBalance').textContent='৳'+bal.toFixed(2);document.getElementById('caRefs').textContent=refs;document.getElementById('caDashMsg').textContent='Realtime Firebase user data loaded.';document.getElementById('caUserTable').innerHTML=a.slice(0,100).map(([p,u])=>`<tr><td>${esc(p)}</td><td>${esc(u.name||'-')}</td><td>৳${Number(u.balance||0).toFixed(2)}</td><td>${Number(u.vipLevel||u.level||0)}</td><td>৳${Number(u.totalDeposit||0).toFixed(2)}</td><td>${Number(u.referStats?.count||0)}</td><td>${u.blocked===true?'Blocked':'Active'}</td><td><button class="mini-btn" onclick="caAdjust('${esc(p)}')">Balance</button><button class="mini-btn ${u.blocked===true?'mini-green':'mini-danger'}" onclick="caBlock('${esc(p)}',${u.blocked===true})">${u.blocked===true?'Unblock':'Block'}</button></td></tr>`).join('')||'<tr><td colspan="8">No users</td></tr>'}
+onValue(ref(db,'users'),s=>{caUsers=s.val()||{};render()});
+window.caSearchUser=()=>{let q=document.getElementById('caSearch').value.trim().toLowerCase();let hit=Object.entries(caUsers).filter(([p,u])=>p.toLowerCase().includes(q)||String(u.name||'').toLowerCase().includes(q));document.getElementById('caUserResult').innerHTML=hit.length?hit.slice(0,10).map(([p,u])=>`<div style="padding:8px;border:1px solid #2a303b;border-radius:8px;margin-top:6px"><b>${esc(u.name||'Unnamed')}</b> • ${esc(p)}<br>Balance ৳${Number(u.balance||0).toFixed(2)} • VIP ${Number(u.vipLevel||u.level||0)} • Deposit ৳${Number(u.totalDeposit||0).toFixed(2)}</div>`).join(''):'কোনো user পাওয়া যায়নি।'};
+window.caAdjust=async p=>{let v=prompt('নতুন balance দিন:',Number(caUsers[p]?.balance||0));if(v===null)return;v=Number(v);if(!Number.isFinite(v)||v<0)return alert('সঠিক balance দিন');await update(ref(db,'users/'+p),{balance:v,adminBalanceUpdatedAt:Date.now()});};
+window.caBlock=async(p,b)=>{await update(ref(db,'users/'+p),{blocked:!b,status:!b?'active':'blocked',blockedAt:!b?null:Date.now()})};
+window.caSavePayment=async()=>{await set(ref(db,'settings/payment'),{bkash:document.getElementById('caBkash').value.trim(),nagad:document.getElementById('caNagad').value.trim(),rocket:document.getElementById('caRocket').value.trim(),depositMin:Number(document.getElementById('caDepMin').value||0),depositMax:Number(document.getElementById('caDepMax').value||0),withdrawMin:Number(document.getElementById('caWithMin').value||0),withdrawMax:Number(document.getElementById('caWithMax').value||0),updatedAt:Date.now()});document.getElementById('caPayMsg').textContent='Payment settings saved.'};
+window.caSaveCashback=async()=>{await set(ref(db,'settings/cashback'),{rate:Number(document.getElementById('caCashRate').value||15),minimumLoss:Number(document.getElementById('caCashMin').value||0),active:document.getElementById('caCashActive').value==='true',updatedAt:Date.now()});document.getElementById('caCashMsg').textContent='Cashback settings saved.'};
+window.caSaveVip=async()=>{await set(ref(db,'settings/vip'),{depositPerLevel:Number(document.getElementById('caVipStep').value||1000),levelBonus:Number(document.getElementById('caVipBonus').value||10),turnoverMultiplier:Number(document.getElementById('caTurnoverRate').value||2),updatedAt:Date.now()});document.getElementById('caVipMsg').textContent='VIP/Turnover settings saved.'};
+window.caSaveSecurity=async()=>{let pin=document.getElementById('caAdminPin').value;await update(ref(db,'settings/security'),{registration:document.getElementById('caRegMode').value==='true',withdrawal:document.getElementById('caWithdrawMode').value==='true',updatedAt:Date.now()});if(pin)await set(ref(db,'admin/password'),pin);document.getElementById('caAdminPin').value='';document.getElementById('caSecMsg').textContent='Security settings saved.'};
+loadSettings();
 </script>
 
 </body>
