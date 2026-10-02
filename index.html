@@ -826,7 +826,7 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
-  import { getDatabase, ref, set, get, update, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+  import { getDatabase, ref, set, get, update, push, onValue, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY",
@@ -851,6 +851,7 @@
   window.fbUpdate = update;
   window.fbPush = push;
   window.fbOnValue = onValue;
+  window.fbRunTransaction = runTransaction;
 
   window.adminLiveNumbers = { bKash: '01XXXXXXXXX', Nagad: '01XXXXXXXXX', Rocket: '01XXXXXXXXX' };
   onValue(ref(db, 'settings/numbers'), (snapshot) => {
@@ -941,26 +942,31 @@
       const userRef = ref(db, 'users/' + phone);
       onValue(userRef, (snapshot) => {
           if (snapshot.exists()) {
-              const userData = snapshot.val();
-              let liveBalance = userData.balance !== undefined ? userData.balance : 0;
+              const userData = snapshot.val() || {};
+              let liveBalance = userData.balance !== undefined ? Number(userData.balance || 0) : 0;
               balance = liveBalance;
-              if(usersDb[phone]) {
-                  usersDb[phone].balance = liveBalance;
-                  usersDb[phone].name = userData.name || usersDb[phone].name;
-                  usersDb[phone].referStats = userData.referStats || usersDb[phone].referStats;
-                  usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
-                  window.usersDb = usersDb;
-                  localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
-                  if(typeof window.refreshReferralUI==='function') window.refreshReferralUI();
-                  usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
-                  usersDb[phone].claimedRewards = userData.claimedRewards || usersDb[phone].claimedRewards;
-                  usersDb[phone].bankAccounts = userData.bankAccounts || usersDb[phone].bankAccounts || {};
-                  if(userData.transactionPassword){
-                      transactionPassword = String(userData.transactionPassword);
-                      localStorage.setItem('aviator_demo_tx_password', transactionPassword);
-                  }
-                  localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+              if(!usersDb[phone]) usersDb[phone] = {phone: phone};
+              usersDb[phone].balance = liveBalance;
+              usersDb[phone].name = userData.name || usersDb[phone].name;
+              usersDb[phone].referStats = userData.referStats || usersDb[phone].referStats || {count:0,bonusEarned:0};
+              usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
+              if(userData.totalDeposit !== undefined) usersDb[phone].totalDeposit = Number(userData.totalDeposit || 0);
+              if(userData.turnoverCurrent !== undefined) usersDb[phone].turnoverCurrent = Number(userData.turnoverCurrent || 0);
+              if(userData.turnoverTarget !== undefined) usersDb[phone].turnoverTarget = Number(userData.turnoverTarget || 0);
+              if(userData.referredBy !== undefined) usersDb[phone].referredBy = userData.referredBy || null;
+              if(userData.referBonusGiven !== undefined) usersDb[phone].referBonusGiven = !!userData.referBonusGiven;
+              if(userData.referBonusAmount !== undefined) usersDb[phone].referBonusAmount = Number(userData.referBonusAmount || 0);
+              if(userData.referBonusQualifiedAt !== undefined) usersDb[phone].referBonusQualifiedAt = userData.referBonusQualifiedAt;
+              usersDb[phone].claimedRewards = userData.claimedRewards || usersDb[phone].claimedRewards || {};
+              usersDb[phone].bankAccounts = userData.bankAccounts || usersDb[phone].bankAccounts || {};
+              if(userData.transactionPassword){
+                  transactionPassword = String(userData.transactionPassword);
+                  localStorage.setItem('aviator_demo_tx_password', transactionPassword);
               }
+              window.usersDb = usersDb;
+              localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+              if(typeof window.refreshReferralUI==='function') window.refreshReferralUI();
+              if(typeof window.tryQualifyReferralBonus==='function') window.tryQualifyReferralBonus(phone);
               updateBalance();
           }
       });
@@ -1247,7 +1253,6 @@ async function handleRegister(){
         window.usersDb = usersDb;
 
         let referrerCountUpdate = null;
-        let referrerSignupBonusUpdate = null;
         if(referredBy){
             const referrer = usersDb[referredBy] || {};
             if(!referrer.referStats) referrer.referStats = { count: 0, bonusEarned: 0 };
@@ -1275,8 +1280,6 @@ async function handleRegister(){
                     firebaseUpdates['users/' + referredBy + '/referStats/count'] = referrerCountUpdate;
                     firebaseUpdates['users/' + referredBy + '/referStats/bonusEarned'] = Number(usersDb[referredBy]?.referStats?.bonusEarned || 0);
                     firebaseUpdates['users/' + referredBy + '/balance'] = Number(usersDb[referredBy]?.balance || 0);
-                    firebaseUpdates['users/' + referredBy + '/lastReferralSignupBonus'] = Number(referrerSignupBonusUpdate || 399);
-                    firebaseUpdates['users/' + referredBy + '/lastReferralSignupBonusAt'] = Number(usersDb[referredBy]?.lastReferralSignupBonusAt || Date.now());
                     firebaseUpdates['users/' + referredBy + '/inboxSms'] = usersDb[referredBy]?.inboxSms || [];
                 }
                 window.fbUpdate(window.fbRef(window.fbDb), firebaseUpdates).catch(err => console.error('Firebase referral registration save failed:', err));
@@ -1697,6 +1700,93 @@ function updateDepositNumberDisplay(){
 
 function randomCrash(){const r=Math.random();if(r<.62)return +(1.05+Math.random()*1.95).toFixed(2);if(r<.90)return +(3+Math.random()*7).toFixed(2);if(r<.975)return +(10+Math.random()*40).toFixed(2);return +(50+Math.random()*1950).toFixed(2)}
 
+window.tryQualifyReferralBonus = async function(userPhone){
+    try{
+        if(!userPhone || !usersDb[userPhone]) return false;
+        const user = usersDb[userPhone];
+        if(!user.referredBy || user.referBonusGiven) return false;
+        const approvedDeposit = Number(user.totalDeposit || 0);
+        const cumulativeBet = Number(user.turnoverCurrent || 0);
+        if(approvedDeposit < 1000 || cumulativeBet < 2000) return false;
+
+        const referrerPhone = String(user.referredBy);
+        const bonus = 399;
+        const now = Date.now();
+
+        if(window.fbDb && window.fbRef && window.fbRunTransaction && window.fbUpdate){
+            const referrerRef = window.fbRef(window.fbDb, 'users/' + referrerPhone);
+            const tx = await window.fbRunTransaction(referrerRef, current => {
+                if(!current) return current;
+                const ledger = current.referralQualifiedBonuses || {};
+                if(ledger[userPhone]) return;
+                const next = {...current};
+                next.balance = Number(current.balance || 0) + bonus;
+                next.referStats = {...(current.referStats || {count:0,bonusEarned:0})};
+                next.referStats.bonusEarned = Number(next.referStats.bonusEarned || 0) + bonus;
+                next.lastReferralQualifiedBonus = bonus;
+                next.lastReferralQualifiedBonusAt = now;
+                next.referralQualifiedBonuses = {...ledger, [userPhone]: {amount:bonus, at:now}};
+                next.inboxSms = Array.isArray(current.inboxSms) ? current.inboxSms.slice() : [];
+                next.inboxSms.unshift({
+                    id: now,
+                    title: '🎁 Referral Bonus ৳399',
+                    text: 'আপনার রেফার করা ইউজার ৳1,000 ডিপোজিট ও ৳2,000 বেটের শর্ত পূরণ করেছে। ৳399 বোনাস যোগ হয়েছে।',
+                    time: 'এখন'
+                });
+                return next;
+            });
+            if(!tx.committed) return false;
+
+            user.referBonusGiven = true;
+            user.referBonusAmount = bonus;
+            user.referBonusQualifiedAt = now;
+            const snap = await window.fbGet(window.fbRef(window.fbDb, 'users/' + referrerPhone));
+            const liveReferrer = snap.exists() ? snap.val() : (usersDb[referrerPhone] || {});
+            usersDb[referrerPhone] = liveReferrer;
+            usersDb[userPhone] = user;
+            window.usersDb = usersDb;
+            localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+            await window.fbUpdate(window.fbRef(window.fbDb, 'users/' + userPhone), {
+                referBonusGiven: true,
+                referBonusAmount: bonus,
+                referBonusQualifiedAt: now,
+                turnoverCurrent: cumulativeBet,
+                totalDeposit: approvedDeposit
+            });
+            balance = Number(usersDb[userPhone]?.balance || balance);
+            if(String(currentUserPhone) === String(userPhone)) updateBalance();
+            if(typeof window.refreshReferralUI === 'function') window.refreshReferralUI();
+            return true;
+        }
+
+        const referrer = usersDb[referrerPhone];
+        if(!referrer) return false;
+        if(!referrer.referralQualifiedBonuses) referrer.referralQualifiedBonuses = {};
+        if(referrer.referralQualifiedBonuses[userPhone]) return false;
+        referrer.balance = Number(referrer.balance || 0) + bonus;
+        referrer.referStats = referrer.referStats || {count:0,bonusEarned:0};
+        referrer.referStats.bonusEarned = Number(referrer.referStats.bonusEarned || 0) + bonus;
+        referrer.referralQualifiedBonuses[userPhone] = {amount:bonus, at:now};
+        referrer.lastReferralQualifiedBonus = bonus;
+        referrer.lastReferralQualifiedBonusAt = now;
+        referrer.inboxSms = Array.isArray(referrer.inboxSms) ? referrer.inboxSms : [];
+        referrer.inboxSms.unshift({id:now,title:'🎁 Referral Bonus ৳399',text:'রেফার করা ইউজার ৳1,000 ডিপোজিট ও ৳2,000 বেটের শর্ত পূরণ করেছে। ৳399 বোনাস যোগ হয়েছে।',time:'এখন'});
+        user.referBonusGiven = true;
+        user.referBonusAmount = bonus;
+        user.referBonusQualifiedAt = now;
+        usersDb[userPhone] = user;
+        usersDb[referrerPhone] = referrer;
+        window.usersDb = usersDb;
+        localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+        if(String(currentUserPhone) === String(referrerPhone)){ balance = Number(referrer.balance||balance); updateBalance(); }
+        if(typeof window.refreshReferralUI === 'function') window.refreshReferralUI();
+        return true;
+    }catch(e){
+        console.error('Referral qualification failed:', e);
+        return false;
+    }
+};
+
 function placeBet(slot){
     if(crashed||bets[slot].active)return;
     const amount=Number(document.getElementById('bet'+slot).value);
@@ -1711,48 +1801,15 @@ function placeBet(slot){
         if(!user.turnoverCurrent) user.turnoverCurrent = 0;
         user.turnoverCurrent += amount;
 
-        // ৳399 Referral Bonus qualification:
-        // 1) referred user has at least ৳1,000 approved cumulative deposit
-        // 2) referred user has placed at least ৳2,000 cumulative bets
-        // 3) bonus is granted only once
-        if(user.referredBy && !user.referBonusGiven){
-            const approvedDeposit = Number(user.totalDeposit || 0);
-            const cumulativeBet = Number(user.turnoverCurrent || 0);
-            if(approvedDeposit >= 1000 && cumulativeBet >= 2000){
-                const referrer = usersDb[user.referredBy];
-                if(referrer){
-                    if(!referrer.referStats) referrer.referStats = { count: 0, bonusEarned: 0 };
-                    const referralBonus = 399;
-                    referrer.balance = Number(referrer.balance || 0) + referralBonus;
-                    referrer.referStats.bonusEarned = Number(referrer.referStats.bonusEarned || 0) + referralBonus;
-                    referrer.lastReferralQualifiedBonus = referralBonus;
-                    referrer.lastReferralQualifiedBonusAt = Date.now();
-                    if(!Array.isArray(referrer.inboxSms)) referrer.inboxSms = [];
-                    referrer.inboxSms.unshift({
-                        id: Date.now(),
-                        title: '🎁 Referral Bonus ৳399',
-                        text: 'আপনার রেফার করা ইউজার ৳1,000 ডিপোজিট ও ৳2,000 বেটের শর্ত পূরণ করেছে। ৳399 বোনাস যোগ হয়েছে।',
-                        time: 'এখন'
-                    });
-                    usersDb[user.referredBy] = referrer;
-                    user.referBonusGiven = true;
-                    user.referBonusAmount = referralBonus;
-                    user.referBonusQualifiedAt = Date.now();
+        // Check the ৳399 referral qualification after every placed bet.
+        tryQualifyReferralBonus(currentUserPhone);
 
-                    if(window.fbDb && window.fbRef && window.fbUpdate){
-                        const referralUpdates = {};
-                        referralUpdates['users/' + currentUserPhone + '/referBonusGiven'] = true;
-                        referralUpdates['users/' + currentUserPhone + '/referBonusAmount'] = referralBonus;
-                        referralUpdates['users/' + currentUserPhone + '/referBonusQualifiedAt'] = user.referBonusQualifiedAt;
-                        referralUpdates['users/' + user.referredBy + '/balance'] = Number(referrer.balance || 0);
-                        referralUpdates['users/' + user.referredBy + '/referStats/bonusEarned'] = Number(referrer.referStats.bonusEarned || 0);
-                        referralUpdates['users/' + user.referredBy + '/lastReferralQualifiedBonus'] = referralBonus;
-                        referralUpdates['users/' + user.referredBy + '/lastReferralQualifiedBonusAt'] = referrer.lastReferralQualifiedBonusAt;
-                        referralUpdates['users/' + user.referredBy + '/inboxSms'] = referrer.inboxSms;
-                        window.fbUpdate(window.fbRef(window.fbDb), referralUpdates).catch(err => console.error('Referral qualification bonus save failed:', err));
-                    }
-                }
-            }
+        // Keep cumulative betting progress synced to Firebase for cross-device/admin visibility.
+        if(window.fbDb && window.fbRef && window.fbUpdate){
+            window.fbUpdate(window.fbRef(window.fbDb, 'users/' + currentUserPhone), {
+                turnoverCurrent: Number(user.turnoverCurrent || 0),
+                balance: Number(balance || 0)
+            }).catch(err => console.warn('Bet progress Firebase sync failed:', err));
         }
         localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
         updateBalance();
@@ -2526,5 +2583,107 @@ async function submitRewardPromoCode(){
   }catch(e){console.error(e);if(msg)msg.textContent='Promo Code যাচাই করতে সমস্যা হয়েছে।';}
 }
 </script>
+
+
+<!-- UNIVERSAL FIREBASE HTML GAME BRIDGE: added without replacing existing game systems. -->
+<style id="universalFirebaseGameStyle">
+#universalGamesWrap{margin:10px 12px 16px}
+#universalGamesWrap .ug-title{font-size:16px;font-weight:900;color:#ffcf72;margin:0 0 8px}
+#universalGamesGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.ug-card{position:relative;display:block;min-height:108px;padding:0;border:1px solid rgba(255,207,114,.22);border-radius:15px;overflow:hidden;background:linear-gradient(145deg,#17120c,#2a1d0d);box-shadow:0 5px 16px rgba(0,0,0,.18);cursor:pointer;color:#fff;text-align:left}
+.ug-card img{display:block;width:100%;height:76px;object-fit:cover;background:#171717}
+.ug-card .ug-name{padding:7px 8px 2px;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ug-card .ug-meta{padding:0 8px 7px;font-size:9px;color:#bfc6d2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ug-card .ug-live{position:absolute;top:6px;right:6px;padding:3px 6px;border-radius:999px;background:#16a34a;color:#fff;font-size:8px;font-weight:900}
+#universalGamePlayerModal{display:none;position:fixed;inset:0;z-index:999999;background:#05070b}
+#universalGamePlayerModal.show{display:flex;flex-direction:column}
+#universalGamePlayerHead{height:48px;display:flex;align-items:center;gap:8px;padding:0 9px;background:linear-gradient(90deg,#17120c,#2b1b08);border-bottom:1px solid #5b411c;color:#fff;flex:0 0 48px}
+#universalGamePlayerName{font-weight:900;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#universalGameClose,#universalGameReload{border:0;border-radius:9px;background:#2d3748;color:#fff;padding:8px 11px;font-weight:900;cursor:pointer}
+#universalGameFrame{width:100%;height:calc(100vh - 48px);height:calc(100dvh - 48px);border:0;background:#fff;display:block}
+@media(max-width:430px){#universalGamesGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ug-card{min-height:101px}.ug-card img{height:70px}.ug-card .ug-name{font-size:11px}}
+</style>
+
+<div id="universalGamePlayerModal" aria-hidden="true">
+  <div id="universalGamePlayerHead">
+    <button id="universalGameClose" type="button">✕</button>
+    <div id="universalGamePlayerName">Game</div>
+    <button id="universalGameReload" type="button">↻</button>
+  </div>
+  <iframe id="universalGameFrame" title="Game Player" allow="autoplay; fullscreen; gamepad; clipboard-read; clipboard-write" allowfullscreen></iframe>
+</div>
+
+<script type="module" id="universalFirebaseHtmlGameBridge">
+import { getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+(function(){
+  const FALLBACK_THUMB='https://i.postimg.cc/2STpnBDP/1790492897623.jpg';
+  const grid=document.getElementById('adminDynamicGamesGrid');
+  const title=document.getElementById('adminDynamicGamesTitle');
+  if(!grid)return;
+
+  function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function safeUrl(v){
+    try{const u=new URL(String(v||''),location.href);if(!/^https?:$/i.test(u.protocol))return '';return u.href;}catch(e){return '';}
+  }
+  function bust(url,version){
+    if(!url)return '';
+    const sep=url.includes('?')?'&':'?';
+    return url+sep+'bd77qGameVersion='+encodeURIComponent(version||Date.now());
+  }
+  function openGame(g){
+    const url=safeUrl(g.url); if(!url){alert('এই গেমের Game Link পাওয়া যায়নি।');return;}
+    const modal=document.getElementById('universalGamePlayerModal');
+    const frame=document.getElementById('universalGameFrame');
+    const name=document.getElementById('universalGamePlayerName');
+    if(!modal||!frame)return;
+    if(name)name.textContent=g.name||'Game';
+    frame.src=bust(url,g.updatedAt||g.createdAt||Date.now());
+    modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow='hidden';
+  }
+  function closeGame(){
+    const modal=document.getElementById('universalGamePlayerModal');
+    const frame=document.getElementById('universalGameFrame');
+    if(frame)frame.src='about:blank';
+    if(modal){modal.classList.remove('show');modal.setAttribute('aria-hidden','true');}
+    document.body.style.overflow='';
+  }
+  window.bd77qOpenUniversalGame=openGame;
+  window.bd77qCloseUniversalGame=closeGame;
+  document.getElementById('universalGameClose')?.addEventListener('click',closeGame);
+  document.getElementById('universalGameReload')?.addEventListener('click',()=>{
+    const f=document.getElementById('universalGameFrame'); if(f)try{f.contentWindow.location.reload();}catch(e){f.src=f.src;}
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeGame();});
+
+  window.renderAdminDynamicGames=function(value){
+    const list=[];
+    if(value && typeof value==='object') Object.entries(value).forEach(([id,g])=>{
+      if(g && g.active!==false && safeUrl(g.url)) list.push({id,...g});
+    });
+    list.sort((a,b)=>Number(a.order||0)-Number(b.order||0)||Number(a.createdAt||0)-Number(b.createdAt||0));
+    if(title)title.style.display=list.length?'block':'none';
+    grid.innerHTML=list.map(g=>{
+      const image=safeUrl(g.image)||FALLBACK_THUMB;
+      return `<button type="button" class="ug-card" data-game-id="${esc(g.id)}">
+        <span class="ug-live">LIVE</span><img src="${esc(image)}" alt="" onerror="this.src='${FALLBACK_THUMB}'">
+        <div class="ug-name">${esc(g.name||'Game')}</div><div class="ug-meta">${esc(g.description||'Play Now')} • ${Number(g.order||0)}</div>
+      </button>`;
+    }).join('');
+    grid.querySelectorAll('.ug-card').forEach((card,i)=>card.addEventListener('click',()=>openGame(list[i])));
+    try{if(typeof filterVipGames==='function')filterVipGames();}catch(e){}
+  };
+
+  try{
+    const app=getApps().length?getApp():null;
+    if(!app)return;
+    const db=getDatabase(app);
+    onValue(ref(db,'games'),snap=>window.renderAdminDynamicGames(snap.exists()?snap.val():{}),err=>console.warn('Firebase games sync:',err));
+  }catch(e){console.warn('Universal Firebase game bridge:',e);}
+})();
+</script>
+
 </body>
 </html>
