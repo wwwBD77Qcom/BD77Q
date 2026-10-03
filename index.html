@@ -845,7 +845,7 @@
           <input id="withdrawNumber" type="hidden">
         </div>
         <div id="withdrawMethod" class="modal-note" style="display:none">Selected: bKash</div>
-        <button class="withdraw-ok" type="button" onclick="submitDemoWithdraw()">OK</button>
+        <button id="withdrawOkBtn" class="withdraw-ok" type="button" onclick="submitDemoWithdraw()" disabled>OK</button>
         <div id="withdrawMsg" class="modal-note" style="margin-top:9px;min-height:18px;color:#e94b43"></div>
       </div>
       <div id="historyPanel" class="withdraw-shot-body" style="display:none"><div class="withdraw-section-title">Withdrawal History</div><div id="withdrawHistoryList" class="history-list"></div></div>
@@ -2029,7 +2029,35 @@ let demoWithdrawMethod='bKash';
 function selectWithdrawMethod(method){demoWithdrawMethod=method;document.getElementById('withdrawMethod').textContent='Selected: '+method;['bKash','Nagad','Rocket'].forEach(m=>{const el=document.getElementById({bKash:'withdrawMethodBkash',Nagad:'withdrawMethodNagad',Rocket:'withdrawMethodRocket'}[m]);if(el)el.classList.toggle('active',m===method)});renderWithdrawWallets();}
 function renderWithdrawWallets(){const u=usersDb?.[currentUserPhone]||{},accounts=u.bankAccounts||{},box=document.getElementById('withdrawWalletList');if(!box)return;const methods=['bKash','Nagad','Rocket'];const saved=methods.filter(m=>accounts[m]&&accounts[m].number);const count=document.getElementById('withdrawWalletCount');if(count)count.textContent=saved.length+'/5';if(!saved.length){box.innerHTML='<div style="padding:18px;text-align:center;color:#888;border:1px dashed #ccc;border-radius:10px">কোনো Registered E-wallet নেই। + বাটনে চাপ দিয়ে নম্বর যুক্ত করুন।</div>';document.getElementById('withdrawNumber').value='';return;}box.innerHTML=saved.map(m=>{const a=accounts[m];const masked=String(a.number||'').replace(/.(?=.{4})/g,'*');return `<button type="button" class="withdraw-wallet-card ${m===demoWithdrawMethod?'active':''}" onclick="selectRegisteredWithdrawWallet('${m}')">${m} <small>${masked}</small></button>`}).join('');const chosen=accounts[demoWithdrawMethod];if(chosen?.number)document.getElementById('withdrawNumber').value=chosen.number;else if(saved.length){demoWithdrawMethod=saved[0];document.getElementById('withdrawNumber').value=accounts[saved[0]].number;}}
 function selectRegisteredWithdrawWallet(method){demoWithdrawMethod=method;const a=usersDb?.[currentUserPhone]?.bankAccounts?.[method];document.getElementById('withdrawNumber').value=a?.number||'';document.getElementById('withdrawMethod').textContent='Selected: '+method;['bKash','Nagad','Rocket'].forEach(m=>{const el=document.getElementById({bKash:'withdrawMethodBkash',Nagad:'withdrawMethodNagad',Rocket:'withdrawMethodRocket'}[m]);if(el)el.classList.toggle('active',m===method)});renderWithdrawWallets();}
-function refreshWithdrawDisplay(){const u=usersDb?.[currentUserPhone]||{},main=Number(u.balance??balance??0),target=Number(u.turnoverTarget||0),current=Number(u.turnoverCurrent||0),remaining=Math.max(0,target-current);const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};set('withdrawMainWallet',main.toFixed(2));set('withdrawAvailableAmount',main.toFixed(2));set('withdrawRemainingTurnover',remaining.toFixed(2));const alertEl=document.getElementById('withdrawTurnoverAlert');if(alertEl)alertEl.textContent=remaining>0?'Please complete the required turnover for withdrawal.':'Turnover requirement completed.';const db=JSON.parse(localStorage.getItem('aviator_full_db'))||globalDb||{},today=new Date().toDateString(),used=(db.withdrawRequests||[]).filter(x=>String(x.userPhone)===String(currentUserPhone)&&new Date(Number(x.createdAt||0)).toDateString()===today).length;set('withdrawDailyRemaining',String(Math.max(0,99-used)));}
+function refreshWithdrawDisplay(){
+    const u=usersDb?.[currentUserPhone]||{};
+    const main=Number(u.balance??balance??0);
+    const target=Number(u.turnoverTarget||0);
+    const current=Number(u.turnoverCurrent||0);
+    const remaining=Math.max(0,target-current);
+    const completed=remaining<=0;
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v};
+    set('withdrawMainWallet',main.toFixed(2));
+    set('withdrawAvailableAmount',main.toFixed(2));
+    set('withdrawRemainingTurnover',remaining.toFixed(2));
+    const alertEl=document.getElementById('withdrawTurnoverAlert');
+    if(alertEl){
+        alertEl.textContent=completed?'Turnover requirement completed — Withdrawal available.':`Please complete the required turnover. Remaining: ৳${fmt(remaining)}`;
+        alertEl.style.color=completed?'#178a55':'#f05b49';
+    }
+    const btn=document.getElementById('withdrawOkBtn');
+    if(btn){
+        btn.disabled=!completed;
+        btn.textContent=completed?'OK':'Complete Turnover First';
+        btn.style.opacity=completed?'1':'0.55';
+        btn.style.cursor=completed?'pointer':'not-allowed';
+    }
+    const db=JSON.parse(localStorage.getItem('aviator_full_db'))||globalDb||{};
+    const today=new Date().toDateString();
+    const used=(db.withdrawRequests||[]).filter(x=>String(x.userPhone)===String(currentUserPhone)&&new Date(Number(x.createdAt||0)).toDateString()===today).length;
+    set('withdrawDailyRemaining',String(Math.max(0,99-used)));
+}
+
 
 function setWithdrawAmount(amount){document.getElementById('withdrawAmount').value=amount}
 
