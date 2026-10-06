@@ -2695,7 +2695,7 @@ async function submitRewardPromoCode(){
 </div>
 
 <script type="module" id="universalFirebaseHtmlGameBridge">
-import { getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 (function(){
@@ -2706,10 +2706,21 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
 
   function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function safeUrl(v){
-    try{const u=new URL(String(v||''),location.href);if(!/^https?:$/i.test(u.protocol))return '';return u.href;}catch(e){return '';}
+    const raw=String(v||'').trim();
+    if(!raw)return '';
+    // Firebase Storage/HTTPS URLs are the normal source.
+    // Also accept a small data: HTML fallback if one is ever stored in games.url.
+    if(/^data:text\/html(?:;[^,]*)?,/i.test(raw))return raw;
+    try{
+      const u=new URL(raw,location.href);
+      if(!/^https?:$/i.test(u.protocol))return '';
+      return u.href;
+    }catch(e){return '';}
   }
   function bust(url,version){
     if(!url)return '';
+    // Do not append a query string to a data: URL because it changes its payload.
+    if(/^data:/i.test(url))return url;
     const sep=url.includes('?')?'&':'?';
     return url+sep+'bd77qGameVersion='+encodeURIComponent(version||Date.now());
   }
@@ -2758,10 +2769,24 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
   };
 
   try{
-    const app=getApps().length?getApp():null;
-    if(!app)return;
+    let app=getApps().length?getApp():null;
+    if(!app){
+      app=initializeApp({
+        apiKey:"AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY",
+        authDomain:"uk77-56f6d.firebaseapp.com",
+        databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",
+        projectId:"uk77-56f6d",
+        storageBucket:"uk77-56f6d.firebasestorage.app",
+        messagingSenderId:"1062783431056",
+        appId:"1:1062783431056:web:c44fd51195cf4061998315",
+        measurementId:"G-C0ST13Q8PJ"
+      });
+    }
     const db=getDatabase(app);
-    onValue(ref(db,'games'),snap=>window.renderAdminDynamicGames(snap.exists()?snap.val():{}),err=>console.warn('Firebase games sync:',err));
+    onValue(ref(db,'games'),
+      snap=>window.renderAdminDynamicGames(snap.exists()?snap.val():{}),
+      err=>console.warn('Firebase games sync:',err)
+    );
   }catch(e){console.warn('Universal Firebase game bridge:',e);}
 })();
 </script>
