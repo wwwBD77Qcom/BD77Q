@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aviator - Live Game & Preview</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icon Library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #090a0f;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 4px;
+        }
+
+        .bg-radar {
+            background: radial-gradient(circle at 0% 100%, rgba(225, 29, 72, 0.28) 0%, rgba(9, 10, 15, 0.98) 75%);
+        }
+
+        .plane-shadow {
+            filter: drop-shadow(0px 8px 12px rgba(225, 29, 72, 0.7));
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(225, 29, 72, 0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 30px rgba(225, 29, 72, 0.85); transform: scale(1.02); }
+        }
+
+        .animate-glow {
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        @keyframes float-plane {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+
+        .animate-float {
+            animation: float-plane 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen max-w-md mx-auto relative overflow-hidden bg-black border-x border-zinc-800">
+
+    <!-- VIEW 1: LIVE THUMBNAIL / PREVIEW SCREEN -->
+    <div id="liveThumbnailView" class="flex-1 flex flex-col justify-between p-4 bg-gradient-to-b from-zinc-950 via-zinc-900 to-black z-30 transition-all duration-500 overflow-y-auto custom-scrollbar">
+        
+        <!-- Header Brand -->
+        <div class="flex items-center justify-between pt-2">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 rounded-xl bg-red-600/20 border border-red-500/40 flex items-center justify-center">
+                    <i class="fa-solid fa-plane-up text-red-500 text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-black text-white italic tracking-wider leading-none">AVIATOR</h1>
+                    <span class="text-[10px] text-zinc-400 font-semibold tracking-widest uppercase">Live Crash Game</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-1.5 bg-red-500/10 border border-red-500/30 px-2.5 py-1 rounded-full">
+                <span class="w-2 h-2 rounded-full bg-red-500 animate-ping"></span>
+                <span class="text-xs font-black text-red-400 uppercase tracking-wider">LIVE</span>
+            </div>
+        </div>
+
+        <!-- Interactive Live Thumbnail Card -->
+        <div class="my-auto my-4 relative rounded-2xl bg-zinc-950 border border-red-500/30 overflow-hidden shadow-2xl p-4 flex flex-col justify-between min-h-[320px] bg-radar group hover:border-red-500/60 transition cursor-pointer" onclick="switchToGame()">
+            
+            <!-- Floating Badge Overlay -->
+            <div class="flex justify-between items-start z-10">
+                <div class="flex flex-col gap-1">
+                    <span class="bg-black/60 backdrop-blur-md text-emerald-400 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-500/30 flex items-center gap-1 w-fit">
+                        <i class="fa-solid fa-users text-[10px]"></i> <span id="thumbOnlineCount">842</span> Playing
+                    </span>
+                    <span class="bg-black/60 backdrop-blur-md text-amber-400 text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-amber-500/30 w-fit">
+                        <i class="fa-solid fa-bolt"></i> High Win Rate
+                    </span>
+                </div>
+                <div class="flex gap-1">
+                    <span class="bg-purple-500/20 text-purple-300 border border-purple-500/40 text-[10px] font-bold px-2 py-0.5 rounded-md">18.40x</span>
+                    <span class="bg-blue-500/20 text-blue-300 border border-blue-500/40 text-[10px] font-bold px-2 py-0.5 rounded-md">4.25x</span>
+                </div>
+            </div>
+
+            <!-- Animated Plane Graphics Center -->
+            <div class="my-6 relative flex flex-col items-center justify-center z-10">
+                <div class="relative animate-float">
+                    <!-- Glow Circle -->
+                    <div class="absolute -inset-4 rounded-full bg-red-600/30 blur-xl"></div>
+                    <!-- Big Plane Icon -->
+                    <i class="fa-solid fa-plane-up text-red-500 text-6xl plane-shadow transform -rotate-12"></i>
+                </div>
+                <!-- Live Dynamic Multiplier Pulse -->
+                <div class="mt-4 flex flex-col items-center">
+                    <span class="text-4xl font-black text-white tracking-tight drop-shadow-lg">
+                        <span id="thumbMultiplier">3.45</span>x
+                    </span>
+                    <span class="text-xs font-semibold text-red-400 uppercase tracking-widest mt-0.5 flex items-center gap-1">
+                        <i class="fa-solid fa-play text-[8px]"></i> ফ্লাইং লাইভ চলছে
+                    </span>
+                </div>
+            </div>
+
+            <!-- Live Action Prompt Footer -->
+            <div class="z-10 bg-zinc-900/90 backdrop-blur-md border border-zinc-800 rounded-xl p-3 flex items-center justify-between">
+                <div>
+                    <div class="text-xs text-zinc-400">সর্বশেষ সর্বোচ্চ উইন</div>
+                    <div class="text-sm font-black text-emerald-400">৳ 45,280.00 BDT</div>
+                </div>
+                <button class="bg-red-600 hover:bg-red-500 text-white font-black px-4 py-2 rounded-lg text-xs tracking-wider uppercase shadow-lg animate-glow flex items-center gap-1.5">
+                    <span>খেলুন</span>
+                    <i class="fa-solid fa-circle-play text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Play Now Big Button -->
+        <button onclick="switchToGame()" class="w-full bg-emerald-500 hover:bg-emerald-400 active:scale-95 text-zinc-950 font-black py-3.5 px-4 rounded-xl text-base tracking-wide uppercase shadow-xl flex items-center justify-center gap-2 transition">
+            <i class="fa-solid fa-gamepad text-lg"></i>
+            <span>লাইভ গেমে প্রবেশ করুন (PLAY NOW)</span>
+        </button>
+    </div>
+
+    <!-- VIEW 2: FULL AVIATOR GAME VIEW (Hidden initially until switched) -->
+    <div id="fullGameView" class="hidden flex-1 flex-col h-full relative overflow-hidden bg-black">
+
+        <!-- Top Header Navigation -->
+        <header class="flex items-center justify-between px-3 py-2 bg-zinc-900/90 border-b border-zinc-800/80 z-20">
+            <div class="flex items-center gap-2">
+                <span class="text-red-600 font-extrabold text-lg italic tracking-wider flex items-center gap-1">
+                    <i class="fa-solid fa-plane-up text-red-500"></i> Aviator
+                </span>
+                <!-- Switch Back to Preview Button -->
+                <button onclick="switchToThumbnail()" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[10px] font-bold px-2 py-1 rounded-md border border-zinc-700 flex items-center gap-1">
+                    <i class="fa-solid fa-tv text-red-400"></i> Preview
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Balance Display -->
+                <div class="bg-zinc-950 border border-zinc-800 rounded-full px-3 py-1 flex items-center gap-1.5 shadow-inner">
+                    <span id="balanceDisplay" class="text-emerald-400 font-bold text-xs sm:text-sm tracking-wide">0.00</span>
+                    <span class="text-[10px] font-semibold text-zinc-400">BDT</span>
+                </div>
+
+                <!-- Sound Toggle Button -->
+                <button id="audioToggleBtn" class="w-7 h-7 rounded-full bg-zinc-800 text-zinc-300 flex items-center justify-center hover:bg-zinc-700 active:scale-95 transition">
+                    <i id="audioIcon" class="fa-solid fa-volume-high text-[11px] text-emerald-400"></i>
+                </button>
+
+                <!-- Chat/Inbox Toggle -->
+                <button id="chatToggleBtn" class="relative w-7 h-7 rounded-full bg-zinc-800 text-zinc-300 flex items-center justify-center hover:bg-zinc-700 active:scale-95 transition">
+                    <i class="fa-solid fa-comment-dots text-[11px]"></i>
+                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold w-3.5 h-3.5 rounded-full flex items-center justify-center border border-zinc-900">3</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Multipliers History Bar -->
+        <div class="bg-zinc-950/90 px-2 py-1 border-b border-zinc-800 flex items-center gap-1.5 overflow-x-auto custom-scrollbar z-10 text-xs font-bold shrink-0" id="historyBar">
+            <span class="text-zinc-500 text-[10px] uppercase font-semibold px-1"><i class="fa-solid fa-clock-rotate-left"></i></span>
+            <span class="px-2 py-0.5 rounded-full bg-zinc-800/80 text-blue-400 border border-blue-500/20">2.66x</span>
+            <span class="px-2 py-0.5 rounded-full bg-zinc-800/80 text-purple-400 border border-purple-500/20">5.21x</span>
+            <span class="px-2 py-0.5 rounded-full bg-zinc-800/80 text-blue-400 border border-blue-500/20">2.99x</span>
+            <span class="px-2 py-0.5 rounded-full bg-zinc-800/80 text-purple-400 border border-purple-500/20">13.28x</span>
+            <span class="px-2 py-0.5 rounded-full bg-zinc-800/80 text-zinc-400 border border-zinc-700/20">1.06x</span>
+            <span class="px-2 py-0.5 rounded-full bg-zinc-800/80 text-zinc-400 border border-zinc-700/20">1.00x</span>
+            <span class="px-2 py-0.5 rounded-full bg-zinc-800/80 text-pink-500 border border-pink-500/20">30.16x</span>
+        </div>
+
+        <!-- Main Game Flight Area Canvas -->
+        <div class="relative w-full h-52 sm:h-60 bg-zinc-950 bg-radar border-b border-zinc-800 overflow-hidden shrink-0 flex flex-col justify-between p-3">
+            
+            <!-- Live Online Bettors Counter -->
+            <div class="absolute bottom-2 right-2 flex items-center gap-1.5 bg-zinc-900/80 border border-zinc-800/90 rounded-full px-2.5 py-0.5 backdrop-blur-sm z-10">
+                <div class="flex -space-x-1.5 overflow-hidden">
+                    <img class="inline-block h-3.5 w-3.5 rounded-full ring-1 ring-zinc-900" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=50&auto=format&fit=crop&q=60" alt="">
+                    <img class="inline-block h-3.5 w-3.5 rounded-full ring-1 ring-zinc-900" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=50&auto=format&fit=crop&q=60" alt="">
+                </div>
+                <span id="onlineCount" class="text-[11px] font-bold text-zinc-300">750</span>
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
+            </div>
+
+            <!-- Multiplier / State Text Center Display -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
+                
+                <!-- Countdown Overlay -->
+                <div id="countdownBox" class="flex flex-col items-center justify-center gap-1">
+                    <span class="text-zinc-400 text-xs font-semibold uppercase tracking-widest">পরবর্তী রাউন্ড শুরু হচ্ছে</span>
+                    <div class="relative flex items-center justify-center">
+                        <span id="countdownNumber" class="text-5xl font-black text-amber-400 tracking-tighter drop-shadow-md">3</span>
+                    </div>
+                    <div class="w-32 bg-zinc-800 h-1.5 rounded-full overflow-hidden mt-1">
+                        <div id="countdownBar" class="bg-amber-400 h-full w-full transition-all duration-1000 linear"></div>
+                    </div>
+                </div>
+
+                <!-- Flew Away Overlay -->
+                <div id="flewAwayBox" class="hidden flex-col items-center justify-center">
+                    <span class="text-red-500 font-extrabold text-2xl tracking-wider uppercase mb-1 drop-shadow">উড়ে গেছে!</span>
+                    <span id="finalMultiplier" class="text-zinc-400 text-lg font-bold">1.25x</span>
+                </div>
+
+                <!-- Flying Multiplier Overlay -->
+                <div id="flyingBox" class="hidden flex-col items-center justify-center">
+                    <span id="multiplierDisplay" class="text-5xl sm:text-6xl font-black tracking-tight text-white drop-shadow-lg">1.00x</span>
+                </div>
+            </div>
+
+            <!-- Flight SVG Grid Canvas -->
+            <svg id="gameSvg" class="absolute inset-0 w-full h-full z-0 overflow-visible">
+                <defs>
+                    <pattern id="grid" width="35" height="35" patternUnits="userSpaceOnUse">
+                        <path d="M 35 0 L 0 0 0 35" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1"/>
+                    </pattern>
+                    <linearGradient id="curveGradient" x1="0%" y1="100%" x2="0%" y2="0%">
+                        <stop offset="0%" stop-color="rgba(225, 29, 72, 0.0)" />
+                        <stop offset="100%" stop-color="rgba(225, 29, 72, 0.45)" />
+                    </linearGradient>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid)" />
+
+                <!-- Flight Trail & Curves -->
+                <path id="flightArea" d="" fill="url(#curveGradient)" />
+                <path id="flightPath" d="" fill="none" stroke="#f43f5e" stroke-width="4" stroke-linecap="round" />
+
+                <!-- Flying Airplane -->
+                <g id="planeGroup" transform="translate(10, 190)" class="transition-transform duration-75">
+                    <circle cx="0" cy="0" r="14" fill="rgba(244, 63, 94, 0.3)" />
+                    <path d="M-12,-3 L-2,-3 L6,-10 L12,-10 L7,-3 L15,-3 L18,-6 L21,-6 L19,0 L21,6 L18,6 L15,3 L7,3 L12,10 L6,10 L-2,3 L-12,3 C-15,3 -16,0 -12,-3 Z" fill="#f43f5e" stroke="#ffffff" stroke-width="1" class="plane-shadow"/>
+                    <line x1="21" y1="-7" x2="21" y2="7" stroke="#ffffff" stroke-width="1.5" opacity="0.8"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Controls & Betting Section -->
+        <div class="flex-1 bg-zinc-950 overflow-y-auto custom-scrollbar flex flex-col p-2 gap-2">
+
+            <!-- Dual Panel Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                
+                <!-- Panel 1 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 flex flex-col gap-1.5 relative shadow-lg">
+                    <!-- Tabs: Bet / Auto -->
+                    <div class="flex items-center justify-between bg-zinc-950 p-0.5 rounded-lg border border-zinc-800/80 text-xs font-semibold">
+                        <button id="p1TabBet" class="flex-1 py-1 rounded-md bg-zinc-800 text-white text-center shadow-sm transition">Bet</button>
+                        <button id="p1TabAuto" class="flex-1 py-1 rounded-md text-zinc-400 hover:text-white text-center transition">Auto</button>
+                    </div>
+
+                    <!-- Auto Options -->
+                    <div id="p1AutoOptions" class="hidden flex items-center justify-between bg-zinc-950/60 px-2 py-1 rounded-lg border border-zinc-800/50 text-xs">
+                        <span class="text-zinc-400 text-[10px] font-medium">অটো ক্যাশআউট</span>
+                        <div class="flex items-center gap-1">
+                            <input id="p1AutoCashoutInput" type="number" step="0.1" value="1.50" class="w-14 bg-zinc-900 border border-zinc-700 rounded px-1 py-0.5 text-center text-emerald-400 font-bold focus:outline-none text-xs">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input id="p1AutoToggle" type="checkbox" class="sr-only peer">
+                                <div class="w-7 h-3.5 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Input Amount & Action Button -->
+                    <div class="flex gap-1.5 items-center">
+                        <div class="flex-1 bg-zinc-950 rounded-lg border border-zinc-800 p-1 flex items-center justify-between">
+                            <button id="p1Minus" class="text-zinc-400 hover:text-white w-5 h-5 rounded flex items-center justify-center font-bold text-sm hover:bg-zinc-800">-</button>
+                            <input id="p1Amount" type="number" value="10.00" class="w-full bg-transparent text-center text-white font-black text-sm focus:outline-none">
+                            <button id="p1Plus" class="text-zinc-400 hover:text-white w-5 h-5 rounded flex items-center justify-center font-bold text-sm hover:bg-zinc-800">+</button>
+                        </div>
+
+                        <button id="p1Btn" class="flex-1 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-zinc-950 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center shadow-lg transition active:scale-95">
+                            <span id="p1BtnText" class="text-sm uppercase tracking-wider leading-none">BET</span>
+                            <span id="p1BtnSub" class="text-[10px] font-extrabold opacity-90 mt-0.5">10.00 BDT</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Presets -->
+                    <div class="grid grid-cols-4 gap-1">
+                        <button onclick="setAmount(1, 50)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">50</button>
+                        <button onclick="setAmount(1, 100)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">100</button>
+                        <button onclick="setAmount(1, 200)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">200</button>
+                        <button onclick="setAmount(1, 500)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">500</button>
+                    </div>
+                </div>
+
+                <!-- Panel 2 -->
+                <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 flex flex-col gap-1.5 relative shadow-lg">
+                    <!-- Tabs -->
+                    <div class="flex items-center justify-between bg-zinc-950 p-0.5 rounded-lg border border-zinc-800/80 text-xs font-semibold">
+                        <button id="p2TabBet" class="flex-1 py-1 rounded-md bg-zinc-800 text-white text-center shadow-sm transition">Bet</button>
+                        <button id="p2TabAuto" class="flex-1 py-1 rounded-md text-zinc-400 hover:text-white text-center transition">Auto</button>
+                    </div>
+
+                    <!-- Auto Options -->
+                    <div id="p2AutoOptions" class="hidden flex items-center justify-between bg-zinc-950/60 px-2 py-1 rounded-lg border border-zinc-800/50 text-xs">
+                        <span class="text-zinc-400 text-[10px] font-medium">অটো ক্যাশআউট</span>
+                        <div class="flex items-center gap-1">
+                            <input id="p2AutoCashoutInput" type="number" step="0.1" value="2.00" class="w-14 bg-zinc-900 border border-zinc-700 rounded px-1 py-0.5 text-center text-emerald-400 font-bold focus:outline-none text-xs">
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input id="p2AutoToggle" type="checkbox" class="sr-only peer">
+                                <div class="w-7 h-3.5 bg-zinc-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-500"></div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Input Amount & Action Button -->
+                    <div class="flex gap-1.5 items-center">
+                        <div class="flex-1 bg-zinc-950 rounded-lg border border-zinc-800 p-1 flex items-center justify-between">
+                            <button id="p2Minus" class="text-zinc-400 hover:text-white w-5 h-5 rounded flex items-center justify-center font-bold text-sm hover:bg-zinc-800">-</button>
+                            <input id="p2Amount" type="number" value="20.00" class="w-full bg-transparent text-center text-white font-black text-sm focus:outline-none">
+                            <button id="p2Plus" class="text-zinc-400 hover:text-white w-5 h-5 rounded flex items-center justify-center font-bold text-sm hover:bg-zinc-800">+</button>
+                        </div>
+
+                        <button id="p2Btn" class="flex-1 bg-emerald-500 hover:bg-emerald-400 active:bg-emerald-600 text-zinc-950 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center shadow-lg transition active:scale-95">
+                            <span id="p2BtnText" class="text-sm uppercase tracking-wider leading-none">BET</span>
+                            <span id="p2BtnSub" class="text-[10px] font-extrabold opacity-90 mt-0.5">20.00 BDT</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Presets -->
+                    <div class="grid grid-cols-4 gap-1">
+                        <button onclick="setAmount(2, 100)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">100</button>
+                        <button onclick="setAmount(2, 200)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">200</button>
+                        <button onclick="setAmount(2, 500)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">500</button>
+                        <button onclick="setAmount(2, 1000)" class="bg-zinc-950 hover:bg-zinc-800 text-zinc-300 font-bold text-[10px] py-0.5 rounded border border-zinc-800/80">1000</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Live Bets & Player Table -->
+            <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-2 flex flex-col gap-1.5 mt-0.5">
+                <div class="flex items-center justify-between border-b border-zinc-800 pb-1.5">
+                    <div class="flex gap-1.5">
+                        <button class="px-2.5 py-0.5 bg-zinc-800 text-white rounded-md text-[11px] font-bold">All Bets</button>
+                        <button class="px-2.5 py-0.5 text-zinc-400 hover:text-white rounded-md text-[11px] font-semibold">My Bets</button>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[9px] text-zinc-400 font-medium">সর্বমোট উইন (BDT)</div>
+                        <div id="totalWinDisplay" class="text-xs font-black text-emerald-400">243,427.30</div>
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between text-[10px] font-semibold text-zinc-400 px-0.5">
+                    <div><span class="text-white font-bold" id="activeBettorsCount">342</span>/1250 Bets</div>
+                    <div class="flex items-center gap-1 text-emerald-400 font-bold">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span>লাইভ প্লেয়ার লিস্ট</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-1 max-h-36 overflow-y-auto custom-scrollbar text-xs" id="liveBetsList">
+                    <!-- Dynamic Live Bets Rows -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Live Chat & Inbox Drawer -->
+    <div id="chatDrawer" class="fixed inset-y-0 right-0 w-full max-w-xs bg-zinc-900 border-l border-zinc-800 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-3 bg-zinc-950 border-b border-zinc-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-comments text-red-500"></i>
+                <span class="font-bold text-xs text-white">লাইভ ইনবক্স / চ্যাট</span>
+            </div>
+            <button id="closeChatBtn" class="text-zinc-400 hover:text-white w-6 h-6 rounded-full bg-zinc-800 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+
+        <div id="chatMessages" class="flex-1 p-3 overflow-y-auto custom-scrollbar flex flex-col gap-2">
+            <div class="bg-zinc-800/60 p-2 rounded-lg border border-zinc-700/50 text-xs">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-amber-400">System Admin</span>
+                    <span class="text-[9px] text-zinc-500">12:00 PM</span>
+                </div>
+                <p class="text-zinc-300">স্বাগতম! গেমের চ্যাট রুমে আপনি অন্যান্য প্লেয়ারদের সাথে মেসেজ করতে পারবেন।</p>
+            </div>
+        </div>
+
+        <form id="chatForm" class="p-2 bg-zinc-950 border-t border-zinc-800 flex gap-2">
+            <input id="chatInput" type="text" placeholder="মেসেজ লিখুন..." class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-2.5 py-1.5 text-xs text-white focus:outline-none focus:border-red-500">
+            <button type="submit" class="bg-red-600 hover:bg-red-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </form>
+    </div>
+
+    <!-- Firebase SDK ও ব্যালেন্স সিঙ্ক স্ক্রিপ্ট -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY",
+            authDomain: "uk77-56f6d.firebaseapp.com",
+            databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
+            projectId: "uk77-56f6d",
+            storageBucket: "uk77-56f6d.firebasestorage.app",
+            messagingSenderId: "1062783431056",
+            appId: "1:1062783431056:web:c44fd51195cf4061998315",
+            measurementId: "G-C0ST13Q8PJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let currentUserPhone = localStorage.getItem('aviator_current_user') || null;
+        window.userBalance = 0;
+
+        if (currentUserPhone) {
+            const userRef = ref(db, 'users/' + currentUserPhone);
+            onValue(userRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const userData = snapshot.val();
+                    window.userBalance = Number(userData.balance || 0);
+                    if (typeof updateBalanceDisplay === 'function') {
+                        updateBalanceDisplay();
+                    }
+                }
+            });
+        } else {
+            let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+            let localPhone = localStorage.getItem('aviator_current_user');
+            if(localPhone && usersDb[localPhone]) {
+                window.userBalance = Number(usersDb[localPhone].balance || 0);
+                if (typeof updateBalanceDisplay === 'function') {
+                    updateBalanceDisplay();
+                }
+            }
+        }
+
+        window.syncBalanceToFirebase = function(newBalance) {
+            window.userBalance = newBalance;
+            if (typeof updateBalanceDisplay === 'function') {
+                updateBalanceDisplay();
+            }
+            
+            if (currentUserPhone) {
+                update(ref(db, 'users/' + currentUserPhone), { balance: newBalance }).catch(err => console.error(err));
+                
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                if(usersDb[currentUserPhone]) {
+                    usersDb[currentUserPhone].balance = newBalance;
+                    localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                }
+            }
+        }
+    </script>
+
+    <script>
+        // View Navigation Switcher
+        function switchToGame() {
+            document.getElementById('liveThumbnailView').classList.add('hidden');
+            document.getElementById('fullGameView').classList.remove('hidden');
+            document.getElementById('fullGameView').classList.add('flex');
+            initAudio();
+        }
+
+        function switchToThumbnail() {
+            document.getElementById('fullGameView').classList.add('hidden');
+            document.getElementById('fullGameView').classList.remove('flex');
+            document.getElementById('liveThumbnailView').classList.remove('hidden');
+        }
+
+        // Animated Thumbnail Multiplier Preview Loop
+        let thumbVal = 1.00;
+        setInterval(() => {
+            thumbVal += 0.08;
+            if (thumbVal > 5.5) thumbVal = 1.00;
+            const el = document.getElementById('thumbMultiplier');
+            if (el) el.innerText = thumbVal.toFixed(2);
+        }, 150);
+
+        // Core Game State Engine
+        let gameState = 'COUNTDOWN';
+        let currentMultiplier = 1.00;
+        let crashMultiplier = 1.00;
+        let countdownTime = 3.0;
+        let flightProgress = 0;
+        let isAudioMuted = false;
+        let totalWinAmount = 243427.30;
+
+        const p1 = { bet: false, cashedOut: false, amount: 10.00, win: 0, auto: false, autoTarget: 1.50 };
+        const p2 = { bet: false, cashedOut: false, amount: 20.00, win: 0, auto: false, autoTarget: 2.00 };
+
+        // Audio Engine ("টুমটুম" Sound Synthesizer)
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new AudioCtx();
+        }
+
+        function playSound(type) {
+            if (isAudioMuted || !audioCtx) return;
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'tum') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(220, now + 0.15);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'start') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(587.33, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.25);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'cashout') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.08);
+                    osc.frequency.setValueAtTime(783.99, now + 0.16);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'crash') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+                    gain.gain.setValueAtTime(0.4, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                }
+            } catch (e) {}
+        }
+
+        // DOM Ref
+        const balanceDisplay = document.getElementById('balanceDisplay');
+        const countdownBox = document.getElementById('countdownBox');
+        const countdownNumber = document.getElementById('countdownNumber');
+        const countdownBar = document.getElementById('countdownBar');
+        const flewAwayBox = document.getElementById('flewAwayBox');
+        const finalMultiplier = document.getElementById('finalMultiplier');
+        const flyingBox = document.getElementById('flyingBox');
+        const multiplierDisplay = document.getElementById('multiplierDisplay');
+        const flightPath = document.getElementById('flightPath');
+        const flightArea = document.getElementById('flightArea');
+        const planeGroup = document.getElementById('planeGroup');
+        const historyBar = document.getElementById('historyBar');
+        const audioToggleBtn = document.getElementById('audioToggleBtn');
+        const audioIcon = document.getElementById('audioIcon');
+        const onlineCount = document.getElementById('onlineCount');
+        const activeBettorsCount = document.getElementById('activeBettorsCount');
+        const totalWinDisplay = document.getElementById('totalWinDisplay');
+        const liveBetsList = document.getElementById('liveBetsList');
+
+        // Audio Toggle
+        audioToggleBtn.addEventListener('click', () => {
+            isAudioMuted = !isAudioMuted;
+            if (isAudioMuted) {
+                audioIcon.className = "fa-solid fa-volume-xmark text-xs text-zinc-500";
+            } else {
+                audioIcon.className = "fa-solid fa-volume-high text-xs text-emerald-400";
+                playSound('tum');
+            }
+        });
+
+        // Chat Logic
+        const chatDrawer = document.getElementById('chatDrawer');
+        const chatToggleBtn = document.getElementById('chatToggleBtn');
+        const closeChatBtn = document.getElementById('closeChatBtn');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        chatToggleBtn.addEventListener('click', () => chatDrawer.classList.remove('translate-x-full'));
+        closeChatBtn.addEventListener('click', () => chatDrawer.classList.add('translate-x-full'));
+
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const text = chatInput.value.trim();
+            if (text) {
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const msg = document.createElement('div');
+                msg.className = 'bg-zinc-800/40 p-2 rounded-lg border border-zinc-800 text-xs';
+                msg.innerHTML = `<div class="flex justify-between mb-1"><span class="font-bold text-red-400">You</span><span class="text-[9px] text-zinc-500">${time}</span></div><p class="text-zinc-300">${text}</p>`;
+                chatMessages.appendChild(msg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                chatInput.value = '';
+            }
+        });
+
+        // Betting Controls Logic
+        function setAmount(panelNum, val) {
+            document.getElementById(`p${panelNum}Amount`).value = parseFloat(val).toFixed(2);
+            updatePanelSubText(panelNum);
+        }
+
+        function updatePanelSubText(panelNum) {
+            const amt = parseFloat(document.getElementById(`p${panelNum}Amount`).value) || 0;
+            const p = panelNum === 1 ? p1 : p2;
+            if (!p.bet) {
+                document.getElementById(`p${panelNum}BtnSub`).innerText = `${amt.toFixed(2)} BDT`;
+            }
+        }
+
+        [1, 2].forEach(pNum => {
+            const p = pNum === 1 ? p1 : p2;
+            const btn = document.getElementById(`p${pNum}Btn`);
+            const amtInput = document.getElementById(`p${pNum}Amount`);
+            const minusBtn = document.getElementById(`p${pNum}Minus`);
+            const plusBtn = document.getElementById(`p${pNum}Plus`);
+            const tabBet = document.getElementById(`p${pNum}TabBet`);
+            const tabAuto = document.getElementById(`p${pNum}TabAuto`);
+            const autoOpts = document.getElementById(`p${pNum}AutoOptions`);
+            const autoToggle = document.getElementById(`p${pNum}AutoToggle`);
+            const autoCashoutInput = document.getElementById(`p${pNum}AutoCashoutInput`);
+
+            amtInput.addEventListener('input', () => updatePanelSubText(pNum));
+            minusBtn.addEventListener('click', () => {
+                let current = parseFloat(amtInput.value) || 10;
+                if (current > 5) amtInput.value = (current - 5).toFixed(2);
+                updatePanelSubText(pNum);
+            });
+            plusBtn.addEventListener('click', () => {
+                let current = parseFloat(amtInput.value) || 10;
+                amtInput.value = (current + 10).toFixed(2);
+                updatePanelSubText(pNum);
+            });
+
+            tabBet.addEventListener('click', () => {
+                tabBet.classList.add('bg-zinc-800', 'text-white');
+                tabAuto.classList.remove('bg-zinc-800', 'text-white');
+                autoOpts.classList.add('hidden');
+            });
+
+            tabAuto.addEventListener('click', () => {
+                tabAuto.classList.add('bg-zinc-800', 'text-white');
+                tabBet.classList.remove('bg-zinc-800', 'text-white');
+                autoOpts.classList.remove('hidden');
+            });
+
+            autoToggle.addEventListener('change', (e) => p.auto = e.target.checked);
+            autoCashoutInput.addEventListener('change', (e) => p.autoTarget = Math.max(1.05, parseFloat(e.target.value) || 1.50));
+
+            btn.addEventListener('click', () => {
+                const amt = parseFloat(amtInput.value) || 10;
+                if (!p.bet) {
+                    if (window.userBalance < amt) {
+                        alert('পর্যাপ্ত ব্যালেন্স নেই!');
+                        return;
+                    }
+                    window.syncBalanceToFirebase(window.userBalance - amt);
+                    p.bet = true;
+                    p.cashedOut = false;
+                    p.amount = amt;
+
+                    btn.className = "flex-1 bg-amber-500 text-zinc-950 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center shadow-lg transition";
+                    document.getElementById(`p${pNum}BtnText`).innerText = gameState === 'FLYING' ? "WAITING" : "CANCEL";
+                    document.getElementById(`p${pNum}BtnSub`).innerText = `${amt.toFixed(2)} BDT`;
+                } else if (gameState === 'FLYING' && !p.cashedOut) {
+                    cashoutPlayer(pNum);
+                } else if (gameState === 'COUNTDOWN') {
+                    window.syncBalanceToFirebase(window.userBalance + p.amount);
+                    p.bet = false;
+                    resetPanelBtn(pNum);
+                }
+            });
+        });
+
+        function cashoutPlayer(pNum) {
+            const p = pNum === 1 ? p1 : p2;
+            if (p.bet && !p.cashedOut && gameState === 'FLYING') {
+                p.cashedOut = true;
+                p.win = p.amount * currentMultiplier;
+                window.syncBalanceToFirebase(window.userBalance + p.win);
+                totalWinAmount += p.win;
+                updateBalanceDisplay();
+                playSound('cashout');
+
+                const btn = document.getElementById(`p${pNum}Btn`);
+                btn.className = "flex-1 bg-zinc-800 text-emerald-400 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center border border-emerald-500/30";
+                document.getElementById(`p${pNum}BtnText`).innerText = `CASH OUT`;
+                document.getElementById(`p${pNum}BtnSub`).innerText = `+${p.win.toFixed(2)} BDT`;
+            }
+        }
+
+        function resetPanelBtn(pNum) {
+            const btn = document.getElementById(`p${pNum}Btn`);
+            btn.className = "flex-1 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center shadow-lg transition";
+            document.getElementById(`p${pNum}BtnText`).innerText = "BET";
+            updatePanelSubText(pNum);
+        }
+
+        function updateBalanceDisplay() {
+            if (balanceDisplay) {
+                balanceDisplay.innerText = Number(window.userBalance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+            if (totalWinDisplay) {
+                totalWinDisplay.innerText = totalWinAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+        }
+
+        // Probability Crash Distribution Mechanics
+        function generateCrashMultiplier() {
+            const rand = Math.random();
+            if (rand < 0.55) {
+                return parseFloat((1.00 + Math.random() * 0.50).toFixed(2));
+            } else if (rand < 0.79) {
+                return parseFloat((1.51 + Math.random() * 0.99).toFixed(2));
+            } else if (rand < 0.94) {
+                return parseFloat((2.51 + Math.random() * 1.99).toFixed(2));
+            } else {
+                return parseFloat((4.50 + Math.random() * 25.50).toFixed(2));
+            }
+        }
+
+        // Live Simulated Bettors
+        const sampleNames = ['Sohag_BD', 'Rizvi_99', 'Robiul_Pro', 'Mamun_Khn', 'Arif_VIP', 'Shakib_75', 'King_BDT'];
+        let simulatedBettors = [];
+
+        function generateSimulatedBettors() {
+            simulatedBettors = [];
+            const count = Math.floor(Math.random() * 10) + 15;
+            for (let i = 0; i < count; i++) {
+                const name = sampleNames[Math.floor(Math.random() * sampleNames.length)] + '_' + Math.floor(Math.random() * 90 + 10);
+                const betAmt = [10, 20, 50, 100, 200, 500][Math.floor(Math.random() * 6)];
+                const autoTarget = parseFloat((1.05 + Math.random() * 3.5).toFixed(2));
+                simulatedBettors.push({ name, betAmt, autoTarget, cashedOut: false, winAmt: 0 });
+            }
+            renderBettorsList();
+        }
+
+        function renderBettorsList() {
+            liveBetsList.innerHTML = '';
+            simulatedBettors.forEach(b => {
+                const row = document.createElement('div');
+                row.className = `flex items-center justify-between p-1.5 rounded bg-zinc-950/70 border border-zinc-800/50 ${b.cashedOut ? 'border-emerald-500/30' : ''}`;
+                row.innerHTML = `
+                    <div class="flex items-center gap-1.5">
+                        <div class="w-4 h-4 rounded-full bg-zinc-800 flex items-center justify-center text-[9px] text-zinc-400 font-bold">${b.name.charAt(0)}</div>
+                        <span class="text-zinc-300 font-semibold text-[10px]">${b.name}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-[10px]">
+                        <span class="text-zinc-400 font-medium">${b.betAmt} BDT</span>
+                        ${b.cashedOut 
+                            ? `<span class="bg-emerald-500/10 text-emerald-400 px-1 py-0.2 rounded font-bold border border-emerald-500/20">${b.autoTarget.toFixed(2)}x (+${b.winAmt.toFixed(2)})</span>`
+                            : `<span class="text-zinc-600 font-bold">খেলছে...</span>`
+                        }
+                    </div>
+                `;
+                liveBetsList.appendChild(row);
+            });
+        }
+
+        function startCountdown() {
+            gameState = 'COUNTDOWN';
+            countdownTime = 3.0;
+            currentMultiplier = 1.00;
+            flightProgress = 0;
+
+            countdownBox.classList.remove('hidden');
+            flewAwayBox.classList.add('hidden');
+            flyingBox.classList.add('hidden');
+
+            flightPath.setAttribute('d', '');
+            flightArea.setAttribute('d', '');
+            planeGroup.setAttribute('transform', `translate(10, 190)`);
+
+            crashMultiplier = generateCrashMultiplier();
+            generateSimulatedBettors();
+
+            [1, 2].forEach(pNum => {
+                const p = pNum === 1 ? p1 : p2;
+                if (p.bet) {
+                    p.cashedOut = false;
+                    const btn = document.getElementById(`p${pNum}Btn`);
+                    btn.className = "flex-1 bg-amber-500 text-zinc-950 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center shadow-lg transition";
+                    document.getElementById(`p${pNum}BtnText`).innerText = "CANCEL";
+                    document.getElementById(`p${pNum}BtnSub`).innerText = `${p.amount.toFixed(2)} BDT`;
+                } else {
+                    resetPanelBtn(pNum);
+                }
+            });
+
+            let lastSec = 3;
+            playSound('tum');
+            const cdInterval = setInterval(() => {
+                countdownTime -= 0.1;
+                countdownNumber.innerText = Math.ceil(countdownTime);
+                countdownBar.style.width = `${(countdownTime / 3.0) * 100}%`;
+
+                if (Math.ceil(countdownTime) < lastSec && Math.ceil(countdownTime) > 0) {
+                    lastSec = Math.ceil(countdownTime);
+                    playSound('tum');
+                }
+
+                if (countdownTime <= 0) {
+                    clearInterval(cdInterval);
+                    startFlight();
+                }
+            }, 100);
+        }
+
+        function startFlight() {
+            gameState = 'FLYING';
+            countdownBox.classList.add('hidden');
+            flyingBox.classList.remove('hidden');
+            playSound('start');
+
+            [1, 2].forEach(pNum => {
+                const p = pNum === 1 ? p1 : p2;
+                if (p.bet && !p.cashedOut) {
+                    const btn = document.getElementById(`p${pNum}Btn`);
+                    btn.className = "flex-1 bg-amber-400 hover:bg-amber-300 text-zinc-950 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center shadow-xl transition animate-pulse";
+                    document.getElementById(`p${pNum}BtnText`).innerText = "CASH OUT";
+                    document.getElementById(`p${pNum}BtnSub`).innerText = `${(p.amount * currentMultiplier).toFixed(2)} BDT`;
+                }
+            });
+
+            const startTime = Date.now();
+            const duration = Math.max(1500, Math.log2(crashMultiplier + 1) * 3500);
+
+            const flightInterval = setInterval(() => {
+                if (gameState !== 'FLYING') {
+                    clearInterval(flightInterval);
+                    return;
+                }
+
+                const elapsed = Date.now() - startTime;
+                flightProgress = Math.min(1, elapsed / duration);
+
+                currentMultiplier = 1.00 + (crashMultiplier - 1.00) * Math.pow(flightProgress, 2.2);
+                multiplierDisplay.innerText = currentMultiplier.toFixed(2) + 'x';
+
+                updateCanvasAnimation(flightProgress);
+
+                [1, 2].forEach(pNum => {
+                    const p = pNum === 1 ? p1 : p2;
+                    if (p.bet && !p.cashedOut) {
+                        document.getElementById(`p${pNum}BtnSub`).innerText = `${(p.amount * currentMultiplier).toFixed(2)} BDT`;
+                        if (p.auto && currentMultiplier >= p.autoTarget) cashoutPlayer(pNum);
+                    }
+                });
+
+                simulatedBettors.forEach(b => {
+                    if (!b.cashedOut && currentMultiplier >= b.autoTarget && currentMultiplier <= crashMultiplier) {
+                        b.cashedOut = true;
+                        b.winAmt = b.betAmt * b.autoTarget;
+                    }
+                });
+                renderBettorsList();
+
+                if (flightProgress >= 1 || currentMultiplier >= crashMultiplier) {
+                    clearInterval(flightInterval);
+                    triggerCrash();
+                }
+            }, 30);
+        }
+
+        function updateCanvasAnimation(progress) {
+            const svgWidth = document.getElementById('gameSvg').clientWidth || 350;
+            const svgHeight = document.getElementById('gameSvg').clientHeight || 200;
+
+            const startX = 15;
+            const startY = svgHeight - 20;
+
+            const endX = startX + (svgWidth - 60) * progress;
+            const endY = startY - (svgHeight - 60) * Math.pow(progress, 0.85);
+
+            const controlX = startX + (endX - startX) * 0.4;
+            const controlY = startY;
+
+            flightPath.setAttribute('d', `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY}`);
+            flightArea.setAttribute('d', `M ${startX} ${startY} Q ${controlX} ${controlY} ${endX} ${endY} L ${endX} ${startY} Z`);
+
+            const dx = endX - controlX;
+            const dy = endY - controlY;
+            const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+            planeGroup.setAttribute('transform', `translate(${endX}, ${endY}) rotate(${angle})`);
+        }
+
+        function triggerCrash() {
+            gameState = 'CRASHED';
+            playSound('crash');
+
+            flyingBox.classList.add('hidden');
+            flewAwayBox.classList.remove('hidden');
+            flewAwayBox.classList.add('flex');
+            finalMultiplier.innerText = currentMultiplier.toFixed(2) + 'x';
+
+            [1, 2].forEach(pNum => {
+                const p = pNum === 1 ? p1 : p2;
+                if (p.bet && !p.cashedOut) {
+                    p.bet = false;
+                    const btn = document.getElementById(`p${pNum}Btn`);
+                    btn.className = "flex-1 bg-red-600/30 border border-red-500/50 text-red-400 font-black rounded-xl py-2.5 px-2 flex flex-col items-center justify-center";
+                    document.getElementById(`p${pNum}BtnText`).innerText = "FLEW AWAY";
+                    document.getElementById(`p${pNum}BtnSub`).innerText = "0.00 BDT";
+                }
+            });
+
+            addHistoryBadge(currentMultiplier);
+
+            setTimeout(() => {
+                startCountdown();
+            }, 2500);
+        }
+
+        function addHistoryBadge(mult) {
+            const badge = document.createElement('span');
+            let colorClass = 'text-zinc-400 border-zinc-700/20';
+            if (mult >= 10.0) colorClass = 'text-pink-500 border-pink-500/20';
+            else if (mult >= 3.0) colorClass = 'text-purple-400 border-purple-500/20';
+            else if (mult >= 2.0) colorClass = 'text-blue-400 border-blue-500/20';
+
+            badge.className = `px-2 py-0.5 rounded-full bg-zinc-800/80 ${colorClass} border shrink-0`;
+            badge.innerText = mult.toFixed(2) + 'x';
+
+            historyBar.insertBefore(badge, historyBar.children[1]);
+            if (historyBar.children.length > 15) historyBar.removeChild(historyBar.lastChild);
+        }
+
+        // Initialize on Window Load
+        window.addEventListener('load', () => {
+            updateBalanceDisplay();
+            startCountdown();
+        });
+    </script>
+</body>
+</html>
