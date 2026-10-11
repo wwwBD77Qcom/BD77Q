@@ -869,6 +869,61 @@
   </div>
 </div>
 
+<style id="admin-banner-live-style">
+.vip-hero-banner.admin-banner-live{height:auto;min-height:0;display:block;padding:0;background:#10151e;border:1px solid rgba(255,255,255,.16);overflow:hidden}
+.vip-hero-banner.admin-banner-live:before,.vip-hero-banner.admin-banner-live:after{display:none}
+.admin-banner-live-track{display:flex;width:100%;transition:transform .4s ease;will-change:transform}
+.admin-banner-live-slide{display:block;position:relative;flex:0 0 100%;width:100%;min-width:100%;height:210px;overflow:hidden;text-decoration:none;color:#fff;background:#10151e}
+.admin-banner-live-slide img{display:block;width:100%;height:100%;object-fit:cover}
+.admin-banner-live-title{position:absolute;left:0;right:0;bottom:0;padding:14px 12px 18px;background:linear-gradient(transparent,rgba(0,0,0,.82));color:#fff;font-size:15px;font-weight:900;text-shadow:0 1px 3px #000}
+.admin-banner-live-dots{display:flex;justify-content:center;gap:6px;padding:7px;background:#10151e}
+.admin-banner-live-dot{width:7px;height:7px;border-radius:9px;background:#687080}
+.admin-banner-live-dot.active{width:19px;background:#ffd166}
+@media(max-width:420px){.admin-banner-live-slide{height:195px}}
+</style>
+<script id="admin-banner-live-renderer">
+(function(){
+  let slideTimer=null, slideIndex=0, currentSlides=[];
+  function escBanner(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+  function bannerTime(v){if(!v)return null;const t=Date.parse(v);if(!Number.isNaN(t))return t;const n=Number(v);return Number.isFinite(n)?n:null;}
+  function bannerIsActive(b){
+    if(!b || b.active===false || !b.image)return false;
+    const now=Date.now(), start=bannerTime(b.start), end=bannerTime(b.end);
+    if(start!==null && now<start)return false;
+    if(end!==null && now>end)return false;
+    return true;
+  }
+  function paintBanner(){
+    const area=document.querySelector('.vip-hero-banner'); if(!area)return;
+    if(slideTimer){clearInterval(slideTimer);slideTimer=null;}
+    const active=currentSlides.filter(x=>bannerIsActive(x.banner)).sort((a,b)=>(Number(a.banner.priority)||1)-(Number(b.banner.priority)||1));
+    if(!area.dataset.originalHtml)area.dataset.originalHtml=area.innerHTML;
+    if(!active.length){area.classList.remove('admin-banner-live');area.innerHTML=area.dataset.originalHtml;return;}
+    area.classList.add('admin-banner-live');slideIndex=0;
+    area.innerHTML='<div class="admin-banner-live-track" id="adminBannerLiveTrack">'+active.map(({banner:b},i)=>{
+      const href=String(b.link||'').trim();
+      const tag=href?'a':'div';
+      const linkAttrs=href?' href="'+escBanner(href)+'"'+(/^https?:\/\//i.test(href)?' target="_blank" rel="noopener noreferrer"':''):'';
+      return '<'+tag+' class="admin-banner-live-slide"'+linkAttrs+'><img src="'+escBanner(b.image)+'" alt="'+escBanner(b.title||'Banner')+'" loading="eager" onerror="this.closest(\'.admin-banner-live-slide\').style.display=\'none\'"><div class="admin-banner-live-title">'+escBanner(b.title||'')+(b.description?'<div style="font-size:11px;font-weight:500;margin-top:3px">'+escBanner(b.description)+'</div>':'')+'</div></'+tag+'>';
+    }).join('')+'</div>'+(active.length>1?'<div class="admin-banner-live-dots">'+active.map((_,i)=>'<span class="admin-banner-live-dot '+(i===0?'active':'')+'"></span>').join('')+'</div>':'');
+    if(active.length>1){
+      slideTimer=setInterval(()=>{
+        slideIndex=(slideIndex+1)%active.length;
+        const track=document.getElementById('adminBannerLiveTrack');
+        if(track)track.style.transform='translateX(-'+(slideIndex*100)+'%)';
+        area.querySelectorAll('.admin-banner-live-dot').forEach((d,i)=>d.classList.toggle('active',i===slideIndex));
+      },active.some(x=>x.banner.autoSlide===false)?7000:4000);
+    }
+  }
+  window.renderAdminBannersForUser=function(data){
+    currentSlides=[];
+    if(data&&typeof data==='object')currentSlides=Object.entries(data).map(([key,banner])=>({key,banner:banner||{}}));
+    paintBanner();
+  };
+  document.addEventListener('DOMContentLoaded',paintBanner);
+})();
+</script>
+
 <!-- FIREBASE MODULE SCRIPT -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -899,6 +954,14 @@
   window.fbPush = push;
   window.fbOnValue = onValue;
   window.fbRunTransaction = runTransaction;
+
+  // Admin-managed banners: live updates from Firebase settings/banners.
+  onValue(ref(db, 'settings/banners'), (snapshot) => {
+      const banners = snapshot.exists() ? (snapshot.val() || {}) : {};
+      if (typeof window.renderAdminBannersForUser === 'function') {
+          window.renderAdminBannersForUser(banners);
+      }
+  }, (error) => console.warn('Live banner sync failed:', error));
 
   window.adminLiveNumbers = { bKash: '01XXXXXXXXX', Nagad: '01XXXXXXXXX', Rocket: '01XXXXXXXXX' };
   onValue(ref(db, 'settings/numbers'), (snapshot) => {
@@ -997,9 +1060,12 @@
               usersDb[phone].name = userData.name || usersDb[phone].name;
               usersDb[phone].referStats = userData.referStats || usersDb[phone].referStats || {count:0,bonusEarned:0};
               usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
-              if(userData.totalDeposit !== undefined) usersDb[phone].totalDeposit = Number(userData.totalDeposit || 0);
+              if(userData.totalDeposit !== undefined) {
+                  usersDb[phone].totalDeposit = Number(userData.totalDeposit || 0);
+                  // Approved cumulative deposit amount = required cumulative turnover target.
+                  usersDb[phone].turnoverTarget = Number(userData.totalDeposit || 0);
+              }
               if(userData.turnoverCurrent !== undefined) usersDb[phone].turnoverCurrent = Number(userData.turnoverCurrent || 0);
-              if(userData.turnoverTarget !== undefined) usersDb[phone].turnoverTarget = Number(userData.turnoverTarget || 0);
               if(userData.referredBy !== undefined) usersDb[phone].referredBy = userData.referredBy || null;
               if(userData.referBonusGiven !== undefined) usersDb[phone].referBonusGiven = !!userData.referBonusGiven;
               if(userData.referBonusAmount !== undefined) usersDb[phone].referBonusAmount = Number(userData.referBonusAmount || 0);
@@ -1450,7 +1516,9 @@ function loadUserData(){
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
         balance = user.balance !== undefined ? user.balance : 0;
-        if(user.turnoverTarget === undefined) user.turnoverTarget = 0;
+        if(user.turnoverTarget === undefined) user.turnoverTarget = Number(user.totalDeposit || 0);
+        // Turnover target always follows approved cumulative deposit.
+        if(user.totalDeposit !== undefined) user.turnoverTarget = Number(user.totalDeposit || 0);
         if(user.turnoverCurrent === undefined) user.turnoverCurrent = 0;
         if(!user.claimedRewards) user.claimedRewards = {};
 
@@ -2695,7 +2763,7 @@ async function submitRewardPromoCode(){
 </div>
 
 <script type="module" id="universalFirebaseHtmlGameBridge">
-import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 (function(){
@@ -2706,21 +2774,10 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
 
   function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
   function safeUrl(v){
-    const raw=String(v||'').trim();
-    if(!raw)return '';
-    // Firebase Storage/HTTPS URLs are the normal source.
-    // Also accept a small data: HTML fallback if one is ever stored in games.url.
-    if(/^data:text\/html(?:;[^,]*)?,/i.test(raw))return raw;
-    try{
-      const u=new URL(raw,location.href);
-      if(!/^https?:$/i.test(u.protocol))return '';
-      return u.href;
-    }catch(e){return '';}
+    try{const u=new URL(String(v||''),location.href);if(!/^https?:$/i.test(u.protocol))return '';return u.href;}catch(e){return '';}
   }
   function bust(url,version){
     if(!url)return '';
-    // Do not append a query string to a data: URL because it changes its payload.
-    if(/^data:/i.test(url))return url;
     const sep=url.includes('?')?'&':'?';
     return url+sep+'bd77qGameVersion='+encodeURIComponent(version||Date.now());
   }
@@ -2769,24 +2826,10 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
   };
 
   try{
-    let app=getApps().length?getApp():null;
-    if(!app){
-      app=initializeApp({
-        apiKey:"AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY",
-        authDomain:"uk77-56f6d.firebaseapp.com",
-        databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",
-        projectId:"uk77-56f6d",
-        storageBucket:"uk77-56f6d.firebasestorage.app",
-        messagingSenderId:"1062783431056",
-        appId:"1:1062783431056:web:c44fd51195cf4061998315",
-        measurementId:"G-C0ST13Q8PJ"
-      });
-    }
+    const app=getApps().length?getApp():null;
+    if(!app)return;
     const db=getDatabase(app);
-    onValue(ref(db,'games'),
-      snap=>window.renderAdminDynamicGames(snap.exists()?snap.val():{}),
-      err=>console.warn('Firebase games sync:',err)
-    );
+    onValue(ref(db,'games'),snap=>window.renderAdminDynamicGames(snap.exists()?snap.val():{}),err=>console.warn('Firebase games sync:',err));
   }catch(e){console.warn('Universal Firebase game bridge:',e);}
 })();
 </script>
