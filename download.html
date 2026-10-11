@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>BD77Q - Auth & Game & Download</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080a0f;color:#fff;font-family:Arial,sans-serif}body{padding:0}.app{width:100%;max-width:520px;margin:auto;min-height:100vh;background:#11151d;box-shadow:0 0 40px rgba(0,0,0,.45);padding-bottom:74px}.screen{display:none}.screen.active{display:block}
+.app-download-btn{display:block;margin:12px;background:linear-gradient(135deg,#00c853,#00a844);color:#fff;text-align:center;padding:14px;border-radius:12px;font-size:16px;font-weight:900;text-decoration:none;box-shadow:0 4px 15px rgba(0,200,83,0.35);transition:0.2s}
+.app-download-btn:active{transform:scale(0.98)}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- অ্যাপ ডাউনলোড বাটন (হোমপেজে সব সময় থাকবে) -->
+  <a id="homeAppDownloadBtn" href="#" class="app-download-btn" onclick="triggerAppDownload(event)">
+    📥 অফিশিয়াল অ্যান্ড্রয়েড অ্যাপ ডাউনলোড করুন (APK)
+  </a>
+
+  <div style="padding: 20px; text-align: center;">
+    <h2>👑 BD77Q-এ আপনাকে স্বাগতম</h2>
+    <p>আপনার অ্যাপ তৈরি রয়েছে। ডাউনলোড করতে ওপরের বাটনে ক্লিক করুন অথবা পপ-আপ ব্যবহার করুন।</p>
+  </div>
+</div>
+
+<script>
+// এডমিন থেকে সেট করা বা ডিফল্ট এপিকে (APK) ডাউনলোডের লিংক
+let appApkDownloadUrl = "https://your-domain.com/app.apk"; 
+
+// অ্যাপে যতবার প্রবেশ করবে ততবার নোটিশ দেখানোর লজিক
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        if(confirm("📲 আমাদের অফিশিয়াল অ্যান্ড্রয়েড অ্যাপটি ডাউনলোড করে আরও দ্রুত ও সহজে গেম খেলুন!\n\nআপনি কি এখনই ডাউনলোড করতে চান?")) {
+            window.location.href = appApkDownloadUrl;
+        }
+    }, 2500); // পেজ লোডের ২.৫ সেকেন্ড পর নোটিশ দেখাবে
+});
+
+// ডাউনলোড বাটনে ক্লিক করলে কাজ করার লজিক
+function triggerAppDownload(e) {
+    e.preventDefault();
+    if(appApkDownloadUrl && appApkDownloadUrl !== "#") {
+        window.location.href = appApkDownloadUrl;
+    } else {
+        alert("ডাউনলোড লিংক প্রস্তুত করা হচ্ছে, অনুগ্রহ করে কিছুক্ষণ পর চেষ্টা করুন।");
+    }
+}
+</script>
+
+</body>
+</html>
