@@ -406,19 +406,19 @@
       <div id="adminDynamicGamesTitle" class="dynamic-admin-games-title" style="display:none">🎮 Admin Games</div>
       <div class="vip-games-grid" id="adminDynamicGamesGrid"></div>
 
-  <div class="vip-quick-grid">
+  <div class="vip-quick-grid" style="display:none !important">
     <button onclick="openProfileModal('referModal')"><span>♙</span><b>Invite Friends</b><small>Referral & 3% Rebate</small></button>
     <button onclick="openPromotionCenter()"><span>🎁</span><b>Promotion</b><small>Bonus & Offers</small></button>
     <button onclick="openRewardCenter()"><span>🏆</span><b>Reward</b><small>Rewards Center</small></button>
     <button onclick="openHelpCare()"><span>🎧</span><b>Customer Service</b><small>24/7 Help Care</small></button>
   </div>
 
-  <div class="vip-legacy-card">
+  <div class="vip-legacy-card" style="display:none !important">
     <div class="vip-legacy-head"><b>More Account Features</b><button onclick="showScreen('profileScreen')">My Account →</button></div>
     <div class="vip-legacy-row"><button onclick="openProfileModal('depositModal')">Deposit</button><button onclick="openProfileModal('moneyModal')">Withdrawal</button><button onclick="openPasswordModal()">Security</button><button onclick="openProfileModal('internationalSmsModal')">Messages</button></div>
   </div>
 
-  <div class="card"><div style="font-size:17px;font-weight:900;margin-bottom:10px">📊 Recent Crash</div><div id="homeHistory" class="list"><div class="item"><span>Round</span><strong>Waiting...</strong></div>
+  <div class="card" style="display:none !important"><div style="font-size:17px;font-weight:900;margin-bottom:10px">📊 Recent Crash</div><div id="homeHistory" class="list"><div class="item"><span>Round</span><strong>Waiting...</strong></div>
 </div>
   </div>
 </div>
@@ -955,6 +955,14 @@
   window.fbOnValue = onValue;
   window.fbRunTransaction = runTransaction;
 
+  // Entry Announcement Popup: sync the admin-managed announcement to the user app.
+  onValue(ref(db, 'settings/entryAnnouncement'), (snapshot) => {
+      const announcement = snapshot.exists() ? (snapshot.val() || {}) : null;
+      if (typeof window.renderEntryAnnouncementForUser === 'function') {
+          window.renderEntryAnnouncementForUser(announcement);
+      }
+  }, (error) => console.warn('Entry announcement sync failed:', error));
+
   // Admin-managed banners: live updates from Firebase settings/banners.
   onValue(ref(db, 'settings/banners'), (snapshot) => {
       const banners = snapshot.exists() ? (snapshot.val() || {}) : {};
@@ -970,6 +978,36 @@
           updateDepositNumberDisplay();
       }
   });
+
+  // Universal admin live updates: update the ticker and add one Inbox message per published update.
+  function addLiveUpdateToCurrentInbox(updateData, fallbackTitle){
+      if(!updateData || updateData.active === false || !window.currentUserPhone || !window.usersDb || !window.usersDb[window.currentUserPhone]) return;
+      const user = window.usersDb[window.currentUserPhone];
+      if(!Array.isArray(user.inboxSms)) user.inboxSms = [];
+      const id = String(updateData.id || updateData.updatedAt || (String(updateData.title||'')+'_'+String(updateData.text||'')));
+      const marker = 'liveUpdateSeen_' + String(window.currentUserPhone) + '_' + id;
+      if(localStorage.getItem(marker) === '1') return;
+      user.inboxSms.unshift({id:Date.now(), title:String(updateData.title || fallbackTitle || '📢 নতুন আপডেট'), text:String(updateData.text || updateData.message || ''), time:'এখন'});
+      user.inboxSms = user.inboxSms.slice(0,200);
+      localStorage.setItem('aviator_users_db', JSON.stringify(window.usersDb));
+      localStorage.setItem(marker,'1');
+      if(typeof window.renderInboxSms === 'function') window.renderInboxSms();
+  }
+
+  onValue(ref(db, 'settings/globalLiveUpdate'), (snapshot) => {
+      const data = snapshot.exists() ? (snapshot.val() || {}) : null;
+      if(data && data.active !== false){
+          const ticker = document.getElementById('vipTickerText');
+          if(ticker && data.text) ticker.textContent = data.text;
+          addLiveUpdateToCurrentInbox(data, '📢 অ্যাডমিন আপডেট');
+      }
+  }, (error) => console.warn('Global live update sync failed:', error));
+
+  // Official notice changes are also mirrored to the user's Inbox.
+  onValue(ref(db, 'settings/officialNotice'), (snapshot) => {
+      const text = snapshot.exists() ? String(snapshot.val() || '') : '';
+      if(text.trim()) addLiveUpdateToCurrentInbox({id:'official_'+text, title:'📢 অফিশিয়াল নিউজ ও নোটিশ', text, active:true}, '📢 অফিশিয়াল নিউজ ও নোটিশ');
+  }, (error) => console.warn('Official notice sync failed:', error));
 
   onValue(ref(db, 'settings/vipAnnouncement'), (snapshot) => {
       if (snapshot.exists()) {
@@ -1382,6 +1420,7 @@ async function handleRegister(){
         
         currentUserPhone = phone;
         window.currentUserPhone = phone;
+        setTimeout(() => window.tryShowEntryAnnouncementPopup && window.tryShowEntryAnnouncementPopup(), 250);
         localStorage.setItem('aviator_current_user', phone);
         balance = 0;
         
@@ -1422,6 +1461,7 @@ function handleLogin(){
     showLoading("লগইন হচ্ছে...", () => {
         currentUserPhone = phone;
         window.currentUserPhone = phone;
+        setTimeout(() => window.tryShowEntryAnnouncementPopup && window.tryShowEntryAnnouncementPopup(), 250);
         localStorage.setItem('aviator_current_user', phone);
         usersDb[phone].lastActive = Date.now();
         localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
@@ -2831,6 +2871,170 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
     const db=getDatabase(app);
     onValue(ref(db,'games'),snap=>window.renderAdminDynamicGames(snap.exists()?snap.val():{}),err=>console.warn('Firebase games sync:',err));
   }catch(e){console.warn('Universal Firebase game bridge:',e);}
+})();
+</script>
+
+
+<style id="entry-announcement-user-popup-style">
+#entryAnnouncementUserOverlay{position:fixed;inset:0;z-index:999999;display:none;align-items:center;justify-content:center;padding:16px;background:rgba(0,0,0,.82);backdrop-filter:blur(5px)}
+#entryAnnouncementUserOverlay.open{display:flex}
+#entryAnnouncementUserPopup{position:relative;width:min(100%,430px);max-height:90vh;overflow:auto;background:linear-gradient(160deg,#202938,#10151e);border:1px solid #ffd166;border-radius:18px;box-shadow:0 20px 70px rgba(0,0,0,.65);padding:18px;color:#fff}
+#entryAnnouncementUserClose{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:50%;background:#343c4b;color:#fff;font-size:22px;line-height:1;padding:0;z-index:2}
+#entryAnnouncementUserHeading{font-size:21px;font-weight:900;color:#ffd166;padding-right:38px;margin:0 0 6px;overflow-wrap:anywhere}
+#entryAnnouncementUserLead{font-size:13px;color:#d7deea;line-height:1.55;margin-bottom:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+#entryAnnouncementUserSlideTitle{font-size:17px;font-weight:800;margin:10px 0;color:#fff;overflow-wrap:anywhere}
+#entryAnnouncementUserImage{display:none;width:100%;max-height:42vh;object-fit:contain;background:#080a0f;border-radius:12px;border:1px solid #303846}
+#entryAnnouncementUserInfo{font-size:14px;line-height:1.6;color:#e6eaf0;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0}
+.entry-ann-user-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px}
+.entry-ann-user-controls button{width:auto;min-width:76px;padding:9px 13px;background:#2b3442;color:#fff;border:1px solid #475264;border-radius:9px}
+#entryAnnouncementUserDots{display:flex;justify-content:center;gap:6px;flex:1;flex-wrap:wrap}
+#entryAnnouncementUserDots span{width:7px;height:7px;border-radius:50%;background:#626d7d}
+#entryAnnouncementUserDots span.active{width:20px;border-radius:8px;background:#ffd166}
+@media(max-width:420px){#entryAnnouncementUserPopup{padding:15px}#entryAnnouncementUserHeading{font-size:19px}}
+</style>
+<div id="entryAnnouncementUserOverlay" role="dialog" aria-modal="true" aria-labelledby="entryAnnouncementUserHeading">
+  <div id="entryAnnouncementUserPopup">
+    <button id="entryAnnouncementUserClose" type="button" aria-label="বন্ধ করুন">×</button>
+    <h2 id="entryAnnouncementUserHeading">Announcement</h2>
+    <div id="entryAnnouncementUserLead"></div>
+    <img id="entryAnnouncementUserImage" alt="Announcement image">
+    <div id="entryAnnouncementUserSlideTitle"></div>
+    <div id="entryAnnouncementUserInfo"></div>
+    <div class="entry-ann-user-controls">
+      <button id="entryAnnouncementUserPrev" type="button">‹ আগের</button>
+      <div id="entryAnnouncementUserDots"></div>
+      <button id="entryAnnouncementUserNext" type="button">পরের ›</button>
+    </div>
+  </div>
+</div>
+<script id="entry-announcement-user-popup-script">
+(function(){
+  let announcementData = null;
+  let shownThisPage = false;
+  let slides = [];
+  let slideIndex = 0;
+  let slideTimer = null;
+  const byId = id => document.getElementById(id);
+  function cleanText(value){ return value == null ? '' : String(value); }
+  function closePopup(){
+    const overlay=byId('entryAnnouncementUserOverlay');
+    if(overlay) overlay.classList.remove('open');
+    if(slideTimer){clearInterval(slideTimer);slideTimer=null;}
+  }
+  function paintSlide(){
+    if(!slides.length) return;
+    if(slideIndex<0) slideIndex=slides.length-1;
+    if(slideIndex>=slides.length) slideIndex=0;
+    const slide=slides[slideIndex]||{};
+    const heading=byId('entryAnnouncementUserHeading');
+    const lead=byId('entryAnnouncementUserLead');
+    const title=byId('entryAnnouncementUserSlideTitle');
+    const info=byId('entryAnnouncementUserInfo');
+    const img=byId('entryAnnouncementUserImage');
+    if(heading) heading.textContent=cleanText(announcementData.title)||'Announcement';
+    if(lead) lead.textContent=cleanText(announcementData.lead);
+    if(title) title.textContent=cleanText(slide.title);
+    if(info) info.textContent=cleanText(slide.info);
+    if(img){
+      const image=cleanText(slide.image).trim();
+      if(image){img.src=image;img.style.display='block';}
+      else {img.removeAttribute('src');img.style.display='none';}
+      img.onerror=function(){img.style.display='none';};
+    }
+    const dots=byId('entryAnnouncementUserDots');
+    if(dots){
+      dots.replaceChildren();
+      slides.forEach((_,i)=>{
+        const dot=document.createElement('span');
+        if(i===slideIndex) dot.classList.add('active');
+        dot.title='স্লাইড '+(i+1);
+        dots.appendChild(dot);
+      });
+    }
+    const prev=byId('entryAnnouncementUserPrev'), next=byId('entryAnnouncementUserNext');
+    if(prev) prev.style.visibility=slides.length>1?'visible':'hidden';
+    if(next) next.style.visibility=slides.length>1?'visible':'hidden';
+  }
+  function showIfReady(){
+    if(!announcementData || announcementData.active===false || shownThisPage) return;
+    if(!window.currentUserPhone) return;
+    const auth=byId('authScreen');
+    if(auth && auth.classList.contains('active')) return;
+    slides=Object.keys(announcementData.slides||{})
+      .sort((a,b)=>Number(a)-Number(b))
+      .map(k=>announcementData.slides[k]||{})
+      .filter(x=>cleanText(x.title).trim()||cleanText(x.image).trim()||cleanText(x.info).trim());
+    if(!slides.length && !cleanText(announcementData.lead).trim()) return;
+    if(!slides.length) slides=[{title:'',image:'',info:''}];
+    slideIndex=0;
+    shownThisPage=true;
+    paintSlide();
+    const overlay=byId('entryAnnouncementUserOverlay');
+    if(overlay) overlay.classList.add('open');
+    if(slideTimer) clearInterval(slideTimer);
+    if(slides.length>1){
+      const seconds=Math.max(2,Number(announcementData.interval)||5);
+      slideTimer=setInterval(()=>{slideIndex=(slideIndex+1)%slides.length;paintSlide();},seconds*1000);
+    }
+  }
+  window.renderEntryAnnouncementForUser=function(data){
+    announcementData=data&&typeof data==='object'?data:null;
+    if(!announcementData || announcementData.active===false){closePopup();return;}
+    showIfReady();
+  };
+  window.tryShowEntryAnnouncementPopup=showIfReady;
+  document.addEventListener('DOMContentLoaded',function(){
+    byId('entryAnnouncementUserClose')?.addEventListener('click',closePopup);
+    byId('entryAnnouncementUserPrev')?.addEventListener('click',()=>{slideIndex=(slideIndex-1+slides.length)%slides.length;paintSlide();});
+    byId('entryAnnouncementUserNext')?.addEventListener('click',()=>{slideIndex=(slideIndex+1)%slides.length;paintSlide();});
+    byId('entryAnnouncementUserOverlay')?.addEventListener('click',e=>{if(e.target===byId('entryAnnouncementUserOverlay'))closePopup();});
+    if(window.currentUserPhone) showIfReady();
+  });
+})();
+</script>
+
+
+<style id="screenBackAndScrollStyles">
+#appGlobalBack{position:fixed;top:calc(env(safe-area-inset-top, 0px) + 10px);left:max(10px,calc((100vw - 520px)/2 + 10px));z-index:1800;display:none;align-items:center;gap:7px;background:rgba(28,34,45,.96);color:#fff;border:1px solid #424b5c;border-radius:24px;padding:10px 15px;box-shadow:0 4px 16px #0008;font-size:14px}
+#appGlobalBack.visible{display:flex}
+</style>
+<script id="screenBackAndScrollScript">
+(function(){
+  var stack=[], positions={}, changing=false;
+  function activeId(){var e=document.querySelector('.screen.active');return e?e.id:'';}
+  function savePosition(){var id=activeId();if(id)positions[id]=window.scrollY||window.pageYOffset||0;}
+  function restorePosition(id){requestAnimationFrame(function(){window.scrollTo({top:Math.max(0,positions[id]||0),left:0,behavior:'auto'});});}
+  function updateBack(){var b=document.getElementById('appGlobalBack');if(!b)return;var id=activeId();b.classList.toggle('visible',!!id&&id!=='homeScreen'&&id!=='authScreen');}
+  function goBack(){
+    var current=activeId();
+    if(current)savePosition();
+    var prev=stack.pop();
+    if(prev&&document.getElementById(prev.id)){
+      changing=true;
+      document.querySelectorAll('.screen').forEach(function(s){s.classList.remove('active','profile-force-visible');});
+      var el=document.getElementById(prev.id);el.classList.add('active');
+      document.querySelectorAll('.nav button').forEach(function(b){b.classList.remove('active');});
+      var map={homeScreen:'navHome',gameScreen:'navGame',profileScreen:'navProfile'};var nav=document.getElementById(map[prev.id]);if(nav)nav.classList.add('active');
+      positions[prev.id]=prev.scrollY||0;restorePosition(prev.id);changing=false;
+    }else if(current!=='homeScreen'&&document.getElementById('homeScreen')){
+      window.showScreen('homeScreen');
+    }
+    updateBack();
+  }
+  function install(){
+    if(!document.getElementById('appGlobalBack')){var b=document.createElement('button');b.id='appGlobalBack';b.type='button';b.innerHTML='&#8592; <span>Back</span>';b.addEventListener('click',goBack);document.body.appendChild(b);}
+    updateBack();
+    var original=window.showScreen;
+    if(typeof original==='function'&&!original.__scrollBackWrapped){
+      var wrapped=function(id){var old=activeId();if(!changing&&old&&old!==id){savePosition();stack.push({id:old,scrollY:positions[old]||0});}var result=original.apply(this,arguments);setTimeout(function(){if(id!=='profileScreen')restorePosition(id);updateBack();},0);return result;};wrapped.__scrollBackWrapped=true;window.showScreen=wrapped;
+    }
+    var oldOpen=window.openMyAccount;
+    if(typeof oldOpen==='function'&&!oldOpen.__scrollBackWrapped){var wrappedOpen=function(){var old=activeId();if(!changing&&old&&old!=='profileScreen'){savePosition();stack.push({id:old,scrollY:positions[old]||0});}var r=oldOpen.apply(this,arguments);setTimeout(function(){restorePosition('profileScreen');updateBack();},0);return r;};wrappedOpen.__scrollBackWrapped=true;window.openMyAccount=wrappedOpen;window.openProfileScreen=wrappedOpen;window.showMyAccount=wrappedOpen;}
+    window.addEventListener('scroll',function(){savePosition();},{passive:true});
+    window.addEventListener('popstate',function(){goBack();});
+    window.addEventListener('pageshow',updateBack);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
 </script>
 
