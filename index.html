@@ -435,7 +435,7 @@
     <div class="panel">
       <div class="box">
         <div style="font-weight:800;margin-bottom:10px">দুইটি Bet Slot</div>
-        <div class="row"><div class="field"><label>Bet 1 — Amount (Max ৳20,000)</label><input id="bet1" type="number" min="10" max="20000" value="100"></div><div class="field"><label>Bet 1 — Auto Cash Out</label><input id="auto1" type="number" min="1.01" max="2000" step="0.01" value="2.00"></div></div><button class="bet" id="betBtn1" onclick="placeBet(1)" style="margin-top:8px">BET 1</button><button class="cash" id="cashBtn1" onclick="cashOut(1)" disabled>CASH OUT 1</button><div style="height:12px"></div><div class="row"><div class="field"><label>Bet 2 — Amount (Max ৳20,000)</label><input id="bet2" type="number" min="10" max="20000" value="200"></div><div class="field"><label>Bet 2 — Auto Cash Out</label><input id="auto2" type="number" min="1.01" max="2000" step="0.01" value="3.00"></div></div><button class="bet" id="betBtn2" onclick="placeBet(2)" style="margin-top:8px">BET 2</button><button class="cash" id="cashBtn2" onclick="cashOut(2)" disabled>CASH OUT 2</button>
+        <div class="row"><div class="field"><label>Bet 1 — Amount (Max ৳20,000)</label><input id="bet1" type="number" min="1" max="20000" value="100"></div><div class="field"><label>Bet 1 — Auto Cash Out</label><input id="auto1" type="number" min="1.01" max="2000" step="0.01" value="2.00"></div></div><button class="bet" id="betBtn1" onclick="placeBet(1)" style="margin-top:8px">BET 1</button><button class="cash" id="cashBtn1" onclick="cashOut(1)" disabled>CASH OUT 1</button><div style="height:12px"></div><div class="row"><div class="field"><label>Bet 2 — Amount (Max ৳20,000)</label><input id="bet2" type="number" min="1" max="20000" value="200"></div><div class="field"><label>Bet 2 — Auto Cash Out</label><input id="auto2" type="number" min="1.01" max="2000" step="0.01" value="3.00"></div></div><button class="bet" id="betBtn2" onclick="placeBet(2)" style="margin-top:8px">BET 2</button><button class="cash" id="cashBtn2" onclick="cashOut(2)" disabled>CASH OUT 2</button>
       </div>
       <div class="box" style="background:#11161e;border:1px solid #2a303b;">
         <div style="font-size:13px;font-weight:900;color:#ffcf72;margin-bottom:6px">📊 টার্নওভার স্ট্যাটাস (Turnover)</div>
@@ -1096,13 +1096,30 @@
               if(!usersDb[phone]) usersDb[phone] = {phone: phone};
               usersDb[phone].balance = liveBalance;
               usersDb[phone].name = userData.name || usersDb[phone].name;
+              // Daily Loss Cashback: sync admin-paid cashback details into the signed-in user's app.
+              if(userData.cashbackState !== undefined) usersDb[phone].cashbackState = userData.cashbackState || {};
+              if(userData.lastCashbackAmount !== undefined) usersDb[phone].lastCashbackAmount = Number(userData.lastCashbackAmount || 0);
+              if(userData.lastCashbackDate !== undefined) usersDb[phone].lastCashbackDate = userData.lastCashbackDate || '';
+              if(Array.isArray(userData.inboxSms)) usersDb[phone].inboxSms = userData.inboxSms;
+              const cbAmount = Number(userData.lastCashbackAmount || 0);
+              const cbDate = String(userData.lastCashbackDate || '');
+              if(cbAmount > 0 && cbDate) {
+                  const cbMarker = 'dailyLossCashbackSeen_' + phone + '_' + cbDate;
+                  if(localStorage.getItem(cbMarker) !== '1') {
+                      if(!Array.isArray(usersDb[phone].inboxSms)) usersDb[phone].inboxSms = [];
+                      usersDb[phone].inboxSms.unshift({id:Date.now(), title:'🎁 ১৫% Daily Loss Cashback', text:'গত দিনের ক্ষতির ১৫% Cashback হিসেবে ৳' + cbAmount.toFixed(2) + ' আপনার ব্যালেন্সে যোগ হয়েছে।', time:'এখন'});
+                      usersDb[phone].inboxSms = usersDb[phone].inboxSms.slice(0,200);
+                      localStorage.setItem(cbMarker, '1');
+                  }
+              }
               usersDb[phone].referStats = userData.referStats || usersDb[phone].referStats || {count:0,bonusEarned:0};
               usersDb[phone].depositRebateEarned = Number(userData.referStats?.depositRebateEarned || 0);
               if(userData.totalDeposit !== undefined) {
                   usersDb[phone].totalDeposit = Number(userData.totalDeposit || 0);
-                  // Approved cumulative deposit amount = required cumulative turnover target.
-                  usersDb[phone].turnoverTarget = Number(userData.totalDeposit || 0);
               }
+              // Preserve the target written by admin; only initialize for older records.
+              if(userData.turnoverTarget !== undefined) usersDb[phone].turnoverTarget = Number(userData.turnoverTarget || 0);
+              else if(usersDb[phone].turnoverTarget === undefined) usersDb[phone].turnoverTarget = Number(userData.totalDeposit || 0);
               if(userData.turnoverCurrent !== undefined) usersDb[phone].turnoverCurrent = Number(userData.turnoverCurrent || 0);
               if(userData.referredBy !== undefined) usersDb[phone].referredBy = userData.referredBy || null;
               if(userData.referBonusGiven !== undefined) usersDb[phone].referBonusGiven = !!userData.referBonusGiven;
@@ -1556,9 +1573,8 @@ function loadUserData(){
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
         balance = user.balance !== undefined ? user.balance : 0;
+        // Keep the admin-adjusted turnoverTarget; initialize only when absent.
         if(user.turnoverTarget === undefined) user.turnoverTarget = Number(user.totalDeposit || 0);
-        // Turnover target always follows approved cumulative deposit.
-        if(user.totalDeposit !== undefined) user.turnoverTarget = Number(user.totalDeposit || 0);
         if(user.turnoverCurrent === undefined) user.turnoverCurrent = 0;
         if(!user.claimedRewards) user.claimedRewards = {};
 
@@ -1945,7 +1961,7 @@ window.tryQualifyReferralBonus = async function(userPhone){
 function placeBet(slot){
     if(crashed||bets[slot].active)return;
     const amount=Number(document.getElementById('bet'+slot).value);
-    if(!amount||amount<10||amount>20000){alert('প্রতি Bet-এর সীমা ৳10–৳20,000।');return}
+    if(!Number.isFinite(amount)||amount<1||amount>20000){alert('প্রতি Bet-এর সীমা ৳1–৳20,000।');return}
     if(amount>balance){alert('পর্যাপ্ত ব্যালেন্স নেই।');return}
     
     balance-=amount;
@@ -1953,8 +1969,11 @@ function placeBet(slot){
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
-        if(!user.turnoverCurrent) user.turnoverCurrent = 0;
-        user.turnoverCurrent += amount;
+        if(!Number.isFinite(Number(user.turnoverCurrent))) user.turnoverCurrent = 0;
+        user.turnoverCurrent = Number(user.turnoverCurrent || 0) + amount;
+        // Treat turnoverTarget as the remaining turnover: reduce it by each placed bet.
+        if(!Number.isFinite(Number(user.turnoverTarget))) user.turnoverTarget = Number(user.totalDeposit || 0);
+        user.turnoverTarget = Math.max(0, Number(user.turnoverTarget || 0) - amount);
 
         // Check the ৳399 referral qualification after every placed bet.
         tryQualifyReferralBonus(currentUserPhone);
@@ -1963,6 +1982,7 @@ function placeBet(slot){
         if(window.fbDb && window.fbRef && window.fbUpdate){
             window.fbUpdate(window.fbRef(window.fbDb, 'users/' + currentUserPhone), {
                 turnoverCurrent: Number(user.turnoverCurrent || 0),
+                turnoverTarget: Number(user.turnoverTarget || 0),
                 balance: Number(balance || 0)
             }).catch(err => console.warn('Bet progress Firebase sync failed:', err));
         }
