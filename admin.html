@@ -1818,7 +1818,7 @@ window.caSearchUser=async()=>{
    const joined=u.createdAt||u.registeredAt||u.joinedAt||u.registrationDate||u.created_at||u.signupAt||'-';
    const joinedText=typeof joined==='number' ? new Date(joined).toLocaleString() : String(joined);
    const txRows=matchedTrx.filter(r=>String(r.userPhone||'')===phone).map(r=>`<li>${esc(r.type)} • Trx: ${esc(r.trx||r.transactionId||r.number||'-')} • ৳${Number(r.baseAmount||r.amount||0).toFixed(2)} • ${esc(r.status||'Pending')}</li>`).join('');
-   return `<div style="padding:10px;border:1px solid #2a303b;border-radius:10px;margin-top:8px;overflow-wrap:anywhere"><b>${esc(u.name||'Unnamed')}</b> • ${esc(phone)}<br>Balance: ৳${Number(u.balance||0).toFixed(2)} • Total Deposit: ৳${Number(u.totalDeposit||calculated||0).toFixed(2)}<br>Request-based approved deposit: ৳${calculated.toFixed(2)} • VIP: ${Number(u.vipLevel||u.level||0)}<br>Account created: ${esc(joinedText)}<br>Referral: ${esc(referrer)}<br>Status: <b>${u.blocked===true?'Blocked':'Active'}</b><br><button class="mini-btn ${u.blocked===true?'mini-green':'mini-danger'}" onclick="caBlock('${esc(phone)}',${u.blocked===true})">${u.blocked===true?'Unblock':'Block user'}</button><details style="margin-top:8px"><summary>সম্পূর্ণ User Document</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px">${esc(JSON.stringify(u,null,2))}</pre></details>${txRows?`<div style="margin-top:8px"><b>Matched transactions</b><ul>${txRows}</ul></div>`:''}</div>`;
+   return `<div style="padding:10px;border:1px solid #2a303b;border-radius:10px;margin-top:8px;overflow-wrap:anywhere"><b>${esc(u.name||'Unnamed')}</b> • ${esc(phone)}<br>Balance: ৳${Number(u.balance||0).toFixed(2)} • Total Deposit: ৳${Number(u.totalDeposit||calculated||0).toFixed(2)}<br><b style="color:#20b56b">Current Remaining Turnover: ৳${Math.max(0,Number(u.turnoverTarget||0)).toFixed(2)}</b><br>Request-based approved deposit: ৳${calculated.toFixed(2)} • VIP: ${Number(u.vipLevel||u.level||0)}<br>Account created: ${esc(joinedText)}<br>Referral: ${esc(referrer)}<br>Status: <b>${u.blocked===true?'Blocked':'Active'}</b><br><button class="mini-btn ${u.blocked===true?'mini-green':'mini-danger'}" onclick="caBlock('${esc(phone)}',${u.blocked===true})">${u.blocked===true?'Unblock':'Block user'}</button><details style="margin-top:8px"><summary>সম্পূর্ণ User Document</summary><pre style="white-space:pre-wrap;overflow-wrap:anywhere;font-size:11px">${esc(JSON.stringify(u,null,2))}</pre></details>${txRows?`<div style="margin-top:8px"><b>Matched transactions</b><ul>${txRows}</ul></div>`:''}</div>`;
   }).join('');
   out.innerHTML=html||(matchedTrx.length?matchedTrx.map(r=>`<div style="padding:8px;border:1px solid #2a303b;border-radius:8px;margin-top:6px">${esc(r.type)} • User: ${esc(r.userPhone||'-')} • Transaction: ${esc(r.trx||r.transactionId||r.number||'-')} • ৳${Number(r.amount||0).toFixed(2)} • ${esc(r.status||'Pending')}<br>এই Transaction-এর User document users/${esc(r.userPhone||'')} এ পাওয়া যায়নি।</div>`).join(''):'কোনো user বা transaction পাওয়া যায়নি।');
  }catch(e){out.textContent='Search error: '+e.message;}
@@ -1847,7 +1847,7 @@ window.caGrantTurnover=async()=>{
   const inbox=Array.isArray(current.inboxSms)?current.inboxSms.slice():[];
   inbox.unshift({id:now,title,text:message,time:'এখন'});
   await update(userRef,{turnoverTarget:oldTarget+amount,adminTurnoverUpdatedAt:now,inboxSms:inbox});
-  show('সফল! '+(user.name||'ইউজার')+' ('+phone+')-কে '+amount.toLocaleString()+' Turnover যোগ করা হয়েছে এবং Inbox-এ মেসেজ পাঠানো হয়েছে।',true);
+  show('সফল! '+(user.name||'ইউজার')+' ('+phone+')-কে '+amount.toLocaleString()+' Turnover যোগ হয়েছে। নতুন বাকি Turnover: '+(oldTarget+amount).toLocaleString()+'. Inbox-এ মেসেজ পাঠানো হয়েছে।',true);
   document.getElementById('caTurnoverUser').value='';
   document.getElementById('caTurnoverAmount').value='';
   document.getElementById('caTurnoverMessage').value='';
@@ -1874,7 +1874,7 @@ window.caReduceTurnover=async()=>{
   const now=Date.now();const updates={turnoverTarget:oldTarget-amount,adminTurnoverReducedAt:now};
   if(message){const inbox=Array.isArray(current.inboxSms)?current.inboxSms.slice():[];inbox.unshift({id:now,title,text:message,time:'এখন'});updates.inboxSms=inbox;}
   await update(userRef,updates);
-  show('সফল! '+(user.name||'ইউজার')+' ('+phone+')-এর Turnover '+amount.toLocaleString()+' কমানো হয়েছে।'+(message?' Inbox-এ মেসেজও পাঠানো হয়েছে.':''),true);
+  show('সফল! '+(user.name||'ইউজার')+' ('+phone+')-এর Turnover '+amount.toLocaleString()+' কমানো হয়েছে। নতুন বাকি Turnover: '+(oldTarget-amount).toLocaleString()+(message?' Inbox-এ মেসেজও পাঠানো হয়েছে.':''),true);
   document.getElementById('caReduceTurnoverUser').value='';document.getElementById('caReduceTurnoverAmount').value='';document.getElementById('caReduceTurnoverMessage').value='';
  }catch(e){show('কাজটি সম্পন্ন হয়নি: '+e.message);}
 };
