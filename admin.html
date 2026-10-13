@@ -1887,6 +1887,19 @@ window.caSaveSecurity=async()=>{let pin=document.getElementById('caAdminPin').va
 loadSettings();
 </script>
 
+
+<!-- APK UPDATE CONTROL: Firebase settings/apkUpdate -->
+<style>#apkUpdateCard{margin:16px 0;padding:16px;border:1px solid #2f855a;border-radius:14px;background:#101722;color:#fff}#apkUpdateCard input,#apkUpdateCard textarea{box-sizing:border-box;width:100%;margin:7px 0 12px;padding:11px;border-radius:9px;border:1px solid #394150;background:#080d14;color:#fff}#apkUpdateCard button{background:#20b56b;color:#07140d;font-weight:900;border:0;border-radius:10px;padding:11px 15px;cursor:pointer}</style>
+<div id="apkUpdateCard" class="card"><h3>📲 APK / App Update Control</h3><p style="font-size:12px;color:#aab4c3">এখানে আসল installable APK-এর সরাসরি HTTPS লিংক দিন। Save করলে User App-এ আপডেট নোটিশ দেখাবে।</p><label>APK Download URL</label><input id="apkUpdateUrl" type="url" placeholder="https://.../app.apk"><label>Version</label><input id="apkUpdateVersion" placeholder="যেমন 1.0.2"><label>Update message</label><textarea id="apkUpdateMessage" rows="3" placeholder="নতুন ভার্সন ডাউনলোড করুন"></textarea><label><input id="apkUpdateActive" type="checkbox" checked style="width:auto"> ইউজার অ্যাপে পপআপ চালু</label><br><button id="apkUpdateSave">💾 APK Update Save</button><span id="apkUpdateStatus" style="display:block;margin-top:10px;font-size:13px"></span></div>
+<script type="module">
+import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+const cfg={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+const app=getApps().length?getApps()[0]:initializeApp(cfg),db=getDatabase(app);const $=id=>document.getElementById(id);const status=$('apkUpdateStatus');
+get(ref(db,'settings/apkUpdate')).then(s=>{const d=s.val()||{};$('apkUpdateUrl').value=d.url||'';$('apkUpdateVersion').value=d.version||'';$('apkUpdateMessage').value=d.message||'';$('apkUpdateActive').checked=d.active!==false;}).catch(e=>{status.textContent='Firebase settings পড়া যায়নি: '+e.message});
+$('apkUpdateSave').addEventListener('click',async()=>{const url=$('apkUpdateUrl').value.trim(),version=$('apkUpdateVersion').value.trim(),message=$('apkUpdateMessage').value.trim(),active=$('apkUpdateActive').checked;if(active&&!url){status.textContent='আগে APK লিংক দিন।';return}if(url&&!/^https:\/\//i.test(url)){status.textContent='HTTPS লিংক দিন।';return}try{await set(ref(db,'settings/apkUpdate'),{url,version,message,active,updatedAt:Date.now()});status.textContent='✅ সেটিংস সেভ হয়েছে';}catch(e){status.textContent='❌ সেভ হয়নি: '+e.message;}});
+</script>
+
 </body>
 </html>
 
