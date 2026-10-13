@@ -147,6 +147,43 @@
 .admin-dynamic-game .game-card-image{display:block}
 .admin-dynamic-game .game-card-icon{display:none}
 .admin-dynamic-game .dynamic-game-badge{position:absolute;left:7px;top:7px;z-index:4;background:rgba(0,0,0,.62);padding:3px 6px;border-radius:8px;font-size:9px;font-weight:900}
+
+/* Screenshot-inspired deposit page */
+.deposit-screen{background:#fff!important;color:#333!important;border-radius:0!important;padding:0 0 16px!important;}
+.deposit-screen .deposit-head{height:78px;background:#164f52;color:#ffb600;display:grid;grid-template-columns:56px 1fr 56px;align-items:center;padding:0 14px;margin:-16px -16px 20px;}
+.deposit-screen .deposit-head h2{margin:0;text-align:center;font-size:27px;font-weight:900;color:#ffb600}
+.deposit-screen .deposit-back,.deposit-screen .deposit-record{background:transparent;color:#ffb600;padding:5px;font-size:30px}
+.deposit-section-title{font-size:21px;font-weight:900;color:#333;margin:18px 0 12px;}
+.deposit-section-title:before{content:'●';color:#ffb000;font-size:16px;margin-right:9px}
+.deposit-screen .payment-method-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 18px}
+.deposit-screen .payment-logo{min-height:120px;border:1.5px solid #e2e2e2;border-radius:12px;background:#fff;color:#333;padding:12px 5px;font-weight:900;position:relative}
+.deposit-screen .payment-logo.active{border:2px solid #ff303b;box-shadow:none;transform:none}
+.deposit-screen .payment-logo.active:after{content:'✓';position:absolute;right:0;bottom:0;background:#ff303b;color:white;padding:2px 6px;border-radius:8px 0 8px 0}
+.deposit-screen .payment-logo .logo{width:60px;height:54px;border-radius:9px;font-size:12px;margin-bottom:10px;color:white}
+.deposit-screen .bkash-logo{background:linear-gradient(135deg,#f72b8a,#a90056)}
+.deposit-screen .nagad-logo{background:linear-gradient(135deg,#ff7d21,#f02d42)}
+.deposit-screen .rocket-logo{background:linear-gradient(135deg,#7139a8,#35105f)}
+.deposit-screen .channel-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0 0 18px}
+.deposit-screen .channel-card{min-height:80px;background:#fff;color:#333;border:1.5px solid #e3e3e3;border-radius:11px;padding:12px 8px;font-weight:900;line-height:1.3}
+.deposit-screen .channel-card.active{border:2px solid #ff303b;color:#e72b35;background:#fffafa}
+.deposit-screen .deposit-instructions{border:1px solid #ddd;background:#fff;color:#333;border-radius:0;padding:12px;margin:18px 0 24px}
+.deposit-screen .deposit-instructions-title{text-align:center;color:#716400;font-weight:900;font-size:17px;margin-bottom:10px}
+.deposit-screen .deposit-step-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+.deposit-screen .deposit-step{border:1px solid #e0d6e7;border-radius:9px;padding:8px 5px;text-align:center;font-size:11px;line-height:1.35;color:#555}
+.deposit-screen .deposit-step b{display:block;margin:0 auto 5px;background:#6c1685;color:#fff;width:22px;height:22px;border-radius:50%;line-height:22px}
+.deposit-screen .bonus-box{background:#f7fbfa;border:1px solid #cce5df;color:#333}
+.deposit-screen .bonus-row strong{color:#087b68}
+.deposit-screen label{color:#444;font-size:14px;font-weight:700}
+.deposit-screen input{background:#fff;color:#222;border:1px solid #ddd;border-radius:9px}
+.deposit-screen .quick-amounts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:10px 0 20px}
+.deposit-screen .quick-amount{min-width:0;background:#fff;color:#555;border:1.5px solid #ffd0d0;border-radius:11px;padding:14px 5px;font-size:16px}
+.deposit-screen .quick-amount.active{border-color:#ff303b;background:#fff4f4;color:#d92a34}
+.deposit-screen .demo-number{background:#f7f8f8;border:1px solid #ddd;color:#333}
+.deposit-screen .demo-number-value{color:#164f52}
+.deposit-screen .cash{background:#164f52;color:#fff;border-radius:0;padding:16px;font-size:18px}
+.deposit-screen .modal-note{color:#666}
+@media(max-width:370px){.deposit-screen .payment-logo{font-size:12px}.deposit-screen .deposit-head h2{font-size:24px}.deposit-screen .deposit-step{font-size:10px}}
+
 </style>
 
 <style id="myAccountVipStyle">
@@ -279,6 +316,10 @@
       </div>
 
       <div class="auth-card">
+        <label for="authLanguage" style="font-weight:800;color:#e8c66d">🌐 Language / ভাষা / भाषा</label>
+        <select id="authLanguage" onchange="changeAuthLanguage(this.value)" style="width:100%;padding:12px;border-radius:9px;background:#11161e;color:#fff;border:1px solid #303846;margin-bottom:12px">
+          <option value="bn">বাংলা (Bangla)</option><option value="en">English</option><option value="hi">हिन्दी (Hindi)</option>
+        </select>
         <div class="auth-tabs">
           <button id="tabLoginBtn" class="auth-tab active" type="button" onclick="switchAuthTab('login')">লগইন</button>
           <button id="tabRegisterBtn" class="auth-tab" type="button" onclick="switchAuthTab('register')">রেজিস্ট্রেশন</button>
@@ -311,6 +352,10 @@
           <button class="cash" type="button" onclick="handleRegister()">একাউন্ট তৈরি করুন</button>
           <div id="regMsg" class="modal-note" style="margin-top:10px;text-align:center;color:#ff7888"></div>
         </div>
+      </div>
+      <div id="authCommunityLinks" style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:12px 0">
+        <a id="telecomLink" href="#" target="_blank" rel="noopener" style="display:none;background:#1685d1;color:#fff;text-decoration:none;padding:10px 14px;border-radius:9px;font-weight:800">Telecom</a>
+        <a id="facebookLink" href="#" target="_blank" rel="noopener" style="display:none;background:#1877f2;color:#fff;text-decoration:none;padding:10px 14px;border-radius:9px;font-weight:800">Facebook</a>
       </div>
     </div>
   </div>
@@ -403,7 +448,7 @@
           <div style="font-size: 10px; color: #fde047; margin-top:2px;">Royal Edition</div>
         </a>
       </div>
-      <div id="adminDynamicGamesTitle" class="dynamic-admin-games-title" style="display:none">🎮 Admin Games</div>
+      <div id="adminDynamicGamesTitle" class="dynamic-admin-games-title" style="display:none">🎮 সব গেম (0)</div>
       <div class="vip-games-grid" id="adminDynamicGamesGrid"></div>
 
   <div class="vip-quick-grid" style="display:none !important">
@@ -521,7 +566,7 @@
         <button class="account-menu-item" onclick="openHelpCare()"><span class="account-menu-icon">☎️</span><span class="account-menu-text">Customer<br>Service</span></button>
         <button class="account-menu-item" onclick="handleLogout()"><span class="account-menu-icon">↪</span><span class="account-menu-text">Logout</span></button>
       </div>
-      <div class="account-quick-note">আপনার Deposit, Withdrawal, Referral Rebate এবং Account তথ্য Firebase-এর সঙ্গে সংযুক্ত।</div>
+      <!-- Account quick note hidden as requested -->
     </div>
   </div>
 
@@ -779,36 +824,50 @@
 </div>
 
   <div id="depositModal" class="profile-modal" onclick="modalBackdrop(event,'depositModal')">
-    <div class="card profile-modal-card">
-      <div class="modal-top"><div style="font-size:21px;font-weight:900">📥 Deposit</div><button class="modal-close" type="button" onclick="closeProfileModal('depositModal')">×</button></div>
-      
-      <div id="depositTimerBox" style="background:#261317;border:1px solid #ff4961;border-radius:10px;padding:10px;text-align:center;margin-bottom:10px;font-weight:900;color:#ff7888;">
-        ⏳ পেমেন্ট করার সময়সীমা: <span id="depositTimerDisplay" style="font-size:16px;color:#fff;">05:00</span>
-      </div>
+    <div class="card profile-modal-card deposit-screen">
+      <div class="deposit-head"><button class="deposit-back" type="button" aria-label="Back" onclick="closeProfileModal('depositModal')">‹</button><h2>Deposit</h2><button class="deposit-record" type="button" aria-label="Deposit records" onclick="closeProfileModal('depositModal');if(typeof openAccountFeature==='function')openAccountFeature('depositRecord')">▤</button></div>
+        <section id="dynamicDepositContent" style="display:none;margin:0 0 16px;padding:13px;border:1px solid #d8e2e2;border-radius:12px;background:#f4fbfa;color:#203536">
+          <div id="dynamicDepositTitle" style="font-size:16px;font-weight:900;margin-bottom:7px">Deposit Information</div>
+          <div id="dynamicDepositText" style="font-size:13px;line-height:1.6;white-space:pre-wrap"></div>
+          <a id="dynamicDepositLink" href="#" target="_blank" rel="noopener noreferrer" style="display:none;margin-top:10px;padding:10px 12px;border-radius:8px;background:#164f52;color:#fff;text-decoration:none;font-weight:800;word-break:break-word">ফাইল / লিংক খুলুন</a>
+        </section>
 
-      <div class="bonus-box"><div class="bonus-title">🎁 Every Deposit — 20% Demo Bonus</div><div class="bonus-row"><span>Deposit</span><strong id="depositPreview">৳500</strong></div><div class="bonus-row"><span>Bonus (20%)</span><strong id="depositBonusPreview">৳100</strong></div><div class="bonus-row"><span>Total Demo Credit</span><strong id="depositTotalPreview">৳600</strong></div></div>
-      <div style="font-size:13px;font-weight:900;margin-top:12px">Payment Method</div>
-      <div class="payment-method-grid"><button id="depositMethodBkash" class="payment-logo active" type="button" onclick="selectMethod('bKash')"><span class="logo bkash-logo">bKash</span><br>bKash</button><button id="depositMethodNagad" class="payment-logo" type="button" onclick="selectMethod('Nagad')"><span class="logo nagad-logo">Nagad</span><br>Nagad</button><button id="depositMethodRocket" class="payment-logo" type="button" onclick="selectMethod('Rocket')"><span class="logo rocket-logo">Rocket</span><br>Rocket</button></div>
-      <div id="depositMethod" class="modal-note" style="margin-bottom:8px">Selected: bKash</div>
-      
-      <div style="background:#151b26;border:1px dashed #303b4c;border-radius:10px;padding:12px;margin:10px 0;">
-        <div style="font-size:13px;font-weight:900;color:#ffcf72;margin-bottom:4px;">💡 পেমেন্ট নির্দেশিকা (Send Money / Cash Out)</div>
-        <div style="font-size:12px;color:#c5cbd3;line-height:1.5;">
-          দয়া করে নিচের এডমিন নম্বরে আপনার নির্বাচিত অ্যাপ থেকে <strong id="instructionTypeText" style="color:#20b56b;">সেন্ড মানি</strong> করুন। টাকা পাঠানোর পর প্রাপ্ত <strong>Transaction ID</strong> নিচের বক্সে দিন।
+      <div style="padding:0 14px 8px">
+        <div class="deposit-section-title">Deposit Method</div>
+        <div class="payment-method-grid">
+          <button id="depositMethodBkash" class="payment-logo active" type="button" onclick="selectMethod('bKash')"><span class="logo bkash-logo">bKash</span><br>BKASH SEND MONEY</button>
+          <button id="depositMethodNagad" class="payment-logo" type="button" onclick="selectMethod('Nagad')"><span class="logo nagad-logo">Nagad</span><br>NAGAD SEND MONEY</button>
+          <button id="depositMethodRocket" class="payment-logo" type="button" onclick="selectMethod('Rocket')"><span class="logo rocket-logo">Rocket</span><br>ROCKET CASH OUT</button>
+          <button class="payment-logo" type="button" onclick="selectMethod('bKash')"><span class="logo bkash-logo">VIP</span><br>BKASH VIP CASH OUT</button>
         </div>
+        <div id="depositMethod" class="modal-note" style="margin:0 0 12px">Selected: bKash</div>
+        <div class="deposit-section-title" style="margin-top:12px">Payment Channel</div>
+        <div class="channel-grid">
+          <button id="depositChannelBkash" class="channel-card active" type="button" onclick="selectDepositChannel('bKash Send Money',this)">A SEND MONEY — বিকাশ পেমেন্ট চ্যানেল</button>
+          <button id="depositChannelNagad" class="channel-card" type="button" onclick="selectDepositChannel('Nagad Send Money',this)">N SEND MONEY — নগদ পেমেন্ট চ্যানেল</button>
+          <button class="channel-card" type="button" onclick="selectDepositChannel('VIP Send Money',this)">SEND MONEY VIP | GBKPAY</button>
+          <button class="channel-card" type="button" onclick="selectDepositChannel('Q Send Money',this)">Q SEND MONEY — বিকাশ পেমেন্ট চ্যানেল</button>
+          <button class="channel-card" type="button" onclick="selectDepositChannel('P Send Money',this)">P SEND MONEY — বিকাশ পেমেন্ট চ্যানেল</button>
+        </div>
+        <div class="deposit-instructions">
+          <div class="deposit-instructions-title">বিকাশ (Bkash) Send Money প্রসেস</div>
+          <div class="deposit-step-list">
+            <div class="deposit-step"><b>1</b>বিকাশ অ্যাপে লগইন করুন</div><div class="deposit-step"><b>2</b>Send Money নির্বাচন করুন</div><div class="deposit-step"><b>3</b>পেমেন্ট নম্বর দিন</div><div class="deposit-step"><b>4</b>টাকার পরিমাণ লিখুন</div><div class="deposit-step"><b>5</b>তথ্য যাচাই করে PIN দিন</div><div class="deposit-step"><b>6</b>Transaction ID সংরক্ষণ করুন</div>
+          </div>
+          <div style="font-size:11px;color:#777;margin-top:9px;text-align:center">আপনার পেমেন্ট অ্যাপের নির্দেশনা অনুসরণ করুন। ভুল নম্বরে টাকা পাঠাবেন না।</div>
+        </div>
+        <div class="deposit-section-title">Deposit Amounts</div>
+        <div class="bonus-box"><div class="bonus-title">🎁 Deposit Bonus</div><div class="bonus-row"><span>Deposit</span><strong id="depositPreview">৳500</strong></div><div class="bonus-row"><span>Bonus (20%)</span><strong id="depositBonusPreview">৳100</strong></div><div class="bonus-row"><span>মোট ক্রেডিট (পরীক্ষামূলক)</span><strong id="depositTotalPreview">৳600</strong></div></div>
+        <label>Deposit Amount (৳100–৳5,000)</label><input id="depositAmount" type="number" min="100" max="5000" value="500" oninput="updateDepositPreview();clearQuickDepositActive()">
+        <div class="quick-amounts"><button class="quick-amount" type="button" onclick="setDepositAmount(100)">৳100</button><button class="quick-amount" type="button" onclick="setDepositAmount(200)">৳200</button><button class="quick-amount active" type="button" onclick="setDepositAmount(500)">৳500</button><button class="quick-amount" type="button" onclick="setDepositAmount(1000)">৳1,000</button><button class="quick-amount" type="button" onclick="setDepositAmount(2000)">৳2,000</button><button class="quick-amount" type="button" onclick="setDepositAmount(5000)">৳5,000</button></div>
+        <div id="depositTimerBox" style="background:#fff6f6;border:1px solid #ffb9b9;border-radius:10px;padding:10px;text-align:center;margin-bottom:14px;font-weight:900;color:#d94b56">⏳ পেমেন্ট করার সময়সীমা: <span id="depositTimerDisplay" style="font-size:16px;color:#333">05:00</span></div>
+        <label>আপনার প্রেরক নম্বর (Sender Number)</label><input id="senderNum" type="text" inputmode="tel" placeholder="01XXXXXXXXX">
+        <div class="demo-number"><div class="modal-note">পেমেন্ট নাম্বার</div><div id="paymentNumber" class="demo-number-value">01XXXXXXXXX</div></div>
+        <div style="background:#fff5f5;border:1px solid #ffd0d0;border-radius:9px;padding:9px;margin:12px 0;font-size:12px;color:#555"><strong>নির্দেশনা:</strong> পেমেন্ট করার পর Transaction ID দিন। নির্বাচিত পেমেন্ট মেথড অনুযায়ী নম্বর যাচাই করুন।</div>
+        <label>Transaction ID (শুধু A–Z ও 0–9, সর্বোচ্চ ১১টি)</label><input id="depositTx" type="text" placeholder="যেমন: 8N7A6BC9" maxlength="11" autocomplete="off" autocapitalize="characters" spellcheck="false" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0,11)">
+        <button class="cash" type="button" onclick="submitDemoDeposit()">Next / CONTINUE DEPOSIT</button>
+        <div id="depositMsg" class="modal-note" style="margin-top:9px;min-height:18px;color:#d94b56"></div>
       </div>
-
-      <label>Deposit Amount (৳100–৳5,000)</label><input id="depositAmount" type="number" min="100" max="5000" value="500" oninput="updateDepositPreview();clearQuickDepositActive()">
-      <div class="quick-amounts"><button class="quick-amount" type="button" onclick="setDepositAmount(100)">৳100</button><button class="quick-amount" type="button" onclick="setDepositAmount(200)">৳200</button><button class="quick-amount active" type="button" onclick="setDepositAmount(500)">৳500</button><button class="quick-amount" type="button" onclick="setDepositAmount(1000)">৳1,000</button><button class="quick-amount" type="button" onclick="setDepositAmount(2000)">৳2,000</button><button class="quick-amount" type="button" onclick="setDepositAmount(5000)">৳5,000</button></div>
-      
-      <label style="margin-top:10px">আপনার প্রেরক নম্বর (Sender Number)</label><input id="senderNum" type="text" placeholder="01XXXXXXXXX">
-
-      <div class="demo-number"><div class="modal-note">Admin Payment Number (Click to copy if needed)</div><div id="paymentNumber" class="demo-number-value">01XXXXXXXXX</div></div>
-      
-      <label style="margin-top:10px">Transaction ID (বড় হাতের ইংরেজিতে)</label><input id="depositTx" type="text" placeholder="যেমন: 8N7A6BC9" oninput="this.value = this.value.toUpperCase()">
-      
-      <button class="cash" type="button" onclick="submitDemoDeposit()">CONTINUE DEPOSIT</button>
-      <div id="depositMsg" class="modal-note" style="margin-top:9px;min-height:18px;color:#ff7888"></div>
     </div>
   </div>
 
@@ -1337,14 +1396,14 @@ function switchAuthTab(tab){
 
 async function handleRegister(){
     const name = document.getElementById('regName').value.trim();
-    const phone = document.getElementById('regPhone').value.trim();
+    const phone = document.getElementById('regPhone').value.trim().replace(/[\s()-]/g,'');
     const password = document.getElementById('regPassword').value;
     const inputReferCode = document.getElementById('regReferCode').value.trim().toUpperCase();
     const msg = document.getElementById('regMsg');
 
-    if(!name){ msg.textContent = 'দয়া করে আপনার নাম লিখুন।'; return; }
-    if(!phone || phone.length < 10){ msg.textContent = 'সঠিক মোবাইল নম্বর দিন।'; return; }
-    if(!password || password.length < 6){ msg.textContent = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।'; return; }
+    if(!name){ msg.textContent = (({bn:'দয়া করে আপনার নাম লিখুন।',en:'Please enter your name.',hi:'कृपया अपना नाम लिखें।'})[document.getElementById('authLanguage')?.value||'bn']); return; }
+    if(!phone || phone.replace(/\D/g,'').length < 10){ msg.textContent = (({bn:'সঠিক মোবাইল নম্বর দিন।',en:'Enter a valid mobile number.',hi:'सही मोबाइल नंबर दर्ज करें।'})[document.getElementById('authLanguage')?.value||'bn']); return; }
+    if(!password || password.length < 6){ msg.textContent = (({bn:'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।',en:'Password must be at least 6 characters.',hi:'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।'})[document.getElementById('authLanguage')?.value||'bn']); return; }
 
     if(usersDb[phone]){
         msg.textContent = 'এই নম্বর দিয়ে ইতিমধ্যে একটি একাউন্ট রয়েছে।';
@@ -2080,9 +2139,12 @@ function updateTimerDisplay(){
     if(timerEl) timerEl.textContent = displayStr;
 }
 
+let selectedDepositChannel='bKash Send Money';
+function selectDepositChannel(name,el){selectedDepositChannel=name;document.querySelectorAll('#depositModal .channel-card').forEach(b=>b.classList.remove('active'));if(el)el.classList.add('active');const note=document.getElementById('depositMethod');if(note)note.textContent='Selected: '+demoDepositMethod+' · '+name;}
+
 function selectMethod(method){
     demoDepositMethod=method;
-    document.getElementById('depositMethod').textContent='Selected: '+method;
+    document.getElementById('depositMethod').textContent='Selected: '+method+' · '+(selectedDepositChannel||'Send Money');
     document.querySelectorAll('#depositModal .payment-logo').forEach(b=>b.classList.remove('active'));
     const id={bKash:'depositMethodBkash',Nagad:'depositMethodNagad',Rocket:'depositMethodRocket'}[method];
     document.getElementById(id).classList.add('active');
@@ -2096,12 +2158,14 @@ function setDepositAmount(amount){document.getElementById('depositAmount').value
 function submitDemoDeposit(){
     const amount=Number(document.getElementById('depositAmount').value);
     const sender=document.getElementById('senderNum').value.trim();
-    const tx=document.getElementById('depositTx').value.trim().toUpperCase();
+    const tx=document.getElementById('depositTx').value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0,11);
+    document.getElementById('depositTx').value = tx;
     const msg=document.getElementById('depositMsg');
     
     if(!Number.isFinite(amount)||amount<100||amount>5000){msg.textContent='Deposit amount অবশ্যই ৳100 থেকে ৳5,000 হতে হবে।';return}
     if(!sender){msg.textContent='আপনার প্রেরক নম্বর দিন।';return}
-    if(!tx){msg.textContent='Transaction ID দিন।';return}
+    if(!tx){msg.textContent='Transaction ID দিন (শুধু A-Z ও 0-9)।';return}
+    if(!/^[A-Z0-9]{1,11}$/.test(tx)){msg.textContent='Transaction ID-তে শুধু ইংরেজি বড় হাতের অক্ষর ও সংখ্যা দিন; সর্বোচ্চ ১১টি অক্ষর।';return}
 
     let freshDb = JSON.parse(localStorage.getItem('aviator_full_db')) || globalDb;
     
@@ -2125,6 +2189,7 @@ function submitDemoDeposit(){
         id: Date.now(),
         userPhone: currentUserPhone,
         method: demoDepositMethod,
+        channel: selectedDepositChannel || 'Send Money',
         sender: sender,
         amount: total,
         baseAmount: amount,
@@ -2873,7 +2938,7 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
       if(g && g.active!==false && safeUrl(g.url)) list.push({id,...g});
     });
     list.sort((a,b)=>Number(a.order||0)-Number(b.order||0)||Number(a.createdAt||0)-Number(b.createdAt||0));
-    if(title)title.style.display=list.length?'block':'none';
+    if(title){title.style.display=list.length?'block':'none';title.textContent='🎮 সব গেম ('+list.length+')';}
     grid.innerHTML=list.map(g=>{
       const image=safeUrl(g.image)||FALLBACK_THUMB;
       return `<button type="button" class="ug-card" data-game-id="${esc(g.id)}">
@@ -3083,6 +3148,91 @@ onValue(ref(db,'settings/apkUpdate'),s=>{latest=s.val();if(!latest||latest.activ
 document.getElementById('apkUpdateLater').addEventListener('click',()=>overlay.classList.remove('open'));
 window.addEventListener('load',()=>setTimeout(maybeShow,1800));
 const authScreen=document.getElementById('authScreen');if(authScreen&&window.MutationObserver){new MutationObserver(()=>maybeShow()).observe(authScreen,{attributes:true,attributeFilter:['class']});}
+</script>
+
+
+<style id="bd77q-game-control-style">
+#bd77qGameControlBar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 8px);left:0;right:0;z-index:1000000;display:none;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px;padding:10px 6px 8px;background:rgba(3,4,24,.97);border-bottom:1px solid #252746;box-shadow:0 5px 18px #0008;color:#fff;font-family:Arial,sans-serif}
+#bd77qGameControlBar.open{display:grid}
+#bd77qGameControlBar button{border:0;background:transparent;color:#fff;min-width:0;min-height:60px;padding:4px 1px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;line-height:1.15;cursor:pointer}
+#bd77qGameControlBar .bd77q-icon{font-size:30px;line-height:1.05;font-weight:500}
+#bd77qGameControlBar button:active{opacity:.65;transform:scale(.97)}
+#bd77qGameControlBar button span:last-child{white-space:normal}
+#universalGamePlayerModal.show{padding-top:96px!important;box-sizing:border-box}
+@media(max-width:380px){#bd77qGameControlBar{padding-left:2px;padding-right:2px}#bd77qGameControlBar .bd77q-icon{font-size:26px}#bd77qGameControlBar button{font-size:11px}}
+</style>
+<nav id="bd77qGameControlBar" aria-label="Game controls">
+  <button type="button" id="bd77qControlBack"><span class="bd77q-icon">←</span><span>Back</span></button>
+  <button type="button" id="bd77qControlFavorites"><span class="bd77q-icon" style="color:#ff4778">♥</span><span>Favorites</span></button>
+  <button type="button" id="bd77qControlSearch"><span class="bd77q-icon">⌕</span><span>Search</span></button>
+  <button type="button" id="bd77qControlHome"><span class="bd77q-icon">⌂</span><span>Home</span></button>
+  <button type="button" id="bd77qControlFullscreen"><span class="bd77q-icon">⛶</span><span>Fullscreen</span></button>
+</nav>
+<script id="bd77q-game-control-script">
+(function(){
+  const bar=()=>document.getElementById('bd77qGameControlBar');
+  const modal=()=>document.getElementById('universalGamePlayerModal');
+  const frame=()=>document.getElementById('universalGameFrame');
+  function refresh(){const m=modal();if(bar()&&m)bar().classList.toggle('open',m.classList.contains('show'));}
+  function close(){if(typeof window.bd77qCloseUniversalGame==='function')window.bd77qCloseUniversalGame();refresh();}
+  document.getElementById('bd77qControlBack')?.addEventListener('click',close);
+  document.getElementById('bd77qControlHome')?.addEventListener('click',function(){close();if(typeof window.showScreen==='function')window.showScreen('homeScreen');});
+  document.getElementById('bd77qControlFavorites')?.addEventListener('click',function(){
+    close();
+    if(typeof window.showScreen==='function')window.showScreen('homeScreen');
+    setTimeout(function(){
+      const fav=document.querySelector('[data-filter="favorites"]');
+      if(fav&&typeof window.setVipGameFilter==='function')window.setVipGameFilter('favorites',fav);
+      else {const section=document.querySelector('[data-filter="favorites"]');if(section)section.click();}
+      const target=document.querySelector('[data-filter="favorites"]');if(target)target.scrollIntoView({behavior:'smooth',block:'center'});
+    },100);
+  });
+  document.getElementById('bd77qControlSearch')?.addEventListener('click',function(){
+    close();if(typeof window.showScreen==='function')window.showScreen('homeScreen');
+    setTimeout(function(){const input=document.getElementById('homeGameSearch');if(input){input.focus();input.scrollIntoView({behavior:'smooth',block:'center'});}},120);
+  });
+  document.getElementById('bd77qControlFullscreen')?.addEventListener('click',async function(){
+    const f=frame();const target=f||modal();try{if(document.fullscreenElement){await document.exitFullscreen();}else if(target&&target.requestFullscreen){await target.requestFullscreen();}else if(target&&target.webkitRequestFullscreen){target.webkitRequestFullscreen();}}catch(e){console.warn('Fullscreen is not available in this WebView.',e);}
+  });
+  const originalOpen=window.bd77qOpenUniversalGame;
+  if(typeof originalOpen==='function'&&!originalOpen.__controlsWrapped){
+    const wrapped=function(){const result=originalOpen.apply(this,arguments);setTimeout(refresh,40);return result;};
+    wrapped.__controlsWrapped=true;window.bd77qOpenUniversalGame=wrapped;
+  }
+  const originalClose=window.bd77qCloseUniversalGame;
+  if(typeof originalClose==='function'&&!originalClose.__controlsWrapped){
+    const wrappedClose=function(){const result=originalClose.apply(this,arguments);refresh();return result;};
+    wrappedClose.__controlsWrapped=true;window.bd77qCloseUniversalGame=wrappedClose;
+  }
+  document.addEventListener('click',function(e){if(e.target.closest('#universalGameClose'))setTimeout(refresh,30);});
+  const observer=new MutationObserver(refresh);
+  document.addEventListener('DOMContentLoaded',function(){const m=modal();if(m)observer.observe(m,{attributes:true,attributeFilter:['class']});refresh();});
+  if(document.readyState!=='loading'){const m=modal();if(m)observer.observe(m,{attributes:true,attributeFilter:['class']});refresh();}
+})();
+</script>
+
+
+<script>
+(function(){
+ const dict={bn:{login:'লগইন',register:'রেজিস্ট্রেশন',phone:'মোবাইল নম্বর',password:'পাসওয়ার্ড',name:'আপনার নাম (Nickname)',regpass:'পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)',refer:'রেফার কোড (ঐচ্ছিক)',create:'একাউন্ট তৈরি করুন',loginbtn:'লগইন করুন',nameph:'আপনার নাম লিখুন',passph:'নতুন পাসওয়ার্ড দিন',referph:'বন্ধুর রেফার কোড দিন (যদি থাকে)',needname:'দয়া করে আপনার নাম লিখুন।',needphone:'সঠিক মোবাইল নম্বর দিন।',needpass:'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।',exists:'এই নম্বর দিয়ে ইতিমধ্যে একটি একাউন্ট রয়েছে।'},en:{login:'Login',register:'Register',phone:'Mobile number',password:'Password',name:'Your name (Nickname)',regpass:'Password (at least 6 characters)',refer:'Referral code (optional)',create:'Create account',loginbtn:'Log in',nameph:'Enter your name',passph:'Enter a new password',referph:'Enter friend referral code (if any)',needname:'Please enter your name.',needphone:'Enter a valid mobile number.',needpass:'Password must be at least 6 characters.',exists:'An account already exists with this number.'},hi:{login:'लॉगिन',register:'रजिस्ट्रेशन',phone:'मोबाइल नंबर',password:'पासवर्ड',name:'आपका नाम (Nickname)',regpass:'पासवर्ड (कम से कम 6 अक्षर)',refer:'रेफरल कोड (वैकल्पिक)',create:'खाता बनाएँ',loginbtn:'लॉगिन करें',nameph:'अपना नाम लिखें',passph:'नया पासवर्ड दर्ज करें',referph:'मित्र का रेफरल कोड (यदि हो)',needname:'कृपया अपना नाम लिखें।',needphone:'सही मोबाइल नंबर दर्ज करें।',needpass:'पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।',exists:'इस नंबर से पहले से एक खाता मौजूद है।'}};
+ window.changeAuthLanguage=function(lang){const d=dict[lang]||dict.bn; const set=(id,t)=>{const e=document.getElementById(id);if(e)e.textContent=t};
+ set('tabLoginBtn',d.login);set('tabRegisterBtn',d.register);
+ const labels=document.querySelectorAll('#authScreen label'); const texts=lang==='bn'?['🌐 Language / ভাষা / भाषा','মোবাইল নম্বর','পাসওয়ার্ড','আপনার নাম (Nickname)','মোবাইল নম্বর','পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)','রেফার কোড (ঐচ্ছিক)']:lang==='en'?['🌐 Language / ভাষা / भाषा','Mobile number','Password','Your name (Nickname)','Mobile number','Password (at least 6 characters)','Referral code (optional)']:['🌐 Language / ভাষা / भाषा','मोबाइल नंबर','पासवर्ड','आपका नाम (Nickname)','मोबाइल नंबर','पासवर्ड (कम से कम 6 अक्षर)','रेफरल कोड (वैकल्पिक)']; labels.forEach((e,i)=>{if(texts[i])e.textContent=texts[i]});
+ const vals={regName:d.nameph,regPassword:d.passph,regReferCode:d.referph,loginPhone:lang==='en'?'01XXXXXXXXX':'01XXXXXXXXX',loginPassword:d.passph};Object.keys(vals).forEach(id=>{const e=document.getElementById(id);if(e)e.placeholder=vals[id]});set('regMsg','');set('loginMsg','');
+ document.documentElement.lang=lang;
+ };
+ // Community links configured in Admin > Community Links, synced through Firebase RTDB.
+ try{const cfg={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js').then(async m=>{const app=m.getApps().length?m.getApp():m.initializeApp(cfg);const dbm=await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js');dbm.onValue(dbm.ref(dbm.getDatabase(app),'settings/communityLinks'),s=>{const v=s.val()||{};[['telecomLink',v.telecomUrl,v.telecomLabel||'Telecom'],['facebookLink',v.facebookUrl,v.facebookLabel||'Facebook']].forEach(([id,url,label])=>{const e=document.getElementById(id);if(!e)return;if(url&&/^https:\/\//i.test(url)){e.href=url;e.textContent=label;e.style.display='inline-block'}else e.style.display='none'})})})}catch(e){console.warn('Community links unavailable',e)}
+})();
+</script>
+
+
+<!-- Admin-managed informational content for Deposit screen. Demo/information only. -->
+<script type="module" id="dynamicDepositContentSync">
+import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+const c={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+try{const app=getApps().length?getApps()[0]:initializeApp(c),db=getDatabase(app);onValue(ref(db,'settings/depositContent'),s=>{const v=s.val()||{},box=document.getElementById('dynamicDepositContent'),title=document.getElementById('dynamicDepositTitle'),txt=document.getElementById('dynamicDepositText'),a=document.getElementById('dynamicDepositLink');if(!box||!title||!txt||!a)return;const url=String(v.url||'').trim(),active=v.active!==false;box.style.display=active&&(v.title||v.text||url)?'block':'none';title.textContent=String(v.title||'Deposit Information').slice(0,120);txt.textContent=String(v.text||'').slice(0,3000);if(url&&/^https:\/\//i.test(url)){a.href=url;a.textContent=String(v.buttonLabel||'ফাইল / লিংক খুলুন').slice(0,80);a.style.display='inline-block'}else{a.removeAttribute('href');a.style.display='none'}},e=>console.warn('Deposit content sync failed',e));}catch(e){console.warn('Deposit content sync unavailable',e)}
 </script>
 
 </body>
