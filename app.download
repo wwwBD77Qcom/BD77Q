@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাপ ডাউনলোড</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+        }
+        .download-box {
+            background: #ffffff;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+        }
+        .download-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            font-size: 18px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .download-btn:hover {
+            background-color: #218838;
+        }
+        .instructions {
+            text-align: left;
+            font-size: 14px;
+            color: #555;
+            background: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="download-box">
+        <h2>আমাদের অ্যাপ ডাউনলোড করুন</h2>
+        <p>নিরাপদ ও দ্রুত ইনস্টল করতে নিচের বাটনে ক্লিক করুন।</p>
+
+        <!-- এখানে href এর মধ্যে আপনার আপলোড করা APK ফাইলের লিংক বসাবেন -->
+        <a href="https://yourwebsite.com/downloads/app.apk" class="download-btn" download>
+            📥 অ্যাপ ডাউনলোড করুন (APK)
+        </a>
+
+        <div class="instructions">
+            <strong>ইনস্টল করার নিয়ম:</strong>
+            <ol>
+                <li>উপরের বোতামে ক্লিক করে ফাইলটি ডাউনলোড করুন[span_0](start_span)[span_0](end_span)।</li>
+                <li>ফোনের Settings > Security এ গিয়ে "Install unknown apps" অপশনটি চালু করুন[span_1](start_span)[span_1](end_span)।</li>
+                <li>ডাউনলোড করা APK ফাইলটি ইন্সটল করুন[span_2](start_span)[span_2](end_span)।</li>
+            </ol>
+        </div>
+    </div>
+
+</body>
+</html>
