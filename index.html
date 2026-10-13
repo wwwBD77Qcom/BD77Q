@@ -332,13 +332,6 @@
     <div class="hero-gift">🎁</div><div class="hero-star">✦</div>
   </div>
 
-  <!-- APK DOWNLOAD BUTTON -->
-  <div style="text-align: center; margin: 15px 0;">
-    <a href="https://raw.githubusercontent.com/wwwBD77Qcom/BD77Q/main/app.apk" class="download-btn" download style="background: #28a745; color: #ffffff; padding: 12px 24px; border-radius: 25px; font-size: 16px; font-weight: bold; text-decoration: none; display: inline-block; box-shadow: 0 4px 10px rgba(40, 167, 69, 0.4);">
-        📥 অ্যাপ ডাউনলোড (APK)
-    </a>
-  </div>
-
   <div class="vip-promo-row">
     <button class="vip-promo-card p1" type="button" onclick="openProfileModal('depositModal')"><span>DEPOSIT<br>NOW!</span><small>GET MORE BONUS</small><b>→</b></button>
     <button class="vip-promo-card p2" type="button" onclick="openProfileModal('referModal')"><span>INVITE<br>FRIENDS</span><small>GET MORE BONUS</small><b>→</b></button>
@@ -3063,6 +3056,33 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',install);else install();
 })();
+</script>
+
+
+<!-- Admin-controlled APK update popup -->
+<style id="apkUpdateStyles">#apkUpdateOverlay{display:none;position:fixed;inset:0;z-index:1000001;background:#000c;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:18px}#apkUpdateOverlay.open{display:flex}#apkUpdateBox{width:min(100%,390px);background:linear-gradient(145deg,#172b24,#10151e);border:1px solid #34d399;border-radius:18px;padding:22px;color:white;text-align:center;box-shadow:0 20px 70px #0009}#apkUpdateBox h2{color:#6ee7a8;margin:0 0 10px}#apkUpdateDownload{display:block;text-decoration:none;background:#20c878;color:#06170e;font-weight:900;padding:13px;border-radius:11px;margin:16px 0}#apkUpdateLater{background:#303a49;color:white;border:0;border-radius:9px;padding:10px 18px;cursor:pointer}</style>
+<div id="apkUpdateOverlay" role="dialog" aria-modal="true" aria-labelledby="apkUpdateTitle"><div id="apkUpdateBox"><h2 id="apkUpdateTitle">📲 অ্যাপ আপডেট</h2><div id="apkUpdateVersionText" style="font-weight:800;margin-bottom:8px"></div><p id="apkUpdateMessageText" style="white-space:pre-wrap;line-height:1.55"></p><a id="apkUpdateDownload" href="#" target="_blank" rel="noopener">⬇ APK ডাউনলোড করুন</a><button id="apkUpdateLater" type="button">এখন নয়</button></div></div>
+<script type="module" id="apk-update-user-listener">
+import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+const cfg={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+const app=getApps().length?getApps()[0]:initializeApp(cfg),db=getDatabase(app),overlay=document.getElementById('apkUpdateOverlay');
+let latest=null,shown=false,shownVersion='';
+function maybeShow(){
+ if(!latest||latest.active===false||!latest.url||shown)return;
+ const auth=document.getElementById('authScreen');if(auth&&auth.classList.contains('active'))return;
+ const version=String(latest.version||'');
+ if(shownVersion===version&&version)return;
+ document.getElementById('apkUpdateVersionText').textContent=version?'নতুন ভার্সন: '+version:'নতুন ভার্সন উপলব্ধ';
+ document.getElementById('apkUpdateMessageText').textContent=latest.message||'নতুন ভার্সন ডাউনলোড করুন।';
+ const a=document.getElementById('apkUpdateDownload');
+ try{const u=new URL(String(latest.url),location.href);if(!['https:','http:'].includes(u.protocol))return;a.href=u.href;}catch(e){return;}
+ overlay.classList.add('open');shown=true;shownVersion=version;
+}
+onValue(ref(db,'settings/apkUpdate'),s=>{latest=s.val();if(!latest||latest.active===false||!latest.url){overlay.classList.remove('open');shown=false;shownVersion='';return;}maybeShow();},e=>console.warn('APK update sync error',e));
+document.getElementById('apkUpdateLater').addEventListener('click',()=>overlay.classList.remove('open'));
+window.addEventListener('load',()=>setTimeout(maybeShow,1800));
+const authScreen=document.getElementById('authScreen');if(authScreen&&window.MutationObserver){new MutationObserver(()=>maybeShow()).observe(authScreen,{attributes:true,attributeFilter:['class']});}
 </script>
 
 </body>
