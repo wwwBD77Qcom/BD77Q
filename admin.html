@@ -1238,6 +1238,16 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   </div>
 
   <div id="adminDashboardScreen" class="screen">
+    <div class="card" style="border:1px solid #4c5870;margin-bottom:14px">
+      <div style="font-size:18px;font-weight:900;color:#ffcf72;margin-bottom:8px">🔗 Community Links</div>
+      <div class="modal-note" style="margin-bottom:12px">ইউজার অ্যাপের রেজিস্ট্রেশন স্ক্রিনে Telecom ও Facebook লিংক দেখাতে এখানে URL দিন।</div>
+      <label>Telecom Link Label</label><input id="communityTelecomLabel" placeholder="Our Telecom" style="margin-bottom:8px">
+      <label>Telecom URL (https://...)</label><input id="communityTelecomUrl" type="url" placeholder="https://example.com" style="margin-bottom:10px">
+      <label>Facebook Link Label</label><input id="communityFacebookLabel" placeholder="Facebook Page" style="margin-bottom:8px">
+      <label>Facebook URL (https://...)</label><input id="communityFacebookUrl" type="url" placeholder="https://facebook.com/yourpage" style="margin-bottom:10px">
+      <button type="button" class="cash" onclick="saveCommunityLinks()">Save Community Links</button>
+      <div id="communityLinksMsg" class="modal-note" style="margin-top:8px"></div>
+    </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
       <div style="font-size:20px;font-weight:900;color:#ffcf72">🛡️ Admin Dashboard</div>
       <button onclick="adminLogout()" style="width:auto;background:#252b35;color:#ff7888;padding:6px 12px;font-size:11px;border-radius:8px">লগআউট</button>
@@ -1898,6 +1908,85 @@ const cfg={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY',authDomain:'uk77-56f
 const app=getApps().length?getApps()[0]:initializeApp(cfg),db=getDatabase(app);const $=id=>document.getElementById(id);const status=$('apkUpdateStatus');
 get(ref(db,'settings/apkUpdate')).then(s=>{const d=s.val()||{};$('apkUpdateUrl').value=d.url||'';$('apkUpdateVersion').value=d.version||'';$('apkUpdateMessage').value=d.message||'';$('apkUpdateActive').checked=d.active!==false;}).catch(e=>{status.textContent='Firebase settings পড়া যায়নি: '+e.message});
 $('apkUpdateSave').addEventListener('click',async()=>{const url=$('apkUpdateUrl').value.trim(),version=$('apkUpdateVersion').value.trim(),message=$('apkUpdateMessage').value.trim(),active=$('apkUpdateActive').checked;if(active&&!url){status.textContent='আগে APK লিংক দিন।';return}if(url&&!/^https:\/\//i.test(url)){status.textContent='HTTPS লিংক দিন।';return}try{await set(ref(db,'settings/apkUpdate'),{url,version,message,active,updatedAt:Date.now()});status.textContent='✅ সেটিংস সেভ হয়েছে';}catch(e){status.textContent='❌ সেভ হয়নি: '+e.message;}});
+</script>
+
+
+<!-- Deposit UI controls: DEMO ONLY; no live payment processing or real payment credentials -->
+<style>
+#depositUiDemoCard{margin:16px;padding:18px;border:1px solid #4b5563;border-radius:16px;background:linear-gradient(145deg,#151d2b,#0b111b);color:#f8fafc}
+#depositUiDemoCard h3{margin:0 0 8px;font-size:20px}
+#depositUiDemoCard .demo-sub{font-size:12px;line-height:1.6;color:#aab7c8;margin:0 0 14px}
+#depositUiDemoCard .demo-pay-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+#depositUiDemoCard .demo-pay-option{display:flex;align-items:center;gap:9px;padding:12px;background:#0d1420;border:1px solid #303b4d;border-radius:11px}
+#depositUiDemoCard .demo-pay-option input{width:18px;height:18px;accent-color:#20b56b}
+#depositUiDemoCard .demo-pay-option label{margin:0;color:#fff;font-weight:700}
+#depositUiDemoCard .demo-pay-number{width:100%;box-sizing:border-box;background:#080d14;color:#fff;border:1px solid #394150;padding:11px;border-radius:9px;margin:6px 0 12px}
+#depositUiDemoCard .demo-save{background:#20b56b;color:#07140d;font-weight:900;border:0;border-radius:10px;padding:12px 16px;cursor:pointer}
+#depositUiDemoCard .demo-status{font-size:12px;color:#9fe7bd;margin-left:10px}
+@media(max-width:480px){#depositUiDemoCard .demo-pay-grid{grid-template-columns:1fr}}
+</style>
+<section id="depositUiDemoCard" class="card">
+  <h3>💳 Deposit UI Controls — Demo</h3>
+  <p class="demo-sub">এটি শুধু ডিপোজিট স্ক্রিনের ডিজাইন/প্রিভিউ কন্ট্রোল। এখানে কোনো বাস্তব পেমেন্ট, টাকা পাঠানো বা Firebase-এ পেমেন্ট নম্বর সংরক্ষণ করা হয় না। আগের অ্যাডমিন ফিচারগুলো অপরিবর্তিত আছে।</p>
+  <div class="demo-pay-grid">
+    <div class="demo-pay-option"><input id="demoPayBkash" type="checkbox" checked><label for="demoPayBkash">bKash Send Money দেখান</label></div>
+    <div class="demo-pay-option"><input id="demoPayNagad" type="checkbox" checked><label for="demoPayNagad">Nagad Send Money দেখান</label></div>
+    <div class="demo-pay-option"><input id="demoPayRocket" type="checkbox" checked><label for="demoPayRocket">Rocket Cash Out দেখান</label></div>
+    <div class="demo-pay-option"><input id="demoPayVip" type="checkbox" checked><label for="demoPayVip">VIP Channel দেখান</label></div>
+  </div>
+  <label style="display:block;margin-top:16px;color:#cbd5e1">ডেমো পেমেন্ট নম্বর (শুধু স্ক্রিন ডিজাইন পরীক্ষা)</label>
+  <input id="demoPaymentNumber" class="demo-pay-number" value="01XXXXXXXXX" maxlength="11" placeholder="01XXXXXXXXX">
+  <label style="display:block;color:#cbd5e1">ডেমো টাইমার (মিনিট)</label>
+  <input id="demoPaymentMinutes" class="demo-pay-number" type="number" min="1" max="10" value="2">
+  <button id="demoDepositSave" class="demo-save" type="button">💾 Demo UI Settings Save</button><span id="demoDepositStatus" class="demo-status"></span>
+</section>
+<script>
+(function(){
+ const ids=['demoPayBkash','demoPayNagad','demoPayRocket','demoPayVip','demoPaymentNumber','demoPaymentMinutes'];
+ const $=id=>document.getElementById(id);
+ try{
+   const d=JSON.parse(localStorage.getItem('depositUiDemoSettings')||'{}');
+   ids.forEach(id=>{if(d[id]!==undefined && $(id)){if($(id).type==='checkbox')$(id).checked=!!d[id];else $(id).value=d[id];}});
+ }catch(e){}
+ $('demoDepositSave').addEventListener('click',()=>{
+   const d={};ids.forEach(id=>{d[id]=$(id).type==='checkbox'?$(id).checked:$(id).value;});
+   d.demoOnly=true;
+   try{localStorage.setItem('depositUiDemoSettings',JSON.stringify(d));$('demoDepositStatus').textContent='এই ব্রাউজারে ডেমো সেটিংস সেভ হয়েছে।';}
+   catch(e){$('demoDepositStatus').textContent='সেভ করা যায়নি।';}
+ });
+})();
+</script>
+
+
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, get, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+const communityCfg={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+const communityApp=getApps().length?getApp():initializeApp(communityCfg);const communityDb=getDatabase(communityApp);
+window.saveCommunityLinks=async function(){const msg=document.getElementById('communityLinksMsg');const telecomUrl=document.getElementById('communityTelecomUrl').value.trim();const facebookUrl=document.getElementById('communityFacebookUrl').value.trim();if([telecomUrl,facebookUrl].some(x=>x&&!/^https:\/\//i.test(x))){msg.textContent='URL অবশ্যই https:// দিয়ে শুরু হতে হবে।';return;}try{await set(ref(communityDb,'settings/communityLinks'),{telecomLabel:document.getElementById('communityTelecomLabel').value.trim()||'Telecom',telecomUrl,facebookLabel:document.getElementById('communityFacebookLabel').value.trim()||'Facebook',facebookUrl,updatedAt:Date.now()});msg.textContent='Community links saved.';}catch(e){msg.textContent='Save failed: Firebase connection/rules check করুন।';}};
+(async()=>{try{const s=await get(ref(communityDb,'settings/communityLinks'));const v=s.val()||{};document.getElementById('communityTelecomLabel').value=v.telecomLabel||'';document.getElementById('communityTelecomUrl').value=v.telecomUrl||'';document.getElementById('communityFacebookLabel').value=v.facebookLabel||'';document.getElementById('communityFacebookUrl').value=v.facebookUrl||'';}catch(e){}})();
+</script>
+
+
+<!-- Deposit content manager: informational/demo links only; no payment processing -->
+<style>#depositContentManager{border:1px solid #45536a;background:linear-gradient(145deg,#172131,#0c121c);border-radius:16px;padding:18px;margin:16px 0;color:#fff}#depositContentManager h3{margin:0 0 8px}#depositContentManager .hint{font-size:12px;color:#aab7c8;line-height:1.6}#depositContentManager input,#depositContentManager textarea{width:100%;box-sizing:border-box;background:#080d14;color:#fff;border:1px solid #394150;padding:11px;border-radius:9px;margin:6px 0 12px}#depositContentManager button{background:#20b56b;color:#07140d;font-weight:900;border:0;border-radius:10px;padding:12px 16px;cursor:pointer;width:100%}</style>
+<section id="depositContentManager">
+<h3>➕ Deposit Content / Link Manager</h3>
+<p class="hint">এখানে শিরোনাম, নির্দেশনা, HTTPS লিংক বা অনলাইনে থাকা ফাইলের লিংক দিন। সেভ করলে ইউজার অ্যাপের Deposit পেজে একটি তথ্য কার্ড হিসেবে দেখাবে। এটি ডেমো/তথ্য প্রদর্শনের জন্য; কোনো পেমেন্ট প্রসেস করে না।</p>
+<label>কার্ডের শিরোনাম</label><input id="depContentTitle" placeholder="যেমন: Deposit Instructions">
+<label>বিবরণ / নির্দেশনা</label><textarea id="depContentText" placeholder="ইউজারদের জন্য নির্দেশনা লিখুন"></textarea>
+<label>লিংক বা অনলাইন ফাইল URL (ঐচ্ছিক, HTTPS)</label><input id="depContentUrl" type="url" placeholder="https://example.com/instructions.pdf">
+<label>লিংক বাটনের নাম</label><input id="depContentButton" placeholder="ফাইল / লিংক খুলুন">
+<label><input id="depContentActive" type="checkbox" checked style="width:auto;margin-right:8px">Deposit পেজে দেখান</label>
+<button type="button" id="depContentSave">💾 Deposit Content সেভ করুন</button><p id="depContentStatus" class="hint" aria-live="polite"></p>
+</section>
+<script type="module">
+import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+const c={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+const app=getApps().length?getApps()[0]:initializeApp(c),db=getDatabase(app),$=id=>document.getElementById(id),p=ref(db,'settings/depositContent');
+try{const s=await get(p),v=s.val()||{};$('depContentTitle').value=v.title||'';$('depContentText').value=v.text||'';$('depContentUrl').value=v.url||'';$('depContentButton').value=v.buttonLabel||'ফাইল / লিংক খুলুন';$('depContentActive').checked=v.active!==false;}catch(e){$('depContentStatus').textContent='Firebase সেটিংস পড়া যায়নি; Rules/connection দেখুন।'}
+$('depContentSave').addEventListener('click',async()=>{const url=$('depContentUrl').value.trim();if(url&&!/^https:\/\//i.test(url)){$('depContentStatus').textContent='নিরাপদ HTTPS লিংক দিন।';return}const v={title:$('depContentTitle').value.trim()||'Deposit Information',text:$('depContentText').value.trim(),url,buttonLabel:$('depContentButton').value.trim()||'ফাইল / লিংক খুলুন',active:$('depContentActive').checked,updatedAt:Date.now()};try{await set(p,v);$('depContentStatus').textContent='সেভ হয়েছে। ইউজার অ্যাপের Deposit পেজে দেখাতে Firebase Rules-এ read access থাকতে হবে।'}catch(e){$('depContentStatus').textContent='সেভ হয়নি: Firebase permission/connection পরীক্ষা করুন।'}});
 </script>
 
 </body>
