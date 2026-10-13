@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Download</title>
+    <title>BD77Q - App Download</title>
     <style>
         * {
             margin: 0;
@@ -21,7 +21,7 @@
             padding: 15px;
         }
 
-        /* Modal Card Container */
+        /* Card Container */
         .download-card {
             background: #ffffff;
             width: 100%;
@@ -225,7 +225,7 @@
                 <div class="app-title">BD77Q App</div>
             </div>
 
-            <!-- Download Button (Raw Link ব্যবহার করা হয়েছে) -->
+            <!-- Direct APK Download Button -->
             <a href="https://raw.githubusercontent.com/wwwBD77Qcom/BD77Q/main/app.apk" class="download-btn" download>
                 📥 অ্যাপ ডাউনলোড (APK)
             </a>
