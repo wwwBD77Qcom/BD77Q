@@ -139,7 +139,7 @@
         .download-btn {
             display: block;
             width: 100%;
-            background: #3b66ff;
+            background: #28a745;
             color: #ffffff;
             text-align: center;
             padding: 14px;
@@ -147,13 +147,13 @@
             font-size: 16px;
             font-weight: bold;
             text-decoration: none;
-            box-shadow: 0 4px 12px rgba(59, 102, 255, 0.4);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
             margin-bottom: 20px;
             transition: background 0.2s;
         }
 
         .download-btn:hover {
-            background: #2a52e0;
+            background: #218838;
         }
 
         /* Installation Instructions */
@@ -206,7 +206,7 @@
     <div class="download-card">
         <!-- Top Banner -->
         <div class="banner">
-            <a href="#" class="close-btn">&times;</a>
+            <a href="index.html" class="close-btn">&times;</a>
             <h3>App ডাউনলোড করুন</h3>
             <p>এখনই অ্যাপ ডাউনলোড করুন এবং বোনাস জিতে নিন!</p>
         </div>
@@ -225,26 +225,26 @@
                 <div class="app-title">BD77Q App</div>
             </div>
 
-            <!-- Download Button (এখানে আপনার APK ফাইলের নাম বসাবেন) -->
-            <a href="app.apk" class="download-btn" download>
-                ☁️ 👈 অ্যাপ ডাউনলোড করুন
+            <!-- Download Button (Raw Link ব্যবহার করা হয়েছে) -->
+            <a href="https://raw.githubusercontent.com/wwwBD77Qcom/BD77Q/main/app.apk" class="download-btn" download>
+                📥 অ্যাপ ডাউনলোড (APK)
             </a>
 
             <!-- Instructions -->
             <div class="instructions">
                 <h4>Android অ্যাপ ইনস্টল করুন:</h4>
                 <ol>
-                    <li>উপরের বোতামে ক্লিক করে ইনস্টলেশন ফাইল ডাউনলোড করুন[span_1](start_span)[span_1](end_span)।</li>
-                    <li>Settings > Security এ গিয়ে "Install unknown apps" চালু করুন[span_2](start_span)[span_2](end_span)।</li>
-                    <li>ডাউনলোড করা APK ফাইলটি খুলুন এবং স্ক্রিনের নির্দেশনা অনুসরণ করুন[span_3](start_span)[span_3](end_span)।</li>
-                    <li>ইনস্টলেশন সম্পন্ন হলে, হোম স্ক্রিনে অ্যাপটি খুঁজে নিন[span_4](start_span)[span_4](end_span)।</li>
+                    <li>উপরের বোতামে ক্লিক করে ইনস্টলেশন ফাইল ডাউনলোড করুন।</li>
+                    <li>Settings > Security এ গিয়ে "Install unknown apps" চালু করুন।</li>
+                    <li>ডাউনলোড করা APK ফাইলটি খুলুন এবং স্ক্রিনের নির্দেশনা অনুসরণ করুন।</li>
+                    <li>ইনস্টলেশন সম্পন্ন হলে, হোম স্ক্রিনে অ্যাপটি খুঁজে নিন।</li>
                 </ol>
             </div>
 
             <!-- Verified Footer -->
             <div class="verified-badge">
                 <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                Android দ্বারা যাচাই করা হয়েছে, ডাউনলোড ও ইনস্টল করা নিরাপদ[span_5](start_span)[span_5](end_span)।
+                Android দ্বারা যাচাই করা হয়েছে, ডাউনলোড ও ইনস্টল করা নিরাপদ।
             </div>
         </div>
     </div>
