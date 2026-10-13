@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BD77Q - App Download</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #8b0021;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
+
+        /* Card Container */
+        .download-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 420px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            position: relative;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        /* Top Banner */
+        .banner {
+            background: linear-gradient(135deg, #ff1a1a, #990000);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .banner h3 {
+            font-size: 22px;
+            font-weight: bold;
+            color: #ffeb3b;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .banner p {
+            font-size: 13px;
+            color: #fff;
+            margin-top: 4px;
+        }
+
+        /* Close Button Icon */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Content Area */
+        .content {
+            padding: 20px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: #f0f0f0;
+            border-radius: 12px;
+            padding: 3px;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .tab.active {
+            background: #ffffff;
+            color: #000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* App Details Box */
+        .app-info {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 12px 15px;
+            border-radius: 14px;
+            margin-bottom: 15px;
+        }
+
+        .app-icon {
+            width: 50px;
+            height: 50px;
+            background: #990000;
+            color: #ffeb3b;
+            font-weight: bold;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-right: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #222;
+        }
+
+        /* Main Download Button */
+        .download-btn {
+            display: block;
+            width: 100%;
+            background: #28a745;
+            color: #ffffff;
+            text-align: center;
+            padding: 14px;
+            border-radius: 30px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+
+        .download-btn:hover {
+            background: #218838;
+        }
+
+        /* Installation Instructions */
+        .instructions {
+            background: #fdfdfd;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .instructions h4 {
+            font-size: 15px;
+            color: #111;
+            margin-bottom: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Verified Badge */
+        .verified-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+
+        .verified-badge svg {
+            width: 16px;
+            height: 16px;
+            fill: #2e7d32;
+            margin-right: 6px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="download-card">
+        <!-- Top Banner -->
+        <div class="banner">
+            <a href="index.html" class="close-btn">&times;</a>
+            <h3>App ডাউনলোড করুন</h3>
+            <p>এখনই অ্যাপ ডাউনলোড করুন এবং বোনাস জিতে নিন!</p>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active">App ডাউনলোড করুন</div>
+                <div class="tab">দ্রুত ইন্সটল</div>
+            </div>
+
+            <!-- App info -->
+            <div class="app-info">
+                <div class="app-icon">BD77Q</div>
+                <div class="app-title">BD77Q App</div>
+            </div>
+
+            <!-- Direct APK Download Button -->
+            <a href="https://raw.githubusercontent.com/wwwBD77Qcom/BD77Q/main/app.apk" class="download-btn" download>
+                📥 অ্যাপ ডাউনলোড (APK)
+            </a>
+
+            <!-- Instructions -->
+            <div class="instructions">
+                <h4>Android অ্যাপ ইনস্টল করুন:</h4>
+                <ol>
+                    <li>উপরের বোতামে ক্লিক করে ইনস্টলেশন ফাইল ডাউনলোড করুন।</li>
+                    <li>Settings > Security এ গিয়ে "Install unknown apps" চালু করুন।</li>
+                    <li>ডাউনলোড করা APK ফাইলটি খুলুন এবং স্ক্রিনের নির্দেশনা অনুসরণ করুন।</li>
+                    <li>ইনস্টলেশন সম্পন্ন হলে, হোম স্ক্রিনে অ্যাপটি খুঁজে নিন।</li>
+                </ol>
+            </div>
+
+            <!-- Verified Footer -->
+            <div class="verified-badge">
+                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                Android দ্বারা যাচাই করা হয়েছে, ডাউনলোড ও ইনস্টল করা নিরাপদ।
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
