@@ -3221,8 +3221,16 @@ const authScreen=document.getElementById('authScreen');if(authScreen&&window.Mut
  const vals={regName:d.nameph,regPassword:d.passph,regReferCode:d.referph,loginPhone:lang==='en'?'01XXXXXXXXX':'01XXXXXXXXX',loginPassword:d.passph};Object.keys(vals).forEach(id=>{const e=document.getElementById(id);if(e)e.placeholder=vals[id]});set('regMsg','');set('loginMsg','');
  document.documentElement.lang=lang;
  };
- // Community links configured in Admin > Community Links, synced through Firebase RTDB.
- try{const cfg={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js').then(async m=>{const app=m.getApps().length?m.getApp():m.initializeApp(cfg);const dbm=await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js');dbm.onValue(dbm.ref(dbm.getDatabase(app),'settings/communityLinks'),s=>{const v=s.val()||{};[['telecomLink',v.telecomUrl,v.telecomLabel||'Telecom'],['facebookLink',v.facebookUrl,v.facebookLabel||'Facebook']].forEach(([id,url,label])=>{const e=document.getElementById(id);if(!e)return;if(url&&/^https:\/\//i.test(url)){e.href=url;e.textContent=label;e.style.display='inline-block'}else e.style.display='none'})})})}catch(e){console.warn('Community links unavailable',e)}
+ // Community links: live Firebase sync for both login and registration view.
+ (async()=>{try{
+ const cfg={apiKey:'AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgY',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+ const m=await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js');
+ const dbm=await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js');
+ const app=m.getApps().length?m.getApp():m.initializeApp(cfg,'communityLinksUser');
+ const db=dbm.getDatabase(app);
+ const apply=(id,url,label)=>{const e=document.getElementById(id);if(!e)return;const u=String(url||'').trim();if(u&&/^https:\/\//i.test(u)){e.href=u;e.textContent=label||id;e.style.display='inline-flex';e.target='_blank';e.rel='noopener noreferrer'}else{e.removeAttribute('href');e.style.display='none'}};
+ dbm.onValue(dbm.ref(db,'settings/communityLinks'),snap=>{const v=snap.val()||{};apply('telecomLink',v.telecomUrl,v.telecomLabel||'Telegram / Telecom');apply('facebookLink',v.facebookUrl,v.facebookLabel||'Facebook');},err=>console.warn('Community links read failed; check Firebase RTDB rules.',err));
+ }catch(e){console.warn('Community links could not initialize.',e)}})();
 })();
 </script>
 
