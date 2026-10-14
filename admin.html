@@ -60,7 +60,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   import { getDatabase, ref, get, set, update, child, push, remove, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDAJGU2sNTdx7LqS7mpAaZX7sKRM0LrgwY",
+    apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
     authDomain: "uk77-56f6d.firebaseapp.com",
     databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
     projectId: "uk77-56f6d",
@@ -352,6 +352,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   window.loadAdminDashboard = async function() {
       document.getElementById('adminLoginScreen').classList.remove('active');
       document.getElementById('adminDashboardScreen').classList.add('active');
+      if (typeof window.loadWalletOtpSettingsAdmin === 'function') await window.loadWalletOtpSettingsAdmin();
       
       const usersSnap = await get(child(ref(db), 'users'));
       if(usersSnap.exists()){
@@ -1154,6 +1155,51 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   }
 
 
+
+  // ================= Wallet Number OTP Controls =================
+  window.loadWalletOtpSettingsAdmin = async function(){
+    const msg=document.getElementById('walletOtpAdminMsg');
+    try{
+      const snap=await get(ref(db,'settings/walletOtpConfig'));
+      const cfg=snap.exists()?(snap.val()||{}):{gmailEnabled:true,smsEnabled:false};
+      const gmail=document.getElementById('walletOtpGmailEnabled');
+      const sms=document.getElementById('walletOtpSmsEnabled');
+      if(gmail) gmail.checked=cfg.gmailEnabled!==false;
+      if(sms) sms.checked=cfg.smsEnabled===true;
+      if(msg){msg.style.color='#9da7b6';msg.textContent='বর্তমান OTP সেটিংস লোড হয়েছে।';}
+    }catch(e){
+      console.error('Wallet OTP settings load failed:',e);
+      if(msg){msg.style.color='#ff7888';msg.textContent='সেটিংস লোড হয়নি। Firebase Rules/Connection পরীক্ষা করুন।';}
+    }
+  };
+
+  window.saveWalletOtpSettingsAdmin = async function(){
+    const gmail=document.getElementById('walletOtpGmailEnabled');
+    const sms=document.getElementById('walletOtpSmsEnabled');
+    const msg=document.getElementById('walletOtpAdminMsg');
+    if(!gmail||!sms||!msg)return;
+    if(!gmail.checked&&!sms.checked){
+      if(!confirm('Gmail এবং SMS—দুই ধরনের OTP-ই বন্ধ করতে চান?')) return;
+    }
+    try{
+      await set(ref(db,'settings/walletOtpConfig'),{
+        gmailEnabled:gmail.checked,
+        smsEnabled:sms.checked,
+        otpLifetimeSeconds:60,
+        maxOtpSends:4,
+        otpWindowHours:24,
+        updatedAt:Date.now()
+      });
+      msg.style.color='#7ed6a7';
+      msg.textContent='✅ OTP সেটিংস Firebase-এ সেভ হয়েছে। ইউজার অ্যাপ সেটিংসটি পড়বে।';
+    }catch(e){
+      console.error('Wallet OTP settings save failed:',e);
+      msg.style.color='#ff7888';
+      msg.textContent='সেভ করা যায়নি। Firebase Rules/Connection পরীক্ষা করুন।';
+    }
+  };
+  // ================= End Wallet Number OTP Controls =================
+
   // ================= REALTIME ADMIN SYNC BRIDGE =================
   // Existing admin functions are preserved. These listeners only refresh
   // the existing dashboard when the User App/Admin changes shared Firebase data.
@@ -1256,6 +1302,29 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
     <div class="stat-box">
       <div style="font-size:13px;color:#9da7b6">মোট রেজিস্টার্ড ইউজার</div>
       <div class="stat-value" id="totalUsersCount">0</div>
+    </div>
+
+
+    <!-- Wallet OTP Control -->
+    <div class="card" id="walletOtpAdminCard" style="border:1px solid #3c5b78;background:linear-gradient(145deg,#191f29,#111a25)">
+      <div style="font-size:17px;font-weight:900;margin-bottom:8px;color:#8fd3ff">🔐 Wallet Number OTP Control</div>
+      <div class="modal-note" style="margin-bottom:14px">ইউজারের Wallet নম্বর পরিবর্তনের OTP পদ্ধতি এখান থেকে চালু বা বন্ধ করুন। পরিবর্তন Firebase-এ সেভ হবে।</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <label style="display:flex;gap:9px;align-items:center;background:#11161e;border:1px solid #303846;border-radius:10px;padding:12px;color:#fff;font-size:13px">
+          <input id="walletOtpGmailEnabled" type="checkbox" style="width:20px;height:20px;margin:0;accent-color:#20b56b">
+          <span><b>📧 Gmail OTP</b><br><small style="color:#9da7b6">ইমেইলে কোড পাঠানো</small></span>
+        </label>
+        <label style="display:flex;gap:9px;align-items:center;background:#11161e;border:1px solid #303846;border-radius:10px;padding:12px;color:#fff;font-size:13px">
+          <input id="walletOtpSmsEnabled" type="checkbox" style="width:20px;height:20px;margin:0;accent-color:#20b56b">
+          <span><b>📱 SMS OTP</b><br><small style="color:#9da7b6">মোবাইল নম্বরে কোড</small></span>
+        </label>
+      </div>
+      <div class="stat-box" style="margin-top:10px;margin-bottom:10px;text-align:left">
+        <div style="font-size:12px;color:#9da7b6">নিরাপত্তা সীমা</div>
+        <div style="font-size:13px;line-height:1.8;margin-top:5px">⏱️ OTP মেয়াদ: <b>৬০ সেকেন্ড</b><br>📨 পাঠানোর সীমা: <b>২৪ ঘণ্টায় সর্বোচ্চ ৪ বার</b></div>
+      </div>
+      <button type="button" class="cash" onclick="saveWalletOtpSettingsAdmin()">💾 OTP সেটিংস সেভ করুন</button>
+      <div id="walletOtpAdminMsg" class="modal-note" style="margin-top:8px"></div>
     </div>
 
     <div class="card">
