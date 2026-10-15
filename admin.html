@@ -1202,7 +1202,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   // ================= End Wallet Number OTP Controls =================
 
 
-  // ================= Healthcare Home Button Controls =================
+  // ================= Profile Healthcare / Customer Service Button Controls =================
   (function setupHealthcareMutualSwitches(){
     const oldBox=document.getElementById('healthcareExistingEnabled');
     const tawkBox=document.getElementById('healthcareTawkEnabled');
@@ -1226,10 +1226,10 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
     const tawk=!!tawkBox.checked, existing=!!oldBox.checked&&!tawk;
     try{
       await set(ref(db,'settings/healthcareConfig'),{existingEnabled:existing,tawkEnabled:tawk,updatedAt:Date.now()});
-      msg.style.color='#7ed6a7';msg.textContent=tawk?'✅ নতুন Tawk.to Healthcare চালু হয়েছে। ইউজার অ্যাপের হোমপেজে দেখা যাবে।':existing?'✅ আগের Help Care চালু হয়েছে। ইউজার অ্যাপের হোমপেজে দেখা যাবে.':'✅ দুইটি Healthcare-ই বন্ধ করা হয়েছে।';
+      msg.style.color='#7ed6a7';msg.textContent=tawk?'✅ Tawk.to Healthcare চালু হয়েছে। ইউজার অ্যাপের প্রোফাইলে Customer Service-এর জায়গায় দেখাবে।':existing?'✅ Customer Service চালু হয়েছে। ইউজার অ্যাপের প্রোফাইলে দেখাবে।':'✅ Customer Service ও Tawk.to Healthcare দুটোই বন্ধ; প্রোফাইলে কোনোটিই দেখাবে না।';
     }catch(e){console.error('Healthcare settings save failed:',e);msg.style.color='#ff7888';msg.textContent='সেভ করা যায়নি। Firebase Rules/Connection পরীক্ষা করুন।';}
   };
-  // ================= End Healthcare Home Button Controls =================
+  // ================= End Profile Healthcare / Customer Service Button Controls =================
 
   // ================= REALTIME ADMIN SYNC BRIDGE =================
   // Existing admin functions are preserved. These listeners only refresh
@@ -1358,13 +1358,13 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       <div id="walletOtpAdminMsg" class="modal-note" style="margin-top:8px"></div>
     </div>
 
-    <!-- Healthcare button selector for User App home page -->
+    <!-- Profile slot selector: Customer Service or Tawk.to Healthcare -->
     <div class="card" id="healthcareAdminControlCard" style="border:1px solid #365c72;background:linear-gradient(145deg,#17232e,#11161e)">
       <div style="font-size:17px;font-weight:900;margin-bottom:8px;color:#7ed6a7">🩺 Healthcare Button Control</div>
-      <div class="modal-note" style="margin-bottom:12px">হোমপেজে একবারে একটি Healthcare সিস্টেম দেখাবে। আগের Help Care বা নতুন Tawk.to বেছে নিন; দুটো বন্ধ করলে হোমপেজে কোনোটিই দেখাবে না। প্রোফাইলের আগের Customer Service বাটন অপরিবর্তিত থাকবে।</div>
+      <div class="modal-note" style="margin-bottom:12px">ইউজার অ্যাপের প্রোফাইলের আগের Customer Service বাটনের জায়গায় একবারে একটি বাটন দেখাবে: Customer Service অথবা Tawk.to Healthcare। যেটি চালু করবেন সেটিই দেখাবে; দুটো বন্ধ করলে ওই জায়গায় কোনোটিই দেখাবে না। হোম পেজে কোনো বাটন দেখাবে না।</div>
       <label style="display:flex;gap:9px;align-items:center;background:#11161e;border:1px solid #303846;border-radius:10px;padding:12px;color:#fff;font-size:13px;margin-bottom:8px">
         <input id="healthcareExistingEnabled" type="checkbox" style="width:20px;height:20px;margin:0;accent-color:#20b56b">
-        <span><b>🆘 আগের Help Care</b><br><small style="color:#9da7b6">আগের Customer Service সিস্টেম</small></span>
+        <span><b>☎️ Customer Service</b><br><small style="color:#9da7b6">প্রোফাইলের আগের সার্ভিস বাটন</small></span>
       </label>
       <label style="display:flex;gap:9px;align-items:center;background:#11161e;border:1px solid #303846;border-radius:10px;padding:12px;color:#fff;font-size:13px;margin-bottom:10px">
         <input id="healthcareTawkEnabled" type="checkbox" style="width:20px;height:20px;margin:0;accent-color:#20b56b">
