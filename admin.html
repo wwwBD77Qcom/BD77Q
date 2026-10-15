@@ -353,6 +353,7 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       document.getElementById('adminLoginScreen').classList.remove('active');
       document.getElementById('adminDashboardScreen').classList.add('active');
       if (typeof window.loadWalletOtpSettingsAdmin === 'function') await window.loadWalletOtpSettingsAdmin();
+      if(typeof loadHealthcareSettingsAdmin==='function') loadHealthcareSettingsAdmin();
       
       const usersSnap = await get(child(ref(db), 'users'));
       if(usersSnap.exists()){
@@ -1200,6 +1201,36 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   };
   // ================= End Wallet Number OTP Controls =================
 
+
+  // ================= Healthcare Home Button Controls =================
+  (function setupHealthcareMutualSwitches(){
+    const oldBox=document.getElementById('healthcareExistingEnabled');
+    const tawkBox=document.getElementById('healthcareTawkEnabled');
+    if(oldBox)oldBox.addEventListener('change',()=>{if(oldBox.checked&&tawkBox)tawkBox.checked=false;});
+    if(tawkBox)tawkBox.addEventListener('change',()=>{if(tawkBox.checked&&oldBox)oldBox.checked=false;});
+  })();
+  window.loadHealthcareSettingsAdmin=async function(){
+    const msg=document.getElementById('healthcareAdminMsg');
+    try{
+      const snap=await get(ref(db,'settings/healthcareConfig'));
+      const v=snap.exists()?(snap.val()||{}):{existingEnabled:true,tawkEnabled:false};
+      const oldBox=document.getElementById('healthcareExistingEnabled'),tawkBox=document.getElementById('healthcareTawkEnabled');
+      if(oldBox)oldBox.checked=v.existingEnabled===true&&v.tawkEnabled!==true;
+      if(tawkBox)tawkBox.checked=v.tawkEnabled===true;
+      if(msg){msg.style.color='#9da7b6';msg.textContent='বর্তমান Healthcare সেটিংস লোড হয়েছে।';}
+    }catch(e){console.error('Healthcare settings load failed:',e);if(msg){msg.style.color='#ff7888';msg.textContent='সেটিংস লোড হয়নি। Firebase connection/rules পরীক্ষা করুন।';}}
+  };
+  window.saveHealthcareSettingsAdmin=async function(){
+    const oldBox=document.getElementById('healthcareExistingEnabled'),tawkBox=document.getElementById('healthcareTawkEnabled'),msg=document.getElementById('healthcareAdminMsg');
+    if(!oldBox||!tawkBox||!msg)return;
+    const tawk=!!tawkBox.checked, existing=!!oldBox.checked&&!tawk;
+    try{
+      await set(ref(db,'settings/healthcareConfig'),{existingEnabled:existing,tawkEnabled:tawk,updatedAt:Date.now()});
+      msg.style.color='#7ed6a7';msg.textContent=tawk?'✅ নতুন Tawk.to Healthcare চালু হয়েছে। ইউজার অ্যাপের হোমপেজে দেখা যাবে।':existing?'✅ আগের Help Care চালু হয়েছে। ইউজার অ্যাপের হোমপেজে দেখা যাবে.':'✅ দুইটি Healthcare-ই বন্ধ করা হয়েছে।';
+    }catch(e){console.error('Healthcare settings save failed:',e);msg.style.color='#ff7888';msg.textContent='সেভ করা যায়নি। Firebase Rules/Connection পরীক্ষা করুন।';}
+  };
+  // ================= End Healthcare Home Button Controls =================
+
   // ================= REALTIME ADMIN SYNC BRIDGE =================
   // Existing admin functions are preserved. These listeners only refresh
   // the existing dashboard when the User App/Admin changes shared Firebase data.
@@ -1325,6 +1356,22 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
       </div>
       <button type="button" class="cash" onclick="saveWalletOtpSettingsAdmin()">💾 OTP সেটিংস সেভ করুন</button>
       <div id="walletOtpAdminMsg" class="modal-note" style="margin-top:8px"></div>
+    </div>
+
+    <!-- Healthcare button selector for User App home page -->
+    <div class="card" id="healthcareAdminControlCard" style="border:1px solid #365c72;background:linear-gradient(145deg,#17232e,#11161e)">
+      <div style="font-size:17px;font-weight:900;margin-bottom:8px;color:#7ed6a7">🩺 Healthcare Button Control</div>
+      <div class="modal-note" style="margin-bottom:12px">হোমপেজে একবারে একটি Healthcare সিস্টেম দেখাবে। আগের Help Care বা নতুন Tawk.to বেছে নিন; দুটো বন্ধ করলে হোমপেজে কোনোটিই দেখাবে না। প্রোফাইলের আগের Customer Service বাটন অপরিবর্তিত থাকবে।</div>
+      <label style="display:flex;gap:9px;align-items:center;background:#11161e;border:1px solid #303846;border-radius:10px;padding:12px;color:#fff;font-size:13px;margin-bottom:8px">
+        <input id="healthcareExistingEnabled" type="checkbox" style="width:20px;height:20px;margin:0;accent-color:#20b56b">
+        <span><b>🆘 আগের Help Care</b><br><small style="color:#9da7b6">আগের Customer Service সিস্টেম</small></span>
+      </label>
+      <label style="display:flex;gap:9px;align-items:center;background:#11161e;border:1px solid #303846;border-radius:10px;padding:12px;color:#fff;font-size:13px;margin-bottom:10px">
+        <input id="healthcareTawkEnabled" type="checkbox" style="width:20px;height:20px;margin:0;accent-color:#20b56b">
+        <span><b>🩺 নতুন Tawk.to Healthcare</b><br><small style="color:#9da7b6">আপনার দেওয়া Live Chat</small></span>
+      </label>
+      <button type="button" class="cash" onclick="saveHealthcareSettingsAdmin()">💾 Healthcare সেটিংস সেভ করুন</button>
+      <div id="healthcareAdminMsg" class="modal-note" style="margin-top:8px"></div>
     </div>
 
     <div class="card">
