@@ -584,9 +584,7 @@
         <button class="account-menu-item" onclick="openProfileModal('referModal');switchReferTab('earnings')"><span class="account-menu-icon">🪙</span><span class="account-menu-text">Rebate</span></button>
         <button class="account-menu-item" onclick="openProfileModal('internationalSmsModal')"><span class="account-menu-icon">@</span><span class="account-menu-text">Internal<br>Message</span></button>
         <button class="account-menu-item" onclick="openAccountFeature('suggestion')"><span class="account-menu-icon">💬</span><span class="account-menu-text">Suggestion</span></button>
-        <button id="profileHealthcareExistingButton" class="account-menu-item" style="display:none" onclick="openHelpCare()"><span class="account-menu-icon">🆘</span><span class="account-menu-text">Help<br>Care</span></button>
-        <button id="profileHealthcareTawkButton" class="account-menu-item" style="display:none" onclick="openNewHealthcare()"><span class="account-menu-icon">🩺</span><span class="account-menu-text">Healthcare</span></button>
-        <button class="account-menu-item" onclick="openHelpCare()"><span class="account-menu-icon">☎️</span><span class="account-menu-text">Customer<br>Service</span></button>
+        <button id="profileHealthcareButton" class="account-menu-item" style="display:none" type="button"><span class="account-menu-icon" id="profileHealthcareButtonIcon">☎️</span><span class="account-menu-text" id="profileHealthcareButtonText">Customer<br>Service</span></button>
         <button class="account-menu-item" onclick="handleLogout()"><span class="account-menu-icon">↪</span><span class="account-menu-text">Logout</span></button>
       </div>
       <!-- Account quick note hidden as requested -->
@@ -3417,12 +3415,27 @@ try{
  const app=getApps().find(x=>x.name==='[DEFAULT]')||initializeApp(cfg),db=getDatabase(app);
  onValue(ref(db,'settings/healthcareConfig'),snap=>{
    const v=snap.exists()?(snap.val()||{}):{existingEnabled:true,tawkEnabled:false};
-   const existing=v.existingEnabled===true, tawk=v.tawkEnabled===true;
-   // Healthcare selection appears only inside the Profile / Member Center menu.
-   const oldButton=document.getElementById('profileHealthcareExistingButton');
-   const tawkButton=document.getElementById('profileHealthcareTawkButton');
-   if(oldButton)oldButton.style.display=(existing&&!tawk)?'flex':'none';
-   if(tawkButton)tawkButton.style.display=tawk?'flex':'none';
+   const customerService=v.existingEnabled===true, tawk=v.tawkEnabled===true;
+   // One shared Profile / Member Center slot: Tawk.to Healthcare or Customer Service, never both.
+   const button=document.getElementById('profileHealthcareButton');
+   const icon=document.getElementById('profileHealthcareButtonIcon');
+   const label=document.getElementById('profileHealthcareButtonText');
+   if(button){
+     if(tawk){
+       button.style.display='flex';
+       button.onclick=()=>openNewHealthcare();
+       if(icon)icon.textContent='🩺';
+       if(label)label.textContent='Healthcare';
+     }else if(customerService){
+       button.style.display='flex';
+       button.onclick=()=>openHelpCare();
+       if(icon)icon.textContent='☎️';
+       if(label)label.innerHTML='Customer<br>Service';
+     }else{
+       button.style.display='none';
+       button.onclick=null;
+     }
+   }
  },err=>console.warn('Healthcare settings sync failed:',err));
 }catch(e){console.warn('Healthcare settings initialization failed:',e)}
 </script>
