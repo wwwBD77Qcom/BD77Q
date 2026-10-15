@@ -469,6 +469,9 @@
       <div id="adminDynamicGamesTitle" class="dynamic-admin-games-title" style="display:none">🎮 সব গেম (0)</div>
       <div class="vip-games-grid" id="adminDynamicGamesGrid"></div>
 
+  <!-- Healthcare buttons are intentionally not shown on the Home page. -->
+
+
   <div class="vip-quick-grid" style="display:none !important">
     <button onclick="openProfileModal('referModal')"><span>♙</span><b>Invite Friends</b><small>Referral & 3% Rebate</small></button>
     <button onclick="openPromotionCenter()"><span>🎁</span><b>Promotion</b><small>Bonus & Offers</small></button>
@@ -581,6 +584,8 @@
         <button class="account-menu-item" onclick="openProfileModal('referModal');switchReferTab('earnings')"><span class="account-menu-icon">🪙</span><span class="account-menu-text">Rebate</span></button>
         <button class="account-menu-item" onclick="openProfileModal('internationalSmsModal')"><span class="account-menu-icon">@</span><span class="account-menu-text">Internal<br>Message</span></button>
         <button class="account-menu-item" onclick="openAccountFeature('suggestion')"><span class="account-menu-icon">💬</span><span class="account-menu-text">Suggestion</span></button>
+        <button id="profileHealthcareExistingButton" class="account-menu-item" style="display:none" onclick="openHelpCare()"><span class="account-menu-icon">🆘</span><span class="account-menu-text">Help<br>Care</span></button>
+        <button id="profileHealthcareTawkButton" class="account-menu-item" style="display:none" onclick="openNewHealthcare()"><span class="account-menu-icon">🩺</span><span class="account-menu-text">Healthcare</span></button>
         <button class="account-menu-item" onclick="openHelpCare()"><span class="account-menu-icon">☎️</span><span class="account-menu-text">Customer<br>Service</span></button>
         <button class="account-menu-item" onclick="handleLogout()"><span class="account-menu-icon">↪</span><span class="account-menu-text">Logout</span></button>
       </div>
@@ -3333,6 +3338,93 @@ try{
   activeOtp=null;return true;
  };
 }catch(e){console.error('Wallet Gmail OTP initialization failed',e)}
+</script>
+
+
+
+<!-- NEW HEALTHCARE CARD + CANCELABLE MODAL (separate from existing Help Care) -->
+<style id="newHealthcareCardStyles">
+.new-healthcare-card{margin:12px;padding:14px;border-radius:16px;border:1px solid #365c72;background:linear-gradient(135deg,#132d38,#151a25);display:flex;align-items:center;justify-content:space-between;gap:12px;box-shadow:0 8px 22px rgba(0,0,0,.22)}
+.new-healthcare-info{display:flex;align-items:center;gap:11px;min-width:0}
+.new-healthcare-icon{width:48px;height:48px;flex:none;display:grid;place-items:center;border-radius:14px;background:linear-gradient(135deg,#20b56b,#176e8a);font-size:25px}
+.new-healthcare-title{font-size:17px;font-weight:900;color:#fff}
+.new-healthcare-sub{font-size:11px;color:#aeb7c6;margin-top:4px}
+.new-healthcare-open{background:linear-gradient(135deg,#20b56b,#0f8f52);color:#fff;padding:11px 15px;border-radius:11px;white-space:nowrap}
+.new-healthcare-modal{display:none;position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,.88);padding:12px;align-items:center;justify-content:center}
+.new-healthcare-modal.show{display:flex}
+.new-healthcare-dialog{width:min(620px,100%);height:min(86vh,760px);background:#111722;border:1px solid #365c72;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.new-healthcare-top{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 13px;background:#171f2b;border-bottom:1px solid #2a3948}
+.new-healthcare-top strong{font-size:16px;color:#fff}
+.new-healthcare-cancel{width:38px;height:38px;padding:0;background:#303946;color:#fff;font-size:25px;border-radius:10px}
+.new-healthcare-frame-wrap{flex:1;min-height:0;background:#fff}
+.new-healthcare-frame{width:100%;height:100%;border:0;display:block;background:#fff}
+@media(max-width:420px){.new-healthcare-card{margin:10px;padding:12px}.new-healthcare-dialog{height:90vh}.new-healthcare-title{font-size:16px}}
+</style>
+
+<div id="newHealthcareModal" class="new-healthcare-modal" aria-hidden="true" onclick="newHealthcareBackdrop(event)">
+  <div class="new-healthcare-dialog" role="dialog" aria-modal="true" aria-label="Healthcare">
+    <div class="new-healthcare-top">
+      <strong>🩺 Healthcare</strong>
+      <button type="button" class="new-healthcare-cancel" aria-label="Cancel Healthcare" onclick="closeNewHealthcare()">×</button>
+    </div>
+    <div id="newHealthcareFrameWrap" class="new-healthcare-frame-wrap"></div>
+  </div>
+</div>
+
+<script id="newHealthcareCardScript">
+function openNewHealthcare(){
+  const modal=document.getElementById('newHealthcareModal');
+  const wrap=document.getElementById('newHealthcareFrameWrap');
+  if(!modal||!wrap)return;
+  // Recreate the embedded page on every open so Cancel works every time.
+  wrap.innerHTML='';
+  const frame=document.createElement('iframe');
+  frame.className='new-healthcare-frame';
+  frame.title='Healthcare support';
+  frame.setAttribute('allow','clipboard-read; clipboard-write');
+  frame.srcdoc=`<!doctype html><html lang="bn"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>html,body{margin:0;width:100%;height:100%;background:#fff}</style></head><body><!--Start of Tawk.to Script--><script type="text/javascript">var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();(function(){var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];s1.async=true;s1.src='https://embed.Tawk.to/6ad03bffa759ce34d04fb522/1k4umknrl';s1.charset='UTF-8';s1.setAttribute('crossorigin','*');s0.parentNode.insertBefore(s1,s0);})();<\/script><!--End of Tawk.to Script--></body></html>`;
+  wrap.appendChild(frame);
+  modal.classList.add('show');
+  modal.setAttribute('aria-hidden','false');
+  document.body.style.overflow='hidden';
+}
+function closeNewHealthcare(){
+  const modal=document.getElementById('newHealthcareModal');
+  const wrap=document.getElementById('newHealthcareFrameWrap');
+  if(wrap){
+    const frame=wrap.querySelector('iframe');
+    if(frame)frame.src='about:blank';
+    wrap.innerHTML='';
+  }
+  if(modal){modal.classList.remove('show');modal.setAttribute('aria-hidden','true');}
+  document.body.style.overflow='';
+}
+function newHealthcareBackdrop(event){
+  if(event.target&&event.target.id==='newHealthcareModal')closeNewHealthcare();
+}
+document.addEventListener('keydown',function(event){
+  if(event.key==='Escape')closeNewHealthcare();
+});
+</script>
+
+
+<!-- Admin-controlled Healthcare selector: settings/healthcareConfig -->
+<script type="module" id="healthcareAdminToggleSync">
+import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+const cfg={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYw',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+try{
+ const app=getApps().find(x=>x.name==='[DEFAULT]')||initializeApp(cfg),db=getDatabase(app);
+ onValue(ref(db,'settings/healthcareConfig'),snap=>{
+   const v=snap.exists()?(snap.val()||{}):{existingEnabled:true,tawkEnabled:false};
+   const existing=v.existingEnabled===true, tawk=v.tawkEnabled===true;
+   // Healthcare selection appears only inside the Profile / Member Center menu.
+   const oldButton=document.getElementById('profileHealthcareExistingButton');
+   const tawkButton=document.getElementById('profileHealthcareTawkButton');
+   if(oldButton)oldButton.style.display=(existing&&!tawk)?'flex':'none';
+   if(tawkButton)tawkButton.style.display=tawk?'flex':'none';
+ },err=>console.warn('Healthcare settings sync failed:',err));
+}catch(e){console.warn('Healthcare settings initialization failed:',e)}
 </script>
 
 </body>
