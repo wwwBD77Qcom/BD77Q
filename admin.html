@@ -52,6 +52,91 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 .referral-admin-table th{background:#161c27;color:#9da7b6}
 .referral-admin-table-wrap{overflow:auto;max-height:420px}
 @media(max-width:520px){.referral-admin-grid{grid-template-columns:1fr 1fr}.referral-admin-table{min-width:650px}}
+
+/* ===== VIP ADMIN UI REFRESH — presentation only; existing functions preserved ===== */
+:root{color-scheme:dark;--vip-bg:#070b16;--vip-panel:#10182b;--vip-card:#121d32;--vip-line:rgba(148,163,184,.19);--vip-text:#edf4ff;--vip-muted:#9aabc5;--vip-gold:#f7c96b;--vip-cyan:#5ee7f5;--vip-purple:#9c8cff;--vip-green:#31d6a0}
+html{scroll-behavior:smooth;scroll-padding-top:95px;background:var(--vip-bg)}
+body{background:radial-gradient(ellipse at 10% 0%,rgba(81,71,190,.22),transparent 32%),radial-gradient(ellipse at 90% 10%,rgba(27,176,199,.13),transparent 28%),var(--vip-bg)!important;color:var(--vip-text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif!important}
+.app{width:min(100%,1440px)!important;max-width:1440px!important;margin:0 auto!important;padding:clamp(12px,2.2vw,30px)!important;background:transparent!important;box-shadow:none!important}
+#adminDashboardScreen{display:none;}
+#adminDashboardScreen.active{display:block!important}
+#adminDashboardScreen>.card,#adminDashboardScreen>#dynamicGameManagerCard,#adminDashboardScreen>#apkUpdateCard,#adminDashboardScreen>#depositContentManager,#adminDashboardScreen>section.card{background:linear-gradient(145deg,rgba(19,29,50,.97),rgba(11,17,31,.98))!important;border:1px solid var(--vip-line)!important;border-radius:20px!important;padding:clamp(15px,2vw,24px)!important;margin:0 0 18px!important;box-shadow:0 12px 35px rgba(0,0,0,.17),inset 0 1px 0 rgba(255,255,255,.025)!important;position:relative;overflow:hidden}
+#adminDashboardScreen>.card:before,#adminDashboardScreen>#dynamicGameManagerCard:before,#adminDashboardScreen>#apkUpdateCard:before,#adminDashboardScreen>#depositContentManager:before{content:"";position:absolute;top:0;left:18px;right:18px;height:1px;background:linear-gradient(90deg,transparent,rgba(94,231,245,.42),rgba(156,140,255,.4),transparent);pointer-events:none}
+#adminDashboardScreen h2,#adminDashboardScreen h3,#adminDashboardScreen h4{letter-spacing:.1px;line-height:1.35}
+#adminDashboardScreen .card>div[style*="font-weight:900"],#adminDashboardScreen .card h3{color:var(--vip-gold)!important}
+label{color:#b5c4db!important;font-size:12px!important;font-weight:650;letter-spacing:.1px}
+input:not([type=checkbox]):not([type=radio]),textarea,select{background:#080f1f!important;border:1px solid rgba(144,166,202,.25)!important;border-radius:11px!important;color:#f2f7ff!important;padding:12px 13px!important;transition:border-color .18s,box-shadow .18s!important;max-width:100%}
+input:focus,textarea:focus,select:focus{border-color:rgba(94,231,245,.75)!important;box-shadow:0 0 0 3px rgba(94,231,245,.1)!important;outline:none!important}
+button{border-radius:11px!important;transition:transform .16s ease,filter .16s ease,box-shadow .16s ease!important;letter-spacing:.1px}
+button:hover{filter:brightness(1.08);transform:translateY(-1px)}
+button:active{transform:translateY(0)}
+button.cash,.cash{background:linear-gradient(115deg,#2bd8a3,#1cb6bd)!important;color:#06151b!important;box-shadow:0 6px 18px rgba(31,205,177,.12)!important}
+.admin-btn{width:auto!important}
+.approve-btn{background:linear-gradient(120deg,#24d6a0,#17a879)!important;color:#03170f!important}
+.reject-btn{background:linear-gradient(120deg,#ff7187,#f04468)!important;color:white!important}
+.card,.stat-box,.referral-admin-stat,.announcement-slide-admin{border-color:var(--vip-line)!important;border-radius:16px!important}
+.stat-box{background:linear-gradient(145deg,#111d32,#0b1222)!important;padding:17px!important}
+.stat-value{font-size:clamp(25px,3vw,36px)!important;color:var(--vip-green)!important;letter-spacing:-.6px}
+.admin-table,.referral-admin-table{border-collapse:separate!important;border-spacing:0!important;overflow:hidden;border-radius:12px!important}
+.admin-table th,.admin-table td,.referral-admin-table th,.referral-admin-table td{border-color:rgba(148,163,184,.16)!important;padding:10px!important}
+.admin-table th,.referral-admin-table th{background:#17243b!important;color:#c7d6ed!important}
+.admin-table tr:nth-child(even) td,.referral-admin-table tr:nth-child(even) td{background:rgba(255,255,255,.018)}
+.modal-note{color:var(--vip-muted)!important;line-height:1.65!important}
+#adminLoginScreen{max-width:470px;margin:6vh auto 0;padding:clamp(8px,2vw,20px)}
+#adminLoginScreen .card{background:linear-gradient(145deg,#151f38,#0c1324)!important;border:1px solid rgba(156,140,255,.35)!important;border-radius:24px!important;padding:26px!important;box-shadow:0 25px 70px rgba(0,0,0,.35)!important}
+#adminLoginScreen button{background:linear-gradient(110deg,#9c8cff,#5ee7f5)!important;color:#08111f!important}
+.vip-admin-hero{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 24px;margin:0 0 18px;border:1px solid rgba(156,140,255,.28);border-radius:22px;background:radial-gradient(ellipse at 85% 0%,rgba(94,231,245,.18),transparent 40%),linear-gradient(115deg,rgba(36,39,81,.92),rgba(13,24,44,.96));box-shadow:0 18px 48px rgba(0,0,0,.2)}
+.vip-admin-brand{display:flex;align-items:center;gap:14px;min-width:0}.vip-admin-emblem{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border-radius:17px;font-size:25px;background:linear-gradient(145deg,#f8d782,#a88bff);box-shadow:0 8px 22px rgba(156,140,255,.18)}
+.vip-admin-title{font-size:clamp(20px,3vw,29px);font-weight:900;letter-spacing:-.5px;color:#fff}.vip-admin-subtitle{font-size:12px;color:#a9bad4;margin-top:5px;line-height:1.5}.vip-admin-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 12px;border-radius:999px;border:1px solid rgba(49,214,160,.28);background:rgba(49,214,160,.08);color:#8cf2cf;font-size:11px;font-weight:800;white-space:nowrap}.vip-admin-pill:before{content:"";width:7px;height:7px;border-radius:50%;background:#31d6a0;box-shadow:0 0 10px #31d6a0}
+.vip-admin-nav{position:sticky;top:8px;z-index:50;display:flex;gap:8px;overflow-x:auto;padding:10px;margin:0 0 18px;border:1px solid rgba(148,163,184,.17);border-radius:15px;background:rgba(8,14,28,.88);backdrop-filter:blur(18px);scrollbar-width:thin}
+.vip-admin-nav a{display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;padding:9px 12px;border:1px solid rgba(148,163,184,.14);border-radius:10px;text-decoration:none;color:#c0cde2;background:rgba(255,255,255,.035);font-size:12px;font-weight:750;white-space:nowrap}
+.vip-admin-nav a:hover{color:#fff;border-color:rgba(94,231,245,.45);background:rgba(94,231,245,.08)}
+.vip-admin-section-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1.8px;color:#7f93b4;margin:20px 2px 10px}
+#adminDashboardScreen>div[style*="justify-content:space-between"]{padding:16px 18px!important;border-radius:16px!important;background:rgba(15,24,43,.82);border:1px solid var(--vip-line);margin-bottom:16px!important}
+#adminDashboardScreen>div[style*="justify-content:space-between"]>div{font-size:22px!important;color:#fff!important}
+#adminDashboardScreen button[onclick="adminLogout()"]{background:rgba(255,113,135,.1)!important;border:1px solid rgba(255,113,135,.24)!important;color:#ff9bab!important}
+#healthcareAdminControlCard{background:radial-gradient(ellipse at 100% 0%,rgba(49,214,160,.09),transparent 45%),linear-gradient(145deg,#12243a,#0c1425)!important}
+#walletOtpAdminCard{background:radial-gradient(ellipse at 100% 0%,rgba(94,231,245,.1),transparent 45%),linear-gradient(145deg,#12243a,#0c1425)!important}
+#healthcareAdminControlCard label,#walletOtpAdminCard label{background:rgba(5,12,24,.5)!important;border-color:rgba(148,163,184,.18)!important;border-radius:12px!important}
+#depositContentManager{background:linear-gradient(145deg,#14243a,#0a1324)!important;border-color:var(--vip-line)!important;border-radius:20px!important;padding:clamp(15px,2vw,24px)!important;box-shadow:0 12px 35px rgba(0,0,0,.17)!important}
+#depositContentManager h3{color:var(--vip-gold)}
+@media(min-width:900px){#adminDashboardScreen{max-width:1320px;margin:0 auto}#adminDashboardScreen>.card,#adminDashboardScreen>#dynamicGameManagerCard,#adminDashboardScreen>#apkUpdateCard,#adminDashboardScreen>#depositContentManager,#adminDashboardScreen>section.card{padding:24px!important}#adminDashboardScreen .referral-admin-table-wrap{max-height:560px}}
+@media(max-width:600px){.app{padding:10px!important}.vip-admin-hero{align-items:flex-start;padding:17px;gap:10px}.vip-admin-emblem{width:44px;height:44px;flex-basis:44px;border-radius:14px}.vip-admin-pill{font-size:10px;padding:7px 9px}.vip-admin-nav{top:4px;margin-left:-1px;margin-right:-1px}.vip-admin-nav a{padding:8px 10px;font-size:11px}#adminDashboardScreen>div[style*="justify-content:space-between"]{align-items:flex-start!important;gap:10px;flex-wrap:wrap}#adminDashboardScreen .stat-value{font-size:27px!important}.admin-table{min-width:600px}.admin-table-wrap,.referral-admin-table-wrap{overflow-x:auto}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button{transition:none!important}}
+
+
+/* === VIP NIGHTSCAPE THEME — visual enhancement; existing IDs and handlers preserved === */
+:root{--vip-gold:#ffd77c;--vip-cyan:#48e6f3;--vip-purple:#8a72ff;--vip-green:#20ddb0;--vip-bg:#030817}
+html,body{background:#030817!important}
+body{background:
+ radial-gradient(ellipse at 78% -8%,rgba(255,176,93,.20),transparent 24%),
+ radial-gradient(ellipse at 52% 2%,rgba(91,89,255,.22),transparent 35%),
+ radial-gradient(ellipse at 4% 38%,rgba(30,122,180,.12),transparent 32%),
+ linear-gradient(155deg,#030817 0%,#08132a 48%,#020713 100%)!important;background-attachment:fixed!important}
+body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.2;background-image:radial-gradient(1px 1px at 10% 18%,#fff 60%,transparent),radial-gradient(1px 1px at 78% 32%,#fff 60%,transparent),radial-gradient(1px 1px at 46% 68%,#fff 60%,transparent),radial-gradient(1px 1px at 88% 82%,#fff 60%,transparent);background-size:190px 170px,230px 220px,170px 200px,260px 210px}
+.app{position:relative;z-index:1}
+.vip-admin-hero{min-height:142px;position:relative;overflow:hidden;border:1px solid rgba(255,215,124,.28)!important;background:linear-gradient(105deg,rgba(17,20,53,.96),rgba(6,18,39,.9) 58%,rgba(15,31,65,.94))!important;box-shadow:0 18px 55px rgba(0,0,0,.3),inset 0 1px rgba(255,255,255,.06)!important}
+.vip-admin-hero:after{content:"";position:absolute;right:-3%;top:-70%;width:48%;height:220%;pointer-events:none;background:radial-gradient(ellipse,rgba(255,180,91,.19),rgba(87,93,255,.12) 38%,transparent 70%);transform:rotate(-12deg)}
+.vip-admin-emblem{background:linear-gradient(145deg,#ffe7a0,#d9a83e 48%,#8a72ff)!important;border:1px solid rgba(255,231,160,.65);box-shadow:0 0 28px rgba(255,202,92,.2),inset 0 1px rgba(255,255,255,.6)!important}
+.vip-admin-title{background:linear-gradient(100deg,#fff8df,#ffd36c 55%,#fff0c1);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+#adminDashboardScreen>.card,#adminDashboardScreen>#dynamicGameManagerCard,#adminDashboardScreen>#apkUpdateCard,#adminDashboardScreen>#depositContentManager,#adminDashboardScreen>section.card{background:linear-gradient(145deg,rgba(12,25,48,.94),rgba(4,12,28,.96))!important;border-color:rgba(114,157,218,.24)!important;box-shadow:0 16px 42px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.035)!important;backdrop-filter:blur(12px)}
+#ownerStaffAccessCard{border-color:rgba(255,215,124,.3)!important;background:linear-gradient(145deg,rgba(19,28,53,.97),rgba(5,15,32,.97))!important}
+#ownerStaffAccessCard h3{color:var(--vip-gold)!important;text-shadow:0 0 22px rgba(255,215,124,.12)}
+button.cash{background:linear-gradient(110deg,#20d6a2,#13bfc9)!important;color:#03151a!important;box-shadow:0 8px 25px rgba(20,213,181,.18),inset 0 1px rgba(255,255,255,.35)!important}
+button.cash:hover{box-shadow:0 10px 30px rgba(20,213,181,.3)!important}
+.approve-btn{box-shadow:0 4px 15px rgba(32,214,160,.14)!important}.reject-btn{box-shadow:0 4px 15px rgba(255,75,105,.13)!important}
+.vip-admin-nav{border-color:rgba(255,215,124,.2)!important;background:rgba(4,10,24,.94)!important;box-shadow:0 12px 34px rgba(0,0,0,.25)}
+.vip-admin-nav a{border-color:rgba(134,158,201,.17)!important;background:linear-gradient(145deg,rgba(24,37,67,.9),rgba(10,18,37,.9))!important;color:#d9e8ff!important}
+.vip-admin-nav a:hover{border-color:rgba(138,114,255,.8)!important;background:linear-gradient(110deg,rgba(99,70,255,.38),rgba(29,194,212,.15))!important;box-shadow:0 0 20px rgba(108,89,255,.16)}
+.stat-box,.referral-admin-stat,.announcement-slide-admin{background:linear-gradient(145deg,rgba(16,35,61,.94),rgba(5,15,31,.97))!important}
+.admin-table th,.referral-admin-table th{background:linear-gradient(110deg,#142847,#102039)!important;color:#d7e8ff!important}
+.admin-table td,.referral-admin-table td{background:rgba(5,13,28,.72)}
+#adminLoginScreen .card{background:linear-gradient(145deg,rgba(20,29,57,.98),rgba(5,13,30,.98))!important;border-color:rgba(255,215,124,.32)!important}
+#adminLoginScreen>div:first-child>div:last-child{color:var(--vip-gold)!important}
+input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
+@media(min-width:1050px){.vip-admin-nav{position:sticky;top:8px;z-index:60}.vip-admin-hero{padding:26px 30px}}
+@media(max-width:600px){.vip-admin-hero{min-height:0}.vip-admin-title{font-size:clamp(20px,6vw,29px)}.vip-admin-subtitle{font-size:12px}.vip-admin-nav{backdrop-filter:blur(16px)}}
+
 </style>
 
 <!-- Firebase SDKs & Config (Modular CDN) -->
@@ -349,7 +434,66 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   }
   // ================== End Referral & Earnings Management ==================
 
+
+  // Owner/Staff Gmail list management (UI + Firebase storage).
+  // Secure enforcement must additionally be configured in Firebase Rules/Cloud Functions.
+  const normalizeAdminEmail = value => String(value || '').trim().toLowerCase();
+  const adminEmailKey = email => email.replace(/\./g,'_dot_').replace(/#/g,'_hash_').replace(/\$/g,'_dollar_').replace(/\[/g,'_lb_').replace(/\]/g,'_rb_').replace(/\//g,'_slash_');
+  window.loadOwnerStaffAccess = async function(){
+    try{
+      const ownerSnap = await get(ref(db, 'admin_settings/ownerEmail'));
+      const ownerInput = document.getElementById('ownerGmailInput');
+      if(ownerInput && ownerSnap.exists()) ownerInput.value = ownerSnap.val() || '';
+      const staffSnap = await get(ref(db, 'admin_settings/staffAdmins'));
+      const staff = staffSnap.exists() ? (staffSnap.val() || {}) : {};
+      const entries = Object.entries(staff).filter(([email, value]) => value && value.active !== false);
+      const count = document.getElementById('staffAdminCount');
+      const body = document.getElementById('staffAdminTableBody');
+      if(count) count.textContent = entries.length + ' জন';
+      if(body) body.innerHTML = entries.length ? entries.map(([email]) =>
+        `<tr><td>${escapeBannerHtml(email)}</td><td style="color:#7ed6a7">অনুমোদিত</td><td><button class="admin-btn reject-btn" onclick="removeStaffGmail('${encodeURIComponent(email)}')">সরান</button></td></tr>`
+      ).join('') : '<tr><td colspan="3" style="text-align:center">কোনো Staff Admin নেই</td></tr>';
+    }catch(e){
+      console.error('Owner/staff list load failed',e);
+      const body=document.getElementById('staffAdminTableBody');
+      if(body) body.innerHTML='<tr><td colspan="3">তালিকা লোড হয়নি। Firebase Rules/Connection দেখুন।</td></tr>';
+    }
+  };
+  window.saveOwnerGmail = async function(){
+    const input=document.getElementById('ownerGmailInput');
+    const msg=document.getElementById('ownerGmailMsg');
+    const email=normalizeAdminEmail(input?.value);
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){if(msg)msg.textContent='সঠিক Gmail ঠিকানা লিখুন।';return;}
+    try{
+      await set(ref(db,'admin_settings/ownerEmail'),email);
+      if(msg){msg.style.color='#7ed6a7';msg.textContent='Owner Gmail Firebase-এ সেভ হয়েছে।';}
+    }catch(e){console.error(e);if(msg)msg.textContent='সেভ হয়নি—Firebase Rules/Connection পরীক্ষা করুন।';}
+  };
+  window.addStaffGmail = async function(){
+    const input=document.getElementById('staffGmailInput');
+    const msg=document.getElementById('staffGmailMsg');
+    const email=normalizeAdminEmail(input?.value);
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){if(msg)msg.textContent='সঠিক Gmail ঠিকানা লিখুন।';return;}
+    try{
+      const ownerSnap=await get(ref(db,'admin_settings/ownerEmail'));
+      if(ownerSnap.exists() && normalizeAdminEmail(ownerSnap.val())===email){if(msg)msg.textContent='Owner Gmail-কে Staff হিসেবে যোগ করা যাবে না।';return;}
+      await set(ref(db,'admin_settings/staffAdmins/'+adminEmailKey(email)),{email,active:true,addedAt:Date.now()});
+      input.value='';
+      if(msg){msg.style.color='#7ed6a7';msg.textContent='Staff Gmail যোগ হয়েছে।';}
+      await loadOwnerStaffAccess();
+    }catch(e){console.error(e);if(msg)msg.textContent='যোগ করা যায়নি—Firebase Rules/Connection পরীক্ষা করুন।';}
+  };
+  window.removeStaffGmail = async function(encodedEmail){
+    const email=decodeURIComponent(encodedEmail || '');
+    if(!email || !confirm(email+'-কে Staff Admin তালিকা থেকে সরাবেন?')) return;
+    try{
+      await remove(ref(db,'admin_settings/staffAdmins/'+adminEmailKey(email)));
+      await loadOwnerStaffAccess();
+    }catch(e){console.error(e);alert('Staff সরানো যায়নি। Firebase Rules/Connection পরীক্ষা করুন।');}
+  };
+
   window.loadAdminDashboard = async function() {
+      if(typeof window.loadOwnerStaffAccess === 'function') await window.loadOwnerStaffAccess();
       document.getElementById('adminLoginScreen').classList.remove('active');
       document.getElementById('adminDashboardScreen').classList.add('active');
       if (typeof window.loadWalletOtpSettingsAdmin === 'function') await window.loadWalletOtpSettingsAdmin();
@@ -1297,6 +1441,47 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   window.addEventListener('DOMContentLoaded', initAdmin);
   setTimeout(()=>window.loadEntryAnnouncement && window.loadEntryAnnouncement(), 500);
 </script>
+
+<style id="vip-reference-theme-v2">
+:root{--vip-bg:#03091b;--vip-panel:rgba(4,13,34,.91);--vip-line:rgba(48,157,255,.55);--vip-gold:#ffda83;--vip-cyan:#46dfff;--vip-violet:#7c68ff;--vip-green:#00e5b0;--vip-red:#ff477e}
+html{background:#020719!important;scroll-behavior:smooth}
+body{background:radial-gradient(ellipse at 70% 0%,rgba(67,63,170,.35),transparent 36%),radial-gradient(ellipse at 12% 40%,rgba(0,118,190,.16),transparent 35%),linear-gradient(180deg,#030719 0%,#06132c 52%,#020817 100%)!important;color:#edf5ff!important;background-attachment:fixed!important}
+body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;background:radial-gradient(ellipse at 70% 8%,rgba(255,190,112,.16),transparent 12%),linear-gradient(180deg,transparent 0 68%,rgba(7,30,64,.5) 68%,rgba(2,8,22,.85) 100%);}
+.app{max-width:1500px!important;margin:0 auto!important;padding:clamp(12px,2vw,28px)!important}
+#adminLoginScreen{max-width:520px;margin:6vh auto!important;padding:28px!important;border:1px solid rgba(80,180,255,.5)!important;border-radius:26px!important;background:linear-gradient(145deg,rgba(9,21,53,.96),rgba(3,9,25,.98))!important;box-shadow:0 0 55px rgba(26,105,255,.16),inset 0 1px rgba(255,255,255,.08)!important}
+#adminLoginScreen .card{border:1px solid rgba(66,166,255,.35)!important;background:rgba(4,13,34,.85)!important;border-radius:18px!important}
+.vip-admin-hero{min-height:120px!important;padding:24px clamp(18px,3vw,34px)!important;margin-bottom:20px!important;border-radius:0 0 22px 22px!important;border:1px solid rgba(255,208,117,.28)!important;background:linear-gradient(105deg,rgba(3,10,30,.97),rgba(13,27,69,.87) 60%,rgba(5,14,35,.96))!important;box-shadow:0 12px 45px rgba(0,0,0,.35)!important;position:relative}
+.vip-admin-hero:after{content:"☾  ✦  ·   ✧";position:absolute;right:20px;top:12px;color:rgba(255,215,130,.65);font-size:20px;letter-spacing:10px;pointer-events:none}
+.vip-admin-emblem{background:radial-gradient(circle at 35% 25%,#fff0ba,#e6ad32 42%,#6b410b 100%)!important;color:#09142b!important;box-shadow:0 0 25px rgba(255,199,67,.25)!important;border:1px solid #ffda83!important}
+.vip-admin-title{background:linear-gradient(90deg,#fff4bd,#f7c85e,#fff0bf)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;font-weight:950!important;letter-spacing:.3px}
+.vip-admin-subtitle{color:#b9cbe9!important}
+.vip-admin-pill{border:1px solid rgba(0,232,187,.42)!important;background:rgba(0,201,160,.11)!important;color:#76ffe0!important;box-shadow:0 0 16px rgba(0,225,181,.08)!important}
+#adminDashboardScreen>.card,#adminDashboardScreen>#dynamicGameManagerCard,#adminDashboardScreen>#apkUpdateCard,#adminDashboardScreen>#depositContentManager,#adminDashboardScreen>section.card,#adminDashboardScreen .card{background:linear-gradient(145deg,rgba(4,15,38,.94),rgba(3,10,27,.97))!important;border:1px solid rgba(67,158,255,.36)!important;border-radius:19px!important;box-shadow:0 14px 36px rgba(0,0,0,.23),inset 0 1px rgba(255,255,255,.045)!important;backdrop-filter:blur(14px)}
+#adminDashboardScreen h2,#adminDashboardScreen h3,#adminDashboardScreen h4{color:#f8e9bd!important}
+#adminDashboardScreen input,#adminDashboardScreen select,#adminDashboardScreen textarea,#adminLoginScreen input{background:rgba(2,10,28,.95)!important;border:1px solid rgba(63,142,230,.47)!important;color:#f4f8ff!important;border-radius:12px!important;min-height:43px!important;box-shadow:inset 0 1px 8px rgba(0,0,0,.15)!important}
+#adminDashboardScreen input::placeholder,#adminDashboardScreen textarea::placeholder{color:#8193b4!important}
+#adminDashboardScreen button,#adminLoginScreen button{border-radius:12px!important;font-weight:800!important;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease!important}
+#adminDashboardScreen button:hover,#adminLoginScreen button:hover{filter:brightness(1.12)!important;transform:translateY(-1px);box-shadow:0 7px 22px rgba(34,135,255,.18)!important}
+#adminDashboardScreen button.cash,#adminLoginScreen button.cash{background:linear-gradient(105deg,#00d9a5,#008fbd)!important;color:#031629!important;border:1px solid rgba(125,255,225,.65)!important;box-shadow:0 5px 22px rgba(0,219,175,.12)!important}
+.admin-table{border-color:rgba(67,158,255,.3)!important;background:rgba(2,10,27,.75)!important;border-radius:12px!important;overflow:hidden}
+.admin-table th{background:linear-gradient(90deg,rgba(11,37,77,.98),rgba(8,24,53,.98))!important;color:#c7ddff!important}
+.admin-table td,.admin-table th{border-color:rgba(72,135,211,.2)!important}
+.vip-admin-nav{display:flex!important;flex-wrap:wrap!important;gap:8px!important;padding:10px!important;margin:0 0 18px!important;border:1px solid rgba(63,143,255,.26)!important;border-radius:15px!important;background:rgba(3,10,28,.88)!important;backdrop-filter:blur(14px)!important}
+.vip-admin-nav a{border:1px solid rgba(65,146,255,.2)!important;background:rgba(15,35,74,.62)!important;color:#d7e8ff!important;border-radius:10px!important;text-decoration:none!important;padding:10px 13px!important}
+.vip-admin-nav a:hover{background:linear-gradient(100deg,#4235b8,#005eaa)!important;color:#fff!important;box-shadow:0 0 18px rgba(60,120,255,.25)!important}
+.stat-box{border:1px solid rgba(60,159,255,.42)!important;background:linear-gradient(145deg,rgba(6,32,75,.86),rgba(3,13,34,.96))!important;border-radius:17px!important;box-shadow:inset 0 1px rgba(255,255,255,.05),0 8px 25px rgba(0,0,0,.16)!important}
+.modal-note{color:#a9bedf!important}
+#ownerStaffAccessCard{border-color:rgba(0,225,180,.5)!important;background:linear-gradient(140deg,rgba(2,28,43,.97),rgba(3,13,34,.97))!important}
+#ownerStaffAccessCard h3{color:#ffdc88!important}
+#ownerStaffAccessCard button{min-height:44px}
+#adminDashboardScreen>div[style*="justify-content:space-between"]{border-color:rgba(255,208,117,.24)!important;background:linear-gradient(100deg,rgba(9,24,54,.95),rgba(3,12,30,.95))!important;border-radius:15px!important}
+@keyframes vipGlow{0%,100%{box-shadow:0 0 10px rgba(45,145,255,.08)}50%{box-shadow:0 0 20px rgba(45,145,255,.2)}}
+.vip-admin-hero{animation:vipGlow 5s ease-in-out infinite}
+@media(min-width:1000px){.app{padding:20px 26px 38px!important}.vip-admin-hero{padding-left:30px!important}.vip-admin-nav a{font-size:14px}}
+@media(max-width:600px){.app{padding:9px!important}.vip-admin-hero{min-height:0!important;padding:17px!important;gap:8px!important}.vip-admin-brand{gap:12px!important}.vip-admin-title{font-size:clamp(20px,6vw,29px)!important}.vip-admin-subtitle{font-size:12px!important;line-height:1.5!important}.vip-admin-hero:after{font-size:12px;letter-spacing:4px;right:9px}.vip-admin-nav{gap:6px!important}.vip-admin-nav a{padding:8px 9px!important;font-size:11px!important}.stat-box{min-width:0!important}.admin-table{min-width:580px!important}#ownerStaffAccessCard{padding:14px!important}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important;transition:none!important}}
+</style>
+
 </head>
 <body>
 
@@ -1315,6 +1500,30 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
   </div>
 
   <div id="adminDashboardScreen" class="screen">
+    <div class="vip-admin-hero">
+      <div class="vip-admin-brand"><div class="vip-admin-emblem">👑</div><div><div class="vip-admin-title">VIP Control Center</div><div class="vip-admin-subtitle">আপনার সব অ্যাডমিন ফাংশন এক জায়গায় • Secure management dashboard</div></div></div>
+      <span class="vip-admin-pill">ADMIN SPACE</span>
+    </div>
+
+    <section class="card" id="ownerStaffAccessCard">
+      <h3 style="margin:0 0 8px;color:#f7c96b">👑 Owner & Staff Admin Access</h3>
+      <p class="modal-note">এখান থেকে Owner Gmail ও অনুমোদিত Staff Gmail তালিকা পরিচালনা করুন। নিরাপত্তার জন্য Firebase Rules/সার্ভার-সাইড অনুমতিও সেট করতে হবে।</p>
+      <label>মূল মালিকের Gmail</label>
+      <input id="ownerGmailInput" type="email" placeholder="owner@example.com">
+      <button class="cash" type="button" onclick="saveOwnerGmail()">মূল মালিকের Gmail সেভ করুন</button>
+      <div id="ownerGmailMsg" class="modal-note" style="margin:8px 0 14px"></div>
+      <div style="height:1px;background:#303846;margin:14px 0"></div>
+      <label>নতুন Staff Admin-এর Gmail</label>
+      <input id="staffGmailInput" type="email" placeholder="staff@example.com">
+      <button class="cash" type="button" onclick="addStaffGmail()">＋ Staff Admin যোগ করুন</button>
+      <div id="staffGmailMsg" class="modal-note" style="margin:8px 0"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px">
+        <strong>অনুমোদিত Staff Admin</strong><span id="staffAdminCount" class="vip-admin-pill">0 জন</span>
+      </div>
+      <div style="overflow-x:auto"><table class="admin-table"><thead><tr><th>Gmail</th><th>অবস্থা</th><th>কাজ</th></tr></thead><tbody id="staffAdminTableBody"><tr><td colspan="3">তালিকা লোড হচ্ছে…</td></tr></tbody></table></div>
+      <p class="modal-note" style="margin-top:10px">নোট: এই তালিকা Firebase-এ সেভ হবে। শুধু এই HTML দিয়ে স্টাফের অনুমতি নিরাপদভাবে সীমাবদ্ধ করা যায় না; Rules/Cloud Functions সেট না করা পর্যন্ত এটিকে নিরাপদ role enforcement ভাববেন না।</p>
+    </section>
+    <nav class="vip-admin-nav" id="vipAdminQuickNav" aria-label="Admin quick navigation"><a href="#walletOtpAdminCard">🔐 OTP / Healthcare</a><a href="#healthcareAdminControlCard">🩺 Healthcare</a><a href="#dynamicGameManagerCard">🎮 Game Manager</a><a href="#apkUpdateCard">📲 App Update</a><a href="#depositContentManager">💳 Deposit Content</a></nav>
     <div class="card" style="border:1px solid #4c5870;margin-bottom:14px">
       <div style="font-size:18px;font-weight:900;color:#ffcf72;margin-bottom:8px">🔗 Community Links</div>
       <div class="modal-note" style="margin-bottom:12px">ইউজার অ্যাপের রেজিস্ট্রেশন স্ক্রিনে Telecom ও Facebook লিংক দেখাতে এখানে URL দিন।</div>
@@ -2105,7 +2314,31 @@ try{const s=await get(p),v=s.val()||{};$('depContentTitle').value=v.title||'';$(
 $('depContentSave').addEventListener('click',async()=>{const url=$('depContentUrl').value.trim();if(url&&!/^https:\/\//i.test(url)){$('depContentStatus').textContent='নিরাপদ HTTPS লিংক দিন।';return}const v={title:$('depContentTitle').value.trim()||'Deposit Information',text:$('depContentText').value.trim(),url,buttonLabel:$('depContentButton').value.trim()||'ফাইল / লিংক খুলুন',active:$('depContentActive').checked,updatedAt:Date.now()};try{await set(p,v);$('depContentStatus').textContent='সেভ হয়েছে। ইউজার অ্যাপের Deposit পেজে দেখাতে Firebase Rules-এ read access থাকতে হবে।'}catch(e){$('depContentStatus').textContent='সেভ হয়নি: Firebase permission/connection পরীক্ষা করুন।'}});
 </script>
 
+
+<script>
+/* VIP dashboard quick links: UI-only helper, does not change existing admin functions. */
+(function(){
+ function setupVipAdminNav(){
+  const dash=document.getElementById('adminDashboardScreen');
+  const nav=document.getElementById('vipAdminQuickNav');
+  if(!dash||!nav||nav.dataset.ready==='1')return;
+  nav.dataset.ready='1';
+  const icons=['👥','💰','📥','📤','🎁','📊','📢','🖼️','🎮','🛠️'];
+  const existing=new Set(Array.from(nav.querySelectorAll('a')).map(a=>a.getAttribute('href')));
+  let n=0;
+  Array.from(dash.children).forEach((el)=>{
+   if(!el.classList||!el.classList.contains('card'))return;
+   let heading=el.querySelector(':scope > h2, :scope > h3, :scope > div[style*="font-weight:900"]');
+   let label=(heading?.innerText||heading?.textContent||'').replace(/\s+/g,' ').trim();
+   if(!label)return;
+   if(!el.id)el.id='vipAdminSection'+(++n);
+   if(existing.has('#'+el.id))return;
+   const a=document.createElement('a');a.href='#'+el.id;a.textContent=(icons[n%icons.length]||'⚙️')+' '+label.slice(0,34);nav.appendChild(a);existing.add('#'+el.id);n++;
+  });
+ }
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setupVipAdminNav);else setupVipAdminNav();
+})();
+</script>
+<script>setInterval(()=>{location.reload();},300000);</script>
 </body>
 </html>
-
-<script>setInterval(()=>{location.reload();},300000);</script>
