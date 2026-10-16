@@ -2,26 +2,29 @@ name: Daily Loss Bonus Automation
 
 on:
   schedule:
-    - cron: '0 18 * * *' 
-  workflow_dispatch:
+    # বাংলাদেশ সময় প্রতিদিন রাত ১২:০০ টায় (00:00 BST) রান করার জন্য 
+    # UTC সময় সন্ধ্যা ৬:০০ টা (18:00 UTC) নির্ধারণ করা হয়েছে
+    - cron: '0 18 * * *'
+  workflow_dispatch: # ম্যানুয়ালি চেক করার অপশন
 
 jobs:
   run-bonus-script:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout Repository Code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Set up Node.js Environment
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '22'
+          cache: 'npm'
 
-      - name: Install dependencies
+      - name: Install Firebase Admin
         run: npm install firebase-admin
 
-      - name: Run Loss Bonus Script
+      - name: Execute Loss Bonus Script
         run: node loss-bonus.js
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          
