@@ -586,10 +586,28 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
   }
 
   window.saveVipAnnouncement = async function() {
-      const vipNoticeText = document.getElementById('adminVipNoticeText').value.trim();
-      await set(ref(db, 'settings/vipAnnouncement'), vipNoticeText);
-      document.getElementById('adminVipNoticeMsg').style.color = '#7ed6a7';
-      document.getElementById('adminVipNoticeMsg').textContent = 'ভিআইপি নোটিশ সফলভাবে আপডেট হয়েছে!';
+      const input = document.getElementById('adminVipNoticeText');
+      const msg = document.getElementById('adminVipNoticeMsg');
+      const vipNoticeText = String(input?.value || '').trim();
+      if(!vipNoticeText){
+          if(msg){msg.style.color='#ff7888';msg.textContent='ভিআইপি নোটিশ লিখে তারপর প্রকাশ করুন।';}
+          return;
+      }
+      const now = Date.now();
+      try {
+          // Keep the original string path for older User App versions; metadata gives every publish a unique ID.
+          await set(ref(db, 'settings/vipAnnouncement'), vipNoticeText);
+          await set(ref(db, 'settings/vipAnnouncementMeta'), {
+              id: 'vip_' + now,
+              title: '👑 ভিআইপি অফিশিয়াল নোটিশ',
+              updatedAt: now,
+              active: true
+          });
+          if(msg){msg.style.color='#7ed6a7';msg.textContent='ভিআইপি নোটিশ প্রকাশ হয়েছে। নতুন User App-এ ইনবক্সেও দেখাবে।';}
+      } catch(e) {
+          console.error('VIP announcement publish failed:', e);
+          if(msg){msg.style.color='#ff7888';msg.textContent='VIP নোটিশ প্রকাশ হয়নি। Firebase Rules/Connection পরীক্ষা করুন।';}
+      }
   }
 
   // Automatically remove deposit/withdraw request records older than 7 days.
