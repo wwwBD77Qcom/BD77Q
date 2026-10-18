@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SUPER ACE - COMPACT EDITION</title>
-    
-    <!-- Firebase SDK Compat Libraries -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <style>
         * {
@@ -489,7 +485,7 @@
 
             <div class="footer-info">
                 <span>LV 2</span>
-                <span id="firebase-status" style="color: #10b981; font-weight: bold;">● ONLINE</span>
+                <span id="firebase-status" style="color: #10b981; font-weight: bold;">● LIVE</span>
                 <span>v_192_0008</span>
             </div>
         </div>
@@ -512,54 +508,68 @@
         </div>
     </div>
 
-    <script>
-        // ব্যালেন্স সবসময় ০.০০ সেট ও রেন্ডার করার ফাংশন
-        function getUserBalance() {
-            let currentBal = 0.00;
-            renderBalanceUI(currentBal);
-            return currentBal;
-        }
+    <!-- ফায়ারবেজ রিয়েল-টাইম ডাটাবেস ও গেম লজিক স্ক্রিপ্ট -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        function renderBalanceUI(bal) {
-            const balEl = document.getElementById('total-balance-display');
-            if (balEl) {
-                balEl.innerText = '৳' + Number(bal).toFixed(2);
-            }
-        }
-
-        function updateUserBalance(newBalance) {
-            userBalance = newBalance;
-            renderBalanceUI(newBalance);
-            try {
-                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
-                let currentUserPhone = localStorage.getItem('aviator_current_user') || "01700000000";
-                
-                if (!usersDb[currentUserPhone]) {
-                    usersDb[currentUserPhone] = {};
-                }
-                usersDb[currentUserPhone].balance = newBalance;
-                localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
-
-                // গেম থেকে ফায়ারবেজে ব্যালেন্স আপডেট পাঠানো বন্ধ রাখা হয়েছে যাতে ডেটাবেজের পুরনো মান রিকল না করে
-            } catch (e) {
-                console.error("Balance update error:", e);
-            }
-        }
-
-        // Firebase Configuration
+        // ফায়ারবেজ কনফিগারেশন
         const firebaseConfig = {
-            apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
-            authDomain: "uk77-56f6d.firebaseapp.com",
-            databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
-            projectId: "uk77-56f6d",
-            storageBucket: "uk77-56f6d.firebasestorage.app",
-            messagingSenderId: "1062783431056",
-            appId: "1:1062783431056:web:c44fd51195cf4061998315",
-            measurementId: "G-C0ST13Q8PJ"
+          apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
+          authDomain: "uk77-56f6d.firebaseapp.com",
+          databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
+          projectId: "uk77-56f6d",
+          storageBucket: "uk77-56f6d.firebasestorage.app",
+          messagingSenderId: "1062783431056",
+          appId: "1:1062783431056:web:c44fd51195cf4061998315",
+          measurementId: "G-C0ST13Q8PJ"
         };
 
-        let dbRef = null;
-        let userBalance = getUserBalance();
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // ইউজার আইডি (প্রয়োজন অনুযায়ী ফায়ারবেজ ডাটাবেসের পাথ সেট করুন)
+        const currentUserId = "user_12345"; 
+        const userBalanceRef = ref(db, 'users/' + currentUserId + '/balance');
+
+        let liveBalance = 0.00;
+
+        // রিয়েল-টাইমে ফায়ারবেজ থেকে ব্যালেন্স সিংক করা
+        onValue(userBalanceRef, (snapshot) => {
+            const val = snapshot.val();
+            if (val !== null) {
+                liveBalance = parseFloat(val);
+                const balEl = document.getElementById('total-balance-display');
+                if (balEl) {
+                    balEl.innerText = '৳' + liveBalance.toFixed(2);
+                }
+            } else {
+                // যদি ডাটাবেসে ব্যালেন্স না থাকে তবে ডিফল্ট মান সেট করা
+                set(userBalanceRef, 1000.00);
+            }
+        });
+
+        // ডাটাবেসে ব্যালেন্স আপডেট করার ফাংশন
+        function updateDatabaseBalance(newBalance) {
+            liveBalance = parseFloat(newBalance.toFixed(2));
+            set(userBalanceRef, liveBalance).catch((error) => {
+                console.error("Firebase balance update failed:", error);
+            });
+        }
+
+        // গ্লোবালি ব্যবহারের জন্য ফাংশনগুলো উইন্ডো অবজেক্টে যুক্ত করা
+        window.getUserBalance = function() {
+            return liveBalance;
+        };
+
+        window.updateDatabaseBalance = updateDatabaseBalance;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initEmptyBoard();
+        });
+    </script>
+
+    <script>
         let selectedBet = 0.5;
         let currentMultiplier = 1;
         let isDealing = false;
@@ -568,39 +578,12 @@
         let autoTimer = null;
         let freeSpinsRemaining = 0;
 
-        let remoteControl = {
-            winRatePowerOn: 0.35,  
-            winRatePowerOff: 0.20, 
-            forceMultiplier: 0
-        };
-
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            dbRef = firebase.database().ref("game_control");
-
-            // ফায়ারবেজ থেকে ব্যালেন্স সিঙ্ক বাদ দেওয়া হয়েছে যাতে সবসময় ০.০০ থাকে
-            dbRef.on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    if (data.powerActive !== undefined && data.powerActive !== powerActive) {
-                        togglePower(data.powerActive);
-                    }
-                    if (data.winRatePowerOn !== undefined) remoteControl.winRatePowerOn = Number(data.winRatePowerOn);
-                    if (data.winRatePowerOff !== undefined) remoteControl.winRatePowerOff = Number(data.winRatePowerOff);
-                    if (data.forceMultiplier !== undefined) remoteControl.forceMultiplier = Number(data.forceMultiplier);
-                }
-            });
-        } catch (e) {
-            console.error("Firebase Connection Error:", e);
-        }
-
         const suits = ['♠', '♥', '♦', '♣'];
         const values = ['A', 'K', 'Q', 'J', '10'];
 
         function initEmptyBoard() {
             const board = document.getElementById('main-card-board');
+            if(!board) return;
             board.innerHTML = '';
             for (let i = 0; i < 20; i++) {
                 const slot = document.createElement('div');
@@ -624,7 +607,6 @@
             } else {
                 if (btn) btn.style.color = "#ef4444";
             }
-            if (dbRef) dbRef.update({ powerActive: powerActive });
         }
 
         function updateMultiplierUI(mult) {
@@ -671,18 +653,22 @@
             `;
         }
 
+        // স্পিন করার সময় ফায়ারবেজ ব্যালেন্স কাটাকুটি করা
         function dealCardsRandom() {
             if (isDealing) return;
 
-            userBalance = getUserBalance();
+            let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
 
             if (freeSpinsRemaining <= 0) {
-                if (userBalance < selectedBet) {
-                    alert('পর্যাপ্ত ব্যালেন্স নেই!');
+                if (currentBalance < selectedBet) {
+                    alert('অপর্যাপ্ত ব্যালেন্স বা কয়েন! দয়া করে ফায়ারবেজ ব্যালেন্স চেক করুন।');
                     if (autoPlay) toggleAutoPlay();
                     return;
                 }
-                updateUserBalance(userBalance - selectedBet);
+                currentBalance -= selectedBet;
+                if (window.updateDatabaseBalance) {
+                    window.updateDatabaseBalance(currentBalance);
+                }
             } else {
                 freeSpinsRemaining--;
                 document.getElementById('free-spins-count').innerText = freeSpinsRemaining;
@@ -691,21 +677,18 @@
                 }
             }
 
+            document.getElementById('total-balance-display').innerText = '৳' + currentBalance.toFixed(2);
             isDealing = true;
 
-            if (remoteControl.forceMultiplier > 0) {
-                updateMultiplierUI(remoteControl.forceMultiplier);
-            } else {
-                const mults = [1, 2, 3, 5];
-                const randMult = mults[Math.floor(Math.random() * mults.length)];
-                updateMultiplierUI(randMult);
-            }
+            const mults = [1, 2, 3, 5];
+            const randMult = mults[Math.floor(Math.random() * mults.length)];
+            updateMultiplierUI(randMult);
 
             initEmptyBoard();
 
             const cards = Array.from({ length: 20 }, () => getRandomCard());
 
-            const winChance = powerActive ? remoteControl.winRatePowerOn : remoteControl.winRatePowerOff;
+            const winChance = powerActive ? 0.35 : 0.20;
             const forceWin = Math.random() < winChance;
 
             if (forceWin) {
@@ -732,7 +715,6 @@
 
         function evaluateMatch(cards) {
             let matchedIndices = [];
-            let matchedValues = [];
 
             for (let col = 0; col < 5; col++) {
                 let colValues = [
@@ -744,7 +726,6 @@
                 
                 if (colValues[0] === colValues[1] && colValues[1] === colValues[2]) {
                     matchedIndices.push(col, col + 5, col + 10);
-                    matchedValues.push(colValues[0]);
                 }
             }
 
@@ -759,8 +740,14 @@
                 });
 
                 const winAmt = (selectedBet * 2.5 * currentMultiplier);
-                userBalance = getUserBalance();
-                updateUserBalance(userBalance + winAmt);
+                let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+                currentBalance += winAmt;
+                
+                if (window.updateDatabaseBalance) {
+                    window.updateDatabaseBalance(currentBalance);
+                }
+
+                document.getElementById('total-balance-display').innerText = '৳' + currentBalance.toFixed(2);
 
                 setTimeout(() => {
                     document.getElementById('win-amount-display').innerText = winAmt.toFixed(3);
@@ -793,11 +780,6 @@
         function closeWinModal() {
             document.getElementById('win-modal').classList.add('hidden');
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            initEmptyBoard();
-            getUserBalance();
-        });
     </script>
 </body>
 </html>
