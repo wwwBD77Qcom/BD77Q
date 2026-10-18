@@ -158,9 +158,16 @@
                 <div class="hidden md:flex items-center gap-1 bg-slate-800/80 px-3 py-1.5 rounded-full border border-orange-500/30 text-xs font-bold text-orange-400">
                     <i class="fa-solid fa-fire text-orange-500"></i> Streak: <span id="win-streak">0</span>
                 </div>
-                <div class="bg-slate-800 px-3 sm:px-5 py-1.5 sm:py-2 rounded-full border border-amber-500/40 flex items-center gap-1.5 sm:gap-2 shadow-inner">
-                    <i class="fa-solid fa-coins text-yellow-400 text-sm sm:text-lg"></i>
-                    <span id="balance" class="font-black text-yellow-400 text-sm sm:text-lg">0.00</span> <span class="text-[10px] sm:text-xs text-slate-400 font-bold">BDT</span>
+                
+                <!-- ব্যালেন্স ডিসপ্লে বক্স (ডিফল্টভাবে 0.00) -->
+                <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 px-3.5 sm:px-5 py-1.5 sm:py-2 rounded-2xl border-2 border-amber-500/60 flex items-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                    <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-amber-500/20 border border-amber-400 flex items-center justify-center text-amber-400 text-xs shadow-inner">
+                        <i class="fa-solid fa-coins"></i>
+                    </div>
+                    <div class="flex items-baseline gap-1.5">
+                        <span id="balance" class="font-black text-yellow-400 text-sm sm:text-lg tracking-wide font-mono">0.00</span>
+                        <span class="text-[10px] sm:text-xs text-amber-300 font-extrabold uppercase">BDT</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -294,9 +301,7 @@
     </div>
 
     <script>
-        // ==========================================
-        // অ্যাপের লোকালস্টোরেজ থেকে সরাসরি ব্যালেন্স সিঙ্কিং লজিক
-        // ==========================================
+        // লোকালস্টোরেজ থেকে ব্যালেন্স নেওয়ার নিখুঁত লজিক (ডেটা না পেলে কঠোরভাবে 0.00 দেখাবে)
         function getUserBalance() {
             try {
                 const usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
@@ -309,7 +314,7 @@
             } catch (e) {
                 console.error("Balance fetch error:", e);
             }
-            return 0.00; // কোনো ইউজার বা ব্যালেন্স না থাকলে ডিফল্ট ০.০০ দেখাবে
+            return 0.00;
         }
 
         function updateUserBalance(newBalance) {
@@ -388,6 +393,7 @@
         // LOADING SCREEN & GAME ENGINE
         // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
+            // গেম লোড হওয়ার সাথে সাথেই অ্যাপের আসল ব্যালেন্স স্ক্রিনে সেট করা হচ্ছে
             userBalance = getUserBalance();
             document.getElementById('balance').innerText = userBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
 
@@ -576,7 +582,7 @@
                         const cIdx = placedCount - 10;
                         const row = cIdx < 5 ? 'community-row1' : 'community-row2';
                         const colIdx = cIdx % 5;
-                        document.getElementById(row).children[colIdx].outerHTML = cardHTML(cCards[cIdx]);
+                        document.getElementById(row).children[cIdx].outerHTML = cardHTML(cCards[cIdx]);
                     }
                     placedCount++;
                 } else {
@@ -631,7 +637,7 @@
                         const colIdx = cIdx % 5;
                         const newCard = getRandomCard();
                         cCards[cIdx] = newCard;
-                        document.getElementById(row).children[cIdx].outerHTML = cardHTML(newCard, 'card-drop');
+                        document.getElementById(row).children[colIdx].outerHTML = cardHTML(newCard, 'card-drop');
                     });
 
                     processWinResult(matches, matchedValues);
