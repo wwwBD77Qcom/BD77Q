@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SUPER AC DELUXE - LIVE CASINO</title>
+    <title>SUPER AC DELUXE - JELLY EDITION</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -40,38 +40,55 @@
             pointer-events: none;
         }
         
-        .card-anim {
-            animation: crazyDeal 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes crazyDeal {
+        @keyframes jellyBounceDrop {
             0% {
                 opacity: 0;
-                transform: translateY(-120px) translateX(var(--tw-translate-x, 0)) scale(0.1) rotate(180deg);
+                transform: translateY(-200px) scale(0.3, 1.5);
+            }
+            50% {
+                opacity: 1;
+                transform: translateY(20px) scale(1.3, 0.7);
             }
             70% {
-                transform: translateY(10px) scale(1.1) rotate(-15deg);
+                transform: translateY(-12px) scale(0.85, 1.15);
+            }
+            85% {
+                transform: translateY(6px) scale(1.05, 0.95);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) scale(1) rotate(0deg);
+                transform: translateY(0) scale(1, 1);
             }
         }
 
+        .card-anim {
+            animation: jellyBounceDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            background: radial-gradient(circle at 30% 30%, #ffffff 0%, #e6e6e6 100%);
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.8), 0 8px 20px rgba(0,0,0,0.6);
+            border-radius: 16px;
+            border: 2.5px solid rgba(255, 215, 0, 0.8);
+            backdrop-filter: blur(4px);
+        }
+
         .card-vanish {
-            animation: cardDisappear 0.5s ease-in-out forwards;
+            animation: cardDisappear 0.4s ease-in-out forwards;
         }
         @keyframes cardDisappear {
             0% { transform: scale(1); opacity: 1; filter: brightness(1.5); }
-            50% { transform: scale(1.2) rotate(10deg); opacity: 0.8; filter: brightness(2); }
+            50% { transform: scale(1.4) rotate(20deg); opacity: 0.6; filter: brightness(2); }
             100% { transform: scale(0); opacity: 0; }
         }
 
         .card-drop {
-            animation: cardDropIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation: jellyBounceDrop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes cardDropIn {
-            0% { opacity: 0; transform: translateY(-60px) scale(0.3); }
-            100% { opacity: 1; transform: translateY(0) scale(1); }
+
+        @keyframes dropMultiplier {
+            0% { transform: translateY(-30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+        .multiplier-drop {
+            animation: dropMultiplier 0.3s ease-out forwards;
         }
 
         @keyframes pulse-glow {
@@ -151,7 +168,7 @@
 
     <!-- Poker Table Area -->
     <main class="flex-grow flex items-center justify-center p-2 sm:p-4">
-        <div class="poker-table w-full max-w-4xl rounded-3xl sm:rounded-full p-4 sm:p-8 relative min-h-[420px] sm:min-h-[460px] flex flex-col justify-between items-center border-amber-900/60 shadow-2xl">
+        <div class="poker-table w-full max-w-4xl rounded-3xl sm:rounded-full p-4 sm:p-8 relative min-h-[460px] sm:min-h-[500px] flex flex-col justify-between items-center border-amber-900/60 shadow-2xl">
             
             <!-- Multiplier Bar System -->
             <div class="flex items-center gap-1.5 bg-black/70 px-4 py-1.5 rounded-full border border-amber-500/40 backdrop-blur-sm shadow-md mt-1 z-10">
@@ -170,40 +187,40 @@
 
             <!-- Community Cards -->
             <div class="my-auto w-full z-10">
-                <div class="flex flex-col gap-2 items-center">
-                    <div class="flex gap-2 sm:gap-3 justify-center min-h-[60px]" id="community-row1">
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
+                <div class="flex flex-col gap-3 items-center">
+                    <div class="flex gap-2.5 sm:gap-3.5 justify-center min-h-[85px]" id="community-row1">
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
                     </div>
-                    <div class="flex gap-2 sm:gap-3 justify-center min-h-[60px]" id="community-row2">
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
+                    <div class="flex gap-2.5 sm:gap-3.5 justify-center min-h-[85px]" id="community-row2">
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
                     </div>
                 </div>
             </div>
 
             <!-- Player Cards -->
             <div class="text-center mb-2 w-full z-10">
-                <div class="flex flex-col gap-2 items-center mb-4">
-                    <div class="flex gap-2 sm:gap-3 justify-center min-h-[60px]" id="player-row1">
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
+                <div class="flex flex-col gap-3 items-center mb-4">
+                    <div class="flex gap-2.5 sm:gap-3.5 justify-center min-h-[85px]" id="player-row1">
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
                     </div>
-                    <div class="flex gap-2 sm:gap-3 justify-center min-h-[60px]" id="player-row2">
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
-                        <div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>
+                    <div class="flex gap-2.5 sm:gap-3.5 justify-center min-h-[85px]" id="player-row2">
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
+                        <div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>
                     </div>
                 </div>
 
@@ -278,25 +295,37 @@
 
     <script>
         // ==========================================
-        // শূন্য ব্যালেন্স লজিক (Localstorage aviator_users_db)
+        // অ্যাপের লোকালস্টোরেজ থেকে সরাসরি ব্যালেন্স সিঙ্কিং লজিক
         // ==========================================
-        let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
-        let currentUserPhone = localStorage.getItem('aviator_current_user') || null;
-
         function getUserBalance() {
-            if (currentUserPhone && usersDb[currentUserPhone]) {
-                return Number(usersDb[currentUserPhone].balance) || 0;
+            try {
+                const usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                const currentUserPhone = localStorage.getItem('aviator_current_user');
+                
+                if (currentUserPhone && usersDb[currentUserPhone]) {
+                    let bal = Number(usersDb[currentUserPhone].balance);
+                    return isNaN(bal) ? 0.00 : bal;
+                }
+            } catch (e) {
+                console.error("Balance fetch error:", e);
             }
-            return 0.00; // ব্যালেন্স না থাকলে ডিফল্ট শূন্য
+            return 0.00; // কোনো ইউজার বা ব্যালেন্স না থাকলে ডিফল্ট ০.০০ দেখাবে
         }
 
         function updateUserBalance(newBalance) {
             userBalance = newBalance;
             document.getElementById('balance').innerText = userBalance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
             
-            if (currentUserPhone && usersDb[currentUserPhone]) {
-                usersDb[currentUserPhone].balance = newBalance;
-                localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+            try {
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                let currentUserPhone = localStorage.getItem('aviator_current_user');
+                
+                if (currentUserPhone && usersDb[currentUserPhone]) {
+                    usersDb[currentUserPhone].balance = newBalance;
+                    localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                }
+            } catch (e) {
+                console.error("Balance update error:", e);
             }
         }
 
@@ -404,7 +433,7 @@
             for (let i = 1; i <= 5; i++) {
                 const el = document.getElementById(`mult-${i}`);
                 if (i === mult) {
-                    el.className = "w-7 h-7 rounded-full text-xs font-black bg-amber-500 text-slate-950 flex items-center justify-center shadow-lg scale-110 animate-bounce transition-all";
+                    el.className = "w-7 h-7 rounded-full text-xs font-black bg-amber-500 text-slate-950 flex items-center justify-center shadow-lg scale-110 multiplier-drop transition-all";
                 } else {
                     el.className = "w-7 h-7 rounded-full text-xs font-black bg-slate-800 text-amber-400/60 flex items-center justify-center transition-all";
                 }
@@ -451,18 +480,18 @@
 
         function cardHTML(card, extraClass = "") {
             const isHigh = highValueCards.includes(card.value);
-            const borderStyle = isHigh ? "border-amber-400 shadow-amber-500/20" : "border-slate-200";
+            const borderStyle = isHigh ? "border-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.5)]" : "border-slate-300";
             return `
-                <div class="card-anim w-10 h-14 sm:w-12 sm:h-18 bg-white rounded-lg p-1 text-slate-900 font-bold flex flex-col justify-between shadow-2xl border-2 ${borderStyle} ${extraClass}">
-                    <span class="text-[10px] sm:text-xs leading-none ${isHigh ? 'text-amber-600 font-black' : ''}">${card.value}</span>
-                    <span class="${card.isRed ? 'text-red-600' : 'text-slate-900'} text-sm sm:text-lg text-center leading-none">${card.suit}</span>
-                    <span class="text-[10px] sm:text-xs leading-none text-right ${isHigh ? 'text-amber-600 font-black' : ''}">${card.value}</span>
+                <div class="card-anim w-14 h-20 sm:w-16 sm:h-24 p-1.5 text-slate-900 font-bold flex flex-col justify-between border-2 ${borderStyle} ${extraClass}">
+                    <span class="text-xs sm:text-sm leading-none ${isHigh ? 'text-amber-700 font-black' : ''}">${card.value}</span>
+                    <span class="${card.isRed ? 'text-red-600' : 'text-slate-900'} text-xl sm:text-2xl text-center leading-none drop-shadow-sm">${card.suit}</span>
+                    <span class="text-xs sm:text-sm leading-none text-right ${isHigh ? 'text-amber-700 font-black' : ''}">${card.value}</span>
                 </div>
             `;
         }
 
         function clearTable() {
-            const emptySlot = '<div class="w-10 h-14 sm:w-12 sm:h-18 border-2 border-dashed border-emerald-800/40 rounded-lg"></div>';
+            const emptySlot = '<div class="w-14 h-20 sm:w-16 sm:h-24 border-2 border-dashed border-emerald-800/40 rounded-xl"></div>';
             document.getElementById('community-row1').innerHTML = emptySlot.repeat(5);
             document.getElementById('community-row2').innerHTML = emptySlot.repeat(5);
             document.getElementById('player-row1').innerHTML = emptySlot.repeat(5);
@@ -471,6 +500,8 @@
 
         function dealCardsRandom() {
             if (isDealing) return;
+
+            userBalance = getUserBalance();
 
             if (userBalance < selectedBet) {
                 alert('পর্যাপ্ত ব্যালেন্স নেই!');
@@ -486,14 +517,16 @@
                 dbRef.update({ userBalance: userBalance });
             }
 
-            if (remoteControl.forceMultiplier > 0) {
-                updateMultiplierUI(remoteControl.forceMultiplier);
-            } else if (Math.random() < 0.20) {
-                const randomMult = Math.floor(Math.random() * 4) + 2; 
-                updateMultiplierUI(randomMult);
-            } else {
-                updateMultiplierUI(1);
-            }
+            setTimeout(() => {
+                if (remoteControl.forceMultiplier > 0) {
+                    updateMultiplierUI(remoteControl.forceMultiplier);
+                } else if (Math.random() < 0.25) {
+                    const randomMult = Math.floor(Math.random() * 4) + 2; 
+                    updateMultiplierUI(randomMult);
+                } else {
+                    updateMultiplierUI(1);
+                }
+            }, 100);
 
             clearTable();
 
@@ -532,19 +565,15 @@
                 }
             }
 
-            let indices = Array.from({length: 20}, (_, i) => i);
-            indices.sort(() => Math.random() - 0.5);
-
             let placedCount = 0;
             const dealInterval = setInterval(() => {
                 if (placedCount < 20) {
-                    const idx = indices[placedCount];
-                    if (idx < 10) {
-                        const row = idx < 5 ? 'player-row1' : 'player-row2';
-                        const colIdx = idx % 5;
-                        document.getElementById(row).children[colIdx].outerHTML = cardHTML(pCards[idx]);
+                    if (placedCount < 10) {
+                        const row = placedCount < 5 ? 'player-row1' : 'player-row2';
+                        const colIdx = placedCount % 5;
+                        document.getElementById(row).children[colIdx].outerHTML = cardHTML(pCards[placedCount]);
                     } else {
-                        const cIdx = idx - 10;
+                        const cIdx = placedCount - 10;
                         const row = cIdx < 5 ? 'community-row1' : 'community-row2';
                         const colIdx = cIdx % 5;
                         document.getElementById(row).children[colIdx].outerHTML = cardHTML(cCards[cIdx]);
@@ -554,7 +583,7 @@
                     clearInterval(dealInterval);
                     evaluateMatch(pCards, cCards);
                 }
-            }, 45);
+            }, 30);
         }
 
         function evaluateMatch(pCards, cCards) {
@@ -606,7 +635,7 @@
                     });
 
                     processWinResult(matches, matchedValues);
-                }, 500);
+                }, 400);
 
             } else {
                 processWinResult(matches, matchedValues);
