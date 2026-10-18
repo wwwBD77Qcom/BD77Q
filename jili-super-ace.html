@@ -463,7 +463,7 @@
             <!-- TOTAL BALANCE BAR -->
             <div class="total-balance-bar">
                 <span class="label">💰 TOTAL BALANCE</span>
-                <span class="amount" id="total-balance-display">৳0.00</span>
+                <span class="amount" id="total-balance-display">৳1020.25</span>
             </div>
 
             <div class="control-row">
@@ -508,12 +508,11 @@
         </div>
     </div>
 
-    <!-- ফায়ারবেজ রিয়েল-টাইম ডাটাবেস ও গেম লজিক স্ক্রিপ্ট -->
+    <!-- ফায়ারবেজ মডিউল ও সিংক লজিক -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, set, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // ফায়ারবেজ কনফিগারেশন
         const firebaseConfig = {
           apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
           authDomain: "uk77-56f6d.firebaseapp.com",
@@ -528,41 +527,65 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // ইউজার আইডি (প্রয়োজন অনুযায়ী ফায়ারবেজ ডাটাবেসের পাথ সেট করুন)
-        const currentUserId = "user_12345"; 
-        const userBalanceRef = ref(db, 'users/' + currentUserId + '/balance');
+        // লোকালস্টোরেজ থেকে রিয়েল ইউজার কি (Key) বের করা, না পেলে ডিফল্ট রাখা
+        const currentUserKey = localStorage.getItem('aviator_current_user') || "user_12345";
+        const userBalanceRef = ref(db, 'users/' + currentUserKey + '/balance');
 
-        let liveBalance = 0.00;
+        let liveBalance = 1020.25;
 
-        // রিয়েল-টাইমে ফায়ারবেজ থেকে ব্যালেন্স সিংক করা
+        // ফায়ারবেজ রিয়েল-টাইম ডাটাবেস থেকে লাইভ ব্যালেন্স রিড করা
         onValue(userBalanceRef, (snapshot) => {
             const val = snapshot.val();
             if (val !== null) {
                 liveBalance = parseFloat(val);
-                const balEl = document.getElementById('total-balance-display');
-                if (balEl) {
-                    balEl.innerText = '৳' + liveBalance.toFixed(2);
-                }
             } else {
-                // যদি ডাটাবেসে ব্যালেন্স না থাকে তবে ডিফল্ট মান সেট করা
-                set(userBalanceRef, 1000.00);
+                // যদি ডাটাবেসে না থাকে, তবে লোকাল স্টোরেজ থেকে চেক করা
+                try {
+                    let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                    if (usersDb[currentUserKey] && usersDb[currentUserKey].balance !== undefined) {
+                        liveBalance = parseFloat(usersDb[currentUserKey].balance);
+                    }
+                } catch (e) {
+                    console.error("Local storage read error:", e);
+                }
+                // ফায়ারবেজে ইনিশিয়াল ব্যালেন্স সেভ করে দেওয়া
+                set(userBalanceRef, liveBalance);
+            }
+
+            // স্ক্রিনের ব্যালেন্স আপডেট করা
+            const balEl = document.getElementById('total-balance-display');
+            if (balEl) {
+                balEl.innerText = '৳' + liveBalance.toFixed(2);
             }
         });
 
-        // ডাটাবেসে ব্যালেন্স আপডেট করার ফাংশন
-        function updateDatabaseBalance(newBalance) {
+        // ফায়ারবেজ এবং লোকালস্টোরেজ উভয় জায়গাতেই ব্যালেন্স আপডেট করার ফাংশন
+        window.updateDatabaseBalance = function(newBalance) {
             liveBalance = parseFloat(newBalance.toFixed(2));
-            set(userBalanceRef, liveBalance).catch((error) => {
-                console.error("Firebase balance update failed:", error);
-            });
-        }
+            
+            // ফায়ারবেজে আপডেট পাঠানো
+            set(userBalanceRef, liveBalance).catch(err => console.error("Firebase update error:", err));
 
-        // গ্লোবালি ব্যবহারের জন্য ফাংশনগুলো উইন্ডো অবজেক্টে যুক্ত করা
+            // লোকাল স্টোরেজেও আপডেট রাখা যাতে সিংক মিস না হয়
+            try {
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                if (usersDb[currentUserKey]) {
+                    usersDb[currentUserKey].balance = liveBalance;
+                    localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                }
+            } catch (e) {
+                console.error("Local storage update error:", e);
+            }
+
+            const balEl = document.getElementById('total-balance-display');
+            if (balEl) {
+                balEl.innerText = '৳' + liveBalance.toFixed(2);
+            }
+        };
+
         window.getUserBalance = function() {
             return liveBalance;
         };
-
-        window.updateDatabaseBalance = updateDatabaseBalance;
 
         document.addEventListener("DOMContentLoaded", () => {
             initEmptyBoard();
@@ -653,7 +676,6 @@
             `;
         }
 
-        // স্পিন করার সময় ফায়ারবেজ ব্যালেন্স কাটাকুটি করা
         function dealCardsRandom() {
             if (isDealing) return;
 
@@ -661,7 +683,7 @@
 
             if (freeSpinsRemaining <= 0) {
                 if (currentBalance < selectedBet) {
-                    alert('অপর্যাপ্ত ব্যালেন্স বা কয়েন! দয়া করে ফায়ারবেজ ব্যালেন্স চেক করুন।');
+                    alert('অপর্যাপ্ত ব্যালেন্স বা কয়েন! দয়া করে ব্যালেন্স চেক করুন।');
                     if (autoPlay) toggleAutoPlay();
                     return;
                 }
