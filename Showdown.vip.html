@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HD Wild West Super Ace Slot - VIP</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            background-color: #0c0502;
+            background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://i.postimg.cc/HkXsGjCw/Screenshot-20261019-065421-5.jpg');
+            background-size: cover;
+            background-position: center;
+            font-family: 'Georgia', serif;
+        }
+
+        .hanging-board {
+            background: radial-gradient(circle, #5c3017, #241106);
+            border: 4px solid #b8860b;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.9), inset 0 0 15px #000;
+        }
+
+        .symbol-card-img {
+            mix-blend-mode: normal;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.95));
+        }
+
+        .gold-framed-symbol {
+            border: 3px solid #ffd700;
+            border-radius: 12px;
+            box-shadow: 0 0 15px #ffd700, inset 0 0 8px #fff700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .wood-btn {
+            background: radial-gradient(circle, #3d2212, #1a0d06);
+            border: 2px solid #b8860b;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center text-amber-100 p-2">
+
+    <!-- ব্যাকগ্রাউন্ড মিউজিক অডিও ট্যাগ -->
+    <audio id="bgMusic" loop>
+        <source src="https://actions.google.com/sounds/v1/ambiences/night_forest.ogg" type="audio/ogg">
+        আপনার ব্রাউজার অডিও ট্যাগ সমর্থন করে না।
+    </audio>
+
+    <div class="game-container w-full max-w-md relative flex flex-col items-center">
+
+        <!-- ১. চেইন দিয়ে ঝুলে থাকা কাঠের মাল্টিপ্লায়ার বোর্ড -->
+        <div class="w-full relative mb-2">
+            <div class="flex justify-between px-12 -mb-2">
+                <i class="fas fa-link text-yellow-700 text-lg"></i>
+                <i class="fas fa-link text-yellow-700 text-lg"></i>
+            </div>
+            
+            <div id="multiplierBoard" class="hanging-board rounded-2xl p-2.5 flex justify-around items-center text-amber-300 font-extrabold text-sm border-2 border-yellow-600 shadow-2xl">
+                <span class="opacity-60 text-xs">x512</span>
+                <span class="text-xl text-yellow-400 bg-black/60 px-3 py-1 rounded-lg border border-yellow-500 shadow-[0_0_12px_#ffd700]">x1</span>
+                <span class="opacity-80">x2</span>
+                <span class="opacity-80">x4</span>
+            </div>
+        </div>
+
+        <!-- ২. মূল গেম বোর্ড (3600 WAYS সহ) -->
+        <div class="hanging-board w-full rounded-3xl p-3 border-4 border-yellow-600 relative">
+            
+            <div class="flex justify-between text-[10px] font-bold text-amber-600 px-2 mb-1 tracking-widest uppercase">
+                <span>3600 WAYS VIP</span>
+                <span>3600 WAYS VIP</span>
+            </div>
+
+            <!-- রিল গ্রিড এরিয়া -->
+            <div id="reelsGrid" class="grid grid-cols-5 gap-2 my-1">
+                <!-- ডায়নামিক সিম্বল বসবে -->
+            </div>
+
+            <!-- FEATURE BUY বাটন -->
+            <div class="flex justify-end mt-2">
+                <button onclick="buyFeature()" class="bg-gradient-to-r from-yellow-600 via-amber-500 to-yellow-600 text-stone-950 font-black px-4 py-1.5 rounded-xl border-2 border-amber-200 shadow-lg text-xs uppercase tracking-wider flex items-center gap-1 hover:brightness-110 active:scale-95 transition-all">
+                    <i class="fas fa-star text-amber-950"></i> FEATURE BUY
+                </button>
+            </div>
+        </div>
+
+        <!-- ৩. স্ট্যাটাস ব্যানার -->
+        <div id="vipBanner" class="w-full bg-gradient-to-r from-amber-900 via-amber-700 to-amber-900 text-yellow-300 text-xs py-1.5 rounded-lg my-2 font-bold text-center border border-yellow-500 shadow-md">
+            🎰 SHOWDOWN VIP SLOT (সীমা ১-৫০)
+        </div>
+
+        <!-- ৪. ব্যালেন্স, বেট ও উইন কন্ট্রোল প্যানেল -->
+        <div class="w-full bg-[#1e0f07]/90 border-2 border-amber-700 rounded-2xl p-2.5 my-2 flex justify-between items-center text-xs font-bold shadow-inner">
+            <div class="bg-black/50 px-2.5 py-1.5 rounded-lg border border-amber-800">
+                <span class="text-amber-500">BAL:</span> $<span id="balance" class="text-white">1000</span>
+            </div>
+            <div class="bg-black/50 px-2.5 py-1.5 rounded-lg border border-amber-800">
+                <span class="text-amber-500">BET:</span> $<span id="betAmountText" class="text-yellow-400">10</span>
+            </div>
+            <div class="bg-black/50 px-2.5 py-1.5 rounded-lg border border-amber-800">
+                <span class="text-amber-500">WIN:</span> $<span id="win" class="text-yellow-400">0</span>
+            </div>
+        </div>
+
+        <!-- ৫. স্পিন, অটো স্পিন ও বেট প্লাস-মাইনাস কন্ট্রোল -->
+        <div class="flex items-center justify-between w-full mt-2 px-1">
+            <button onclick="toggleAutoPlay()" id="autoBtn" class="bg-amber-900 border-2 border-amber-600 text-amber-200 text-[11px] font-bold px-2.5 py-2 rounded-xl shadow-md active:scale-95">
+                AUTO: OFF
+            </button>
+
+            <!-- বেট কমানোর বাটন (-) -->
+            <button onclick="changeBet(-1)" class="wood-btn w-9 h-9 rounded-full flex items-center justify-center text-amber-400 text-sm shadow-md active:scale-90 font-bold">
+                <i class="fas fa-minus"></i>
+            </button>
+
+            <!-- মূল স্পিন বাটন -->
+            <button id="spinBtn" onclick="startSpinProcess()" class="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-800 via-yellow-600 to-amber-800 border-4 border-yellow-400 shadow-[0_0_20px_rgba(255,215,0,0.5)] flex flex-col items-center justify-center text-white active:scale-95 transition-all">
+                <i class="fas fa-sync-alt text-xl drop-shadow-md"></i>
+            </button>
+
+            <!-- বেট বাড়ানোর বাটন (+) -->
+            <button onclick="changeBet(1)" class="wood-btn w-9 h-9 rounded-full flex items-center justify-center text-amber-400 text-sm shadow-md active:scale-90 font-bold">
+                <i class="fas fa-plus"></i>
+            </button>
+
+            <button onclick="toggleAutoPlay()" class="bg-amber-900 border-2 border-amber-600 text-amber-200 text-[11px] font-bold px-2.5 py-2 rounded-xl shadow-md active:scale-95">
+                LIMIT 1-50
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ফায়ারবেজ মডিউল ও ব্যালেন্স সিংক লজিক -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
+          authDomain: "uk77-56f6d.firebaseapp.com",
+          databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
+          projectId: "uk77-56f6d",
+          storageBucket: "uk77-56f6d.firebasestorage.app",
+          messagingSenderId: "1062783431056",
+          appId: "1:1062783431056:web:c44fd51195cf4061998315",
+          measurementId: "G-C0ST13Q8PJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const currentUserKey = localStorage.getItem('aviator_current_user') || "user_12345";
+        const userBalanceRef = ref(db, 'users/' + currentUserKey + '/balance');
+
+        let liveBalance = 1000.00;
+
+        onValue(userBalanceRef, (snapshot) => {
+            const val = snapshot.val();
+            if (val !== null) {
+                liveBalance = parseFloat(val);
+            } else {
+                try {
+                    let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                    if (usersDb[currentUserKey] && usersDb[currentUserKey].balance !== undefined) {
+                        liveBalance = parseFloat(usersDb[currentUserKey].balance);
+                    } else {
+                        liveBalance = 1000.00;
+                    }
+                } catch (e) {
+                    console.error("Local storage read error:", e);
+                }
+                set(userBalanceRef, liveBalance);
+            }
+
+            const balEl = document.getElementById('balance');
+            if (balEl) {
+                balEl.innerText = liveBalance.toFixed(2);
+            }
+        });
+
+        window.updateDatabaseBalance = function(newBalance) {
+            liveBalance = parseFloat(newBalance.toFixed(2));
+            
+            set(userBalanceRef, liveBalance).catch(err => console.error("Firebase update error:", err));
+
+            try {
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                if (usersDb[currentUserKey]) {
+                    usersDb[currentUserKey].balance = liveBalance;
+                    localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                }
+            } catch (e) {
+                console.error("Local storage update error:", e);
+            }
+
+            const balEl = document.getElementById('balance');
+            if (balEl) {
+                balEl.innerText = liveBalance.toFixed(2);
+            }
+        };
+
+        window.getUserBalance = function() {
+            return liveBalance;
+        };
+    </script>
+
+<script>
+    const REGULAR_SYMBOLS = [
+        "https://i.postimg.cc/HkXsGjCw/Screenshot-20261019-065421-5.jpg",
+        "https://i.postimg.cc/pT6t5tHX/Screenshot-20261019-065421-4.jpg",
+        "https://i.postimg.cc/RVcVyNmc/Screenshot-20261019-065421-3.jpg",
+        "https://i.postimg.cc/SQ9yYJnW/Screenshot-20261019-065421-2.jpg",
+        "https://i.postimg.cc/wjwHYNGN/Screenshot-20261019-065421.jpg",
+        "https://i.postimg.cc/XJVwGT8b/Screenshot-20261019-065421-6.jpg",
+        "https://i.postimg.cc/NfyRH81R/Screenshot-20261019-065421-7.jpg",
+        "https://i.postimg.cc/zBXgXTzB/Screenshot-20261019-065421-8.jpg",
+        "https://i.postimg.cc/dVN1mgwh/Screenshot-20261019-065421-9.jpg"
+    ];
+
+    const SCATTER_SYMBOL = "https://i.postimg.cc/vmyPh2z2/Screenshot-20261019-201547.jpg";
+
+    let currentBet = 10;
+    let freeSpinsRemaining = 0;
+    let currentMultiplier = 1;
+    let musicStarted = false;
+    let isAutoPlaying = false;
+    let autoPlayInterval = null;
+
+    const reelsGrid = document.getElementById("reelsGrid");
+    const betAmountText = document.getElementById("betAmountText");
+    const winEl = document.getElementById("win");
+    const spinBtn = document.getElementById("spinBtn");
+    const vipBanner = document.getElementById("vipBanner");
+    const bgMusic = document.getElementById("bgMusic");
+    const autoBtn = document.getElementById("autoBtn");
+
+    function changeBet(amount) {
+        currentBet += amount;
+        if (currentBet < 1) currentBet = 1;
+        if (currentBet > 50) currentBet = 50;
+        betAmountText.innerText = currentBet;
+    }
+
+    function initBoard(forcedScatterCount = 0) {
+        reelsGrid.innerHTML = "";
+        
+        let scatterCount = forcedScatterCount;
+        if (scatterCount === 0) {
+            const randChance = Math.random();
+            if (randChance > 0.70) {
+                scatterCount = 1; 
+            } else {
+                scatterCount = 0; 
+            }
+        }
+
+        let scatterPositions = [];
+        while (scatterPositions.length < scatterCount) {
+            let pos = Math.floor(Math.random() * 15);
+            if (!scatterPositions.includes(pos)) scatterPositions.push(pos);
+        }
+
+        let currentIndex = 0;
+
+        for (let col = 0; col < 5; col++) {
+            const colDiv = document.createElement("div");
+            colDiv.className = "flex flex-col gap-2";
+            for (let row = 0; row < 3; row++) {
+                const card = document.createElement("div");
+                card.className = "h-[68px] flex items-center justify-center p-1 relative rounded-xl transition-all";
+                
+                const isGoldFramed = Math.random() > 0.88 && !scatterPositions.includes(currentIndex);
+                if (isGoldFramed) {
+                    card.classList.add("gold-framed-symbol");
+                }
+
+                const imgTag = document.createElement("img");
+                imgTag.className = "w-full h-full object-contain symbol-card-img";
+                
+                if (scatterPositions.includes(currentIndex)) {
+                    imgTag.src = SCATTER_SYMBOL;
+                    card.classList.add("gold-framed-symbol");
+                } else {
+                    imgTag.src = REGULAR_SYMBOLS[Math.floor(Math.random() * REGULAR_SYMBOLS.length)];
+                }
+                
+                card.appendChild(imgTag);
+                colDiv.appendChild(card);
+                currentIndex++;
+            }
+            reelsGrid.appendChild(colDiv);
+        }
+    }
+
+    function startSpinProcess() {
+        if (!musicStarted) {
+            bgMusic.play().catch(e => console.log("Audio play prevented:", e));
+            musicStarted = true;
+        }
+
+        let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+
+        if (freeSpinsRemaining <= 0 && currentBalance < currentBet) {
+            alert("অপর্যাপ্ত ব্যালেন্স!");
+            stopAutoPlay();
+            return;
+        }
+
+        if (freeSpinsRemaining > 0) {
+            freeSpinsRemaining--;
+            vipBanner.innerText = `🎁 FREE SPINS: ${freeSpinsRemaining} | MULTIPLIER: x${currentMultiplier}`;
+        } else {
+            currentBalance -= currentBet;
+            if (window.updateDatabaseBalance) {
+                window.updateDatabaseBalance(currentBalance);
+            }
+            currentMultiplier = 1;
+            vipBanner.innerText = `🎰 SHOWDOWN VIP SLOT (বেট: $${currentBet})`;
+        }
+
+        winEl.innerText = "0";
+        spinBtn.disabled = true;
+
+        let intervalCount = 0;
+        const spinInterval = setInterval(() => {
+            initBoard();
+            intervalCount++;
+            if (intervalCount > 10) {
+                clearInterval(spinInterval);
+                
+                calculateWin();
+                spinBtn.disabled = false;
+
+                if (freeSpinsRemaining > 0 && !isAutoPlaying) {
+                    setTimeout(startSpinProcess, 1200);
+                }
+            }
+        }, 80);
+    }
+
+    function toggleAutoPlay() {
+        if (!isAutoPlaying) {
+            isAutoPlaying = true;
+            autoBtn.innerText = "AUTO: ON";
+            autoBtn.classList.replace("bg-amber-900", "bg-green-800");
+            
+            autoPlayInterval = setInterval(() => {
+                let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+                if (currentBalance < currentBet && freeSpinsRemaining <= 0) {
+                    stopAutoPlay();
+                    alert("ব্যালেন্স শেষ!");
+                    return;
+                }
+                if (!spinBtn.disabled) {
+                    startSpinProcess();
+                }
+            }, 1800);
+        } else {
+            stopAutoPlay();
+        }
+    }
+
+    function stopAutoPlay() {
+        isAutoPlaying = false;
+        clearInterval(autoPlayInterval);
+        autoBtn.innerText = "AUTO: OFF";
+        autoBtn.classList.replace("bg-green-800", "bg-amber-900");
+    }
+
+    function buyFeature() {
+        let featureCost = currentBet * 10; 
+        if (!musicStarted) {
+            bgMusic.play().catch(e => console.log("Audio play prevented:", e));
+            musicStarted = true;
+        }
+
+        let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+
+        if (currentBalance < featureCost) {
+            alert("ফিচারের জন্য পর্যাপ্ত ব্যালেন্স নেই!");
+            return;
+        }
+        currentBalance -= featureCost;
+        if (window.updateDatabaseBalance) {
+            window.updateDatabaseBalance(currentBalance);
+        }
+        
+        initBoard(3); 
+        freeSpinsRemaining = 10;
+        currentMultiplier = 8;
+        
+        vipBanner.innerText = `⭐ ফিচার বাই সফল! ১০টি ফ্রি স্পিন চালু (x8)`;
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        startSpinProcess();
+    }
+
+    function calculateWin() {
+        const isWin = Math.random() > 0.90; 
+        if (isWin) {
+            let baseWin = freeSpinsRemaining > 0 ? Math.floor(Math.random() * 5 + 2) * currentBet : Math.floor(Math.random() * 3 + 1) * currentBet;
+            const finalWin = baseWin * currentMultiplier;
+            
+            let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+            currentBalance += finalWin;
+            if (window.updateDatabaseBalance) {
+                window.updateDatabaseBalance(currentBalance);
+            }
+
+            winEl.innerText = finalWin;
+
+            if (finalWin >= currentBet * 15) {
+                vipBanner.innerText = `🔥 BIG WIN! অসাধারণ জয়: $${finalWin} 🔥`;
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+            }
+        } else {
+            winEl.innerText = "0";
+        }
+    }
+
+    initBoard();
+</script>
+
+</body>
+</html>
