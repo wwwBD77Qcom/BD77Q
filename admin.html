@@ -1920,43 +1920,6 @@ body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;bac
   <div id="dgmList" class="dgm-list"><div style="color:#9da7b6;text-align:center;padding:12px">গেম লোড হচ্ছে...</div></div>
 </div>
 
-<!-- Live Theme + Custom Buttons manager; saves to same Firebase project -->
-<style>
-#dgmThemePanel{margin-top:16px;border:1px solid rgba(96,165,250,.45);background:linear-gradient(145deg,#091b36,#10112d)!important}
-#dgmThemePanel .dgm-theme-title{font-size:17px;font-weight:900;color:#8ee7ff;margin-bottom:6px}
-#dgmThemePanel .dgm-help{font-size:12px;color:#aabbd4;line-height:1.55;margin-bottom:12px}
-#dgmThemePanel .dgm-preview{border-radius:15px;padding:14px;background:linear-gradient(135deg,var(--dgm-p,#1d4ed8),var(--dgm-s,#7c3aed));box-shadow:0 0 24px color-mix(in srgb,var(--dgm-p,#1d4ed8) 40%,transparent);margin:10px 0}
-#dgmThemePanel .dgm-preview b{font-size:17px}#dgmThemePanel .dgm-preview span{display:inline-block;margin-top:8px;background:#fff;color:#111;padding:7px 12px;border-radius:999px;font-size:11px;font-weight:900}
-#dgmThemePanel .dgm-custom-list{display:grid;gap:8px;margin-top:12px}
-#dgmThemePanel .dgm-custom-row{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#081225;border:1px solid #273a58;border-radius:12px;padding:10px;font-size:12px}
-#dgmThemePanel input[type=color]{height:42px;padding:4px;min-width:0}
-</style>
-<div id="dgmThemePanel" class="card">
-  <div class="dgm-theme-title">✨ Live Theme & Design Studio</div>
-  <div class="dgm-help">এখান থেকে নতুন থিম, রঙ, ব্যাকগ্রাউন্ড ছবি ও ডিজাইন লিংক সেট করুন। Save করলে একই Firebase-এ যুক্ত ইউজার অ্যাপে লাইভ আপডেট হবে।</div>
-  <div class="dgm-grid">
-    <input id="dgmThemeName" class="dgm-input" placeholder="থিমের নাম (যেমন Neon VIP)">
-    <select id="dgmThemeStyle" class="dgm-input"><option value="neon">💠 Neon Glow</option><option value="royal">👑 Royal Gold</option><option value="ocean">🌊 Ocean Blue</option><option value="fire">🔥 Fire Red</option><option value="nature">🌿 Emerald</option></select>
-    <label style="font-size:12px;color:#cbd5e1">প্রাইমারি রঙ<input id="dgmThemePrimary" class="dgm-input" type="color" value="#1d4ed8"></label>
-    <label style="font-size:12px;color:#cbd5e1">সেকেন্ডারি রঙ<input id="dgmThemeSecondary" class="dgm-input" type="color" value="#7c3aed"></label>
-    <input id="dgmThemeBg" class="dgm-input full" type="url" placeholder="ব্যাকগ্রাউন্ড ছবি URL (ঐচ্ছিক https://...)">
-    <input id="dgmThemeDesignLink" class="dgm-input full" type="url" placeholder="Design Link (ঐচ্ছিক — ইউজার অ্যাপে বাটন হবে)">
-  </div>
-  <div id="dgmThemePreview" class="dgm-preview"><b>✨ VIP GAME ZONE</b><br><span>▶ PLAY NOW</span></div>
-  <div class="dgm-actions"><button id="dgmThemeSave" class="dgm-btn dgm-primary" type="button">🎨 থিম লাইভ করুন</button><button id="dgmThemeReset" class="dgm-btn dgm-secondary" type="button">↺ ডিফল্ট</button></div>
-  <div id="dgmThemeMsg" style="font-size:12px;margin-top:8px"></div>
-  <hr style="border-color:#273a58;margin:18px 0">
-  <div class="dgm-theme-title">➕ নতুন ইউজার বাটন যোগ করুন</div>
-  <div class="dgm-help">এই বাটনগুলো ইউজার অ্যাপে গেম কার্ডের উপরে দেখা যাবে। বাটনে একটি ওয়েব লিংক দিন; বাটন চাপলে সেই লিংক খুলবে। গেম যোগ করতে উপরের Game Management-এ HTML ফাইল/গেম URL দিন।</div>
-  <div class="dgm-grid">
-    <input id="dgmButtonName" class="dgm-input" placeholder="বাটনের নাম (যেমন 🎁 Bonus Zone)">
-    <select id="dgmButtonStyle" class="dgm-input"><option value="gold">🌟 Gold</option><option value="blue">💎 Blue</option><option value="pink">💖 Pink</option><option value="green">🍀 Green</option></select>
-    <input id="dgmButtonUrl" class="dgm-input full" type="url" placeholder="বাটনের লিংক (https://...)">
-  </div>
-  <div class="dgm-actions"><button id="dgmButtonAdd" class="dgm-btn dgm-primary" type="button">➕ বাটন যোগ করুন</button></div>
-  <div id="dgmButtonMsg" style="font-size:12px;margin-top:8px"></div><div id="dgmButtonList" class="dgm-custom-list"></div>
-</div>
-
 <script type="module">
 import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -2070,21 +2033,6 @@ function render(){
   </div>`).join('');
 }
 onValue(ref(dgmDb,'games'),snap=>{gamesCache=snap.exists()?(snap.val()||{}):{};render();});
-
-// Live theme configuration and user-facing custom buttons
-let dgmButtonsCache={};
-function dgmSafeWebUrl(value){try{const u=new URL(String(value||''));return /^https?:$/.test(u.protocol)?u.href:'';}catch(e){return '';}}
-function dgmThemePreview(){const p=$('dgmThemePrimary')?.value||'#1d4ed8',s=$('dgmThemeSecondary')?.value||'#7c3aed',el=$('dgmThemePreview');if(el){el.style.setProperty('--dgm-p',p);el.style.setProperty('--dgm-s',s);}}
-$('dgmThemePrimary')?.addEventListener('input',dgmThemePreview);$('dgmThemeSecondary')?.addEventListener('input',dgmThemePreview);
-$('dgmThemeStyle')?.addEventListener('change',()=>{const presets={neon:['#1d4ed8','#7c3aed'],royal:['#9a6700','#25103f'],ocean:['#0284c7','#0f766e'],fire:['#dc2626','#7f1d1d'],nature:['#059669','#064e3b']};const pair=presets[$('dgmThemeStyle').value];if(pair){$('dgmThemePrimary').value=pair[0];$('dgmThemeSecondary').value=pair[1];dgmThemePreview();}});
-onValue(ref(dgmDb,'appConfig/gameTheme'),snap=>{const t=snap.val();if(!t)return;if($('dgmThemeName'))$('dgmThemeName').value=t.name||'';if($('dgmThemeStyle'))$('dgmThemeStyle').value=t.style||'neon';if($('dgmThemePrimary'))$('dgmThemePrimary').value=t.primary||'#1d4ed8';if($('dgmThemeSecondary'))$('dgmThemeSecondary').value=t.secondary||'#7c3aed';if($('dgmThemeBg'))$('dgmThemeBg').value=t.background||'';if($('dgmThemeDesignLink'))$('dgmThemeDesignLink').value=t.designLink||'';dgmThemePreview();});
-$('dgmThemeSave')?.addEventListener('click',async()=>{const background=$('dgmThemeBg').value.trim(),designLink=$('dgmThemeDesignLink').value.trim();if(background&&!dgmSafeWebUrl(background))return $('dgmThemeMsg').textContent='সঠিক https:// ব্যাকগ্রাউন্ড URL দিন।';if(designLink&&!dgmSafeWebUrl(designLink))return $('dgmThemeMsg').textContent='সঠিক http/https Design Link দিন।';const data={name:$('dgmThemeName').value.trim()||'VIP Live Theme',style:$('dgmThemeStyle').value,primary:$('dgmThemePrimary').value,secondary:$('dgmThemeSecondary').value,background,designLink,updatedAt:Date.now(),active:true};try{await set(ref(dgmDb,'appConfig/gameTheme'),data);$('dgmThemeMsg').textContent='✅ থিম ইউজার অ্যাপে লাইভ করার জন্য সেভ হয়েছে।';$('dgmThemeMsg').style.color='#4ade80';}catch(e){$('dgmThemeMsg').textContent='❌ সেভ হয়নি: '+(e.message||'Firebase permission পরীক্ষা করুন');$('dgmThemeMsg').style.color='#f87171';}});
-$('dgmThemeReset')?.addEventListener('click',async()=>{try{await set(ref(dgmDb,'appConfig/gameTheme'),{name:'Neon VIP',style:'neon',primary:'#1d4ed8',secondary:'#7c3aed',background:'',designLink:'',updatedAt:Date.now(),active:true});$('dgmThemeMsg').textContent='ডিফল্ট Neon থিম সেট হয়েছে।';}catch(e){$('dgmThemeMsg').textContent='সেভ করা যায়নি।';}});
-function renderDgmButtons(){const el=$('dgmButtonList');if(!el)return;const arr=Object.entries(dgmButtonsCache).map(([id,b])=>({id,...b})).sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0));el.innerHTML=arr.length?arr.map(b=>`<div class="dgm-custom-row"><div><b>${esc(b.name||'Button')}</b><div class="dgm-url">${esc(b.url||'')}</div></div><button type="button" class="dgm-btn dgm-danger" onclick="window.dgmRemoveCustomButton('${b.id}')">🗑️ মুছুন</button></div>`).join(''):'<div style="font-size:12px;color:#94a3b8">এখনো কোনো কাস্টম বাটন নেই।</div>';}
-onValue(ref(dgmDb,'gameButtons'),snap=>{dgmButtonsCache=snap.exists()?(snap.val()||{}):{};renderDgmButtons();});
-$('dgmButtonAdd')?.addEventListener('click',async()=>{const name=$('dgmButtonName').value.trim(),url=dgmSafeWebUrl($('dgmButtonUrl').value.trim()),style=$('dgmButtonStyle').value;if(!name)return $('dgmButtonMsg').textContent='বাটনের নাম দিন।';if(!url)return $('dgmButtonMsg').textContent='সঠিক http/https লিংক দিন।';try{const n=push(ref(dgmDb,'gameButtons'));await set(n,{name,url,style,active:true,createdAt:Date.now()});$('dgmButtonName').value='';$('dgmButtonUrl').value='';$('dgmButtonMsg').textContent='✅ ইউজার অ্যাপে বাটন যোগ হয়েছে।';$('dgmButtonMsg').style.color='#4ade80';}catch(e){$('dgmButtonMsg').textContent='❌ বাটন যোগ হয়নি। Firebase Rules পরীক্ষা করুন।';$('dgmButtonMsg').style.color='#f87171';}});
-window.dgmRemoveCustomButton=async id=>{if(!confirm('এই বাটনটি মুছবেন?'))return;try{await remove(ref(dgmDb,'gameButtons/'+id));}catch(e){alert('বাটন মুছতে পারেনি। Firebase Rules পরীক্ষা করুন।')}};
-
 $('dgmFile')?.addEventListener('change',e=>{
   const file=e.target.files?.[0];
   if(!file)return;
@@ -2414,5 +2362,21 @@ $('depContentSave').addEventListener('click',async()=>{const url=$('depContentUr
 })();
 </script>
 <script>setInterval(()=>{location.reload();},300000);</script>
+
+<!-- BD77Q_OFFICIAL_LINKS_MANAGER -->
+<section id="officialLinksManager" style="margin:18px auto;padding:18px;max-width:1000px;background:#10172b;border:1px solid #38527e;border-radius:18px;color:#eef5ff;box-shadow:0 10px 28px #0004">
+<h2 style="margin:0 0 6px;color:#9ee7ff">🔗 Official Links — Login + Registration</h2><p style="margin:0 0 14px;color:#b9c9e6;font-size:13px">এখানে যোগ করা লিংক ইউজার অ্যাপের লগইন ও রেজিস্ট্রেশন—দুই পেজেই দেখাবে।</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px"><input id="officialLinkLabel" placeholder="লিংকের নাম (যেমন Telegram)" style="padding:12px;border-radius:9px;border:1px solid #52678e;background:#080f20;color:#fff"><input id="officialLinkUrl" placeholder="https://example.com" style="padding:12px;border-radius:9px;border:1px solid #52678e;background:#080f20;color:#fff"><button type="button" id="officialLinkAddBtn" style="padding:12px;border:0;border-radius:9px;background:linear-gradient(120deg,#0ea5e9,#7c3aed);color:#fff;font-weight:900">＋ লিংক যোগ করুন</button></div><div id="officialLinksAdminMsg" style="margin:10px 0;color:#fde68a;font-size:13px"></div><div id="officialLinksAdminList" style="display:grid;gap:8px"></div></section>
+
+<script type="module">
+// BD77Q_OFFICIAL_LINKS_MANAGER
+import { initializeApp as initOfficialApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase as getOfficialDB, ref as officialRef, push as officialPush, set as officialSet, remove as officialRemove, onValue as officialOnValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+const officialCfg={apiKey:"AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",authDomain:"uk77-56f6d.firebaseapp.com",databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",projectId:"uk77-56f6d",storageBucket:"uk77-56f6d.firebasestorage.app",messagingSenderId:"1062783431056",appId:"1:1062783431056:web:c44fd51195cf4061998315"};
+const officialApp=initOfficialApp(officialCfg,'officialLinksManagerApp'); const officialDB=getOfficialDB(officialApp); const el=id=>document.getElementById(id);
+function renderLinks(data){const list=el('officialLinksAdminList');if(!list)return;list.innerHTML='';Object.entries(data||{}).forEach(([id,x])=>{const row=document.createElement('div');row.style.cssText='display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:#0b1224;border:1px solid #2d4269;border-radius:10px;padding:10px';const info=document.createElement('div');info.style.cssText='min-width:0;flex:1';const title=document.createElement('b');title.textContent=x.label||'Link';const url=document.createElement('div');url.textContent=x.url||'';url.style.cssText='font-size:12px;color:#9fb5d8;overflow-wrap:anywhere';info.append(title,url);const toggle=document.createElement('button');toggle.textContent=x.active===false?'চালু করুন':'বন্ধ করুন';toggle.style.cssText='padding:8px 10px;border:0;border-radius:8px;background:#334155;color:white;width:auto';toggle.onclick=()=>officialSet(officialRef(officialDB,'settings/officialLinks/'+id),{...x,active:x.active===false});const del=document.createElement('button');del.textContent='মুছুন';del.style.cssText='padding:8px 10px;border:0;border-radius:8px;background:#991b1b;color:white;width:auto';del.onclick=()=>{if(confirm('এই লিংকটি মুছবেন?'))officialRemove(officialRef(officialDB,'settings/officialLinks/'+id));};row.append(info,toggle,del);list.append(row);});}
+officialOnValue(officialRef(officialDB,'settings/officialLinks'),s=>renderLinks(s.exists()?s.val():{}),e=>{el('officialLinksAdminMsg').textContent='Firebase permission error: '+e.message;});
+el('officialLinkAddBtn')?.addEventListener('click',async()=>{const label=el('officialLinkLabel').value.trim(),raw=el('officialLinkUrl').value.trim();if(!label||!raw){el('officialLinksAdminMsg').textContent='লিংকের নাম ও URL দিন।';return;}let url=raw;if(!/^https?:\/\//i.test(url))url='https://'+url;try{const p=new URL(url);if(!['http:','https:'].includes(p.protocol))throw new Error();}catch(e){el('officialLinksAdminMsg').textContent='সঠিক http:// বা https:// লিংক দিন।';return;}try{await officialSet(officialPush(officialRef(officialDB,'settings/officialLinks')),{label,url,active:true,createdAt:Date.now()});el('officialLinkLabel').value='';el('officialLinkUrl').value='';el('officialLinksAdminMsg').textContent='লিংক যোগ হয়েছে।';}catch(e){el('officialLinksAdminMsg').textContent='লিংক সেভ হয়নি: '+e.message;}});
+</script>
 </body>
 </html>
