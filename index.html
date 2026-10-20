@@ -127,6 +127,25 @@
 #authScreen .modal-note{color:#9db1c9}
 @media(max-width:520px){#authScreen .auth-container{padding:0 11px 22px}#authScreen .auth-card{margin-top:155px!important;padding:17px!important;border-radius:20px!important}#authScreen .auth-visual-brand{top:20px}#authScreen .auth-visual-logo{font-size:29px}#authScreen .auth-visual-sub{font-size:9px;letter-spacing:1.5px}}
 
+/* ULTRA VIP AUTH LIGHTING + OFFICIAL TELEGRAM/LINK BAR */
+#authScreen{background:radial-gradient(ellipse at 50% 15%,#10295a 0%,#050b20 42%,#01030b 100%)!important}
+#authScreen:before{content:"";position:fixed;inset:-40%;z-index:1;pointer-events:none;background:conic-gradient(from 0deg,transparent 0 18%,rgba(0,225,255,.09) 22%,transparent 29% 48%,rgba(178,72,255,.10) 53%,transparent 62% 80%,rgba(255,194,65,.07) 85%,transparent 92%);animation:authVipAura 18s linear infinite}
+@keyframes authVipAura{to{transform:rotate(360deg)}}
+#authScreen .auth-visual{background-image:radial-gradient(circle at 50% 22%,rgba(0,217,255,.32),transparent 28%),linear-gradient(135deg,#06152f,#171044 48%,#04162c)!important;border:1px solid rgba(72,224,255,.5)!important;box-shadow:inset 0 0 35px rgba(0,196,255,.18),0 0 28px rgba(0,196,255,.2)!important}
+#authScreen .auth-visual:before{content:"✦  ✧  ✦";position:absolute;z-index:1;top:25%;left:0;right:0;text-align:center;letter-spacing:24px;color:#ffe28a;font-size:22px;text-shadow:0 0 16px #00d9ff;animation:authVipSpark 3s ease-in-out infinite alternate}
+@keyframes authVipSpark{from{opacity:.35;filter:brightness(.8)}to{opacity:1;filter:brightness(1.6)}}
+#authScreen .auth-card{border:1px solid rgba(83,232,255,.75)!important;background:linear-gradient(145deg,rgba(4,15,40,.94),rgba(24,10,48,.93),rgba(2,21,36,.96))!important;box-shadow:0 0 0 1px rgba(255,255,255,.04),0 0 18px rgba(0,204,255,.28),0 0 42px rgba(120,62,255,.18),0 24px 65px #000b!important;animation:authCardGlow 4s ease-in-out infinite alternate}
+@keyframes authCardGlow{from{border-color:rgba(0,220,255,.55);box-shadow:0 0 16px rgba(0,204,255,.2),0 24px 65px #000b}to{border-color:rgba(255,206,92,.85);box-shadow:0 0 25px rgba(0,204,255,.32),0 0 24px rgba(255,194,65,.13),0 24px 65px #000b}}
+#authScreen .auth-tabs{box-shadow:inset 0 0 14px rgba(0,0,0,.4)}
+#authScreen .auth-tab.active{background:linear-gradient(120deg,#00e5ff,#3867ff 55%,#a23bff)!important;box-shadow:0 0 16px rgba(0,210,255,.38),inset 0 1px 0 #ffffff55!important}
+#authScreen .cash{background:linear-gradient(110deg,#ffd66b,#ff9d25 35%,#ffce55 55%,#b86a08)!important;color:#191020!important;border:1px solid #ffe9a5!important;box-shadow:0 0 16px rgba(255,184,54,.3),inset 0 1px 0 #fff8!important;font-weight:1000!important}
+#authScreen .google-auth-msg{color:#9cecff!important}
+#authScreen #authCommunityLinks{position:relative;z-index:8;width:min(450px,100%);margin:12px 0 22px!important;gap:9px!important}
+#authScreen #authCommunityLinks a{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 15px!important;border:1px solid #73eaff!important;border-radius:999px!important;background:linear-gradient(120deg,#06284c,#132b6d 55%,#4c1b77)!important;color:#fff!important;font-size:12px!important;letter-spacing:.3px;box-shadow:0 0 12px #00cfff55,inset 0 0 12px #ffffff0b!important;text-shadow:0 1px 4px #000;transition:transform .2s,box-shadow .2s}
+#authScreen #authCommunityLinks a:before{content:"✈";display:inline-flex;align-items:center;justify-content:center;width:23px;height:23px;border-radius:50%;background:linear-gradient(135deg,#4de8ff,#0088cc);color:white;font-size:13px;box-shadow:0 0 10px #00cfff99}
+#authScreen #authCommunityLinks a:hover{transform:translateY(-2px);box-shadow:0 0 22px #00d9ff88!important}
+@media(max-width:520px){#authScreen #authCommunityLinks{margin-top:8px!important}#authScreen #authCommunityLinks a{min-height:39px;padding:8px 12px!important}}
+
 /* VIP HOME REDESIGN — existing functionality preserved */
 .vip-home-head{height:72px;background:#171717;display:flex;align-items:center;justify-content:space-between;padding:0 12px;border-bottom:1px solid #272727;position:sticky;top:0;z-index:90}
 .vip-brand{font-size:23px;font-weight:1000;white-space:nowrap}.vip-menu-icon{color:#777;font-size:25px;margin-right:10px}.brand-gold{color:#ffe000}.brand-yellow{color:#dfff00}.brand-white{color:#eee;margin:0 3px}.brand-green{color:#18e66d}
@@ -387,6 +406,20 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 @keyframes bd77qCrownFloat{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-2px) rotate(5deg)}}
 @keyframes bd77qVipSweep{0%,20%{transform:translateX(-150%);opacity:0}45%{opacity:1}75%,100%{transform:translateX(160%);opacity:0}}
 @media(prefers-reduced-motion:reduce){.vip-home-head .vip-brand:after,.vip-home-head .vip-brand .brand-gold,.vip-home-head .vip-brand .brand-yellow,.vip-home-head .vip-brand .vip-menu-icon,.vip-ribbon,.vip-ribbon span,.vip-ribbon i{animation:none!important}}
+</style>
+
+
+<style id="google-auth-neon-lighting-theme">
+#authScreen .auth-card{border-color:rgba(85,220,255,.82)!important;box-shadow:0 18px 55px rgba(0,0,0,.62),0 0 24px rgba(0,190,255,.24),inset 0 0 22px rgba(24,95,255,.08)!important;animation:authNeonBreath 3.8s ease-in-out infinite}
+#authScreen .auth-card input:focus{border-color:#42e8ff!important;box-shadow:0 0 0 2px rgba(66,232,255,.15),0 0 20px rgba(0,190,255,.22)!important}
+#authScreen button[onclick*="bd77qGoogleSignup"]{position:relative;overflow:hidden;border:1px solid rgba(116,225,255,.95)!important;background:linear-gradient(110deg,#fff 0%,#e6f8ff 30%,#fff 60%,#e8eaff 100%)!important;color:#17233a!important;box-shadow:0 0 0 1px rgba(35,184,255,.15),0 0 17px rgba(0,190,255,.27),0 7px 20px rgba(0,0,0,.2)!important;transition:transform .2s ease,box-shadow .2s ease}
+#authScreen button[onclick*="bd77qGoogleSignup"]:hover{transform:translateY(-1px);box-shadow:0 0 25px rgba(0,210,255,.48),0 7px 22px rgba(0,0,0,.24)!important}
+#authScreen .cash{background:linear-gradient(110deg,#00d4ff,#1675ff 48%,#7b3dff)!important;border:1px solid rgba(150,233,255,.75);box-shadow:0 0 18px rgba(0,162,255,.35),inset 0 1px 0 rgba(255,255,255,.28)!important}
+#authScreen .auth-tabs{box-shadow:inset 0 0 18px rgba(0,170,255,.08),0 0 15px rgba(0,170,255,.08)}
+#authScreen .auth-visual:after{background:radial-gradient(ellipse at 50% 28%,rgba(0,175,255,.12),transparent 48%),linear-gradient(180deg,rgba(1,5,18,.12),rgba(1,5,18,.44) 35%,rgba(4,8,25,.94) 100%)!important}
+#authScreen .auth-visual-logo{filter:drop-shadow(0 0 10px rgba(0,210,255,.55))}
+@keyframes authNeonBreath{0%,100%{box-shadow:0 18px 55px rgba(0,0,0,.62),0 0 18px rgba(0,190,255,.18),inset 0 0 22px rgba(24,95,255,.06)}50%{box-shadow:0 18px 55px rgba(0,0,0,.62),0 0 30px rgba(0,190,255,.3),inset 0 0 26px rgba(24,95,255,.1)}}
+@media(prefers-reduced-motion:reduce){#authScreen .auth-card{animation:none!important}#authScreen button[onclick*="bd77qGoogleSignup"]{transition:none!important}}
 </style>
 
 </head>
@@ -3404,7 +3437,8 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
 <div id="apkUpdateOverlay" role="dialog" aria-modal="true" aria-labelledby="apkUpdateTitle"><div id="apkUpdateBox"><h2 id="apkUpdateTitle">📲 অ্যাপ আপডেট</h2><div id="apkUpdateVersionText" style="font-weight:800;margin-bottom:8px"></div><p id="apkUpdateMessageText" style="white-space:pre-wrap;line-height:1.55"></p><a id="apkUpdateDownload" href="#" target="_blank" rel="noopener">⬇ APK ডাউনলোড করুন</a><button id="apkUpdateLater" type="button">এখন নয়</button></div></div>
 <script type="module" id="apk-update-user-listener">
 import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import {getDatabase,ref,onValue,get,set} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
 const cfg={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
 const app=getApps().length?getApps()[0]:initializeApp(cfg),db=getDatabase(app),overlay=document.getElementById('apkUpdateOverlay');
 let latest=null,shown=false,shownVersion='';
@@ -3507,6 +3541,9 @@ const authScreen=document.getElementById('authScreen');if(authScreen&&window.Mut
 import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
 const c={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+const googleApp=getApps().find(a=>a.name==='[DEFAULT]')||initializeApp(c);
+const auth=getAuth(googleApp);
+const db=getDatabase(googleApp);
 try{const app=getApps().length?getApps()[0]:initializeApp(c),db=getDatabase(app);onValue(ref(db,'settings/depositContent'),s=>{const v=s.val()||{},box=document.getElementById('dynamicDepositContent'),title=document.getElementById('dynamicDepositTitle'),txt=document.getElementById('dynamicDepositText'),a=document.getElementById('dynamicDepositLink');if(!box||!title||!txt||!a)return;const url=String(v.url||'').trim(),active=v.active!==false;box.style.display=active&&(v.title||v.text||url)?'block':'none';title.textContent=String(v.title||'Deposit Information').slice(0,120);txt.textContent=String(v.text||'').slice(0,3000);if(url&&/^https:\/\//i.test(url)){a.href=url;a.textContent=String(v.buttonLabel||'ফাইল / লিংক খুলুন').slice(0,80);a.style.display='inline-block'}else{a.removeAttribute('href');a.style.display='none'}},e=>console.warn('Deposit content sync failed',e));}catch(e){console.warn('Deposit content sync unavailable',e)}
 
   // Google Sign-In for login and registration. Existing accounts are reused by Firebase UID.
@@ -3555,8 +3592,8 @@ try{const app=getApps().length?getApps()[0]:initializeApp(c),db=getDatabase(app)
       links.filter(x=>x&&x.active!==false&&x.url&&x.label).forEach(x=>{
         let url=String(x.url).trim(); if(!/^https?:\/\//i.test(url))url='https://'+url;
         try{const parsed=new URL(url);if(!['http:','https:'].includes(parsed.protocol))return;}catch(e){return;}
-        const link=document.createElement('a'); link.href=url; link.target='_blank'; link.rel='noopener noreferrer'; link.dataset.adminOfficialLink='1'; link.textContent=String(x.label).slice(0,60);
-        link.style.cssText='display:inline-block;background:linear-gradient(120deg,#0ea5e9,#7c3aed);color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:800;border:1px solid #7dd3fc;box-shadow:0 0 12px #38bdf866';
+        const link=document.createElement('a'); link.href=url; link.target='_blank'; link.rel='noopener noreferrer'; link.dataset.adminOfficialLink='1'; link.setAttribute('aria-label','Official '+String(x.label).slice(0,60)); link.innerHTML='<span aria-hidden="true" style="font-size:17px;line-height:1">✈️</span><span style="display:flex;flex-direction:column;align-items:flex-start;line-height:1.15"><small style="font-size:8px;letter-spacing:1.2px;color:#8ff4ff">OFFICIAL</small><strong>'+String(x.label).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])).slice(0,60)+'</strong></span>';
+        link.style.cssText='display:inline-flex;align-items:center;gap:8px;background:linear-gradient(120deg,#06284c,#132b6d 55%,#4c1b77);color:#fff;text-decoration:none;padding:9px 15px;border-radius:999px;font-weight:800;border:1px solid #73eaff;box-shadow:0 0 14px #38bdf866';
         officialWrap.appendChild(link);
       });
     },err=>console.warn('Official links sync failed',err));
@@ -3943,6 +3980,33 @@ button:disabled{filter:saturate(.55);box-shadow:none;animation:none}
 /* Buttons across the rest of the app keep their own colors, with a refined neon outline */
 .profile-action-btn,.payment-logo,.quick-amount,.reward-btn,.social-share-btn{transition:transform .18s ease,box-shadow .2s ease,border-color .2s ease}
 @media(prefers-reduced-motion:reduce){button,#profileScreen button,.profile-modal button,.game-card-item{animation:none!important;transition:none!important}}
+
+/* Alternate design: Royal Amethyst glass + rose-gold lighting */
+:root{color-scheme:dark}
+html,body{background:#090513!important;color:#fff!important}
+body{background:radial-gradient(ellipse at 15% 5%,rgba(160,55,255,.25),transparent 35%),radial-gradient(ellipse at 90% 30%,rgba(255,73,163,.18),transparent 32%),#090513!important}
+.app{background:linear-gradient(155deg,rgba(26,12,48,.98),rgba(10,8,24,.99))!important;border-left:1px solid rgba(213,142,255,.25);border-right:1px solid rgba(213,142,255,.25);box-shadow:0 0 55px rgba(155,55,255,.2)!important}
+.header{background:linear-gradient(100deg,#281044,#171027 55%,#32102f)!important;border-bottom:1px solid rgba(236,171,255,.28)!important}
+.logo{color:#fff!important;text-shadow:0 0 14px rgba(228,139,255,.8)}
+.card,.hero,.game{background:linear-gradient(145deg,rgba(39,23,62,.95),rgba(18,14,35,.98))!important;border:1px solid rgba(211,142,255,.28)!important;box-shadow:0 12px 30px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.05)!important}
+input{background:rgba(9,6,21,.85)!important;border:1px solid rgba(203,139,255,.32)!important;border-radius:13px!important}
+input:focus{border-color:#e2a4ff!important;box-shadow:0 0 0 3px rgba(188,88,255,.13),0 0 18px rgba(188,88,255,.15)!important}
+button{border-radius:13px!important;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease}
+button:active{transform:scale(.98)}
+button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[type="submit"]{background:linear-gradient(110deg,#8b35e8,#d34ca8 55%,#f0a65c)!important;color:#fff!important;border:1px solid rgba(255,255,255,.25)!important;box-shadow:0 0 20px rgba(189,74,255,.24),inset 0 1px rgba(255,255,255,.3)!important}
+.small,.bet{background:linear-gradient(135deg,#34224b,#21172f)!important;border:1px solid rgba(215,164,255,.22)!important;color:#f5eaff!important}
+.balance{background:linear-gradient(120deg,#44205f,#6c2858)!important;border:1px solid rgba(242,177,255,.3)!important;box-shadow:0 0 16px rgba(194,83,255,.18)}
+#authScreen{background:radial-gradient(ellipse at 50% 0%,rgba(190,69,255,.16),transparent 48%),linear-gradient(160deg,#10071e,#090513)!important}
+#authScreen .auth-card{background:linear-gradient(145deg,rgba(44,24,65,.94),rgba(17,10,31,.97))!important;border:1px solid rgba(228,167,255,.42)!important;border-radius:25px!important;box-shadow:0 22px 65px rgba(0,0,0,.62),0 0 28px rgba(189,73,255,.2),inset 0 1px rgba(255,255,255,.12)!important;backdrop-filter:blur(18px)!important}
+#authScreen .auth-visual{border-radius:22px!important;overflow:hidden!important}
+#authScreen .auth-visual:after{background:radial-gradient(ellipse at 50% 25%,rgba(255,143,225,.2),transparent 48%),linear-gradient(180deg,rgba(15,5,28,.06),rgba(13,5,25,.3) 35%,rgba(10,5,20,.96) 100%)!important}
+#authScreen .auth-visual-logo{filter:drop-shadow(0 0 14px rgba(228,143,255,.85))!important}
+#authScreen .auth-tabs{background:rgba(12,7,24,.7)!important;border:1px solid rgba(214,149,255,.24)!important;border-radius:15px!important}
+#authScreen .auth-tabs button{border-radius:11px!important}
+#authScreen input{border-radius:13px!important}
+@keyframes amethystGlow{0%,100%{box-shadow:0 22px 65px rgba(0,0,0,.62),0 0 22px rgba(189,73,255,.17),inset 0 1px rgba(255,255,255,.1)}50%{box-shadow:0 22px 65px rgba(0,0,0,.62),0 0 34px rgba(239,93,193,.27),inset 0 1px rgba(255,255,255,.13)}}
+#authScreen .auth-card{animation:amethystGlow 5s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){#authScreen .auth-card{animation:none!important}}
 </style>
 
 
