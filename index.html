@@ -479,7 +479,7 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
           <input id="loginPassword" type="password" placeholder="আপনার পাসওয়ার্ড দিন" style="margin-bottom:16px">
           
           <button class="cash" type="button" onclick="handleLogin()">লগইন করুন</button>
-          <button type="button" onclick="window.bd77qGoogleSignup && window.bd77qGoogleSignup()" style="width:100%;margin-top:10px;padding:13px;border-radius:11px;border:1px solid #d1d5db;background:#fff;color:#202124;font-weight:800;font-size:15px">🌐 Google দিয়ে লগইন করুন</button><div class="google-auth-msg modal-note" style="text-align:center;margin-top:6px"></div>
+          <button type="button" onclick="if(typeof window.bd77qGoogleSignup==='function'){window.bd77qGoogleSignup()}else{const m=this.nextElementSibling;if(m)m.textContent='Google লগইন চালু হচ্ছে না। পেজটি রিফ্রেশ করে আবার চেষ্টা করুন।'}" style="width:100%;margin-top:10px;padding:13px;border-radius:11px;border:1px solid #d1d5db;background:#fff;color:#202124;font-weight:800;font-size:15px">🌐 Google দিয়ে লগইন করুন</button><div class="google-auth-msg modal-note" style="text-align:center;margin-top:6px"></div>
           <div id="loginMsg" class="modal-note" style="margin-top:10px;text-align:center;color:#ff7888"></div>
         </div>
 
@@ -497,7 +497,7 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
           <input id="regReferCode" type="text" placeholder="বন্ধুর রেফার কোড দিন (যদি থাকে)" style="margin-bottom:16px">
           
           <button class="cash" type="button" onclick="handleRegister()">একাউন্ট তৈরি করুন</button>
-          <button type="button" onclick="window.bd77qGoogleSignup && window.bd77qGoogleSignup()" style="width:100%;margin-top:10px;padding:13px;border-radius:11px;border:1px solid #d1d5db;background:#fff;color:#202124;font-weight:800;font-size:15px">🌐 Google দিয়ে অ্যাকাউন্ট করুন</button><div class="google-auth-msg modal-note" style="text-align:center;margin-top:6px"></div>
+          <button type="button" onclick="if(typeof window.bd77qGoogleSignup==='function'){window.bd77qGoogleSignup()}else{const m=this.nextElementSibling;if(m)m.textContent='Google লগইন চালু হচ্ছে না। পেজটি রিফ্রেশ করে আবার চেষ্টা করুন।'}" style="width:100%;margin-top:10px;padding:13px;border-radius:11px;border:1px solid #d1d5db;background:#fff;color:#202124;font-weight:800;font-size:15px">🌐 Google দিয়ে অ্যাকাউন্ট করুন</button><div class="google-auth-msg modal-note" style="text-align:center;margin-top:6px"></div>
           <div id="regMsg" class="modal-note" style="margin-top:10px;text-align:center;color:#ff7888"></div>
         </div>
       </div>
@@ -3539,7 +3539,8 @@ const authScreen=document.getElementById('authScreen');if(authScreen&&window.Mut
 <!-- Admin-managed informational content for Deposit screen. Demo/information only. -->
 <script type="module" id="dynamicDepositContentSync">
 import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+import {getAuth,GoogleAuthProvider,signInWithPopup,signInWithRedirect,getRedirectResult} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+import {getDatabase,ref,onValue,get,set} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
 const c={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
 const googleApp=getApps().find(a=>a.name==='[DEFAULT]')||initializeApp(c);
 const auth=getAuth(googleApp);
