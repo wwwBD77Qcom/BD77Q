@@ -446,6 +446,7 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
           <input id="loginPassword" type="password" placeholder="আপনার পাসওয়ার্ড দিন" style="margin-bottom:16px">
           
           <button class="cash" type="button" onclick="handleLogin()">লগইন করুন</button>
+          <button type="button" onclick="window.bd77qGoogleSignup && window.bd77qGoogleSignup()" style="width:100%;margin-top:10px;padding:13px;border-radius:11px;border:1px solid #d1d5db;background:#fff;color:#202124;font-weight:800;font-size:15px">🌐 Google দিয়ে লগইন করুন</button><div class="google-auth-msg modal-note" style="text-align:center;margin-top:6px"></div>
           <div id="loginMsg" class="modal-note" style="margin-top:10px;text-align:center;color:#ff7888"></div>
         </div>
 
@@ -463,6 +464,7 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
           <input id="regReferCode" type="text" placeholder="বন্ধুর রেফার কোড দিন (যদি থাকে)" style="margin-bottom:16px">
           
           <button class="cash" type="button" onclick="handleRegister()">একাউন্ট তৈরি করুন</button>
+          <button type="button" onclick="window.bd77qGoogleSignup && window.bd77qGoogleSignup()" style="width:100%;margin-top:10px;padding:13px;border-radius:11px;border:1px solid #d1d5db;background:#fff;color:#202124;font-weight:800;font-size:15px">🌐 Google দিয়ে অ্যাকাউন্ট করুন</button><div class="google-auth-msg modal-note" style="text-align:center;margin-top:6px"></div>
           <div id="regMsg" class="modal-note" style="margin-top:10px;text-align:center;color:#ff7888"></div>
         </div>
       </div>
@@ -1115,8 +1117,9 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 
 <!-- FIREBASE MODULE SCRIPT -->
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+  import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getAnalytics, isSupported as analyticsIsSupported } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
   import { getDatabase, ref, set, get, update, push, onValue, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
   const firebaseConfig = {
@@ -1130,9 +1133,16 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
     measurementId: "G-C0ST13Q8PJ"
   };
 
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+  // Reuse the default Firebase app if another module initialized it first.
+  const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+  // Analytics must never prevent database listeners (banners/notices) from starting.
+  try {
+    if (await analyticsIsSupported()) getAnalytics(app);
+  } catch (analyticsError) {
+    console.warn('Firebase Analytics unavailable; continuing with database sync:', analyticsError);
+  }
   const db = getDatabase(app);
+  const auth = getAuth(app);
 
   window.fbDb = db;
   window.fbRef = ref;
@@ -1184,6 +1194,11 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
       const bar = document.getElementById('vipNoticeBar');
       if(bar){ bar.style.display = 'flex'; try { localStorage.removeItem('vipNoticeBarDismissed'); } catch(e) {} }
   }
+  // Keep the notification ticker available when this page is opened; live admin data replaces its placeholder.
+  try {
+      const bar = document.getElementById('vipNoticeBar');
+      if (bar && localStorage.getItem('vipNoticeBarDismissed') !== '1') bar.style.display = 'flex';
+  } catch(e) {}
   try { if(localStorage.getItem('vipNoticeBarDismissed') === '1'){ const b=document.getElementById('vipNoticeBar'); if(b) b.style.display='none'; } } catch(e) {}
 
   const pendingAdminInboxUpdates = new Map();
@@ -3493,6 +3508,59 @@ import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/f
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
 const c={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
 try{const app=getApps().length?getApps()[0]:initializeApp(c),db=getDatabase(app);onValue(ref(db,'settings/depositContent'),s=>{const v=s.val()||{},box=document.getElementById('dynamicDepositContent'),title=document.getElementById('dynamicDepositTitle'),txt=document.getElementById('dynamicDepositText'),a=document.getElementById('dynamicDepositLink');if(!box||!title||!txt||!a)return;const url=String(v.url||'').trim(),active=v.active!==false;box.style.display=active&&(v.title||v.text||url)?'block':'none';title.textContent=String(v.title||'Deposit Information').slice(0,120);txt.textContent=String(v.text||'').slice(0,3000);if(url&&/^https:\/\//i.test(url)){a.href=url;a.textContent=String(v.buttonLabel||'ফাইল / লিংক খুলুন').slice(0,80);a.style.display='inline-block'}else{a.removeAttribute('href');a.style.display='none'}},e=>console.warn('Deposit content sync failed',e));}catch(e){console.warn('Deposit content sync unavailable',e)}
+
+  // Google Sign-In for login and registration. Existing accounts are reused by Firebase UID.
+  window.bd77qGoogleSignup = async function(){
+    const msgs=[...document.querySelectorAll('.google-auth-msg')];
+    msgs.forEach(m=>m.textContent='Google দিয়ে সংযোগ করা হচ্ছে…');
+    try {
+      const provider=new GoogleAuthProvider();
+      provider.setCustomParameters({prompt:'select_account'});
+      let result;
+      try { result=await signInWithPopup(auth,provider); }
+      catch(err) {
+        if(err && ['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request'].includes(err.code)) { await signInWithRedirect(auth,provider); return; }
+        throw err;
+      }
+      const u=result.user;
+      const pRef=ref(db,'users/'+u.uid);
+      const old=await get(pRef);
+      const p=old.exists()?(old.val()||{}):{};
+      await set(pRef,{...p,uid:u.uid,displayName:u.displayName||p.displayName||'Google User',email:u.email||'',photoURL:u.photoURL||'',authProvider:'google',lastLoginAt:Date.now(),createdAt:p.createdAt||Date.now()});
+      msgs.forEach(m=>m.textContent='Google অ্যাকাউন্ট সফলভাবে সংযুক্ত হয়েছে।');
+    } catch(err) {
+      console.error('Google sign-in failed',err);
+      const messages={
+        'auth/operation-not-allowed':'Firebase Console → Authentication → Sign-in method থেকে Google চালু করুন।',
+        'auth/unauthorized-domain':'এই ডোমেইনটি Firebase Authentication → Settings → Authorized domains-এ যোগ করুন।',
+        'auth/popup-closed-by-user':'Google লগইন উইন্ডো বন্ধ করা হয়েছে। আবার চেষ্টা করুন.',
+        'auth/network-request-failed':'ইন্টারনেট সংযোগ পরীক্ষা করুন।'
+      };
+      msgs.forEach(m=>m.textContent=messages[err?.code]||'Google দিয়ে লগইন হয়নি। Firebase-এ Google provider চালু আছে কি না পরীক্ষা করুন।');
+    }
+  };
+  getRedirectResult(auth).then(async result=>{
+    if(!result || !result.user) return;
+    const u=result.user,pRef=ref(db,'users/'+u.uid),old=await get(pRef),p=old.exists()?(old.val()||{}):{};
+    await set(pRef,{...p,uid:u.uid,displayName:u.displayName||p.displayName||'Google User',email:u.email||'',photoURL:u.photoURL||'',authProvider:'google',lastLoginAt:Date.now(),createdAt:p.createdAt||Date.now()});
+  }).catch(err=>console.warn('Google redirect result',err));
+
+  // Admin-managed official links appear on both login and registration screens.
+  const officialWrap=document.getElementById('authCommunityLinks');
+  if(officialWrap){
+    onValue(ref(db,'settings/officialLinks'),snap=>{
+      officialWrap.querySelectorAll('[data-admin-official-link="1"]').forEach(n=>n.remove());
+      const val=snap.exists()?snap.val():{};
+      const links=Array.isArray(val)?val:Object.values(val||{});
+      links.filter(x=>x&&x.active!==false&&x.url&&x.label).forEach(x=>{
+        let url=String(x.url).trim(); if(!/^https?:\/\//i.test(url))url='https://'+url;
+        try{const parsed=new URL(url);if(!['http:','https:'].includes(parsed.protocol))return;}catch(e){return;}
+        const link=document.createElement('a'); link.href=url; link.target='_blank'; link.rel='noopener noreferrer'; link.dataset.adminOfficialLink='1'; link.textContent=String(x.label).slice(0,60);
+        link.style.cssText='display:inline-block;background:linear-gradient(120deg,#0ea5e9,#7c3aed);color:#fff;text-decoration:none;padding:10px 14px;border-radius:10px;font-weight:800;border:1px solid #7dd3fc;box-shadow:0 0 12px #38bdf866';
+        officialWrap.appendChild(link);
+      });
+    },err=>console.warn('Official links sync failed',err));
+  }
 </script>
 
 <!-- Firebase Phone Authentication: real SMS OTP for wallet ownership verification -->
