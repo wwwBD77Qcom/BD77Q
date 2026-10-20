@@ -185,6 +185,10 @@
 .deposit-screen .modal-note{color:#666}
 @media(max-width:370px){.deposit-screen .payment-logo{font-size:12px}.deposit-screen .deposit-head h2{font-size:24px}.deposit-screen .deposit-step{font-size:10px}}
 
+
+/* Betting record / P&L / rebate report UI */
+.report-tabs{display:flex;gap:7px;overflow:auto;padding:7px 0;margin:4px 0 12px}.report-tabs button{white-space:nowrap;background:#101b2d;color:#8fd3ff;border:1px solid #2998db;padding:9px 12px;border-radius:9px}.report-tabs button.active{background:#138de0;color:white}.report-filter{display:flex;gap:8px;margin-bottom:12px}.report-filter select,.report-filter input{min-width:0;flex:1;background:#101722;color:#fff;border:1px solid #258fd0;border-radius:8px;padding:9px}.report-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.report-stat{background:linear-gradient(135deg,#12233d,#101522);border:1px solid #284e78;border-radius:10px;padding:12px}.report-stat span{display:block;color:#aeb9c9;font-size:12px}.report-stat strong{display:block;margin-top:4px;font-size:18px}.report-record{background:#f8f8fa;color:#222;border-radius:9px;margin:9px 0;overflow:hidden}.report-record-head{padding:11px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #e8e8ed;font-weight:700}.report-record-body{padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px}.report-record-body span{display:block;color:#85858c}.report-record-body strong{display:block;margin-top:3px}.report-positive{color:#40a34b!important}.report-negative{color:#e43e45!important}.report-empty{padding:22px 10px;text-align:center;color:#aab4c4;background:#101722;border-radius:10px}
+
 </style>
 
 <style id="myAccountVipStyle">
@@ -676,7 +680,7 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
         <button class="account-menu-item" onclick="openAccountFeature('myAccount')"><span class="account-menu-icon">👤</span><span class="account-menu-text">My<br>Account</span></button>
         <button class="account-menu-item" onclick="openAccountFeature('security')"><span class="account-menu-icon">🛡️</span><span class="account-menu-text">Security<br>Center</span></button>
         <button class="account-menu-item" onclick="openProfileModal('referModal');switchReferTab('link')"><span class="account-menu-icon">👥</span><span class="account-menu-text">Invite<br>Friends</span></button>
-        <button class="account-menu-item" onclick="openProfileModal('referModal');switchReferTab('earnings')"><span class="account-menu-icon">🪙</span><span class="account-menu-text">Rebate</span></button>
+        <button class="account-menu-item" onclick="openAccountFeature('rebate')"><span class="account-menu-icon">🪙</span><span class="account-menu-text">Rebate</span></button>
         <button class="account-menu-item" onclick="openProfileModal('internationalSmsModal')"><span class="account-menu-icon">@</span><span class="account-menu-text">Internal<br>Message</span></button>
         <button class="account-menu-item" onclick="openAccountFeature('suggestion')"><span class="account-menu-icon">💬</span><span class="account-menu-text">Suggestion</span></button>
         <button id="profileHealthcareButton" class="account-menu-item" style="display:none" type="button"><span class="account-menu-icon" id="profileHealthcareButtonIcon">☎️</span><span class="account-menu-text" id="profileHealthcareButtonText">Customer<br>Service</span></button>
@@ -1843,7 +1847,8 @@ function updateBalance(){
 }
 
 function syncAppBalance(){
-    ['homeBalance','profileBalance','profileBalance2','moneyBalance'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(balance)});
+    ['homeBalance','profileBalance','profileBalance2','moneyBalance','universalGameBalanceValue'].forEach(id=>{const e=document.getElementById(id);if(e)e.textContent=fmt(balance)});
+    try{const frame=document.getElementById('universalGameFrame');const modal=document.getElementById('universalGamePlayerModal');if(frame&&frame.contentWindow&&modal&&modal.classList.contains('show'))frame.contentWindow.postMessage({type:'BD77Q_BALANCE_UPDATE',balance:Number(balance)||0,currency:'BDT'},'*');}catch(e){}
     const h=document.getElementById('homeHistory');if(h)h.innerHTML=history.length?history.slice(0,6).map(x=>`<div class="item"><span>Crash</span><strong>${x.toFixed(2)}×</strong></div>`).join(''):'<div class="item"><span>Round</span><strong>Waiting...</strong></div>';
     updateDepositNumberDisplay();
     if(typeof renderMyAccount==='function') renderMyAccount();
@@ -2673,8 +2678,9 @@ function openAccountFeature(type){
  const title=document.getElementById('accountFeatureTitle'),body=document.getElementById('accountFeatureBody'); if(!title||!body)return;
  let html='';
  if(type==='reward'){title.textContent='🏆 Reward Center';html=`<div class="bonus-box"><div class="bonus-title">Referral & Achievement Rewards</div>${rowHtml('Successful Referrals',String(u.referStats?.count||0)+' জন')}${rowHtml('Invitation/Bonus Earned',money2(u.referStats?.bonusEarned||0))}${rowHtml('Deposit Rebate Earned',money2(u.referStats?.depositRebateEarned||0))}</div><button class="cash" onclick="closeProfileModal('accountFeatureModal');openProfileModal('referModal');switchReferTab('rewards')">Open Reward Details</button>`}
- else if(type==='betting'){title.textContent='⚡ Betting Record';const hs=(history||[]).slice(0,20);html=`<div class="modal-note">বর্তমান গেমের completed crash round history এবং turnover summary।</div><div class="feature-list">${rowHtml('Turnover Completed',money2(u.turnoverCurrent||0))}${rowHtml('Turnover Target',money2(u.turnoverTarget||0))}${hs.length?hs.map((x,i)=>rowHtml('Round '+(i+1),Number(x).toFixed(2)+'×')).join(''):'<div class="modal-note">এখনও কোনো completed round নেই।</div>'}</div>`}
- else if(type==='profit'){title.textContent='🧾 Profit And Loss';const deps=userDepositRecords().filter(x=>String(x.status).toLowerCase()==='success');const wds=userWithdrawRecords().filter(x=>String(x.status).toLowerCase()==='success');const dep=deps.reduce((s,x)=>s+Number(x.baseAmount||x.amount||0),0);const wd=wds.reduce((s,x)=>s+Number(x.amount||0),0);html=`<div class="feature-list">${rowHtml('Approved Deposits',money2(dep))}${rowHtml('Approved Withdrawals',money2(wd))}${rowHtml('Current Balance',money2(balance))}${rowHtml('Referral Rebate',money2(u.referStats?.depositRebateEarned||0))}</div><div class="modal-note" style="margin-top:10px">এটি account-level summary; game-by-game P/L আলাদা server-side game ledger না থাকলে নির্ভুল betting P/L হিসেবে গণ্য হবে না।</div>`}
+ else if(type==='betting'){title.textContent='⚡ Betting Record';const hs=(history||[]).slice(0,50);html=`<div class="report-tabs"><button class="active" type="button" onclick="renderBettingReport('all',this)">All</button><button type="button" onclick="renderBettingReport('today',this)">Today</button><button type="button" onclick="renderBettingReport('7days',this)">7-days</button></div><div class="report-filter"><select id="betReportType" onchange="renderBettingReport()"><option value="all">All games</option><option value="crash">Crash Game</option></select><input id="betReportDate" type="date" onchange="renderBettingReport()" aria-label="Date filter"></div><div class="report-summary"><div class="report-stat"><span>Turnover Completed</span><strong>${money2(u.turnoverCurrent||0)}</strong></div><div class="report-stat"><span>Turnover Target</span><strong>${money2(u.turnoverTarget||0)}</strong></div></div><div id="betReportRecords">${hs.length?hs.map((x,i)=>`<div class="report-record"><div class="report-record-head"><span>🔵 Crash Game</span><span>Round ${i+1}</span></div><div class="report-record-body"><div><span>Round result</span><strong>${Number(x).toFixed(2)}×</strong></div><div><span>Record type</span><strong>Round history</strong></div></div></div>`).join(''):'<div class="report-empty">এখনও কোনো completed round history নেই।</div>'}</div><div class="modal-note">এখানে বর্তমানে অ্যাপে সংরক্ষিত রাউন্ড হিস্ট্রি দেখানো হচ্ছে। প্রকৃত Bet amount / winnings দেখাতে সংশ্লিষ্ট গেমকে bet ledger পাঠাতে হবে।</div>`} 
+ else if(type==='rebate'){title.textContent='🪙 Rebate';const rd=getReferralDepositData();const total=rd.rebates.reduce((a,r)=>a+Number(r.rebateAmount||0),0);const todayStart=new Date();todayStart.setHours(0,0,0,0);const today=rd.rebates.filter(r=>Number(r.createdAt||0)>=todayStart.getTime()).reduce((a,r)=>a+Number(r.rebateAmount||0),0);html=`<div class="report-tabs"><button class="active" type="button" onclick="renderRebateReport('mine',this)">My Rebates</button><button type="button" onclick="renderRebateReport('history',this)">Rebate History</button></div><div class="report-record"><div class="report-record-head"><span>Date</span><span>${new Date().toISOString().slice(0,10)}</span></div><div class="report-record-body"><div><span>Today</span><strong class="report-positive">${money2(today)}</strong></div><div><span>Total Rebate</span><strong class="report-positive">${money2(total)}</strong></div></div></div><div id="rebateReportRecords">${rd.rebates.length?rd.rebates.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).map(r=>`<div class="report-record"><div class="report-record-head"><span>Deposit Rebate</span><strong class="report-positive">+${money2(r.rebateAmount||0)}</strong></div><div class="report-record-body"><div><span>Deposit amount</span><strong>${money2(r.depositAmount||r.baseAmount||0)}</strong></div><div><span>Date</span><strong>${r.createdAt?new Date(r.createdAt).toLocaleString():'—'}</strong></div></div></div>`).join(''):'<div class="report-empty">এখনও কোনো confirmed rebate record নেই।</div>'}</div><button class="cash" type="button" onclick="closeProfileModal('accountFeatureModal');openProfileModal('referModal');switchReferTab('earnings')">Open Rebate Details</button><div class="modal-note">শুধু সংরক্ষিত referral rebate রেকর্ড এখানে দেখানো হবে; অনুমোদিত রেকর্ড না থাকলে পরিমাণ ০.০০ থাকবে।</div>`}
+ else if(type==='profit'){title.textContent='🧾 Profit And Loss';const deps=userDepositRecords().filter(x=>['success','approved'].includes(String(x.status).toLowerCase()));const wds=userWithdrawRecords().filter(x=>['success','approved'].includes(String(x.status).toLowerCase()));const dep=deps.reduce((s,x)=>s+Number(x.baseAmount||x.amount||0),0);const wd=wds.reduce((s,x)=>s+Number(x.amount||0),0);const rebate=Number(u.referStats?.depositRebateEarned||0);const allNet=Number(balance||0)+wd-dep;html=`<div class="report-tabs"><button class="active" type="button" onclick="renderProfitReport('today',this)">Today</button><button type="button" onclick="renderProfitReport('yesterday',this)">Yesterday</button><button type="button" onclick="renderProfitReport('7days',this)">7-days</button><button type="button" onclick="renderProfitReport('all',this)">All</button></div><div class="report-summary"><div class="report-stat"><span>Deposit</span><strong>${money2(dep)}</strong></div><div class="report-stat"><span>Withdrawal</span><strong>${money2(wd)}</strong></div><div class="report-stat"><span>Referral Rebate</span><strong class="report-positive">${money2(rebate)}</strong></div><div class="report-stat"><span>Current Balance</span><strong>${money2(balance)}</strong></div></div><div class="feature-list">${rowHtml('Account net flow (balance + withdrawals − deposits)',money2(allNet),allNet>=0?'report-positive':'report-negative')}${rowHtml('Approved deposit records',String(deps.length))}${rowHtml('Approved withdrawal records',String(wds.length))}</div><div class="modal-note" style="margin-top:10px">গেমভিত্তিক প্রকৃত Profit/Loss দেখাতে প্রতিটি গেম থেকে wager, winnings এবং settlement ledger সংরক্ষণ করতে হবে। এখানে account-level তথ্য দেখানো হচ্ছে; এটিকে গেমের নিশ্চিত P/L হিসেবে ধরবেন না।</div>`}
  else if(type==='depositRecord'){title.textContent='📋 Deposit Record';const rs=userDepositRecords();html=rs.length?`<div class="feature-list">${rs.map(x=>rowHtml(money2(x.baseAmount||x.amount)+' • '+(x.method||'Deposit'),String(x.status||'Pending'))).join('')}</div>`:'<div class="modal-note" style="padding:20px;text-align:center">কোনো Deposit Record নেই।</div>'}
  else if(type==='withdrawRecord'){title.textContent='📥 Withdrawal Record';const rs=userWithdrawRecords();html=rs.length?`<div class="feature-list">${rs.map(x=>rowHtml(money2(x.amount)+' • '+(x.method||'Withdraw'),String(x.status||'Pending'))).join('')}</div>`:'<div class="modal-note" style="padding:20px;text-align:center">কোনো Withdrawal Record নেই।</div>'}
  else if(type==='accountRecord'){title.textContent='📊 Account Record';const rs=userDepositRecords(),ws=userWithdrawRecords();html=`<div class="feature-list">${rowHtml('Account',currentUserPhone)}${rowHtml('VIP Level','VIP'+getVipLevel(u))}${rowHtml('Total Deposit',money2(u.totalDeposit||0))}${rowHtml('Balance',money2(balance))}${rowHtml('Deposit Requests',String(rs.length))}${rowHtml('Withdrawal Requests',String(ws.length))}${rowHtml('Referral Count',String(u.referStats?.count||0))}</div>`}
@@ -2683,6 +2689,9 @@ function openAccountFeature(type){
  else if(type==='suggestion'){title.textContent='💬 Suggestion';html=`<label>আপনার পরামর্শ</label><textarea id="suggestionText" style="width:100%;min-height:110px;background:#0e1218;color:#fff;border:1px solid #303846;border-radius:8px;padding:12px;resize:vertical" placeholder="আপনার পরামর্শ লিখুন..."></textarea><div id="suggestionMsg" class="modal-note" style="margin-top:8px;min-height:18px"></div><button class="cash" onclick="submitSuggestion()">📨 Submit Suggestion</button>`}
  body.innerHTML=html;openProfileModal('accountFeatureModal');
 }
+function renderBettingReport(range,btn){if(btn){btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}const target=document.getElementById('betReportRecords');if(!target)return;let hs=(history||[]).slice(0,50);const date=document.getElementById('betReportDate')?.value;if(date){target.innerHTML=hs.length?hs.map((x,i)=>`<div class="report-record"><div class="report-record-head"><span>🔵 Crash Game</span><span>Round ${i+1}</span></div><div class="report-record-body"><div><span>Round result</span><strong>${Number(x).toFixed(2)}×</strong></div><div><span>Record type</span><strong>Round history</strong></div></div></div>`).join(''):'<div class="report-empty">এই ফিল্টারে কোনো রেকর্ড নেই।</div>';return}target.innerHTML=hs.length?hs.map((x,i)=>`<div class="report-record"><div class="report-record-head"><span>🔵 Crash Game</span><span>Round ${i+1}</span></div><div class="report-record-body"><div><span>Round result</span><strong>${Number(x).toFixed(2)}×</strong></div><div><span>Record type</span><strong>Round history</strong></div></div></div>`).join(''):'<div class="report-empty">এখনও কোনো completed round history নেই।</div>'}
+function renderRebateReport(mode,btn){if(btn){btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}const target=document.getElementById('rebateReportRecords');if(!target)return;const rs=getReferralDepositData().rebates.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));target.innerHTML=rs.length?rs.map(r=>`<div class="report-record"><div class="report-record-head"><span>Deposit Rebate</span><strong class="report-positive">+${money2(r.rebateAmount||0)}</strong></div><div class="report-record-body"><div><span>Deposit amount</span><strong>${money2(r.depositAmount||r.baseAmount||0)}</strong></div><div><span>Date</span><strong>${r.createdAt?new Date(r.createdAt).toLocaleString():'—'}</strong></div></div></div>`).join(''):'<div class="report-empty">এখনও কোনো confirmed rebate record নেই।</div>'}
+function renderProfitReport(range,btn){if(btn){btn.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('active'));btn.classList.add('active')}/* Summary is rebuilt on open using approved account records. */}
 function selectBankMethod(method){selectedBankMethod=method;document.querySelectorAll('.bank-method-btn').forEach(b=>b.classList.remove('active'));const el=document.getElementById('bank'+method.charAt(0).toUpperCase()+method.slice(1).toLowerCase());if(el)el.classList.add('active');}
 function normalizeWalletPhone(number){let d=String(number||'').trim().replace(/[\s()-]/g,'');if(d.startsWith('+'))return /^\+\d{10,15}$/.test(d)?d:null;d=d.replace(/\D/g,'');if(/^01\d{9}$/.test(d))return '+880'+d.slice(1);if(/^8801\d{9}$/.test(d))return '+'+d;if(/^\d{10,15}$/.test(d))return '+'+d;return null}
 function openBankAccountModal(){const u=getAccountUser();if(!u)return;const a=u.bankAccounts?.[selectedBankMethod]||{};document.getElementById('bankAccountNumber').value=a.number||'';document.getElementById('bankAccountName').value=a.name||u.name||'';document.getElementById('walletOtpCode').value='';document.getElementById('bankAccountMsg').textContent='';document.getElementById('walletRecaptchaContainer').innerHTML='';if(window.resetWalletOtpCountdown)window.resetWalletOtpCountdown();window.walletOtpVerifiedFor='';window.walletOtpVerifiedMethodName='';window.walletOtpRequestedFor='';openProfileModal('bankAccountModal')}
@@ -3064,15 +3073,18 @@ async function submitRewardPromoCode(){
 #universalGamePlayerModal.show{display:flex;flex-direction:column}
 #universalGamePlayerHead{height:48px;display:flex;align-items:center;gap:8px;padding:0 9px;background:linear-gradient(90deg,#17120c,#2b1b08);border-bottom:1px solid #5b411c;color:#fff;flex:0 0 48px}
 #universalGamePlayerName{font-weight:900;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#universalGameBalance{flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:7px 9px;border:1px solid rgba(74,222,128,.7);border-radius:999px;background:linear-gradient(135deg,#052e24,#064e3b);color:#bbf7d0;font-size:12px;font-weight:1000;box-shadow:0 0 12px rgba(16,185,129,.18);white-space:nowrap}
+#universalGameBalance strong{color:#fff;font-size:13px}
 #universalGameClose,#universalGameReload{border:0;border-radius:9px;background:#2d3748;color:#fff;padding:8px 11px;font-weight:900;cursor:pointer}
 #universalGameFrame{width:100%;height:calc(100vh - 48px);height:calc(100dvh - 48px);border:0;background:#fff;display:block}
-@media(max-width:430px){#universalGamesGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ug-card{min-height:101px}.ug-card img{height:70px}.ug-card .ug-name{font-size:11px}}
+@media(max-width:430px){#universalGamesGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.ug-card{min-height:101px}.ug-card img{height:70px}.ug-card .ug-name{font-size:11px}#universalGamePlayerHead{gap:5px;padding:0 6px}#universalGameBalance{font-size:10px;padding:6px 6px}#universalGameBalance strong{font-size:11px}#universalGameClose,#universalGameReload{padding:7px 8px}}
 </style>
 
 <div id="universalGamePlayerModal" aria-hidden="true">
   <div id="universalGamePlayerHead">
     <button id="universalGameClose" type="button">✕</button>
     <div id="universalGamePlayerName">Game</div>
+    <div id="universalGameBalance" aria-live="polite">💰 ৳<strong id="universalGameBalanceValue">0</strong></div>
     <button id="universalGameReload" type="button">↻</button>
   </div>
   <iframe id="universalGameFrame" title="Game Player" allow="autoplay; fullscreen; gamepad; clipboard-read; clipboard-write" allowfullscreen></iframe>
@@ -3114,6 +3126,29 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
     const sep=url.includes('?')?'&':'?';
     return url+sep+'bd77qGameVersion='+encodeURIComponent(version||Date.now());
   }
+  function paintGameBalance(){
+    const el=document.getElementById('universalGameBalanceValue');
+    if(el)el.textContent=typeof fmt==='function'?fmt(balance):Math.round(Number(balance)||0).toLocaleString('en-US');
+  }
+  function sendBalanceToGame(){
+    paintGameBalance();
+    const frame=document.getElementById('universalGameFrame');
+    try{if(frame&&frame.contentWindow)frame.contentWindow.postMessage({type:'BD77Q_BALANCE_UPDATE',balance:Number(balance)||0,currency:'BDT'},'*');}catch(e){}
+  }
+  window.bd77qGetBalance=function(){return Number(balance)||0;};
+  window.bd77qChangeGameBalance=function(delta){
+    const amount=Number(delta);if(!Number.isFinite(amount)||!currentUserPhone||!usersDb[currentUserPhone])return false;
+    const next=(Number(balance)||0)+amount;if(next<0){alert('পর্যাপ্ত ব্যালেন্স নেই।');return false;}
+    balance=Math.round(next*100)/100;updateBalance();return true;
+  };
+  window.addEventListener('message',function(event){
+    const frame=document.getElementById('universalGameFrame');
+    if(!frame||event.source!==frame.contentWindow||!event.data||typeof event.data!=='object')return;
+    if(event.data.type==='BD77Q_GAME_BALANCE_CHANGE'){
+      const delta=Number(event.data.delta);if(Number.isFinite(delta))window.bd77qChangeGameBalance(delta);
+    }
+    if(event.data.type==='BD77Q_GAME_REQUEST_BALANCE')sendBalanceToGame();
+  });
   function openGame(g){
     const url=safeUrl(g.url); if(!url){alert('এই গেমের Game Link পাওয়া যায়নি।');return;}
     const modal=document.getElementById('universalGamePlayerModal');
@@ -3121,6 +3156,8 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10
     const name=document.getElementById('universalGamePlayerName');
     if(!modal||!frame)return;
     if(name)name.textContent=g.name||'Game';
+    paintGameBalance();
+    frame.onload=sendBalanceToGame;
     frame.src=bust(url,g.updatedAt||g.createdAt||Date.now());
     modal.classList.add('show'); modal.setAttribute('aria-hidden','false');
     document.body.style.overflow='hidden';
