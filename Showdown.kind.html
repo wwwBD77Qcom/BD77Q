@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wild West Gold VIP Slot - 5 Min Daily Scatter & Balanced Odds</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rye&family=Cinzel:wght@700;900&family=Oswald:wght@500;700&display=swap');
+
+        * {
+            user-select: none;
+            -webkit-user-select: none;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #050302 url('https://i.postimg.cc/SxWZX4vW/IMG-20261021-082438.jpg') center/cover fixed;
+            font-family: 'Oswald', sans-serif;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .bg-overlay {
+            background: radial-gradient(circle, rgba(15, 7, 2, 0.8) 0%, rgba(3, 1, 0, 0.96) 100%);
+        }
+
+        .western-title { font-family: 'Rye', cursive; }
+        .cinzel-font { font-family: 'Cinzel', serif; }
+
+        /* VIP Showdown 1 to 100 Loading Screen */
+        #vip-loading-screen {
+            position: fixed;
+            inset: 0;
+            background: #030100 url('https://i.postimg.cc/FHXHNbSY/1792466155374.jpg') center/cover no-repeat;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 3rem 1rem;
+            transition: opacity 0.6s ease;
+        }
+
+        .loading-overlay-bg {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle, rgba(10,5,2,0.65) 0%, rgba(3,1,0,0.92) 100%);
+        }
+
+        .vip-neon-box {
+            background: rgba(20, 8, 2, 0.85);
+            border: 3px solid #ffcc00;
+            box-shadow: 0 0 35px #ff9900, inset 0 0 20px #ffee00;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 10;
+        }
+
+        .vip-lights {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .neon-light {
+            width: 14px;
+            height: 14px;
+            background: #ffcc00;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #ffaa00, 0 0 22px #ffea00;
+            animation: lightPulse 0.8s infinite alternate;
+        }
+
+        .neon-light:nth-child(2) { animation-delay: 0.2s; }
+        .neon-light:nth-child(3) { animation-delay: 0.4s; }
+        .neon-light:nth-child(4) { animation-delay: 0.6s; }
+
+        @keyframes lightPulse {
+            0% { opacity: 0.4; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.25); box-shadow: 0 0 20px #fff, 0 0 35px #ffcc00; }
+        }
+
+        .loading-bar-container {
+            width: 260px;
+            height: 16px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #ffcc00;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.9);
+            position: relative;
+        }
+
+        .loading-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff8800, #ffea00, #fff);
+            box-shadow: 0 0 15px #ff9900;
+            transition: width 0.08s linear;
+        }
+
+        /* Top Board */
+        .top-board {
+            background: linear-gradient(180deg, #7a3e13 0%, #311504 100%);
+            border: 3px solid #f3bc65;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.95), inset 0 2px 8px rgba(255,235,170,0.5);
+            position: relative;
+        }
+
+        .chain-link {
+            width: 8px;
+            height: 38px;
+            background: linear-gradient(90deg, #333, #bbb, #222);
+            border-radius: 4px;
+            box-shadow: 2px 3px 6px rgba(0,0,0,0.9);
+        }
+
+        .mult-active {
+            color: #ffe600 !important;
+            text-shadow: 0 0 15px #ff9900, 0 0 25px #ffea00;
+            transform: scale(1.25);
+            transition: all 0.3s ease;
+        }
+
+        .slot-board {
+            background: rgba(22, 10, 4, 0.95);
+            border: 5px solid #c68a3e;
+            box-shadow: 0 0 40px rgba(0,0,0,0.98), inset 0 0 30px rgba(0,0,0,0.9);
+            border-radius: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes dropSymbolAnimation {
+            0% { transform: translateY(-120%); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .symbol-drop-effect {
+            animation: dropSymbolAnimation 0.35s cubic-bezier(0.25, 1.5, 0.5, 1) forwards;
+        }
+
+        /* ওপর থেকে বড় গুণের সংখ্যা ড্রপ */
+        #falling-multiplier-overlay {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .big-mult-text {
+            font-family: 'Rye', cursive;
+            font-size: 4.5rem;
+            color: #ffee00;
+            text-shadow: 0 0 20px #ff9900, 0 0 30px #ff0000, 4px 4px 0 #000;
+            animation: fallAndBounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes fallAndBounce {
+            0% { transform: translateY(-220px) scale(3); opacity: 0; }
+            70% { transform: translateY(0) scale(1.2); opacity: 1; }
+            85% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        .symbol-cell {
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: rgba(10, 5, 2, 0.6);
+            border: 1px solid rgba(198, 138, 62, 0.3);
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .gold-framed {
+            border: 3px solid #ffcc00 !important;
+            box-shadow: 0 0 22px #ff9900, inset 0 0 15px #ffee55;
+            background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, rgba(30,12,2,0.9) 100%);
+            animation: pulseGold 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGold {
+            0% { box-shadow: 0 0 12px #ff9900; }
+            100% { box-shadow: 0 0 28px #ffee55, 0 0 45px #ff8800; }
+        }
+
+        .symbol-img {
+            width: 88%;
+            height: 88%;
+            object-fit: contain;
+            filter: drop-shadow(2px 5px 8px rgba(0,0,0,0.95));
+        }
+
+        .letter-symbol {
+            font-family: 'Rye', cursive;
+            font-size: 2.2rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 0px #050201, -1px -1px 0 #fff;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.9));
+        }
+
+        .letter-A { color: #f39c12; }
+        .letter-K { color: #e74c3c; }
+        .letter-Q { color: #1abc9c; }
+        .letter-J { color: #3498db; }
+
+        .winning-match {
+            animation: winFlash 0.6s ease-in-out 3;
+            border: 3px solid #00ffcc !important;
+            background: rgba(0, 255, 204, 0.2) !important;
+        }
+
+        @keyframes winFlash {
+            0%, 100% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.1); filter: brightness(1.4); box-shadow: 0 0 25px #00ffcc; }
+        }
+
+        .showdown-banner {
+            background: linear-gradient(180deg, #6b2e0b 0%, #220b02 100%);
+            border: 2px solid #ffcc00;
+            box-shadow: inset 0 0 12px rgba(0,0,0,0.9), 0 0 15px rgba(255, 165, 0, 0.5);
+            animation: showdownGlow 2s infinite alternate;
+        }
+
+        @keyframes showdownGlow {
+            0% { border-color: #cca300; }
+            100% { border-color: #ffed4a; box-shadow: inset 0 0 15px rgba(255,215,0,0.6), 0 0 22px rgba(255,215,0,0.8); }
+        }
+
+        .control-pill {
+            background: linear-gradient(180deg, rgba(40, 22, 10, 0.95) 0%, rgba(15, 7, 2, 0.95) 100%);
+            border: 1px solid #b0722a;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.9), 0 3px 8px rgba(0,0,0,0.6);
+        }
+
+        .spin-wood-btn {
+            background: radial-gradient(circle, #f5b041 0%, #945112 65%, #3d1b02 100%);
+            border: 4px solid #fff2aa;
+            box-shadow: 0 0 30px rgba(0,0,0,0.95), 0 0 20px rgba(245, 176, 65, 0.7), inset 0 0 15px rgba(255,255,255,0.6);
+            transition: all 0.15s ease;
+        }
+
+        .spin-wood-btn:hover { transform: scale(1.06); }
+        .spin-wood-btn:active { transform: scale(0.92); filter: brightness(1.25); }
+
+        .circle-btn {
+            background: rgba(30, 15, 5, 0.92);
+            border: 1px solid #8c5222;
+            color: #f5d082;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.75);
+            transition: all 0.15s;
+        }
+
+        .feature-buy-btn {
+            background: linear-gradient(180deg, #e68a35 0%, #5e2603 100%);
+            border: 2px solid #ffde8a;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.85), inset 0 2px 6px rgba(255,255,255,0.45);
+        }
+
+        /* 10-Second Custom Showdown Image Live Overlay */
+        #showdown-action-overlay {
+            position: fixed;
+            inset: 0;
+            background: url('https://i.postimg.cc/FHXHNbSY/1792466155374.jpg') center/cover no-repeat;
+            z-index: 300;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 2rem 1rem;
+            animation: actionShake 0.15s infinite alternate;
+        }
+
+        @keyframes actionShake {
+            0% { filter: brightness(1) contrast(1.1); }
+            100% { filter: brightness(1.25) contrast(1.3) drop-shadow(0 0 20px #ff0000); }
+        }
+
+        .overlay-card {
+            background: rgba(10, 5, 2, 0.88);
+            border: 3px solid #ffcc00;
+            box-shadow: 0 0 35px #ff9900, inset 0 0 20px #ffee00;
+            border-radius: 16px;
+            backdrop-filter: blur(8px);
+        }
+
+        #win-popup {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: linear-gradient(135deg, #b8860b, #3d1e03);
+            border: 3px solid #ffD700;
+            color: #fff;
+            padding: 15px 30px;
+            font-size: 1.6rem;
+            font-family: 'Rye', cursive;
+            border-radius: 14px;
+            box-shadow: 0 0 35px rgba(255,215,0,0.9);
+            z-index: 100;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+            text-align: center;
+        }
+
+        #win-popup.show { transform: translate(-50%, -50%) scale(1); }
+        .fallback-text { display: none; font-size: 2.2rem; }
+    </style>
+</head>
+<body class="min-h-screen bg-overlay flex flex-col justify-between items-center p-2 sm:p-4 text-amber-100">
+
+    <!-- VIP Showdown 1 to 100 Loading Screen -->
+    <div id="vip-loading-screen">
+        <div class="loading-overlay-bg"></div>
+        
+        <div class="vip-neon-box p-4 text-center mt-6">
+            <div class="vip-lights justify-center">
+                <div class="neon-light"></div>
+                <div class="neon-light"></div>
+                <div class="neon-light"></div>
+                <div class="neon-light"></div>
+            </div>
+            <h1 class="western-title text-2xl sm:text-3xl text-amber-300 drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]">
+                SHOWDOWN VIP SLOT
+            </h1>
+            <p class="cinzel-font text-xs text-amber-400 tracking-widest mt-1">চূড়ান্ত লড়াইয়ের প্রস্তুতি চলছে...</p>
+        </div>
+
+        <div class="vip-neon-box p-5 text-center mb-6 max-w-xs w-full flex flex-col items-center">
+            <div class="text-3xl font-black western-title text-yellow-300 mb-2 drop-shadow-[0_0_15px_#ff9900]">
+                <span id="load-percent">0</span>%
+            </div>
+            <div class="loading-bar-container">
+                <div id="loading-fill" class="loading-progress"></div>
+            </div>
+            <p class="text-[10px] text-amber-300 uppercase tracking-widest mt-2 cinzel-font">LOADING LIVE SYSTEM...</p>
+        </div>
+    </div>
+
+    <!-- 10-Second Live Showdown Image Shooting Overlay -->
+    <div id="showdown-action-overlay">
+        <div class="overlay-card p-4 text-center mt-4">
+            <span class="bg-red-600 text-amber-100 px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase animate-pulse border border-amber-300">
+                🔥 10 SECONDS GUNFIRE SHOWDOWN
+            </span>
+            <h1 class="western-title text-3xl sm:text-4xl text-amber-300 mt-2 drop-shadow-[0_4px_10px_rgba(0,0,0,0.9)]">
+                আপনি ১০ টি স্ক্যাটার ফ্রি মার পেয়েছেন!
+            </h1>
+        </div>
+
+        <div class="overlay-card p-4 text-center mb-8 max-w-sm w-full">
+            <p class="text-amber-200 text-sm font-bold mb-1">অটো স্পিন বোনাস শুরু হচ্ছে...</p>
+            <div class="text-4xl font-black western-title text-yellow-400 drop-shadow-[0_0_15px_#ffcc00]">
+                <span id="action-timer">10</span>s
+            </div>
+        </div>
+    </div>
+
+    <div id="win-popup">WIN! +Tk <span id="win-amount">0.00</span><br><span id="mult-msg" class="text-xs text-amber-300 font-sans"></span></div>
+
+    <!-- Multiplier Board -->
+    <div class="w-full max-w-md flex flex-col items-center relative mt-1 mb-2">
+        <div class="w-3/4 flex justify-between px-8 -mb-2 z-10">
+            <div class="chain-link"></div>
+            <div class="chain-link"></div>
+        </div>
+
+        <div class="top-board w-full rounded-2xl py-2 px-3 text-center flex items-center justify-around z-20">
+            <span id="m-512" class="text-xs text-amber-400/80 western-title transition-all">x512</span>
+            <span id="m-1024" class="text-sm text-red-500 western-title font-bold drop-shadow transition-all">x1024</span>
+            <span id="m-1" class="text-3xl sm:text-4xl western-title text-amber-300 drop-shadow-[0_4px_8px_rgba(0,0,0,0.95)] px-2 transition-all">x1</span>
+            <span id="m-2" class="text-sm text-amber-400/90 western-title transition-all">x2</span>
+            <span id="m-4" class="text-xs text-amber-400/80 western-title transition-all">x4</span>
+        </div>
+    </div>
+
+    <!-- Main Grid Slot Board -->
+    <main class="w-full max-w-md my-auto relative">
+        <div class="slot-board p-2 sm:p-3">
+            <div id="falling-multiplier-overlay"></div>
+
+            <div id="grid-container" class="grid grid-cols-5 gap-1.5 sm:gap-2">
+                
+                <!-- Column 1 -->
+                <div class="col-reel flex flex-col gap-1.5 sm:gap-2">
+                    <div class="symbol-cell"><span class="letter-symbol letter-Q">Q</span></div>
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/XJxmrWXX/1792551344076.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Pistol">
+                            <span class="fallback-text w-full h-full items-center justify-center">🔫</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell"><span class="letter-symbol letter-A">A</span></div>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="col-reel flex flex-col gap-1.5 sm:gap-2">
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/RVTmB1VH/IMG-20261021-082603.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Whiskey">
+                            <span class="fallback-text w-full h-full items-center justify-center">🥃</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell"><span class="letter-symbol letter-Q">Q</span></div>
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/XJxmrWXX/1792551344076.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Pistol">
+                            <span class="fallback-text w-full h-full items-center justify-center">🔫</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/SxWZX4vW/IMG-20261021-082438.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Cowboy">
+                            <span class="fallback-text w-full h-full items-center justify-center">🤠</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="col-reel flex flex-col gap-1.5 sm:gap-2">
+                    <div class="symbol-cell gold-framed"><span class="letter-symbol letter-A">A</span></div>
+                    <div class="symbol-cell"><span class="letter-symbol letter-J">J</span></div>
+                    <div class="symbol-cell"><span class="letter-symbol letter-K">K</span></div>
+                    <div class="symbol-cell gold-framed">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/XJxmrWXX/1792551344076.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Pistol">
+                            <span class="fallback-text w-full h-full items-center justify-center">🔫</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/90Kx9Q2X/1792551289157.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Hat">
+                            <span class="fallback-text w-full h-full items-center justify-center">🎩</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 4 -->
+                <div class="col-reel flex flex-col gap-1.5 sm:gap-2">
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/RVTmB1VH/IMG-20261021-082603.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Whiskey">
+                            <span class="fallback-text w-full h-full items-center justify-center">🥃</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell"><span class="letter-symbol letter-Q">Q</span></div>
+                    <div class="symbol-cell gold-framed">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/XJxmrWXX/1792551344076.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Pistol">
+                            <span class="fallback-text w-full h-full items-center justify-center">🔫</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell relative z-10 gold-framed">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/0NV1w9KL/1792551308769.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Scatter">
+                            <span class="fallback-text w-full h-full items-center justify-center">👑</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Column 5 -->
+                <div class="col-reel flex flex-col gap-1.5 sm:gap-2">
+                    <div class="symbol-cell"><span class="letter-symbol letter-Q">Q</span></div>
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/XJxmrWXX/1792551344076.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Pistol">
+                            <span class="fallback-text w-full h-full items-center justify-center">🔫</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell">
+                        <div class="w-full h-full flex items-center justify-center">
+                            <img src="https://i.postimg.cc/SxWZX4vW/IMG-20261021-082438.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="Cowboy">
+                            <span class="fallback-text w-full h-full items-center justify-center">🤠</span>
+                        </div>
+                    </div>
+                    <div class="symbol-cell"><span class="letter-symbol letter-Q">Q</span></div>
+                </div>
+
+            </div>
+        </div>
+
+        <button onclick="triggerFeatureBuy()" class="feature-buy-btn absolute -right-3 bottom-10 rounded-xl px-3.5 py-3 flex flex-col items-center justify-center cursor-pointer transition z-30">
+            <span class="cinzel-font text-xs font-black text-amber-200 tracking-wider">FEATURE</span>
+            <span class="cinzel-font text-sm font-black text-amber-300 tracking-wider">BUY</span>
+        </button>
+    </main>
+
+    <!-- Controls -->
+    <footer class="w-full max-w-md flex flex-col gap-2.5 my-2">
+        <div class="showdown-banner rounded-xl py-1.5 px-3 flex items-center justify-center gap-2 relative overflow-hidden">
+            <div class="w-6 h-6 rounded-full overflow-hidden flex-shrink-0 border-2 border-yellow-400 shadow">
+                <img src="https://i.postimg.cc/3RLGV005/1792551293769.jpg" onerror="this.style.display='none';" class="w-full h-full object-cover" alt="Showdown">
+            </div>
+            <span id="live-win-ticker" class="text-yellow-300 text-xs sm:text-sm font-bold tracking-wider cinzel-font">SHOWDOWN: READY FOR BIG WIN!</span>
+        </div>
+
+        <div class="flex items-center justify-between gap-2 text-xs sm:text-sm">
+            <div class="control-pill rounded-full px-4 py-2 flex items-center gap-2 flex-1 justify-between">
+                <i class="fa-solid fa-wallet text-amber-400"></i>
+                <span class="text-amber-200 font-bold">Tk <span id="bal-val">100.50</span></span>
+            </div>
+            <div class="control-pill rounded-full px-3.5 py-2 flex items-center justify-center font-bold text-amber-400">
+                PG
+            </div>
+            <div class="control-pill rounded-full px-4 py-2 flex items-center gap-2 flex-1 justify-between">
+                <span class="text-amber-200 font-bold">Tk <span id="bet-val">4.00</span></span>
+                <i class="fa-solid fa-coins text-amber-400"></i>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-around mt-1">
+            <button onclick="toggleAudio()" id="audio-btn" class="circle-btn w-11 h-11 rounded-full flex items-center justify-center text-lg">
+                <i class="fa-solid fa-volume-high"></i>
+            </button>
+            <button onclick="adjustBet(-0.5)" class="circle-btn w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-minus"></i>
+            </button>
+            <button id="spin-btn" onclick="spinSlot()" class="spin-wood-btn w-20 h-20 rounded-full flex items-center justify-center text-amber-200 relative">
+                <i class="fa-solid fa-rotate text-amber-100 text-3xl drop-shadow-[0_3px_6px_rgba(0,0,0,0.95)]"></i>
+            </button>
+            <button onclick="adjustBet(0.5)" class="circle-btn w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-plus"></i>
+            </button>
+            <button onclick="toggleAuto()" id="auto-btn" class="circle-btn w-11 h-11 rounded-full flex items-center justify-center text-lg">
+                <i class="fa-solid fa-play"></i>
+            </button>
+        </div>
+    </footer>
+
+    <!-- ফায়ারবেজ মডিউল ও ব্যালেন্স সিংক লজিক -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
+          authDomain: "uk77-56f6d.firebaseapp.com",
+          databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
+          projectId: "uk77-56f6d",
+          storageBucket: "uk77-56f6d.firebasestorage.app",
+          messagingSenderId: "1062783431056",
+          appId: "1:1062783431056:web:c44fd51195cf4061998315",
+          measurementId: "G-C0ST13Q8PJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const currentUserKey = localStorage.getItem('aviator_current_user') || "user_12345";
+        const userBalanceRef = ref(db, 'users/' + currentUserKey + '/balance');
+
+        let liveBalance = 100.50;
+
+        onValue(userBalanceRef, (snapshot) => {
+            const val = snapshot.val();
+            if (val !== null) {
+                liveBalance = parseFloat(val);
+            } else {
+                try {
+                    let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                    if (usersDb[currentUserKey] && usersDb[currentUserKey].balance !== undefined) {
+                        liveBalance = parseFloat(usersDb[currentUserKey].balance);
+                    } else {
+                        liveBalance = 100.50;
+                    }
+                } catch (e) {
+                    console.error("Local storage read error:", e);
+                }
+                set(userBalanceRef, liveBalance);
+            }
+
+            const balEl = document.getElementById('bal-val');
+            if (balEl) {
+                balEl.innerText = liveBalance.toFixed(2);
+            }
+        });
+
+        window.updateDatabaseBalance = function(newBalance) {
+            liveBalance = parseFloat(newBalance.toFixed(2));
+            
+            set(userBalanceRef, liveBalance).catch(err => console.error("Firebase update error:", err));
+
+            try {
+                let usersDb = JSON.parse(localStorage.getItem('aviator_users_db')) || {};
+                if (usersDb[currentUserKey]) {
+                    usersDb[currentUserKey].balance = liveBalance;
+                    localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
+                }
+            } catch (e) {
+                console.error("Local storage update error:", e);
+            }
+
+            const balEl = document.getElementById('bal-val');
+            if (balEl) {
+                balEl.innerText = liveBalance.toFixed(2);
+            }
+        };
+
+        window.getUserBalance = function() {
+            return liveBalance;
+        };
+    </script>
+
+    <script>
+        let audioCtx = null;
+        let isMuted = false;
+        let gameStartTime = Date.now(); 
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playScatterSound(pitchIndex = 1) {
+            if (isMuted) return;
+            initAudio();
+
+            try {
+                const now = audioCtx.currentTime;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                const baseFreq = 587.33 * pitchIndex;
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(baseFreq, now);
+                osc.frequency.exponentialRampToValueAtTime(baseFreq * 1.5, now + 0.15);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.6);
+            } catch (e) {
+                console.log("Audio play error", e);
+            }
+        }
+
+        function speakMultiplier(multValue) {
+            if ('speechSynthesis' in window && !isMuted) {
+                window.speechSynthesis.cancel();
+                let speechText = multValue + " গুণ মাল্টিপ্লায়ার!";
+                let speech = new SpeechSynthesisUtterance(speechText);
+                speech.rate = 0.95; 
+                speech.pitch = 1.0; 
+                speech.volume = 1.0;
+                speech.lang = 'bn-BD'; 
+                window.speechSynthesis.speak(speech);
+            }
+        }
+
+        // VIP Showdown 1 to 100 Loading Script
+        window.addEventListener('DOMContentLoaded', () => {
+            let loadPercent = 0;
+            const percentSpan = document.getElementById('load-percent');
+            const fillBar = document.getElementById('loading-fill');
+            const loadingScreen = document.getElementById('vip-loading-screen');
+
+            const loadInterval = setInterval(() => {
+                loadPercent += Math.floor(Math.random() * 8) + 3;
+                if (loadPercent >= 100) {
+                    loadPercent = 100;
+                    clearInterval(loadInterval);
+                    setTimeout(() => {
+                        loadingScreen.style.opacity = '0';
+                        setTimeout(() => loadingScreen.style.display = 'none', 600);
+                    }, 400);
+                }
+                percentSpan.innerText = loadPercent;
+                fillBar.style.width = loadPercent + '%';
+            }, 50);
+        });
+
+        const normalSymbols = [
+            { key: 'cowboy', type: 'img', src: 'https://i.postimg.cc/SxWZX4vW/IMG-20261021-082438.jpg', fallback: '🤠', name: 'Cowboy' },
+            { key: 'pistol', type: 'img', src: 'https://i.postimg.cc/XJxmrWXX/1792551344076.jpg', fallback: '🔫', name: 'Pistol' },
+            { key: 'hat', type: 'img', src: 'https://i.postimg.cc/90Kx9Q2X/1792551289157.jpg', fallback: '🎩', name: 'Hat' },
+            { key: 'whiskey', type: 'img', src: 'https://i.postimg.cc/RVTmB1VH/IMG-20261021-082603.jpg', fallback: '🥃', name: 'Whiskey' },
+            { key: 'A', type: 'letter', char: 'A', class: 'letter-A' },
+            { key: 'K', type: 'letter', char: 'K', class: 'letter-K' },
+            { key: 'Q', type: 'letter', char: 'Q', class: 'letter-Q' },
+            { key: 'J', type: 'letter', char: 'J', class: 'letter-J' }
+        ];
+
+        const scatterSymbol = { key: 'scatter', type: 'img', src: 'https://i.postimg.cc/0NV1w9KL/1792551308769.jpg', fallback: '👑', name: 'Scatter' };
+
+        const multipliersPool = [
+            { val: 1, id: 'm-1', weight: 40 },
+            { val: 2, id: 'm-2', weight: 30 },
+            { val: 4, id: 'm-4', weight: 20 },
+            { val: 512, id: 'm-512', weight: 2 },
+            { val: 1024, id: 'm-1024', weight: 1 }
+        ];
+
+        function getRandomMultiplier() {
+            let totalWeight = multipliersPool.reduce((sum, item) => sum + item.weight, 0);
+            let random = Math.random() * totalWeight;
+            for (let item of multipliersPool) {
+                if (random < item.weight) return item;
+                random -= item.weight;
+            }
+            return multipliersPool[0];
+        }
+
+        let currentBet = 4.00;
+        let isSpinning = false;
+        let freeSpinsLeft = 0;
+        let hasGiven5MinScatterBonus = false; 
+
+        function renderSymbolToCell(cell, sym) {
+            const isGold = Math.random() < 0.15;
+            if (isGold && sym.key !== 'scatter') cell.classList.add('gold-framed');
+            else cell.classList.remove('gold-framed');
+
+            cell.setAttribute('data-symbol', sym.key);
+
+            if (sym.type === 'img') {
+                cell.innerHTML = `
+                    <div class="w-full h-full flex items-center justify-center symbol-drop-effect">
+                        <img src="${sym.src}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="symbol-img" alt="${sym.name}">
+                        <span class="fallback-text w-full h-full items-center justify-center">${sym.fallback}</span>
+                    </div>
+                `;
+            } else {
+                cell.innerHTML = `<span class="letter-symbol ${sym.class} symbol-drop-effect">${sym.char}</span>`;
+            }
+        }
+
+        function adjustBet(delta) {
+            if (isSpinning || freeSpinsLeft > 0) return;
+            currentBet = Math.max(0.5, Math.min(50, currentBet + delta));
+            document.getElementById('bet-val').innerText = currentBet.toFixed(2);
+        }
+
+        function toggleAudio() {
+            isMuted = !isMuted;
+            document.getElementById('audio-btn').innerHTML = isMuted ? '<i class="fa-solid fa-volume-xmark"></i>' : '<i class="fa-solid fa-volume-high"></i>';
+        }
+
+        function triggerFeatureBuy() {
+            if (isSpinning || freeSpinsLeft > 0) return;
+            initAudio();
+            const cost = (currentBet * 75);
+            let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+
+            if (confirm(`Feature Buy খরচ Tk${cost.toFixed(2)}! আপনি কি সাথে সাথে ১০টি ফ্রি স্পিন বোনাস নিতে চান?`)) {
+                if (currentBalance >= cost) {
+                    currentBalance -= cost;
+                    if (window.updateDatabaseBalance) {
+                        window.updateDatabaseBalance(currentBalance);
+                    }
+                    triggerThreeScattersSequence();
+                } else {
+                    alert("পর্যাপ্ত ব্যালেন্স নেই!");
+                }
+            }
+        }
+
+        function spinSlot(isBonus = false) {
+            if (isSpinning) return;
+            initAudio();
+
+            let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+
+            if (currentBalance < currentBet && !isBonus && freeSpinsLeft === 0) {
+                alert("ব্যালেন্স শেষ! অনুগ্রহ করে রিচার্জ করুন।");
+                return;
+            }
+
+            if (!isBonus && freeSpinsLeft === 0) {
+                currentBalance -= currentBet;
+                if (window.updateDatabaseBalance) {
+                    window.updateDatabaseBalance(currentBalance);
+                }
+            }
+
+            isSpinning = true;
+            document.getElementById('spin-btn').classList.add('animate-spin');
+            document.getElementById('live-win-ticker').innerText = freeSpinsLeft > 0 ? `🎉 FREE SPINS LEFT: ${freeSpinsLeft}` : "SHOWDOWN: SPINNING...";
+
+            document.querySelectorAll('.symbol-cell').forEach(c => c.classList.remove('winning-match'));
+            multipliersPool.forEach(m => document.getElementById(m.id).classList.remove('mult-active'));
+
+            const cells = Array.from(document.querySelectorAll('.symbol-cell'));
+            let spinCount = 0;
+
+            const spinInterval = setInterval(() => {
+                cells.forEach(cell => {
+                    const randomSym = normalSymbols[Math.floor(Math.random() * normalSymbols.length)];
+                    renderSymbolToCell(cell, randomSym);
+                });
+
+                spinCount++;
+                if (spinCount >= 10) {
+                    clearInterval(spinInterval);
+
+                    let elapsedTime = Date.now() - gameStartTime;
+                    let fiveMinutesInMs = 5 * 60 * 1000;
+
+                    if (!hasGiven5MinScatterBonus && elapsedTime >= fiveMinutesInMs) {
+                        hasGiven5MinScatterBonus = true;
+                        triggerThreeScattersSequence();
+                    } else {
+                        if (Math.random() < 0.22) {
+                            let randomCellForOneScatter = cells[Math.floor(Math.random() * cells.length)];
+                            renderSymbolToCell(randomCellForOneScatter, scatterSymbol);
+                            playScatterSound(1);
+                        }
+
+                        document.getElementById('spin-btn').classList.remove('animate-spin');
+                        isSpinning = false;
+                        evaluateMatch(isBonus);
+                    }
+                }
+            }, 70);
+        }
+
+        function triggerThreeScattersSequence() {
+            const cells = Array.from(document.querySelectorAll('.symbol-cell'));
+            let shuffled = cells.sort(() => 0.5 - Math.random());
+            let targetCells = shuffled.slice(0, 3);
+
+            let delay = 0;
+            targetCells.forEach((cell, idx) => {
+                setTimeout(() => {
+                    renderSymbolToCell(cell, scatterSymbol);
+                    cell.classList.add('gold-framed');
+                    playScatterSound(idx + 1);
+
+                    if (idx === 2) {
+                        setTimeout(() => {
+                            document.getElementById('spin-btn').classList.remove('animate-spin');
+                            isSpinning = false;
+                            showShowdownImageOverlay();
+                        }, 500);
+                    }
+                }, delay);
+                delay += 500;
+            });
+        }
+
+        function showShowdownImageOverlay() {
+            const overlay = document.getElementById('showdown-action-overlay');
+            const timerSpan = document.getElementById('action-timer');
+            overlay.style.display = 'flex';
+            
+            let timeLeft = 10;
+            timerSpan.innerText = timeLeft;
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerSpan.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    overlay.style.display = 'none';
+                    startFreeSpinsMode();
+                }
+            }, 1000);
+        }
+
+        function startFreeSpinsMode() {
+            freeSpinsLeft = 10;
+            runAutoFreeSpins();
+        }
+
+        function runAutoFreeSpins() {
+            if (freeSpinsLeft > 0) {
+                freeSpinsLeft--;
+                setTimeout(() => {
+                    spinSlot(true);
+                }, 1000);
+            } else {
+                document.getElementById('live-win-ticker').innerText = "SHOWDOWN: FREE SPINS COMPLETED!";
+            }
+        }
+
+        function triggerFallingMultiplier(multiplierValue) {
+            const container = document.getElementById('falling-multiplier-overlay');
+            container.innerHTML = `<div class="big-mult-text">x${multiplierValue}</div>`;
+            speakMultiplier(multiplierValue);
+
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 850);
+        }
+
+        function evaluateMatch(isBonus = false) {
+            let symbolCounts = {};
+
+            document.querySelectorAll('.symbol-cell').forEach(cell => {
+                let key = cell.getAttribute('data-symbol');
+                if (!symbolCounts[key]) symbolCounts[key] = [];
+                symbolCounts[key].push(cell);
+            });
+
+            const winProbability = isBonus ? 0.50 : 0.22;
+            const willWin = Math.random() < winProbability;
+            
+            let matchedCells = [];
+            let matchType = 0;
+
+            if (willWin) {
+                for (let key in symbolCounts) {
+                    if (key !== 'scatter' && (symbolCounts[key].length === 3 || symbolCounts[key].length === 4)) {
+                        matchedCells = symbolCounts[key];
+                        matchType = symbolCounts[key].length;
+                        break;
+                    }
+                }
+            }
+
+            if (matchedCells.length >= 3) {
+                let chosenMultObj = getRandomMultiplier();
+                let chosenMult = chosenMultObj.val;
+
+                triggerFallingMultiplier(chosenMult);
+
+                setTimeout(() => {
+                    document.getElementById(chosenMultObj.id).classList.add('mult-active');
+                    matchedCells.forEach(cell => cell.classList.add('winning-match'));
+
+                    let randomVariation = Math.random() < 0.5 ? 0.25 : 0.65;
+                    let basePayout = matchType === 4 ? (currentBet * (randomVariation * 1.5)) : (currentBet * randomVariation);
+                    let multiplierFactor = isBonus ? 0.65 : 0.95;
+                    let totalWin = (basePayout * chosenMult) * multiplierFactor;
+
+                    let currentBalance = window.getUserBalance ? window.getUserBalance() : 0;
+                    currentBalance += totalWin;
+
+                    if (window.updateDatabaseBalance) {
+                        window.updateDatabaseBalance(currentBalance);
+                    }
+                    
+                    document.getElementById('live-win-ticker').innerText = `🔥 WIN! +Tk ${totalWin.toFixed(2)} (x${chosenMult})`;
+
+                    showWinPopup(totalWin, `${matchType} Match! Multiplier: x${chosenMult}`);
+                }, 400);
+
+            } else {
+                if (freeSpinsLeft === 0) {
+                    document.getElementById('live-win-ticker').innerText = "SHOWDOWN: TRY AGAIN!";
+                }
+            }
+
+            if (freeSpinsLeft > 0) {
+                runAutoFreeSpins();
+            }
+        }
+
+        function showWinPopup(amount, msg) {
+            const popup = document.getElementById('win-popup');
+            document.getElementById('win-amount').innerText = amount.toFixed(2);
+            document.getElementById('mult-msg').innerText = msg;
+            popup.classList.add('show');
+            setTimeout(() => popup.classList.remove('show'), 2000);
+        }
+
+        function toggleAuto() {
+            if (!isSpinning && freeSpinsLeft === 0) {
+                spinSlot();
+            }
+        }
+    </script>
+</body>
+</html>
