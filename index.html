@@ -3829,7 +3829,7 @@ document.addEventListener('keydown',function(event){
 <script type="module" id="healthcareAdminToggleSync">
 import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
-const cfg={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYw',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+const cfg={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
 try{
  const app=getApps().find(x=>x.name==='[DEFAULT]')||initializeApp(cfg),db=getDatabase(app);
  onValue(ref(db,'settings/healthcareConfig'),snap=>{
