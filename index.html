@@ -1357,21 +1357,26 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 
   window.initLiveUserSync = function(phone) {
       if(!phone) return;
-      // Prevent writing cached balance before Firebase loads for this user.
-      balanceSyncReadyPhone = null;
+      // Balance sync guard: stop the previous account listener and wait for this account's Firebase value.
+      if(typeof window.liveUserBalanceUnsubscribe === 'function') window.liveUserBalanceUnsubscribe();
+      window.liveUserBalanceReady = false;
+      window.liveUserBalancePhone = phone;
       const userRef = ref(db, 'users/' + phone);
-      onValue(userRef, (snapshot) => {
-          // Ignore callbacks for a different logged-in user.
-          if (String(currentUserPhone || '') !== String(phone)) return;
+      window.liveUserBalanceUnsubscribe = onValue(userRef, (snapshot) => {
+          // Ignore late events from a previously signed-in account.
+          if(currentUserPhone !== phone || window.liveUserBalancePhone !== phone) return;
           if (snapshot.exists()) {
               const userData = snapshot.val() || {};
               let liveBalance = userData.balance !== undefined ? Number(userData.balance || 0) : 0;
-              if (!Number.isFinite(liveBalance)) liveBalance = 0;
               balance = liveBalance;
-              // Firebase balance has now been received for this user.
-              balanceSyncReadyPhone = String(phone);
+              window.liveUserBalanceReady = true;
               if(!usersDb[phone]) usersDb[phone] = {phone: phone};
               usersDb[phone].balance = liveBalance;
+              // Match Admin Panel: retain the timestamp attached to manual balance adjustments.
+              if(userData.adminBalanceUpdatedAt !== undefined) {
+                  usersDb[phone].adminBalanceUpdatedAt = Number(userData.adminBalanceUpdatedAt || 0);
+                  window.liveUserAdminBalanceUpdatedAt = Number(userData.adminBalanceUpdatedAt || 0);
+              }
               usersDb[phone].name = userData.name || usersDb[phone].name;
               // Daily Loss Cashback: sync admin-paid cashback details into the signed-in user's app.
               if(userData.cashbackState !== undefined) usersDb[phone].cashbackState = userData.cashbackState || {};
@@ -1434,8 +1439,6 @@ let currentUserPhone = localStorage.getItem('aviator_current_user') || null;
 window.currentUserPhone = currentUserPhone;
 
 let balance = 0;
-// Only allow balance writes after the current user's Firebase balance is loaded.
-let balanceSyncReadyPhone = null;
 let multiplier=1,crashed=false,roundNo=1,start=0,crashAt=0,countdownTimer=null;
 let bets={1:{active:false,amount:0},2:{active:false,amount:0}},history=[];
 const multEl=document.getElementById('mult'),stateEl=document.getElementById('state'),plane=document.getElementById('plane'),sky=document.getElementById('sky'),countdown=document.getElementById('countdown'),countNum=document.getElementById('countNum');
@@ -1789,6 +1792,10 @@ function checkAuthStatus(){
         document.getElementById('profileScreen').classList.remove('active');
     } else {
         document.getElementById('authScreen').classList.remove('active');
+        // Each login must wait for the current account's authoritative Firebase balance.
+        window.liveUserBalanceReady = false;
+        window.liveUserBalancePhone = currentUserPhone;
+        window.liveUserAdminBalanceUpdatedAt = 0;
         showScreen('homeScreen');
         loadUserData();
         checkDailyBonusNotification();
@@ -1888,26 +1895,19 @@ function fmt(n){return Math.round(Number(n)||0).toLocaleString('en-US')}
 
 function updateBalance(){
     if(currentUserPhone && usersDb[currentUserPhone]){
-        usersDb[currentUserPhone].balance = Number(balance) || 0;
+        usersDb[currentUserPhone].balance = balance;
         usersDb[currentUserPhone].lastActive = Date.now();
         localStorage.setItem('aviator_users_db', JSON.stringify(usersDb));
         renderTopReferrers(usersDb);
-        // Write balance only after Firebase has loaded it for this user.
-        if(
-            String(balanceSyncReadyPhone || '') === String(currentUserPhone) &&
-            window.fbDb && window.fbRef && window.fbUpdate
-        ){
-            const patch = { balance: Number(balance) || 0 };
-            if(usersDb[currentUserPhone].referStats !== undefined){
-                patch.referStats = usersDb[currentUserPhone].referStats;
-            }
-            if(usersDb[currentUserPhone].claimedRewards !== undefined){
-                patch.claimedRewards = usersDb[currentUserPhone].claimedRewards;
-            }
-            window.fbUpdate(
-                window.fbRef(window.fbDb, 'users/' + currentUserPhone),
-                patch
-            ).catch(err => console.warn('Firebase balance sync failed:', err));
+        // Do not let cached Local Storage balance overwrite Firebase before its first snapshot.
+        if(window.liveUserBalanceReady === true &&
+           window.liveUserBalancePhone === currentUserPhone &&
+           window.fbDb && window.fbRef && window.fbUpdate){
+            window.fbUpdate(window.fbRef(window.fbDb, 'users/' + currentUserPhone), {
+                balance: balance,
+                referStats: usersDb[currentUserPhone].referStats,
+                claimedRewards: usersDb[currentUserPhone].claimedRewards
+            });
         }
     }
     const b=document.getElementById('balance');if(b)b.textContent=fmt(balance);syncAppBalance()
