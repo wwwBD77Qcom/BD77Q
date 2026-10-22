@@ -1357,18 +1357,20 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 
   window.initLiveUserSync = function(phone) {
       if(!phone) return;
-      // Balance sync guard: stop the previous account listener and wait for this account's Firebase value.
+      phone = String(phone).trim();
+      // Keep only one live listener for the currently signed-in account.
       if(typeof window.liveUserBalanceUnsubscribe === 'function') window.liveUserBalanceUnsubscribe();
       window.liveUserBalanceReady = false;
       window.liveUserBalancePhone = phone;
       const userRef = ref(db, 'users/' + phone);
       window.liveUserBalanceUnsubscribe = onValue(userRef, (snapshot) => {
-          // Ignore late events from a previously signed-in account.
-          if(currentUserPhone !== phone || window.liveUserBalancePhone !== phone) return;
+          // Use the window account marker to avoid stale/cross-script login state.
+          if(String(window.currentUserPhone || '') !== phone || String(window.liveUserBalancePhone || '') !== phone) return;
           if (snapshot.exists()) {
               const userData = snapshot.val() || {};
-              let liveBalance = userData.balance !== undefined ? Number(userData.balance || 0) : 0;
+              const liveBalance = Number(userData.balance ?? 0) || 0;
               balance = liveBalance;
+              if (usersDb[phone]) usersDb[phone].balance = liveBalance;
               window.liveUserBalanceReady = true;
               if(!usersDb[phone]) usersDb[phone] = {phone: phone};
               usersDb[phone].balance = liveBalance;
@@ -1418,7 +1420,12 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
               if(typeof window.refreshReferralUI==='function') window.refreshReferralUI();
               if(typeof window.tryQualifyReferralBonus==='function') window.tryQualifyReferralBonus(phone);
               updateBalance();
+          } else {
+              console.warn('Live balance sync: Firebase user record not found for current phone.');
           }
+      }, (error) => {
+          window.liveUserBalanceReady = false;
+          console.error('Live balance sync failed:', error);
       });
   }
 </script>
