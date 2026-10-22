@@ -684,7 +684,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       }
   }
 
-  // হেল্প কেয়ার / সাপোর্ট টিকেট লোড করার ফাংশন[span_1](start_span)[span_1](end_span)
+  // হেল্প কেয়ার / সাপোর্ট টিকেট লোড করার ফাংশন
   const HELP_CARE_24H = 24 * 60 * 60 * 1000;
 
   async function cleanupExpiredSupportTickets() {
@@ -1208,11 +1208,9 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
           const newTotalDeposit = Number((Number(userData.totalDeposit || 0) + depositAmount).toFixed(2));
 
           // Deposit approval + referral rebate are linked to the same request key.
-          // This prevents the same approved deposit from paying the 3% rebate twice.
           const updates = {};
           updates['users/' + phone + '/balance'] = Number((currentBal + depositAmount).toFixed(2));
           updates['users/' + phone + '/totalDeposit'] = newTotalDeposit;
-          // Every approved deposit adds the same amount to the cumulative turnover target.
           updates['users/' + phone + '/turnoverTarget'] = newTotalDeposit;
           updates['requests/' + reqKey + '/status'] = 'Success';
           updates['requests/' + reqKey + '/approvedAt'] = Date.now();
@@ -1267,8 +1265,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
               }
           }
 
-          // A single multi-location update keeps the depositor balance, request status
-          // and referral payment in the same Firebase write operation.
           await update(ref(db), updates);
 
           await sendUserInboxSms(phone, "💰 ডিপোজিট সফল", `আপনার অ্যাকাউন্টে সফলভাবে ${depositAmount} টাকা জমা হয়েছে।`);
@@ -1394,8 +1390,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
   // ================= End Profile Healthcare / Customer Service Button Controls =================
 
   // ================= REALTIME ADMIN SYNC BRIDGE =================
-  // Existing admin functions are preserved. These listeners only refresh
-  // the existing dashboard when the User App/Admin changes shared Firebase data.
   function adminDashboardOpen(){
       const el=document.getElementById('adminDashboardScreen');
       return !!(el && el.classList.contains('active'));
@@ -2146,7 +2140,7 @@ import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.8.0/fire
 import{getDatabase,ref,get,update,onValue,set}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 const cfg={apiKey:"AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",authDomain:"uk77-56f6d.firebaseapp.com",databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",projectId:"uk77-56f6d",storageBucket:"uk77-56f6d.firebasestorage.app",messagingSenderId:"1062783431056",appId:"1:1062783431056:web:c44fd51195cf4061998315",measurementId:"G-C0ST13Q8PJ"};
 const app=getApps().length?getApps()[0]:initializeApp(cfg);const db=getDatabase(app);let caUsers={};
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
 async function loadSettings(){try{let s=await get(ref(db,'settings'));let v=s.val()||{};let p=v.payment||{};document.getElementById('caBkash').value=p.bkash||'';document.getElementById('caNagad').value=p.nagad||'';document.getElementById('caRocket').value=p.rocket||'';document.getElementById('caDepMin').value=p.depositMin??'';document.getElementById('caDepMax').value=p.depositMax??'';document.getElementById('caWithMin').value=p.withdrawMin??'';document.getElementById('caWithMax').value=p.withdrawMax??'';let c=v.cashback||{};document.getElementById('caCashRate').value=c.rate??15;document.getElementById('caCashMin').value=c.minimumLoss??0;document.getElementById('caCashActive').value=String(c.active!==false);let vip=v.vip||{};document.getElementById('caVipStep').value=vip.depositPerLevel??1000;document.getElementById('caVipBonus').value=vip.levelBonus??10;document.getElementById('caTurnoverRate').value=vip.turnoverMultiplier??2;let sec=v.security||{};document.getElementById('caRegMode').value=String(sec.registration!==false);document.getElementById('caWithdrawMode').value=String(sec.withdrawal!==false)}catch(e){document.getElementById('caDashMsg').textContent='Settings load error: '+e.message}}
 function render(){let a=Object.entries(caUsers);let bal=0,refs=0,active=0;a.forEach(([p,u])=>{bal+=Number(u.balance||0);refs+=Number(u.referStats?.count||0);if(u.blocked!==true)active++});document.getElementById('caUsers').textContent=a.length;document.getElementById('caActive').textContent=active;document.getElementById('caBalance').textContent='৳'+bal.toFixed(2);document.getElementById('caRefs').textContent=refs;document.getElementById('caDashMsg').textContent='Realtime Firebase user data loaded.';document.getElementById('caUserTable').innerHTML=a.slice(0,100).map(([p,u])=>`<tr><td>${esc(p)}</td><td>${esc(u.name||'-')}</td><td>৳${Number(u.balance||0).toFixed(2)}</td><td>${Number(u.vipLevel||u.level||0)}</td><td>৳${Number(u.totalDeposit||0).toFixed(2)}</td><td>${Number(u.referStats?.count||0)}</td><td>${u.blocked===true?'Blocked':'Active'}</td><td><button class="mini-btn" onclick="caAdjust('${esc(p)}')">Balance</button><button class="mini-btn ${u.blocked===true?'mini-green':'mini-danger'}" onclick="caBlock('${esc(p)}',${u.blocked===true})">${u.blocked===true?'Unblock':'Block'}</button></td></tr>`).join('')||'<tr><td colspan="8">No users</td></tr>';const blocked=a.filter(([p,u])=>u.blocked===true||u.status==='blocked');document.getElementById('caBlockedCount').textContent=blocked.length;document.getElementById('caBlockedTable').innerHTML=blocked.map(([p,u])=>`<tr><td>${esc(p)}</td><td>${esc(u.name||'-')}</td><td>৳${Number(u.balance||0).toFixed(2)}</td><td>${esc(u.blockedAt?new Date(u.blockedAt).toLocaleString():'-')}</td><td><button class="mini-btn mini-green" onclick="caBlock('${esc(p)}',true)">Unblock</button></td></tr>`).join('')||'<tr><td colspan="5">কোনো blocked user নেই</td></tr>'}
 onValue(ref(db,'users'),s=>{caUsers=s.val()||{};render()});
