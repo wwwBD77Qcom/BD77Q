@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <title>BD77Q - Auth & Game & Helpline</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#080a0f;color:#fff;font-family:Arial,sans-serif}body{padding:0}.app{width:100%;max-width:520px;margin:auto;min-height:100vh;background:#11151d;box-shadow:0 0 40px rgba(0,0,0,.45);padding-bottom:74px}.screen{display:none}.screen.active{display:block}.header{height:62px;background:#171c26;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #292f3b}.logo{font-size:23px;font-weight:900}.logo span{font-size:27px}.balance{background:#242b37;padding:9px 12px;border-radius:20px;font-weight:900}.card{margin:12px;background:#191f29;border:1px solid #2a303b;border-radius:14px;padding:16px}.hero{padding:20px 16px;background:linear-gradient(135deg,#191f29,#10151d)}.stat{display:flex;justify-content:space-between;gap:12px;margin:10px 0;color:#aeb7c6}.stat strong{color:#fff;text-align:right}.row{display:flex;gap:8px}.field{flex:1;min-width:0}.field label,label{display:block;color:#9da7b6;font-size:12px;margin-bottom:6px}input{width:100%;background:#0e1218;border:1px solid #303846;color:#fff;padding:12px;border-radius:8px;font-size:16px;outline:none}input:focus{border-color:#6d7788}button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cursor:pointer}.bet{background:#2a303b;color:#fff;width:100%}.cash{background:#20b56b;color:#fff;width:100%;margin-top:8px}.cash:disabled{opacity:.35;cursor:not-allowed}.small{background:#252c37;color:#dce2eb}.note{font-size:11px;color:#7f8999;text-align:center;margin:12px;line-height:1.5}.game{margin:12px;border-radius:12px;overflow:hidden;background:#080b10;border:1px solid #272e39}.sky{height:410px;position:relative;overflow:hidden;background:linear-gradient(#101a2a,#0a0d13)}.mult{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:55px;font-weight:900;color:#fff;text-shadow:0 2px 12px #000;z-index:4}.status{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;z-index:5;color:#aeb7c6;font-size:13px}.grid{position:absolute;inset:0;opacity:.18;background-image:linear-gradient(#72809a 1px,transparent 1px),linear-gradient(90deg,#72809a 1px,transparent 1px);background-size:45px 45px;transform:skewY(-10deg) scale(1.4);transform-origin:bottom}.plane{position:absolute;left:12%;bottom:13%;font-size:48px;z-index:6;filter:drop-shadow(0 5px 8px #000)}.line{position:absolute;left:-20%;bottom:10%;width:150%;height:4px;background:#ff334f;transform:rotate(-16deg);transform-origin:left;box-shadow:0 0 15px #ff334f;z-index:3}.crashed .mult{color:#ff4961}.panel{padding:0 12px}.box{background:#191f29;border-radius:12px;padding:12px;margin-bottom:10px}.history{display:flex;gap:7px;overflow:hidden;margin-top:10px;padding:0 10px 10px}.pill{padding:6px 9px;border-radius:15px;background:#26303c;font-size:12px;color:#7ed6a7}.pill.hot{color:#ffcf72}.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;background:#151a23;border-top:1px solid #2a303b;display:grid;grid-template-columns:repeat(5,1fr);padding:7px 8px;z-index:200}.nav button{background:transparent;color:#8e98a8;padding:9px 4px;font-size:12px}.nav button.active{color:#fff;background:#222936}.list{display:grid;gap:8px}.item{background:#11161e;padding:12px;border-radius:10px;display:flex;justify-content:space-between}.nickname-box{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:12px}.nickname-head{display:flex;align-items:center;justify-content:space-between;gap:8px}.nickname-title{font-size:18px;font-weight:900}.nickname-value{font-size:14px;color:#dce2eb;margin-top:4px}.nickname-edit{background:#252c37;color:#fff;padding:9px 12px}.nickname-form{display:none;margin-top:10px}.nickname-form.show{display:block}.nickname-msg{font-size:12px;color:#9da7b6;margin-top:8px;min-height:18px}.profile-action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px}.profile-action-btn{border:0;border-radius:14px;padding:15px 10px;color:#fff;font-weight:900;font-size:16px;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.2)}.deposit-btn{background:linear-gradient(135deg,#00c853,#00a844)}.money-btn{background:linear-gradient(135deg,#ffb300,#f57c00)}.profile-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;align-items:center;justify-content:center;padding:14px;overflow:auto}.profile-modal.show{display:flex}.profile-modal-card{width:min(470px,100%);max-height:92vh;overflow:auto;margin:0}.modal-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.modal-close{background:#252b35;color:#fff;border-radius:9px;width:38px;height:38px;padding:0;font-size:22px}.payment-method-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:10px 0 12px}.payment-logo{border:1px solid #303744;background:#11161e;border-radius:12px;padding:10px 5px;text-align:center;color:#fff;font-weight:900;transition:.15s}.payment-logo.active{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.08);transform:translateY(-1px)}.payment-logo .logo{display:inline-flex;align-items:center;justify-content:center;width:42px;height:38px;border-radius:10px;margin-bottom:5px;font-size:10px}.bkash-logo{background:#e2136e}.nagad-logo{background:#f58220}.rocket-logo{background:#6b2fa3}.quick-amounts{display:flex;flex-wrap:wrap;gap:7px;margin:9px 0}.quick-amount{flex:1 1 calc(33.333% - 7px);min-width:72px;background:#202733;color:#fff;border:1px solid #303846;padding:9px 7px;font-size:13px}.quick-amount.active{border-color:#fff;background:#2d3542}.bonus-box{background:#10261b;border:1px solid #1f7a49;border-radius:12px;padding:11px;margin:10px 0}.bonus-title{font-size:14px;font-weight:900;margin-bottom:6px}.bonus-row{display:flex;justify-content:space-between;gap:8px;margin:5px 0;font-size:13px}.bonus-row strong{color:#7ed6a7}.demo-number{margin-top:10px;background:#11161e;border-radius:10px;padding:12px}.demo-number-value{font-size:18px;font-weight:900;margin-top:4px}.money-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px}.money-tab{background:#202733;color:#aeb7c6}.money-tab.active{background:#fff;color:#111}.history-list{display:grid;gap:8px}.history-item{background:#11161e;border:1px solid #252c37;border-radius:10px;padding:11px}.history-item-top{display:flex;justify-content:space-between;gap:8px}.pending{color:#ffd166}.modal-note{font-size:11px;color:#7f8999;line-height:1.5}.success-box{background:#10261b;border:1px solid #1f7a49;border-radius:12px;padding:15px;text-align:center}.success-icon{font-size:42px}.success-title{font-size:20px;font-weight:900;margin:5px 0}.danger{color:#ff7888}.info{color:#8fd3ff}
@@ -208,6 +209,15 @@
 /* Betting record / P&L / rebate report UI */
 .report-tabs{display:flex;gap:7px;overflow:auto;padding:7px 0;margin:4px 0 12px}.report-tabs button{white-space:nowrap;background:#101b2d;color:#8fd3ff;border:1px solid #2998db;padding:9px 12px;border-radius:9px}.report-tabs button.active{background:#138de0;color:white}.report-filter{display:flex;gap:8px;margin-bottom:12px}.report-filter select,.report-filter input{min-width:0;flex:1;background:#101722;color:#fff;border:1px solid #258fd0;border-radius:8px;padding:9px}.report-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}.report-stat{background:linear-gradient(135deg,#12233d,#101522);border:1px solid #284e78;border-radius:10px;padding:12px}.report-stat span{display:block;color:#aeb9c9;font-size:12px}.report-stat strong{display:block;margin-top:4px;font-size:18px}.report-record{background:#f8f8fa;color:#222;border-radius:9px;margin:9px 0;overflow:hidden}.report-record-head{padding:11px;display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #e8e8ed;font-weight:700}.report-record-body{padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px}.report-record-body span{display:block;color:#85858c}.report-record-body strong{display:block;margin-top:3px}.report-positive{color:#40a34b!important}.report-negative{color:#e43e45!important}.report-empty{padding:22px 10px;text-align:center;color:#aab4c4;background:#101722;border-radius:10px}
 
+
+/* Compact glowing QR referral card */
+.qr-mini-card{position:relative;display:flex;align-items:center;gap:12px;margin:10px 0 14px;padding:11px;border-radius:15px;background:linear-gradient(120deg,#101e2b,#13291f 55%,#101e2b);border:1px solid rgba(83,255,181,.65);box-shadow:0 0 8px rgba(34,255,169,.20),inset 0 0 18px rgba(34,255,169,.05);overflow:hidden}
+.qr-mini-card:before{content:"";position:absolute;inset:-60% auto -60% -45%;width:35%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);transform:rotate(20deg);animation:qrLightSweep 4s ease-in-out infinite;pointer-events:none}
+@keyframes qrLightSweep{0%,35%{left:-45%}75%,100%{left:130%}}
+.qr-mini-code{width:76px;height:76px;flex:0 0 76px;display:flex;align-items:center;justify-content:center;background:#fff;padding:4px;border-radius:10px;box-shadow:0 0 12px rgba(61,255,174,.42)}
+.qr-mini-code img,.qr-mini-code canvas{width:68px!important;height:68px!important;display:block}
+.qr-mini-info{min-width:0;flex:1;position:relative;z-index:1}.qr-mini-title{font-size:14px;font-weight:900;color:#9dffd3;letter-spacing:.2px}.qr-mini-sub{font-size:10px;color:#c1d7d0;line-height:1.4;margin:4px 0 8px}.qr-mini-actions{display:flex;gap:6px}.qr-mini-btn{padding:7px 9px;border-radius:8px;font-size:10px;font-weight:900;background:linear-gradient(135deg,#39f5a5,#0eaf73);color:#052318;box-shadow:0 0 10px rgba(57,245,165,.18)}.qr-mini-btn.secondary{background:#1d3440;color:#d6fff0;border:1px solid #3a6d5a;box-shadow:none}
+@media(max-width:360px){.qr-mini-card{gap:8px;padding:9px}.qr-mini-code{width:66px;height:66px;flex-basis:66px}.qr-mini-code img,.qr-mini-code canvas{width:58px!important;height:58px!important}.qr-mini-title{font-size:12px}.qr-mini-sub{font-size:9px}}
 </style>
 
 <style id="myAccountVipStyle">
@@ -424,6 +434,20 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 
 </head>
 <body>
+<style id="emergency-award-cashback-style">
+#emergencyAwardPopup{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(7px)}
+#emergencyAwardPopup .ea-card{position:relative;width:min(420px,100%);padding:3px;border-radius:22px;background:conic-gradient(from 0deg,#ff004c,#ffae00,#eaff00,#00ffd5,#476bff,#d500f9,#ff004c);animation:eaSpin 5s linear infinite;box-shadow:0 0 28px #c400ff88}
+#emergencyAwardPopup .ea-inner{border-radius:19px;padding:22px 18px;text-align:center;color:#fff;background:radial-gradient(circle at top,#38205c,#101020 68%);animation:eaGlow 2s ease-in-out infinite alternate}
+#emergencyAwardPopup h2{margin:8px 0;color:#ffe68b;text-shadow:0 0 14px #ff5de4;font-size:25px}
+#emergencyAwardPopup p{margin:8px 0 15px;line-height:1.5}
+#emergencyAwardPopup .ea-close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:30px;height:30px;background:#ffffff22;color:#fff;font-size:22px}
+#cashbackInfoCard{display:none;margin:12px;padding:14px;border-radius:16px;color:#fff;background:linear-gradient(120deg,#171339,#42165a,#102b4d);border:1px solid #e879f9;box-shadow:0 0 16px #a855f755}
+@keyframes eaSpin{to{filter:hue-rotate(360deg)}}@keyframes eaGlow{from{box-shadow:inset 0 0 8px #ff4fd8}to{box-shadow:inset 0 0 24px #35d8ff}}
+@media(prefers-reduced-motion:reduce){#emergencyAwardPopup .ea-card,#emergencyAwardPopup .ea-inner{animation:none}}
+</style>
+<div id="emergencyAwardPopup" role="dialog" aria-modal="true" aria-label="Emergency Award"><div class="ea-card"><div class="ea-inner"><button class="ea-close" onclick="document.getElementById('emergencyAwardPopup').style.display='none'" aria-label="Close">×</button><div style="font-size:34px">🎁 ⚡ 🎁</div><h2 id="eaTitle">EMERGENCY AWARD</h2><p id="eaMessage">বিশেষ বোনাসের ঘোষণা</p><strong id="eaAmount" style="font-size:22px;color:#83ffdc"></strong></div></div></div>
+<div id="cashbackInfoCard"><b style="font-size:17px">💸 ১৫% Cashback</b><div id="cashbackInfoText" style="display:none;margin-top:6px;font-size:13px" aria-hidden="true"></div></div>
+
 
 
 <!-- APP START SPLASH -->
@@ -866,18 +890,14 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 
       <!-- Tab 1: Invite Link Content -->
       <div id="referLinkSection">
-
-        <!-- Auto-generated QR code shown at the top of the existing Invite tab -->
-        <div class="qr-referral-card" id="qrReferralCard">
-          <div class="qr-referral-inner">
-            <div class="qr-referral-codebox"><div id="referralQrCanvas" aria-label="আপনার রেফার QR কোড"></div></div>
-            <div class="qr-referral-info">
-              <div class="qr-referral-title">✨ Referral QR</div>
-              <div class="qr-referral-sub">বন্ধুকে এই QR স্ক্যান করতে দিন। আপনার ব্যক্তিগত রেফার লিংক খুলবে।</div>
-              <div class="qr-referral-actions">
-                <button class="qr-referral-btn" type="button" onclick="downloadReferralQR()">⬇ QR Save</button>
-                <button class="qr-referral-btn secondary" type="button" onclick="shareReferralQR()">↗ Share</button>
-              </div>
+        <div class="qr-mini-card" aria-label="QR Referral">
+          <div id="miniReferralQr" class="qr-mini-code"><span style="font-size:9px;color:#111;text-align:center">QR</span></div>
+          <div class="qr-mini-info">
+            <div class="qr-mini-title">✦ আপনার Referral QR</div>
+            <div class="qr-mini-sub">বন্ধুকে স্ক্যান করতে দিন—আপনার রেফার লিংক খুলবে।</div>
+            <div class="qr-mini-actions">
+              <button class="qr-mini-btn" type="button" onclick="downloadMiniReferralQR()">⬇ ডাউনলোড</button>
+              <button class="qr-mini-btn secondary" type="button" onclick="shareMiniReferralQR()">↗ শেয়ার</button>
             </div>
           </div>
         </div>
@@ -1949,7 +1969,7 @@ function syncAppBalance(){
         
         const refCodeEl = document.getElementById('myReferCode');
         if(refCodeEl) refCodeEl.value = fullReferLink;
-        if(typeof renderReferralQR==='function') setTimeout(renderReferralQR, 50);
+        if(typeof renderMiniReferralQR === 'function') renderMiniReferralQR(fullReferLink);
 
         const refCountEl = document.getElementById('totalReferredCount');
         if(refCountEl) refCountEl.textContent = (user.referStats ? user.referStats.count : 0) + ' জন';
@@ -1993,49 +2013,6 @@ function syncAppBalance(){
         renderRewardsList();
         renderReferralEarnings();
     }
-}
-
-
-/* Referral QR: encode the exact personal referral URL already used by this app. */
-function renderReferralQR(){
-  const holder=document.getElementById('referralQrCanvas');
-  const linkBox=document.getElementById('myReferCode');
-  if(!holder||!linkBox||!linkBox.value)return;
-  if(typeof QRCode==='undefined'){
-    holder.innerHTML='<div style="font-size:10px;color:#b91c1c;text-align:center">QR লোড হচ্ছে…</div>';
-    setTimeout(()=>{if(typeof QRCode!=='undefined')renderReferralQR();},500);
-    return;
-  }
-  if(holder.dataset.qrValue===linkBox.value && holder.querySelector('canvas, img'))return;
-  holder.innerHTML='';
-  new QRCode(holder,{text:linkBox.value,width:256,height:256,colorDark:'#050505',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.H});
-  holder.dataset.qrValue=linkBox.value;
-}
-function downloadReferralQR(){
-  renderReferralQR();
-  const holder=document.getElementById('referralQrCanvas');
-  const canvas=holder&&holder.querySelector('canvas');
-  const img=holder&&holder.querySelector('img');
-  let url='';
-  if(canvas)url=canvas.toDataURL('image/png');
-  else if(img&&img.src)url=img.src;
-  if(!url){alert('QR তৈরি হচ্ছে, এক সেকেন্ড পরে আবার চেষ্টা করুন।');return;}
-  const a=document.createElement('a');a.href=url;a.download='my-referral-qr.png';document.body.appendChild(a);a.click();a.remove();
-}
-async function shareReferralQR(){
-  const linkBox=document.getElementById('myReferCode');
-  const holder=document.getElementById('referralQrCanvas');
-  renderReferralQR();
-  const canvas=holder&&holder.querySelector('canvas');
-  const link=linkBox?linkBox.value:'';
-  try{
-    if(canvas&&navigator.share&&navigator.canShare){
-      const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
-      if(blob){const file=new File([blob],'my-referral-qr.png',{type:'image/png'});if(navigator.canShare({files:[file]})){await navigator.share({title:'My Referral QR',text:'আমার রেফার লিংক স্ক্যান করুন বা খুলুন: '+link,files:[file]});return;}}
-    }
-  }catch(e){if(e&&e.name==='AbortError')return;}
-  if(navigator.share){try{await navigator.share({title:'My Referral Link',text:'আমার রেফার লিংক: '+link,url:link});return;}catch(e){if(e&&e.name==='AbortError')return;}}
-  try{await navigator.clipboard.writeText(link);alert('আপনার রেফার লিংক কপি হয়েছে। QR Save চাপ দিয়ে ছবিটিও সেভ করতে পারেন।');}catch(e){alert('আপনার রেফার লিংক: '+link);}
 }
 
 function switchReferTab(tab){
@@ -2189,6 +2166,31 @@ function claimReward(milestoneId, rewardAmount){
     updateBalance();
     renderRewardsList();
     alert(`অভিনন্দন! আপনি সফলভাবে ৳${rewardAmount} রিওয়ার্ড ক্লেইম করেছেন!`);
+}
+
+function renderMiniReferralQR(link){
+    const host=document.getElementById('miniReferralQr');
+    if(!host)return;
+    const value=String(link || (document.getElementById('myReferCode')||{}).value || '').trim();
+    if(!value)return;
+    if(!window.QRCode){host.innerHTML='<span style="font-size:9px;color:#111;text-align:center">QR লোড হচ্ছে…</span>';return;}
+    host.innerHTML='';
+    try{new QRCode(host,{text:value,width:68,height:68,colorDark:'#07130f',colorLight:'#ffffff',correctLevel:QRCode.CorrectLevel.M});}
+    catch(e){host.innerHTML='<span style="font-size:9px;color:#111;text-align:center">QR তৈরি হয়নি</span>';}
+}
+function downloadMiniReferralQR(){
+    const host=document.getElementById('miniReferralQr');if(!host)return;
+    const img=host.querySelector('img');const canvas=host.querySelector('canvas');
+    const url=img?img.src:(canvas?canvas.toDataURL('image/png'):'');
+    if(!url){alert('QR কোড তৈরি হচ্ছে—একটু পরে আবার চেষ্টা করুন।');return;}
+    const a=document.createElement('a');a.href=url;a.download='my-referral-qr.png';document.body.appendChild(a);a.click();a.remove();
+}
+function shareMiniReferralQR(){
+    const link=(document.getElementById('myReferCode')||{}).value||'';
+    if(!link){alert('রেফার লিংক পাওয়া যায়নি।');return;}
+    if(navigator.share){navigator.share({title:'My Referral QR',text:'আমার রেফার লিংক',url:link}).catch(()=>{});}
+    else if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(link).then(()=>alert('রেফার লিংক কপি হয়েছে। QR ছবিটি ডাউনলোড করে শেয়ার করুন।')).catch(()=>{alert(link);});}
+    else {alert(link);}
 }
 
 function copyReferCode(){
@@ -2406,7 +2408,6 @@ function openProfileModal(id){
     if(id==='referModal'){
         switchReferTab('link');
         syncAppBalance();
-        setTimeout(renderReferralQR, 120);
     }
     if(id==='internationalSmsModal'){renderInboxSms();}
 }
@@ -4094,17 +4095,6 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
 @keyframes amethystGlow{0%,100%{box-shadow:0 22px 65px rgba(0,0,0,.62),0 0 22px rgba(189,73,255,.17),inset 0 1px rgba(255,255,255,.1)}50%{box-shadow:0 22px 65px rgba(0,0,0,.62),0 0 34px rgba(239,93,193,.27),inset 0 1px rgba(255,255,255,.13)}}
 #authScreen .auth-card{animation:amethystGlow 5s ease-in-out infinite}
 @media(prefers-reduced-motion:reduce){#authScreen .auth-card{animation:none!important}}
-
-/* Compact animated rainbow QR referral card */
-.qr-referral-card{position:relative;isolation:isolate;overflow:hidden;margin:12px 0 14px;padding:3px;border-radius:18px;background:conic-gradient(from 0deg,#00f5d4,#00aaff,#8b5cf6,#ff4fd8,#ffb703,#00f5d4);background-size:200% 200%;animation:qrRainbow 2.2s linear infinite;box-shadow:0 0 12px #00e5ff66,0 0 25px #b517ff44}
-.qr-referral-inner{position:relative;z-index:1;display:flex;align-items:center;gap:13px;padding:13px;border-radius:15px;background:linear-gradient(135deg,#101827 0%,#17132b 55%,#102a32 100%);color:#fff}
-.qr-referral-card:before{content:"";position:absolute;inset:-60%;background:conic-gradient(transparent 0deg,rgba(255,255,255,.28) 45deg,transparent 85deg);animation:qrShine 1.45s linear infinite;pointer-events:none}
-.qr-referral-codebox{flex:0 0 142px;width:142px;height:142px;display:flex;align-items:center;justify-content:center;padding:7px;background:#fff;border-radius:12px;box-shadow:0 0 12px #fff9,0 0 20px #00e5ff77}
-#referralQrCanvas{width:128px;height:128px;display:flex;align-items:center;justify-content:center}
-#referralQrCanvas canvas,#referralQrCanvas img{width:128px!important;height:128px!important;image-rendering:pixelated}
-.qr-referral-info{min-width:0;flex:1}.qr-referral-title{font-weight:900;font-size:16px;line-height:1.3;background:linear-gradient(90deg,#fff,#8ef8ff,#ff9df2,#fff);background-size:200% auto;color:#fff;background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:qrTextGlow 1.5s linear infinite}.qr-referral-sub{font-size:11px;line-height:1.45;color:#d7e4f5;margin:7px 0 10px}.qr-referral-actions{display:flex;flex-wrap:wrap;gap:6px}.qr-referral-btn{border:0;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:800;color:#08111d;background:linear-gradient(100deg,#66f7d4,#6edbff);box-shadow:0 0 10px #44eaff55}.qr-referral-btn.secondary{color:#fff;background:linear-gradient(100deg,#8b5cf6,#ec4899);box-shadow:0 0 10px #d946ef55}
-@keyframes qrRainbow{to{background-position:200% 50%;filter:hue-rotate(360deg)}}@keyframes qrShine{to{transform:rotate(360deg)}}@keyframes qrTextGlow{to{background-position:200% center}}
-@media(max-width:380px){.qr-referral-inner{gap:9px;padding:10px}.qr-referral-codebox{flex-basis:122px;width:122px;height:122px;padding:5px}#referralQrCanvas,#referralQrCanvas canvas,#referralQrCanvas img{width:110px!important;height:110px!important}.qr-referral-title{font-size:14px}.qr-referral-btn{padding:7px 8px}}
 </style>
 
 
@@ -4178,7 +4168,27 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
 </script>
 
 
-<!-- QR code generator library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
+<script id="emergency-award-cashback-listeners">
+(function(){
+ let bannerListenerStarted=false, userBonusListenerStarted=false;
+ function dbReady(){return !!(window.fbDb&&window.fbRef&&window.fbOnValue);}
+ function startBannerListener(){if(bannerListenerStarted||!dbReady())return;bannerListenerStarted=true;
+  try{window.fbOnValue(window.fbRef(window.fbDb,'settings/emergencyAward'),function(snap){
+   const v=snap.exists()?(snap.val()||{}):{}; const popup=document.getElementById('emergencyAwardPopup');
+   if(!popup)return; if(v.active===true){document.getElementById('eaTitle').textContent=String(v.title||'EMERGENCY AWARD');document.getElementById('eaMessage').textContent=String(v.message||'বিশেষ বোনাসের ঘোষণা');document.getElementById('eaAmount').textContent=v.amount!==undefined&&v.amount!==''?'৳ '+String(v.amount):'';popup.style.display='flex';}
+   else popup.style.display='none';
+  });
+  window.fbOnValue(window.fbRef(window.fbDb,'settings/cashback'),function(snap){const card=document.getElementById('cashbackInfoCard');if(!card)return;const v=snap.exists()?(snap.val()||{}):{};if(v.active===true){card.style.display='block';document.getElementById('cashbackInfoText').textContent='';}else card.style.display='none';});
+  }catch(e){console.warn('Award/cashback listener:',e);bannerListenerStarted=false;}
+ }
+ function startUserBonusListener(){if(userBonusListenerStarted||!dbReady())return;const phone=window.currentUserPhone||localStorage.getItem('aviator_current_user');if(!phone)return;userBonusListenerStarted=true;
+  try{window.fbOnValue(window.fbRef(window.fbDb,'users/'+phone+'/cashbackNotice'),function(snap){if(!snap.exists())return;const v=snap.val()||{};const id=String(v.id||v.updatedAt||'');if(!id)return;const key='cashbackNoticeSeen_'+phone+'_'+id;if(localStorage.getItem(key))return;localStorage.setItem(key,'1');const amount=Number(v.amount||0);alert('🎁 Cashback/Bonus আপডেট!\n'+String(v.message||'আপনার বোনাস আপডেট হয়েছে।')+(amount?'\nপরিমাণ: ৳'+amount:''));});}
+  catch(e){console.warn('Cashback notification listener:',e);userBonusListenerStarted=false;}
+ }
+ function init(){if(!dbReady()){setTimeout(init,800);return;}startBannerListener();startUserBonusListener();}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+ const oldSetInterval=window.setInterval;oldSetInterval(function(){startUserBonusListener();},1500);
+})();
+</script>
 </body>
 </html>
