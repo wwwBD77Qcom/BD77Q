@@ -34,15 +34,12 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 .banner-on{color:#7ed6a7;font-weight:800}
 .banner-off{color:#ff7888;font-weight:800}
 @media(max-width:520px){.banner-grid{grid-template-columns:1fr}.banner-table img{width:90px;height:45px}}
-/* Entry Announcement Admin */
 .announcement-admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .announcement-slide-admin{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:10px;margin-top:10px}
 .announcement-slide-admin h4{margin:0 0 8px;color:#ffcf72;font-size:13px}
 .announcement-admin-grid input{margin-bottom:8px}
 @media(max-width:520px){.announcement-admin-grid{grid-template-columns:1fr}}
 
-
-/* Referral & Earnings Admin */
 .referral-admin-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .referral-admin-stat{background:#11161e;border:1px solid #2a303b;border-radius:10px;padding:12px}
 .referral-admin-stat span{display:block;color:#9da7b6;font-size:11px}
@@ -53,7 +50,6 @@ button{border:0;border-radius:9px;padding:12px;font-weight:800;font-size:15px;cu
 .referral-admin-table-wrap{overflow:auto;max-height:420px}
 @media(max-width:520px){.referral-admin-grid{grid-template-columns:1fr 1fr}.referral-admin-table{min-width:650px}}
 
-/* ===== VIP ADMIN UI REFRESH — presentation only; existing functions preserved ===== */
 :root{color-scheme:dark;--vip-bg:#070b16;--vip-panel:#10182b;--vip-card:#121d32;--vip-line:rgba(148,163,184,.19);--vip-text:#edf4ff;--vip-muted:#9aabc5;--vip-gold:#f7c96b;--vip-cyan:#5ee7f5;--vip-purple:#9c8cff;--vip-green:#31d6a0}
 html{scroll-behavior:smooth;scroll-padding-top:95px;background:var(--vip-bg)}
 body{background:radial-gradient(ellipse at 10% 0%,rgba(81,71,190,.22),transparent 32%),radial-gradient(ellipse at 90% 10%,rgba(27,176,199,.13),transparent 28%),var(--vip-bg)!important;color:var(--vip-text)!important;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif!important}
@@ -104,8 +100,6 @@ button.cash,.cash{background:linear-gradient(115deg,#2bd8a3,#1cb6bd)!important;c
 @media(max-width:600px){.app{padding:10px!important}.vip-admin-hero{align-items:flex-start;padding:17px;gap:10px}.vip-admin-emblem{width:44px;height:44px;flex-basis:44px;border-radius:14px}.vip-admin-pill{font-size:10px;padding:7px 9px}.vip-admin-nav{top:4px;margin-left:-1px;margin-right:-1px}.vip-admin-nav a{padding:8px 10px;font-size:11px}#adminDashboardScreen>div[style*="justify-content:space-between"]{align-items:flex-start!important;gap:10px;flex-wrap:wrap}#adminDashboardScreen .stat-value{font-size:27px!important}.admin-table{min-width:600px}.admin-table-wrap,.referral-admin-table-wrap{overflow-x:auto}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}button{transition:none!important}}
 
-
-/* === VIP NIGHTSCAPE THEME — visual enhancement; existing IDs and handlers preserved === */
 :root{--vip-gold:#ffd77c;--vip-cyan:#48e6f3;--vip-purple:#8a72ff;--vip-green:#20ddb0;--vip-bg:#030817}
 html,body{background:#030817!important}
 body{background:
@@ -136,10 +130,8 @@ button.cash:hover{box-shadow:0 10px 30px rgba(20,213,181,.3)!important}
 input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
 @media(min-width:1050px){.vip-admin-nav{position:sticky;top:8px;z-index:60}.vip-admin-hero{padding:26px 30px}}
 @media(max-width:600px){.vip-admin-hero{min-height:0}.vip-admin-title{font-size:clamp(20px,6vw,29px)}.vip-admin-subtitle{font-size:12px}.vip-admin-nav{backdrop-filter:blur(16px)}}
-
 </style>
 
-<!-- Firebase SDKs & Config (Modular CDN) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getDatabase, ref, get, set, update, child, push, remove, onValue, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -200,8 +192,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       document.getElementById('adminLoginScreen').classList.add('active');
   }
 
-  // ================== Daily Loss Cashback (15%) ==================
-  // User App-এর cashbackState-এর সঙ্গে মিল রেখে Firebase users ডাটায় কাজ করবে।
   function cashbackDateKey(date = new Date()){
       return date.toDateString();
   }
@@ -289,10 +279,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       await processDailyLossCashbackAdmin(true);
       if(btn){ btn.disabled = false; btn.textContent = '🎁 এখন Cashback প্রসেস করুন'; }
   };
-  // ================== End Daily Loss Cashback ==================
 
-
-  // ================== Referral & Earnings Management ==================
   async function getReferralAdminData(){
       const usersSnap = await get(child(ref(db), 'users'));
       const reqSnap = await get(child(ref(db), 'requests'));
@@ -432,11 +419,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
           }
       }catch(e){console.error('Referral settings load failed:',e)}
   }
-  // ================== End Referral & Earnings Management ==================
 
-
-  // Owner/Staff Gmail list management (UI + Firebase storage).
-  // Secure enforcement must additionally be configured in Firebase Rules/Cloud Functions.
   const normalizeAdminEmail = value => String(value || '').trim().toLowerCase();
   const adminEmailKey = email => email.replace(/\./g,'_dot_').replace(/#/g,'_hash_').replace(/\$/g,'_dollar_').replace(/\[/g,'_lb_').replace(/\]/g,'_rb_').replace(/\//g,'_slash_');
   window.loadOwnerStaffAccess = async function(){
@@ -595,7 +578,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       }
       const now = Date.now();
       try {
-          // Keep the original string path for older User App versions; metadata gives every publish a unique ID.
           await set(ref(db, 'settings/vipAnnouncement'), vipNoticeText);
           await set(ref(db, 'settings/vipAnnouncementMeta'), {
               id: 'vip_' + now,
@@ -610,8 +592,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       }
   }
 
-  // Automatically remove deposit/withdraw request records older than 7 days.
-  // Records without a valid timestamp are preserved to avoid accidental deletion.
   async function cleanupOldPaymentRequests(){
       const cutoff = Date.now() - 7*24*60*60*1000;
       for (const path of ['requests','withdrawRequests']) {
@@ -684,7 +664,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       }
   }
 
-  // হেল্প কেয়ার / সাপোর্ট টিকেট লোড করার ফাংশন
   const HELP_CARE_24H = 24 * 60 * 60 * 1000;
 
   async function cleanupExpiredSupportTickets() {
@@ -849,7 +828,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       fetchSupportTickets();
   }
 
-  // ==================== Banner Advertisement Control ====================
   let editingBannerId = null;
   let selectedBannerImage = '';
 
@@ -1065,7 +1043,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       document.getElementById('bannerMsg').textContent = '';
   };
 
-  // ==================== Entry Announcement Control ====================
   window.loadEntryAnnouncement = async function(){
       try{
           const snap = await get(ref(db, 'settings/entryAnnouncement'));
@@ -1126,10 +1103,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       document.getElementById('entryAnnMsg').textContent='';
   };
 
-  // ================== End Entry Announcement Control ==================
-
-  // ================== End Banner Advertisement Control =================
-
   window.saveAdminNumbers = async function() {
       const bKash = document.getElementById('adminBkash').value.trim();
       const Nagad = document.getElementById('adminNagad').value.trim();
@@ -1179,6 +1152,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       }
   }
 
+  /* ================== UPDATED HANDLE DEPOSIT WITH BALANCE LOGIC ================== */
   window.handleDeposit = async function(reqKey, action, phone, amount) {
       const reqRef = ref(db, 'requests/' + reqKey);
       const snap = await get(reqRef);
@@ -1205,13 +1179,17 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
           }
           const userData = userSnap.val() || {};
           const currentBal = Number(userData.balance || 0);
+          const newBalance = Number((currentBal + depositAmount).toFixed(2));
           const newTotalDeposit = Number((Number(userData.totalDeposit || 0) + depositAmount).toFixed(2));
 
-          // Deposit approval + referral rebate are linked to the same request key.
           const updates = {};
-          updates['users/' + phone + '/balance'] = Number((currentBal + depositAmount).toFixed(2));
+          
+          // ১. ইউজারের মূল ব্যালেন্স, মোট ডিপোজিট ও টার্নওভার ফায়ারবেসে আপডেট
+          updates['users/' + phone + '/balance'] = newBalance;
           updates['users/' + phone + '/totalDeposit'] = newTotalDeposit;
           updates['users/' + phone + '/turnoverTarget'] = newTotalDeposit;
+
+          // ২. ডিপোজিট রিকোয়েস্টের স্ট্যাটাস Success করা
           updates['requests/' + reqKey + '/status'] = 'Success';
           updates['requests/' + reqKey + '/approvedAt'] = Date.now();
           updates['requests/' + reqKey + '/referralRebateProcessed'] = false;
@@ -1220,6 +1198,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
           let rebateAmount = 0;
           const referrerPhone = userData.referredBy ? String(userData.referredBy) : '';
 
+          // ৩. রেফারেল রিবেট বোনাস প্রসেস (যদি থাকে)
           if(referrerPhone && referrerPhone !== String(phone)){
               const referrerRef = ref(db, 'users/' + referrerPhone);
               const referrerSnap = await get(referrerRef);
@@ -1265,15 +1244,17 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
               }
           }
 
+          // ৪. ফায়ারবেসে সকল ডেটা একসাথে আপডেট পাঠানো
           await update(ref(db), updates);
 
+          // ৫. ইউজারের ইনবক্সে মেসেজ ও এলার্ট
           await sendUserInboxSms(phone, "💰 ডিপোজিট সফল", `আপনার অ্যাকাউন্টে সফলভাবে ${depositAmount} টাকা জমা হয়েছে।`);
           if(rebateAmount > 0){
               await sendUserInboxSms(referrerPhone, "🎁 Referral Deposit Rebate", `আপনার referral user ${phone} ৳${depositAmount.toFixed(2)} deposit করেছে। ${rebateAmount.toFixed(2)} টাকা Referral Rebate হিসেবে আপনার ব্যালেন্সে যোগ হয়েছে।`);
           }
           alert(rebateAmount > 0
               ? `ডিপোজিট সফল। Referrer-কে ৳${rebateAmount.toFixed(2)} Referral Rebate দেওয়া হয়েছে।`
-              : 'ডিপোজিট সফলভাবে Accept করা হয়েছে!');
+              : 'ডিপোজিট সফলভাবে Accept করা হয়েছে এবং ইউজারের অ্যাকাউন্টে ব্যালেন্স যোগ হয়েছে!');
       } else {
           await update(reqRef, { status: 'Rejected' });
           await sendUserInboxSms(phone, "❌ ডিপোজিট ব্যর্থ", `আপনার ডিপোজিট রিকোয়েস্টটি গ্রহণ করা সম্ভব হয়নি। সঠিক ট্রানজেকশন আইডি দিয়ে আবার চেষ্টা করুন।`);
@@ -1313,9 +1294,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       fetchRequests();
   }
 
-
-
-  // ================= Wallet Number OTP Controls =================
   window.loadWalletOtpSettingsAdmin = async function(){
     const msg=document.getElementById('walletOtpAdminMsg');
     try{
@@ -1357,10 +1335,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       msg.textContent='সেভ করা যায়নি। Firebase Rules/Connection পরীক্ষা করুন।';
     }
   };
-  // ================= End Wallet Number OTP Controls =================
 
-
-  // ================= Profile Healthcare / Customer Service Button Controls =================
   (function setupHealthcareMutualSwitches(){
     const oldBox=document.getElementById('healthcareExistingEnabled');
     const tawkBox=document.getElementById('healthcareTawkEnabled');
@@ -1384,12 +1359,10 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
     const tawk=!!tawkBox.checked, existing=!!oldBox.checked&&!tawk;
     try{
       await set(ref(db,'settings/healthcareConfig'),{existingEnabled:existing,tawkEnabled:tawk,updatedAt:Date.now()});
-      msg.style.color='#7ed6a7';msg.textContent=tawk?'✅ Tawk.to Healthcare চালু হয়েছে। ইউজার অ্যাপের প্রোফাইলে Customer Service-এর জায়গায় দেখাবে।':existing?'✅ Customer Service চালু হয়েছে। ইউজার অ্যাপের প্রোফাইলে দেখাবে।':'✅ Customer Service ও Tawk.to Healthcare দুটোই বন্ধ; প্রোফাইলে কোনোটিই দেখাবে না।';
+      msg.style.color='#7ed6a7';msg.textContent=tawk?'✅ Tawk.to Healthcare चालू হয়েছে। ইউজার অ্যাপের প্রোফাইলে Customer Service-এর জায়গায় দেখাবে।':existing?'✅ Customer Service চালু হয়েছে। ইউজার অ্যাপের প্রোফাইলে দেখাবে।':'✅ Customer Service ও Tawk.to Healthcare দুটোই বন্ধ; প্রোফাইলে কোনোটিই দেখাবে না।';
     }catch(e){console.error('Healthcare settings save failed:',e);msg.style.color='#ff7888';msg.textContent='সেভ করা যায়নি। Firebase Rules/Connection পরীক্ষা করুন।';}
   };
-  // ================= End Profile Healthcare / Customer Service Button Controls =================
 
-  // ================= REALTIME ADMIN SYNC BRIDGE =================
   function adminDashboardOpen(){
       const el=document.getElementById('adminDashboardScreen');
       return !!(el && el.classList.contains('active'));
@@ -1448,7 +1421,6 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
   onValue(ref(db,'suggestions'), snapshot=>{
       window.adminLiveSuggestions=snapshot.exists()?(snapshot.val()||{}):{};
   });
-  // ================================================================
 
   window.addEventListener('DOMContentLoaded', initAdmin);
   setTimeout(()=>window.loadEntryAnnouncement && window.loadEntryAnnouncement(), 500);
@@ -1556,8 +1528,6 @@ body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;bac
       <div class="stat-value" id="totalUsersCount">0</div>
     </div>
 
-
-    <!-- Wallet OTP Control -->
     <div class="card" id="walletOtpAdminCard" style="border:1px solid #3c5b78;background:linear-gradient(145deg,#191f29,#111a25)">
       <div style="font-size:17px;font-weight:900;margin-bottom:8px;color:#8fd3ff">🔐 Wallet Number OTP Control</div>
       <div class="modal-note" style="margin-bottom:14px">ইউজারের Wallet নম্বর পরিবর্তনের OTP পদ্ধতি এখান থেকে চালু বা বন্ধ করুন। পরিবর্তন Firebase-এ সেভ হবে।</div>
@@ -1579,7 +1549,6 @@ body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;bac
       <div id="walletOtpAdminMsg" class="modal-note" style="margin-top:8px"></div>
     </div>
 
-    <!-- Profile slot selector: Customer Service or Tawk.to Healthcare -->
     <div class="card" id="healthcareAdminControlCard" style="border:1px solid #365c72;background:linear-gradient(145deg,#17232e,#11161e)">
       <div style="font-size:17px;font-weight:900;margin-bottom:8px;color:#7ed6a7">🩺 Healthcare Button Control</div>
       <div class="modal-note" style="margin-bottom:12px">ইউজার অ্যাপের প্রোফাইলের আগের Customer Service বাটনের জায়গায় একবারে একটি বাটন দেখাবে: Customer Service অথবা Tawk.to Healthcare। যেটি চালু করবেন সেটিই দেখাবে; দুটো বন্ধ করলে ওই জায়গায় কোনোটিই দেখাবে না। হোম পেজে কোনো বাটন দেখাবে না।</div>
@@ -1667,11 +1636,6 @@ body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;bac
       <button style="background:#ffb300;color:#111" type="button" onclick="changeAdminPassword()">Update Password</button>
       <div id="adminPwMsg" class="modal-note" style="margin-top:5px"></div>
     </div>
-
-    <!-- Banner Advertisement Control -->
-
-
-
 
     <div class="card" id="referralEarningsAdminCard">
       <div style="font-size:16px;font-weight:900;margin-bottom:6px;color:#ffcf72">👥 Referral & Earnings Management</div>
@@ -1833,7 +1797,6 @@ body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;bac
       </div>
     </div>
 
-    <!-- Help Care / Support Ticket Management -->
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px">
         <div style="font-size:16px;font-weight:900;color:#ffcf72">🛟 Help Care — ইউজার সাপোর্ট</div>
@@ -1873,7 +1836,6 @@ body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;bac
   </div>
 </div>
 
-<!-- Dynamic Game Management: added without removing existing admin features -->
 <style>
 #dynamicGameManagerCard{margin-top:16px}
 .dgm-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -1919,7 +1881,6 @@ import { getApps, getApp, initializeApp } from "https://www.gstatic.com/firebase
 import { getDatabase, ref, push, set, update, remove, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-/* Dynamic Game Manager — existing Admin features remain untouched. */
 const DGM_THUMBNAIL = 'https://i.postimg.cc/2STpnBDP/1790492897623.jpg';
 
 const dgmApp = getApps().length ? getApp() : initializeApp({
@@ -2040,9 +2001,7 @@ $('dgmCancelBtn')?.addEventListener('click',clearForm);$('dgmRefreshBtn')?.addEv
 window.dgmEdit=editGame; window.dgmToggle=toggleGame; window.dgmDelete=deleteGame;
 </script>
 
-
 <style>
-/* ================= COMPLETE ADMIN CONTROL CENTER ================= */
 .complete-admin{margin:18px 0;font-family:Arial,sans-serif}.complete-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .complete-card{background:#11161e;border:1px solid #2a303b;border-radius:14px;padding:14px}.complete-card h3{margin:0 0 10px;color:#ffcf72;font-size:15px}
 .complete-card p{font-size:11px;color:#9da7b6;line-height:1.5}.complete-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}.complete-form input,.complete-form select,.complete-form button{width:100%;padding:10px;border-radius:9px;border:1px solid #303846;background:#0c1016;color:#fff}.complete-form button{background:#20b56b;border:0;font-weight:800;cursor:pointer}.complete-full{grid-column:1/-1}
@@ -2140,7 +2099,7 @@ import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.8.0/fire
 import{getDatabase,ref,get,update,onValue,set}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 const cfg={apiKey:"AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",authDomain:"uk77-56f6d.firebaseapp.com",databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",projectId:"uk77-56f6d",storageBucket:"uk77-56f6d.firebasestorage.app",messagingSenderId:"1062783431056",appId:"1:1062783431056:web:c44fd51195cf4061998315",measurementId:"G-C0ST13Q8PJ"};
 const app=getApps().length?getApps()[0]:initializeApp(cfg);const db=getDatabase(app);let caUsers={};
-const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function loadSettings(){try{let s=await get(ref(db,'settings'));let v=s.val()||{};let p=v.payment||{};document.getElementById('caBkash').value=p.bkash||'';document.getElementById('caNagad').value=p.nagad||'';document.getElementById('caRocket').value=p.rocket||'';document.getElementById('caDepMin').value=p.depositMin??'';document.getElementById('caDepMax').value=p.depositMax??'';document.getElementById('caWithMin').value=p.withdrawMin??'';document.getElementById('caWithMax').value=p.withdrawMax??'';let c=v.cashback||{};document.getElementById('caCashRate').value=c.rate??15;document.getElementById('caCashMin').value=c.minimumLoss??0;document.getElementById('caCashActive').value=String(c.active!==false);let vip=v.vip||{};document.getElementById('caVipStep').value=vip.depositPerLevel??1000;document.getElementById('caVipBonus').value=vip.levelBonus??10;document.getElementById('caTurnoverRate').value=vip.turnoverMultiplier??2;let sec=v.security||{};document.getElementById('caRegMode').value=String(sec.registration!==false);document.getElementById('caWithdrawMode').value=String(sec.withdrawal!==false)}catch(e){document.getElementById('caDashMsg').textContent='Settings load error: '+e.message}}
 function render(){let a=Object.entries(caUsers);let bal=0,refs=0,active=0;a.forEach(([p,u])=>{bal+=Number(u.balance||0);refs+=Number(u.referStats?.count||0);if(u.blocked!==true)active++});document.getElementById('caUsers').textContent=a.length;document.getElementById('caActive').textContent=active;document.getElementById('caBalance').textContent='৳'+bal.toFixed(2);document.getElementById('caRefs').textContent=refs;document.getElementById('caDashMsg').textContent='Realtime Firebase user data loaded.';document.getElementById('caUserTable').innerHTML=a.slice(0,100).map(([p,u])=>`<tr><td>${esc(p)}</td><td>${esc(u.name||'-')}</td><td>৳${Number(u.balance||0).toFixed(2)}</td><td>${Number(u.vipLevel||u.level||0)}</td><td>৳${Number(u.totalDeposit||0).toFixed(2)}</td><td>${Number(u.referStats?.count||0)}</td><td>${u.blocked===true?'Blocked':'Active'}</td><td><button class="mini-btn" onclick="caAdjust('${esc(p)}')">Balance</button><button class="mini-btn ${u.blocked===true?'mini-green':'mini-danger'}" onclick="caBlock('${esc(p)}',${u.blocked===true})">${u.blocked===true?'Unblock':'Block'}</button></td></tr>`).join('')||'<tr><td colspan="8">No users</td></tr>';const blocked=a.filter(([p,u])=>u.blocked===true||u.status==='blocked');document.getElementById('caBlockedCount').textContent=blocked.length;document.getElementById('caBlockedTable').innerHTML=blocked.map(([p,u])=>`<tr><td>${esc(p)}</td><td>${esc(u.name||'-')}</td><td>৳${Number(u.balance||0).toFixed(2)}</td><td>${esc(u.blockedAt?new Date(u.blockedAt).toLocaleString():'-')}</td><td><button class="mini-btn mini-green" onclick="caBlock('${esc(p)}',true)">Unblock</button></td></tr>`).join('')||'<tr><td colspan="5">কোনো blocked user নেই</td></tr>'}
 onValue(ref(db,'users'),s=>{caUsers=s.val()||{};render()});
@@ -2238,8 +2197,6 @@ window.caSaveSecurity=async()=>{let pin=document.getElementById('caAdminPin').va
 loadSettings();
 </script>
 
-
-<!-- APK UPDATE CONTROL: Firebase settings/apkUpdate -->
 <style>#apkUpdateCard{margin:16px 0;padding:16px;border:1px solid #2f855a;border-radius:14px;background:#101722;color:#fff}#apkUpdateCard input,#apkUpdateCard textarea{box-sizing:border-box;width:100%;margin:7px 0 12px;padding:11px;border-radius:9px;border:1px solid #394150;background:#080d14;color:#fff}#apkUpdateCard button{background:#20b56b;color:#07140d;font-weight:900;border:0;border-radius:10px;padding:11px 15px;cursor:pointer}</style>
 <div id="apkUpdateCard" class="card"><h3>📲 APK / App Update Control</h3><p style="font-size:12px;color:#aab4c3">এখানে আসল installable APK-এর সরাসরি HTTPS লিংক দিন। Save করলে User App-এ আপডেট নোটিশ দেখাবে।</p><label>APK Download URL</label><input id="apkUpdateUrl" type="url" placeholder="https://.../app.apk"><label>Version</label><input id="apkUpdateVersion" placeholder="যেমন 1.0.2"><label>Update message</label><textarea id="apkUpdateMessage" rows="3" placeholder="নতুন ভার্সন ডাউনলোড করুন"></textarea><label><input id="apkUpdateActive" type="checkbox" checked style="width:auto"> ইউজার অ্যাপে পপআপ চালু</label><br><button id="apkUpdateSave">💾 APK Update Save</button><span id="apkUpdateStatus" style="display:block;margin-top:10px;font-size:13px"></span></div>
 <script type="module">
@@ -2251,8 +2208,6 @@ get(ref(db,'settings/apkUpdate')).then(s=>{const d=s.val()||{};$('apkUpdateUrl')
 $('apkUpdateSave').addEventListener('click',async()=>{const url=$('apkUpdateUrl').value.trim(),version=$('apkUpdateVersion').value.trim(),message=$('apkUpdateMessage').value.trim(),active=$('apkUpdateActive').checked;if(active&&!url){status.textContent='আগে APK লিংক দিন।';return}if(url&&!/^https:\/\//i.test(url)){status.textContent='HTTPS লিংক দিন।';return}try{await set(ref(db,'settings/apkUpdate'),{url,version,message,active,updatedAt:Date.now()});status.textContent='✅ সেটিংস সেভ হয়েছে';}catch(e){status.textContent='❌ সেভ হয়নি: '+e.message;}});
 </script>
 
-
-<!-- Deposit UI controls: DEMO ONLY; no live payment processing or real payment credentials -->
 <style>
 #depositUiDemoCard{margin:16px;padding:18px;border:1px solid #4b5563;border-radius:16px;background:linear-gradient(145deg,#151d2b,#0b111b);color:#f8fafc}
 #depositUiDemoCard h3{margin:0 0 8px;font-size:20px}
@@ -2298,7 +2253,6 @@ $('apkUpdateSave').addEventListener('click',async()=>{const url=$('apkUpdateUrl'
 })();
 </script>
 
-
 <script type="module">
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
 import { getDatabase, ref, get, set } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
@@ -2308,8 +2262,6 @@ window.saveCommunityLinks=async function(){const msg=document.getElementById('co
 (async()=>{try{const s=await get(ref(communityDb,'settings/communityLinks'));const v=s.val()||{};document.getElementById('communityTelecomLabel').value=v.telecomLabel||'';document.getElementById('communityTelecomUrl').value=v.telecomUrl||'';document.getElementById('communityFacebookLabel').value=v.facebookLabel||'';document.getElementById('communityFacebookUrl').value=v.facebookUrl||'';}catch(e){}})();
 </script>
 
-
-<!-- Deposit content manager: informational/demo links only; no payment processing -->
 <style>#depositContentManager{border:1px solid #45536a;background:linear-gradient(145deg,#172131,#0c121c);border-radius:16px;padding:18px;margin:16px 0;color:#fff}#depositContentManager h3{margin:0 0 8px}#depositContentManager .hint{font-size:12px;color:#aab7c8;line-height:1.6}#depositContentManager input,#depositContentManager textarea{width:100%;box-sizing:border-box;background:#080d14;color:#fff;border:1px solid #394150;padding:11px;border-radius:9px;margin:6px 0 12px}#depositContentManager button{background:#20b56b;color:#07140d;font-weight:900;border:0;border-radius:10px;padding:12px 16px;cursor:pointer;width:100%}</style>
 <section id="depositContentManager">
 <h3>➕ Deposit Content / Link Manager</h3>
@@ -2330,9 +2282,7 @@ try{const s=await get(p),v=s.val()||{};$('depContentTitle').value=v.title||'';$(
 $('depContentSave').addEventListener('click',async()=>{const url=$('depContentUrl').value.trim();if(url&&!/^https:\/\//i.test(url)){$('depContentStatus').textContent='নিরাপদ HTTPS লিংক দিন।';return}const v={title:$('depContentTitle').value.trim()||'Deposit Information',text:$('depContentText').value.trim(),url,buttonLabel:$('depContentButton').value.trim()||'ফাইল / লিংক খুলুন',active:$('depContentActive').checked,updatedAt:Date.now()};try{await set(p,v);$('depContentStatus').textContent='সেভ হয়েছে। ইউজার অ্যাপের Deposit পেজে দেখাতে Firebase Rules-এ read access থাকতে হবে।'}catch(e){$('depContentStatus').textContent='সেভ হয়নি: Firebase permission/connection পরীক্ষা করুন।'}});
 </script>
 
-
 <script>
-/* VIP dashboard quick links: UI-only helper, does not change existing admin functions. */
 (function(){
  function setupVipAdminNav(){
   const dash=document.getElementById('adminDashboardScreen');
@@ -2357,13 +2307,11 @@ $('depContentSave').addEventListener('click',async()=>{const url=$('depContentUr
 </script>
 <script>setInterval(()=>{location.reload();},300000);</script>
 
-<!-- BD77Q_OFFICIAL_LINKS_MANAGER -->
 <section id="officialLinksManager" style="margin:18px auto;padding:18px;max-width:1000px;background:#10172b;border:1px solid #38527e;border-radius:18px;color:#eef5ff;box-shadow:0 10px 28px #0004">
 <h2 style="margin:0 0 6px;color:#9ee7ff">🔗 Official Links — Login + Registration</h2><p style="margin:0 0 14px;color:#b9c9e6;font-size:13px">এখানে যোগ করা লিংক ইউজার অ্যাপের লগইন ও রেজিস্ট্রেশন—দুই পেজেই দেখাবে।</p>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px"><input id="officialLinkLabel" placeholder="লিংকের নাম (যেমন Telegram)" style="padding:12px;border-radius:9px;border:1px solid #52678e;background:#080f20;color:#fff"><input id="officialLinkUrl" placeholder="https://example.com" style="padding:12px;border-radius:9px;border:1px solid #52678e;background:#080f20;color:#fff"><button type="button" id="officialLinkAddBtn" style="padding:12px;border:0;border-radius:9px;background:linear-gradient(120deg,#0ea5e9,#7c3aed);color:#fff;font-weight:900">＋ লিংক যোগ করুন</button></div><div id="officialLinksAdminMsg" style="margin:10px 0;color:#fde68a;font-size:13px"></div><div id="officialLinksAdminList" style="display:grid;gap:8px"></div></section>
 
 <script type="module">
-// BD77Q_OFFICIAL_LINKS_MANAGER
 import { initializeApp as initOfficialApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getDatabase as getOfficialDB, ref as officialRef, push as officialPush, set as officialSet, remove as officialRemove, onValue as officialOnValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 const officialCfg={apiKey:"AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",authDomain:"uk77-56f6d.firebaseapp.com",databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",projectId:"uk77-56f6d",storageBucket:"uk77-56f6d.firebasestorage.app",messagingSenderId:"1062783431056",appId:"1:1062783431056:web:c44fd51195cf4061998315"};
