@@ -200,7 +200,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
       document.getElementById('adminLoginScreen').classList.add('active');
   }
 
-  // ================== Daily Loss Cashback (15%) ==================
+  // ================== Daily Loss Cashback (Admin-configured rate) ==================
   // User App-এর cashbackState-এর সঙ্গে মিল রেখে Firebase users ডাটায় কাজ করবে।
   function cashbackDateKey(date = new Date()){
       return date.toDateString();
@@ -215,6 +215,14 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
           }
 
           const users = snap.val() || {};
+          const settingsSnap = await get(ref(db, 'settings/cashback'));
+          const cashbackSettings = settingsSnap.exists() ? (settingsSnap.val() || {}) : {};
+          if(cashbackSettings.active === false){
+              if(showAlert) alert('Daily Loss Cashback বর্তমানে Admin Settings থেকে বন্ধ আছে।');
+              return {processed:0, paid:0, total:0, disabled:true};
+          }
+          const cashbackRate = Math.min(100, Math.max(0, Number(cashbackSettings.rate ?? 15)));
+          const minimumLoss = Math.max(0, Number(cashbackSettings.minimumLoss ?? 0));
           const today = cashbackDateKey();
           const updates = {};
           let processed = 0, paid = 0, total = 0;
@@ -237,7 +245,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
               if(state.date !== today){
                   const startBalance = Number(state.dayStartBalance || 0);
                   const loss = Math.max(0, startBalance - currentBalance);
-                  const cashback = Number((loss * 0.15).toFixed(2));
+                  const cashback = loss >= minimumLoss ? Number((loss * cashbackRate / 100).toFixed(2)) : 0;
                   let newBalance = currentBalance;
                   let inbox = Array.isArray(user.inboxSms) ? [...user.inboxSms] : [];
 
@@ -247,7 +255,7 @@ input,textarea,select{box-shadow:inset 0 1px rgba(255,255,255,.025)}
                       total += cashback;
                       inbox.unshift({
                           id: Date.now() + paid,
-                          title: '🎁 ১৫% Daily Loss Cashback',
+                          title: `🎁 ${cashbackRate}% Daily Loss Cashback`,
                           text: `গত দিনের ক্ষতির ১৫% Cashback হিসেবে ৳${cashback.toFixed(2)} আপনার ব্যালেন্সে যোগ হয়েছে।`,
                           time: 'আজ'
                       });
@@ -2146,6 +2154,7 @@ import{initializeApp,getApps}from"https://www.gstatic.com/firebasejs/10.8.0/fire
 import{getDatabase,ref,get,update,onValue,set}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 const cfg={apiKey:"AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",authDomain:"uk77-56f6d.firebaseapp.com",databaseURL:"https://uk77-56f6d-default-rtdb.firebaseio.com",projectId:"uk77-56f6d",storageBucket:"uk77-56f6d.firebasestorage.app",messagingSenderId:"1062783431056",appId:"1:1062783431056:web:c44fd51195cf4061998315",measurementId:"G-C0ST13Q8PJ"};
 const app=getApps().length?getApps()[0]:initializeApp(cfg);const db=getDatabase(app);let caUsers={};
+window.db=db;window.ref=ref;window.get=get;window.update=update;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 async function loadSettings(){try{let s=await get(ref(db,'settings'));let v=s.val()||{};let p=v.payment||{};document.getElementById('caBkash').value=p.bkash||'';document.getElementById('caNagad').value=p.nagad||'';document.getElementById('caRocket').value=p.rocket||'';document.getElementById('caDepMin').value=p.depositMin??'';document.getElementById('caDepMax').value=p.depositMax??'';document.getElementById('caWithMin').value=p.withdrawMin??'';document.getElementById('caWithMax').value=p.withdrawMax??'';let c=v.cashback||{};document.getElementById('caCashRate').value=c.rate??15;document.getElementById('caCashMin').value=c.minimumLoss??0;document.getElementById('caCashActive').value=String(c.active!==false);let vip=v.vip||{};document.getElementById('caVipStep').value=vip.depositPerLevel??1000;document.getElementById('caVipBonus').value=vip.levelBonus??10;document.getElementById('caTurnoverRate').value=vip.turnoverMultiplier??2;let sec=v.security||{};document.getElementById('caRegMode').value=String(sec.registration!==false);document.getElementById('caWithdrawMode').value=String(sec.withdrawal!==false)}catch(e){document.getElementById('caDashMsg').textContent='Settings load error: '+e.message}}
 function render(){let a=Object.entries(caUsers);let bal=0,refs=0,active=0;a.forEach(([p,u])=>{bal+=Number(u.balance||0);refs+=Number(u.referStats?.count||0);if(u.blocked!==true)active++});document.getElementById('caUsers').textContent=a.length;document.getElementById('caActive').textContent=active;document.getElementById('caBalance').textContent='৳'+bal.toFixed(2);document.getElementById('caRefs').textContent=refs;document.getElementById('caDashMsg').textContent='Realtime Firebase user data loaded.';document.getElementById('caUserTable').innerHTML=a.slice(0,100).map(([p,u])=>`<tr><td>${esc(p)}</td><td>${esc(u.name||'-')}</td><td>৳${Number(u.balance||0).toFixed(2)}</td><td>${Number(u.vipLevel||u.level||0)}</td><td>৳${Number(u.totalDeposit||0).toFixed(2)}</td><td>${Number(u.referStats?.count||0)}</td><td>${u.blocked===true?'Blocked':'Active'}</td><td><button class="mini-btn" onclick="caAdjust('${esc(p)}')">Balance</button><button class="mini-btn ${u.blocked===true?'mini-green':'mini-danger'}" onclick="caBlock('${esc(p)}',${u.blocked===true})">${u.blocked===true?'Unblock':'Block'}</button></td></tr>`).join('')||'<tr><td colspan="8">No users</td></tr>';const blocked=a.filter(([p,u])=>u.blocked===true||u.status==='blocked');document.getElementById('caBlockedCount').textContent=blocked.length;document.getElementById('caBlockedTable').innerHTML=blocked.map(([p,u])=>`<tr><td>${esc(p)}</td><td>${esc(u.name||'-')}</td><td>৳${Number(u.balance||0).toFixed(2)}</td><td>${esc(u.blockedAt?new Date(u.blockedAt).toLocaleString():'-')}</td><td><button class="mini-btn mini-green" onclick="caBlock('${esc(p)}',true)">Unblock</button></td></tr>`).join('')||'<tr><td colspan="5">কোনো blocked user নেই</td></tr>'}
@@ -2378,5 +2387,46 @@ function renderLinks(data){const list=el('officialLinksAdminList');if(!list)retu
 officialOnValue(officialRef(officialDB,'settings/officialLinks'),s=>renderLinks(s.exists()?s.val():{}),e=>{el('officialLinksAdminMsg').textContent='Firebase permission error: '+e.message;});
 el('officialLinkAddBtn')?.addEventListener('click',async()=>{const label=el('officialLinkLabel').value.trim(),raw=el('officialLinkUrl').value.trim();if(!label||!raw){el('officialLinksAdminMsg').textContent='লিংকের নাম ও URL দিন।';return;}let url=raw;if(!/^https?:\/\//i.test(url))url='https://'+url;try{const p=new URL(url);if(!['http:','https:'].includes(p.protocol))throw new Error();}catch(e){el('officialLinksAdminMsg').textContent='সঠিক http:// বা https:// লিংক দিন।';return;}try{await officialSet(officialPush(officialRef(officialDB,'settings/officialLinks')),{label,url,active:true,createdAt:Date.now()});el('officialLinkLabel').value='';el('officialLinkUrl').value='';el('officialLinksAdminMsg').textContent='লিংক যোগ হয়েছে।';}catch(e){el('officialLinksAdminMsg').textContent='লিংক সেভ হয়নি: '+e.message;}});
 </script>
+
+<section class="card" id="featureControlPanel" style="border:1px solid #7c3aed;box-shadow:0 0 22px #7c3aed33">
+<h2 style="margin-top:0;color:#c4b5fd">✨ Live Show, Emergency Award & Banner Control</h2><p style="color:#aab8d2;font-size:13px">এই কন্ট্রোলগুলো Firebase-এর settings পাথে সেভ হবে।</p>
+<h3>🎁 Emergency Award (Admin চালু করলে পপ-আপ)</h3><label>শিরোনাম</label><input id="faTitle" value="বিশেষ পুরস্কার চালু হয়েছে!"/><label>বার্তা</label><textarea id="faMessage">এখনই পুরস্কারের বিস্তারিত দেখুন।</textarea><label>পুরস্কারের পরিমাণ (ঐচ্ছিক, ৳)</label><input id="faAmount" type="number" min="0" step="0.01" placeholder="যেমন: 500"/><label>পুরস্কার/বিস্তারিত লিংক (ঐচ্ছিক)</label><input id="faUrl" placeholder="https://example.com/award"/><label><input id="faActive" type="checkbox" style="width:auto;margin-right:8px"> Emergency Award চালু করুন</label><button class="cash" id="faSaveAward">Save Award Settings</button>
+<hr style="border-color:#303846;margin:18px 0"><h3>🔴 Live Show Control</h3><label>লাইভের শিরোনাম</label><input id="flTitle" value="Live Show"/><label>লাইভ লিংক (YouTube / অন্য URL)</label><input id="flUrl" placeholder="https://..."/><label>সরাসরি স্ট্রিমের ভিডিও URL (ঐচ্ছিক; HLS/MP4 সমর্থন পরিবেশভেদে)</label><input id="flStream" placeholder="https://.../stream.m3u8"/><label><input id="flActive" type="checkbox" style="width:auto;margin-right:8px"> Live Show চালু করুন</label><button class="cash" id="flSaveLive">Save Live Settings</button>
+<hr style="border-color:#303846;margin:18px 0"><h3>🖼️ Banner Advertisement</h3><label>ব্যানারের শিরোনাম</label><input id="fbTitle" value="Special Offer"/><label>ব্যানার ইমেজ URL</label><input id="fbImage" placeholder="https://.../banner.jpg"/><label>ক্লিক করলে যে লিংক খুলবে</label><input id="fbUrl" placeholder="https://..."/><label><input id="fbActive" type="checkbox" style="width:auto;margin-right:8px"> ব্যানার চালু করুন</label><button class="cash" id="fbSaveBanner">Save Banner Settings</button><p id="featureAdminStatus" style="font-size:13px;color:#fde68a"></p>
+</section>
+<script type="module" id="feature-admin-sync">
+import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';import {getDatabase,ref,set,onValue} from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+const fc={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgU',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};const fa=getApps().length?getApps()[0]:initializeApp(fc),fd=getDatabase(fa),$=id=>document.getElementById(id);const msg=t=> $('featureAdminStatus').textContent=t;
+function validUrl(v){if(!v)return '';try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:''}catch{return ''}}
+onValue(ref(fd,'settings/emergencyAward'),s=>{const x=s.val()||{};$('faTitle').value=x.title||'বিশেষ পুরস্কার চালু হয়েছে!';$('faMessage').value=x.message||'';$('faAmount').value=x.amount??'';$('faUrl').value=x.url||'';$('faActive').checked=x.active===true});
+onValue(ref(fd,'settings/liveShow'),s=>{const x=s.val()||{};$('flTitle').value=x.title||'Live Show';$('flUrl').value=x.url||'';$('flStream').value=x.streamUrl||'';$('flActive').checked=x.active===true});
+onValue(ref(fd,'settings/bannerAd'),s=>{const x=s.val()||{};$('fbTitle').value=x.title||'Special Offer';$('fbImage').value=x.imageUrl||'';$('fbUrl').value=x.url||'';$('fbActive').checked=x.active===true});
+$('faSaveAward').onclick=async()=>{try{const url=$('faUrl').value.trim();if(url&&!validUrl(url))throw Error('সঠিক http/https URL দিন');await set(ref(fd,'settings/emergencyAward'),{title:$('faTitle').value.trim(),message:$('faMessage').value.trim(),amount:$('faAmount').value===''?'':Number($('faAmount').value),url:validUrl(url),active:$('faActive').checked,updatedAt:Date.now()});msg('Emergency Award সেটিংস সেভ হয়েছে।')}catch(e){msg('সেভ হয়নি: '+e.message)}};
+$('flSaveLive').onclick=async()=>{try{const url=$('flUrl').value.trim(),stream=$('flStream').value.trim();if(url&&!validUrl(url))throw Error('সঠিক Live URL দিন');if(stream&&!validUrl(stream))throw Error('সঠিক Stream URL দিন');await set(ref(fd,'settings/liveShow'),{title:$('flTitle').value.trim(),url:validUrl(url),streamUrl:validUrl(stream),active:$('flActive').checked,updatedAt:Date.now()});msg('Live Show সেটিংস সেভ হয়েছে।')}catch(e){msg('সেভ হয়নি: '+e.message)}};
+$('fbSaveBanner').onclick=async()=>{try{const image=$('fbImage').value.trim(),url=$('fbUrl').value.trim();if(image&&!validUrl(image))throw Error('সঠিক image URL দিন');if(url&&!validUrl(url))throw Error('সঠিক banner URL দিন');await set(ref(fd,'settings/bannerAd'),{title:$('fbTitle').value.trim(),imageUrl:validUrl(image),url:validUrl(url),active:$('fbActive').checked,updatedAt:Date.now()});msg('Banner সেটিংস সেভ হয়েছে।')}catch(e){msg('সেভ হয়নি: '+e.message)}};
+</script>
+
+
+<!-- DAILY BONUS ADMIN CONTROL: deposit bonus / manual loss cashback + user inbox notification -->
+<style>#dailyBonusAdmin{margin:16px 0;padding:16px;border:1px solid #37b6a5;border-radius:14px;background:#101722;color:#fff}#dailyBonusAdmin input,#dailyBonusAdmin select,#dailyBonusAdmin textarea{box-sizing:border-box;width:100%;margin:6px 0 12px;padding:11px;border-radius:9px;border:1px solid #394150;background:#080d14;color:#fff}#dailyBonusAdmin button{background:#20b56b;color:#07140d;font-weight:900;border:0;border-radius:10px;padding:11px 15px;cursor:pointer}</style>
+<section id="dailyBonusAdmin"><h3>🎁 Daily Deposit Bonus / Loss Cashback</h3><p>নির্দিষ্ট ইউজারের বোনাস যোগ করলে তার ব্যালেন্স ও Inbox notification একসঙ্গে আপডেট হবে। ১৫% loss cashback-এর জন্য ক্ষতির পরিমাণ দিন।</p>
+<label>User phone / ইউজারের ফোন</label><input id="dbUserPhone" placeholder="User phone number">
+<label>Bonus type / বোনাসের ধরন</label><select id="dbBonusType"><option value="deposit">Deposit Bonus</option><option value="loss">15% Loss Cashback (loss amount থেকে হিসাব)</option><option value="manual">Manual Bonus</option></select>
+<label>Deposit / Loss amount (৳)</label><input id="dbBaseAmount" type="number" min="0.01" step="0.01" placeholder="Deposit amount or loss amount">
+<label>Bonus rate % (loss-এর জন্য default 15)</label><input id="dbRate" type="number" min="0" max="100" step="0.01" value="15">
+<label>Manual bonus amount (শুধু Manual Bonus হলে)</label><input id="dbManualAmount" type="number" min="0.01" step="0.01" placeholder="Optional fixed bonus">
+<label>Notification title</label><input id="dbBonusTitle" value="🎁 Bonus Update">
+<label>Notification message (ঐচ্ছিক)</label><textarea id="dbBonusText" rows="3" placeholder="বোনাসের তথ্য"></textarea>
+<button type="button" onclick="window.applyDailyBonusToUser()">বোনাস যোগ করুন + নোটিফিকেশন পাঠান</button><p id="dbBonusStatus" role="status"></p></section>
+<script>
+window.applyDailyBonusToUser=async function(){
+ const $=id=>document.getElementById(id);const phone=$('dbUserPhone').value.trim();const type=$('dbBonusType').value;const base=Number($('dbBaseAmount').value||0);const rate=Number($('dbRate').value||15);const manual=Number($('dbManualAmount').value||0);const status=$('dbBonusStatus');
+ try{if(!phone){status.textContent='ইউজারের ফোন নম্বর দিন।';return;}if(!window.db||!window.ref||!window.get||!window.update){status.textContent='Firebase connection/API পাওয়া যায়নি।';return;}if(!Number.isFinite(rate)||rate<0||rate>100){status.textContent='Rate 0–100 এর মধ্যে দিন।';return;}
+ const userRef=window.ref(window.db,'users/'+phone);const snap=await window.get(userRef);if(!snap.exists()){status.textContent='এই ফোন নম্বরের ইউজার পাওয়া যায়নি।';return;}const u=snap.val()||{};let bonus=type==='manual'?manual:Number((base*rate/100).toFixed(2));if(type==='deposit'&&base<=0){status.textContent='Deposit amount দিন।';return;}if(type==='loss'&&base<=0){status.textContent='Loss amount দিন।';return;}if(!Number.isFinite(bonus)||bonus<=0){status.textContent='বোনাসের পরিমাণ শূন্যের বেশি হতে হবে।';return;}
+ const now=Date.now();const title=$('dbBonusTitle').value.trim()||'🎁 Bonus Update';const custom=$('dbBonusText').value.trim();const typeLabel=type==='loss'?'15% Loss Cashback':type==='deposit'?'Deposit Bonus':'Manual Bonus';const message=custom||typeLabel+' হিসেবে ৳'+bonus.toFixed(2)+' আপনার ব্যালেন্সে যোগ হয়েছে।';const inbox=Array.isArray(u.inboxSms)?u.inboxSms.slice():[];inbox.unshift({id:now,title,text:message,time:'এখন',type:typeLabel,amount:bonus});const updates={balance:Number((Number(u.balance||0)+bonus).toFixed(2)),inboxSms:inbox.slice(0,200),lastAdminBonus:{id:String(now),type:typeLabel,amount:bonus,baseAmount:base,rate,at:now},lastAdminBonusAt:now};if(type==='loss'){updates.lastCashbackAmount=bonus;updates.lastCashbackDate=new Date().toDateString();}await window.update(userRef,updates);status.textContent='সফল! ৳'+bonus.toFixed(2)+' বোনাস যোগ হয়েছে এবং Inbox notification পাঠানো হয়েছে।';
+ }catch(e){console.error(e);status.textContent='সেভ হয়নি: '+(e&&e.message?e.message:'Firebase error');}
+};
+</script>
+
 </body>
 </html>
