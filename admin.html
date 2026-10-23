@@ -2407,26 +2407,43 @@ $('fbSaveBanner').onclick=async()=>{try{const image=$('fbImage').value.trim(),ur
 </script>
 
 
-<!-- DAILY BONUS ADMIN CONTROL: deposit bonus / manual loss cashback + user inbox notification -->
-<style>#dailyBonusAdmin{margin:16px 0;padding:16px;border:1px solid #37b6a5;border-radius:14px;background:#101722;color:#fff}#dailyBonusAdmin input,#dailyBonusAdmin select,#dailyBonusAdmin textarea{box-sizing:border-box;width:100%;margin:6px 0 12px;padding:11px;border-radius:9px;border:1px solid #394150;background:#080d14;color:#fff}#dailyBonusAdmin button{background:#20b56b;color:#07140d;font-weight:900;border:0;border-radius:10px;padding:11px 15px;cursor:pointer}</style>
-<section id="dailyBonusAdmin"><h3>🎁 Daily Deposit Bonus / Loss Cashback</h3><p>নির্দিষ্ট ইউজারের বোনাস যোগ করলে তার ব্যালেন্স ও Inbox notification একসঙ্গে আপডেট হবে। ১৫% loss cashback-এর জন্য ক্ষতির পরিমাণ দিন।</p>
-<label>User phone / ইউজারের ফোন</label><input id="dbUserPhone" placeholder="User phone number">
-<label>Bonus type / বোনাসের ধরন</label><select id="dbBonusType"><option value="deposit">Deposit Bonus</option><option value="loss">15% Loss Cashback (loss amount থেকে হিসাব)</option><option value="manual">Manual Bonus</option></select>
-<label>Deposit / Loss amount (৳)</label><input id="dbBaseAmount" type="number" min="0.01" step="0.01" placeholder="Deposit amount or loss amount">
-<label>Bonus rate % (loss-এর জন্য default 15)</label><input id="dbRate" type="number" min="0" max="100" step="0.01" value="15">
-<label>Manual bonus amount (শুধু Manual Bonus হলে)</label><input id="dbManualAmount" type="number" min="0.01" step="0.01" placeholder="Optional fixed bonus">
-<label>Notification title</label><input id="dbBonusTitle" value="🎁 Bonus Update">
-<label>Notification message (ঐচ্ছিক)</label><textarea id="dbBonusText" rows="3" placeholder="বোনাসের তথ্য"></textarea>
-<button type="button" onclick="window.applyDailyBonusToUser()">বোনাস যোগ করুন + নোটিফিকেশন পাঠান</button><p id="dbBonusStatus" role="status"></p></section>
+<!-- GLOBAL LOSS CASHBACK CONTROL -->
+<style>#dailyBonusAdmin{margin:16px 0;padding:16px;border:1px solid #37b6a5;border-radius:14px;background:#101722;color:#fff;box-shadow:0 0 18px #d7a84322}#dailyBonusAdmin h3{color:#ffd36b}#dailyBonusAdmin button{background:linear-gradient(100deg,#ffd36b,#ff6b6b);color:#07140d;font-weight:900;border:0;border-radius:10px;padding:12px 15px;cursor:pointer;margin:5px 5px 5px 0}#dailyBonusAdmin .note{font-size:13px;color:#cbd5e1;line-height:1.55}#globalCashbackStatus{white-space:pre-wrap;color:#fde68a}</style>
+<section id="dailyBonusAdmin"><h3>🎁 Global Profile Loss / Bet Loss Cashback</h3>
+<p class="note">কোনো User ID বা ফোন নম্বর লাগবে না। বাটনটি users-এর যাচাইকৃত game settlement ledger স্ক্যান করে ১০% ক্যাশব্যাক দেয়। একই settlement ID আগে পেমেন্ট হয়ে থাকলে আবার দেবে না।</p>
+<button type="button" onclick="window.runGlobalLossCashback('profile_loss')">Profile Loss Cashback — 10%</button>
+<button type="button" onclick="window.runGlobalLossCashback('bet_loss')">Bet Loss Cashback — 10%</button>
+<p class="note">গুরুত্বপূর্ণ: বর্তমান User App-এর Crash history-তে শুধু multiplier সংরক্ষিত হয়; bet amount/winnings/settlement ledger নেই। তাই প্রকৃত লসের রেকর্ড না থাকলে কোনো টাকা দেওয়া হবে না। ব্যালেন্স কমাকে একা লস হিসেবে ধরা হয় না।</p>
+<p id="globalCashbackStatus" role="status"></p></section>
 <script>
-window.applyDailyBonusToUser=async function(){
- const $=id=>document.getElementById(id);const phone=$('dbUserPhone').value.trim();const type=$('dbBonusType').value;const base=Number($('dbBaseAmount').value||0);const rate=Number($('dbRate').value||15);const manual=Number($('dbManualAmount').value||0);const status=$('dbBonusStatus');
- try{if(!phone){status.textContent='ইউজারের ফোন নম্বর দিন।';return;}if(!window.db||!window.ref||!window.get||!window.update){status.textContent='Firebase connection/API পাওয়া যায়নি।';return;}if(!Number.isFinite(rate)||rate<0||rate>100){status.textContent='Rate 0–100 এর মধ্যে দিন।';return;}
- const userRef=window.ref(window.db,'users/'+phone);const snap=await window.get(userRef);if(!snap.exists()){status.textContent='এই ফোন নম্বরের ইউজার পাওয়া যায়নি।';return;}const u=snap.val()||{};let bonus=type==='manual'?manual:Number((base*rate/100).toFixed(2));if(type==='deposit'&&base<=0){status.textContent='Deposit amount দিন।';return;}if(type==='loss'&&base<=0){status.textContent='Loss amount দিন।';return;}if(!Number.isFinite(bonus)||bonus<=0){status.textContent='বোনাসের পরিমাণ শূন্যের বেশি হতে হবে।';return;}
- const now=Date.now();const title=$('dbBonusTitle').value.trim()||'🎁 Bonus Update';const custom=$('dbBonusText').value.trim();const typeLabel=type==='loss'?'15% Loss Cashback':type==='deposit'?'Deposit Bonus':'Manual Bonus';const message=custom||typeLabel+' হিসেবে ৳'+bonus.toFixed(2)+' আপনার ব্যালেন্সে যোগ হয়েছে।';const inbox=Array.isArray(u.inboxSms)?u.inboxSms.slice():[];inbox.unshift({id:now,title,text:message,time:'এখন',type:typeLabel,amount:bonus});const updates={balance:Number((Number(u.balance||0)+bonus).toFixed(2)),inboxSms:inbox.slice(0,200),lastAdminBonus:{id:String(now),type:typeLabel,amount:bonus,baseAmount:base,rate,at:now},lastAdminBonusAt:now};if(type==='loss'){updates.lastCashbackAmount=bonus;updates.lastCashbackDate=new Date().toDateString();}await window.update(userRef,updates);status.textContent='সফল! ৳'+bonus.toFixed(2)+' বোনাস যোগ হয়েছে এবং Inbox notification পাঠানো হয়েছে।';
- }catch(e){console.error(e);status.textContent='সেভ হয়নি: '+(e&&e.message?e.message:'Firebase error');}
+window.runGlobalLossCashback=async function(source){
+ const out=document.getElementById('globalCashbackStatus');const label=source==='bet_loss'?'Bet Loss':'Profile Loss';
+ if(!confirm(label+'-এর যাচাইকৃত লস করা সব eligible user-কে ১০% cashback দিতে চান?'))return;
+ try{
+  if(!window.db||!window.ref||!window.get||!window.update){out.textContent='Firebase connection/API পাওয়া যায়নি।';return;}
+  out.textContent='ইউজার ও settlement ledger যাচাই হচ্ছে…';
+  const snap=await window.get(window.ref(window.db,'users'));if(!snap.exists()){out.textContent='কোনো user record পাওয়া যায়নি।';return;}
+  const users=snap.val()||{};let eligible=0,paid=0,skipped=0,errors=0,total=0;
+  for(const [uid,u0] of Object.entries(users)){
+   const u=u0||{};const records=Array.isArray(u.betLedger)?u.betLedger:(Array.isArray(u.gameSettlements)?u.gameSettlements:(Array.isArray(u.betHistory)?u.betHistory:[]));
+   const ledger=Array.isArray(u.lossCashbackLedger)?u.lossCashbackLedger:[];const existing=new Set(ledger.map(x=>String(x.settlementId||x.sourceRecordId||x.id||'')));
+   let due=0;const additions=[];
+   for(const r of records){if(!r||r.settled!==true)continue;const rid=String(r.settlementId||r.betId||r.id||'');if(!rid||existing.has(rid))continue;
+    const wager=Number(r.betAmount??r.wager??r.stake??r.amount??NaN);const payout=Number(r.payout??r.winAmount??r.returnAmount??0);
+    if(!Number.isFinite(wager)||wager<=0||!Number.isFinite(payout)||payout<0)continue;
+    const loss=Math.max(0,Number((wager-payout).toFixed(2)));if(loss<=0)continue;
+    // Profile Loss is paid only from an explicit, verified profile-loss record; bet-loss uses settled bet loss.
+    if(source==='profile_loss' && r.lossType!=='profile_loss')continue;
+    if(source==='bet_loss' && r.lossType==='profile_loss')continue;
+    const amount=Number((loss*0.10).toFixed(2));if(amount<=0)continue;due+=amount;additions.push({id:'global_'+source+'_'+rid,source,settlementId:rid,lossAmount:loss,rate:10,paidAmount:amount,at:Date.now(),adminEntry:true});existing.add(rid);
+   }
+   if(due<=0){skipped++;continue;}eligible++;
+   try{const inbox=Array.isArray(u.inboxSms)?u.inboxSms.slice():[];const now=Date.now();inbox.unshift({id:'global_'+source+'_'+now,title:'🎁 '+label+' Cashback',text:'যাচাইকৃত '+label+' Loss-এর ১০% (৳'+due.toFixed(2)+') আপনার ব্যালেন্সে যোগ হয়েছে।',time:'এখন',type:label+' Cashback',amount:due});const newLedger=[...additions,...ledger].slice(0,1000);await window.update(window.ref(window.db,'users/'+uid),{balance:Number((Number(u.balance||0)+due).toFixed(2)),inboxSms:inbox.slice(0,200),lossCashbackLedger:newLedger,totalLossCashbackPaid:Number((Number(u.totalLossCashbackPaid||0)+due).toFixed(2)),lastCashbackAmount:due,lastCashbackDate:new Date().toDateString(),lastGlobalLossCashback:{source,rate:10,amount:due,at:now}});paid++;total+=due;
+   }catch(e){errors++;console.error('Cashback update failed for a user',e);}
+  }
+  out.textContent=label+' Cashback scan complete.\nযোগ্য user: '+eligible+'\nপেমেন্ট সফল: '+paid+'\nস্কিপ: '+skipped+'\nমোট দেওয়া: ৳'+total.toFixed(2)+'\nব্যর্থ update: '+errors+'\n\nযদি ledger-এ প্রকৃত settled bet record না থাকে, সিস্টেম টাকা দেয়নি।';
+ }catch(e){console.error(e);out.textContent='Cashback চালানো যায়নি: '+(e?.message||e);}
 };
 </script>
-
 </body>
 </html>
