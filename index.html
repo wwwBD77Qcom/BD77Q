@@ -400,10 +400,10 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 
 <style id="bd77q-appname-vip-lighting-v2">
 /* BD77Q app-name lighting: animated multicolor neon without changing layout */
-.vip-home-head .vip-brand{position:relative;display:flex;align-items:center;gap:1px;padding:7px 10px 9px 4px;border-radius:13px;isolation:isolate;text-shadow:0 0 5px rgba(75,225,255,.55),0 0 14px rgba(123,92,255,.42);}
-.vip-home-head .vip-brand:after{content:"";position:absolute;left:5px;right:3px;bottom:1px;height:2px;border-radius:9px;background:linear-gradient(90deg,transparent,#39f5ff,#a66bff,#ff56c8,#ffe66d,transparent);background-size:220% 100%;animation:bd77qBrandBeam 3.2s linear infinite;box-shadow:0 0 8px #39f5ff,0 0 15px rgba(166,107,255,.7);z-index:-1}
-.vip-home-head .vip-brand .brand-gold,.vip-home-head .vip-brand .brand-yellow{background:linear-gradient(100deg,#fff6a7 0%,#58f7ff 25%,#d6a2ff 48%,#fff 60%,#ffd34e 78%,#8dfcff 100%);background-size:260% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:bd77qBrandTextGlow 4s linear infinite;filter:drop-shadow(0 0 4px rgba(77,236,255,.65));}
-.vip-home-head .vip-brand .vip-menu-icon{color:#8dfaff;text-shadow:0 0 7px #24dfff,0 0 15px #865dff;animation:bd77qIconPulse 2.4s ease-in-out infinite}
+.vip-home-head .vip-brand{position:relative;display:flex;align-items:center;gap:1px;padding:7px 10px 9px 4px;border-radius:13px;isolation:isolate;text-shadow:0 0 5px rgba(255,38,62,.65),0 0 14px rgba(255,174,0,.55);}
+.vip-home-head .vip-brand:after{content:"";position:absolute;left:5px;right:3px;bottom:1px;height:2px;border-radius:9px;background:linear-gradient(90deg,transparent,#ff1b35,#ff8a00,#ffe08a,#ff1b35,transparent);background-size:220% 100%;animation:bd77qBrandBeam 3.2s linear infinite;box-shadow:0 0 8px #ff263e,0 0 15px rgba(255,174,0,.7);z-index:-1}
+.vip-home-head .vip-brand .brand-gold,.vip-home-head .vip-brand .brand-yellow{background:linear-gradient(100deg,#fff6a7 0%,#ff263e 25%,#ff9d00 48%,#fff 60%,#ffd34e 78%,#ff263e 100%);background-size:260% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:bd77qBrandTextGlow 4s linear infinite;filter:drop-shadow(0 0 4px rgba(255,38,62,.75));}
+.vip-home-head .vip-brand .vip-menu-icon{color:#ffcf65;text-shadow:0 0 7px #ff263e,0 0 15px #ffae00;animation:bd77qIconPulse 2.4s ease-in-out infinite}
 /* Separate VIP treatment below the banner: royal violet/cyan moving light */
 .vip-ribbon{border:1px solid transparent!important;background:linear-gradient(110deg,#100b28,#20104b 34%,#071b35 67%,#16092d) padding-box,linear-gradient(100deg,#8c52ff,#35f3ff,#ff5fd2,#ffdf78,#8c52ff) border-box!important;background-size:100% 100%,260% 100%!important;color:#f5eaff!important;letter-spacing:2px;text-shadow:0 0 5px #d8b8ff,0 0 13px rgba(153,83,255,.95),0 0 24px rgba(42,223,255,.42)!important;box-shadow:inset 0 0 18px rgba(110,65,255,.23),0 0 8px rgba(115,81,255,.45),0 0 22px rgba(40,220,255,.16)!important;animation:bd77qVipBorderFlow 5s linear infinite,bd77qVipPulse 2.8s ease-in-out infinite}
 .vip-ribbon span{color:#ffe58a;text-shadow:0 0 6px #ffcd4d,0 0 15px #ff8b35;display:inline-block;animation:bd77qCrownFloat 2.2s ease-in-out infinite}
@@ -432,17 +432,29 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
 @media(prefers-reduced-motion:reduce){#authScreen .auth-card{animation:none!important}#authScreen button[onclick*="bd77qGoogleSignup"]{transition:none!important}}
 </style>
 
+
+<style id="bd77q-hide-cashback-heading-and-rgb-brand">
+/* Hide only the unwanted homepage Cashback label/card; cashback logic remains intact. */
+#cashbackInfoCard{display:none!important}
+/* RGB neon lighting for the BD77Q home header brand */
+.vip-home-head .vip-brand{filter:drop-shadow(0 0 5px rgba(255,0,80,.55));}
+.vip-home-head .vip-brand .brand-gold,.vip-home-head .vip-brand .brand-yellow{background:linear-gradient(90deg,#ff1744,#ff9800,#ffee58,#00e676,#00b0ff,#d500f9,#ff1744)!important;background-size:300% 100%!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important;animation:bd77qRGBBrand 5s linear infinite!important}
+.vip-home-head .vip-brand:after{background:linear-gradient(90deg,#ff1744,#ff9800,#ffee58,#00e676,#00b0ff,#d500f9,#ff1744)!important;background-size:300% 100%!important;animation:bd77qRGBBrand 4s linear infinite!important;box-shadow:0 0 10px #ff1744,0 0 16px #00b0ff!important}
+@keyframes bd77qRGBBrand{0%{background-position:0% 50%;filter:hue-rotate(0deg)}100%{background-position:300% 50%;filter:hue-rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.vip-home-head .vip-brand .brand-gold,.vip-home-head .vip-brand .brand-yellow,.vip-home-head .vip-brand:after{animation:none!important}}
+</style>
+
 </head>
 <body>
 <style id="emergency-award-cashback-style">
 #emergencyAwardPopup{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.78);align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(7px)}
-#emergencyAwardPopup .ea-card{position:relative;width:min(420px,100%);padding:3px;border-radius:22px;background:conic-gradient(from 0deg,#ff004c,#ffae00,#eaff00,#00ffd5,#476bff,#d500f9,#ff004c);animation:eaSpin 5s linear infinite;box-shadow:0 0 28px #c400ff88}
-#emergencyAwardPopup .ea-inner{border-radius:19px;padding:22px 18px;text-align:center;color:#fff;background:radial-gradient(circle at top,#38205c,#101020 68%);animation:eaGlow 2s ease-in-out infinite alternate}
-#emergencyAwardPopup h2{margin:8px 0;color:#ffe68b;text-shadow:0 0 14px #ff5de4;font-size:25px}
+#emergencyAwardPopup .ea-card{position:relative;width:min(420px,100%);padding:3px;border-radius:22px;background:conic-gradient(from 0deg,#ff172e,#ffae00,#ffe7a3,#ff4b1f,#ff172e);animation:eaSpin 5s linear infinite;box-shadow:0 0 28px #ff4b1f88}
+#emergencyAwardPopup .ea-inner{border-radius:19px;padding:22px 18px;text-align:center;color:#fff;background:radial-gradient(circle at top,#45120d,#100707 68%);animation:eaGlow 2s ease-in-out infinite alternate}
+#emergencyAwardPopup h2{margin:8px 0;color:#ffe68b;text-shadow:0 0 14px #ff3b22;font-size:25px}
 #emergencyAwardPopup p{margin:8px 0 15px;line-height:1.5}
 #emergencyAwardPopup .ea-close{position:absolute;right:12px;top:12px;border:0;border-radius:50%;width:30px;height:30px;background:#ffffff22;color:#fff;font-size:22px}
 #cashbackInfoCard{display:none;margin:12px;padding:14px;border-radius:16px;color:#fff;background:linear-gradient(120deg,#171339,#42165a,#102b4d);border:1px solid #e879f9;box-shadow:0 0 16px #a855f755}
-@keyframes eaSpin{to{filter:hue-rotate(360deg)}}@keyframes eaGlow{from{box-shadow:inset 0 0 8px #ff4fd8}to{box-shadow:inset 0 0 24px #35d8ff}}
+@keyframes eaSpin{to{filter:hue-rotate(35deg)}}@keyframes eaGlow{from{box-shadow:inset 0 0 8px #ff3b22}to{box-shadow:inset 0 0 24px #ffae00}}
 @media(prefers-reduced-motion:reduce){#emergencyAwardPopup .ea-card,#emergencyAwardPopup .ea-inner{animation:none}}
 </style>
 <div id="emergencyAwardPopup" role="dialog" aria-modal="true" aria-label="Emergency Award"><div class="ea-card"><div class="ea-inner"><button class="ea-close" onclick="document.getElementById('emergencyAwardPopup').style.display='none'" aria-label="Close">×</button><div style="font-size:34px">🎁 ⚡ 🎁</div><h2 id="eaTitle">EMERGENCY AWARD</h2><p id="eaMessage">বিশেষ বোনাসের ঘোষণা</p><strong id="eaAmount" style="font-size:22px;color:#83ffdc"></strong></div></div></div>
@@ -1419,6 +1431,8 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
               if(userData.cashbackState !== undefined) usersDb[phone].cashbackState = userData.cashbackState || {};
               if(userData.lastCashbackAmount !== undefined) usersDb[phone].lastCashbackAmount = Number(userData.lastCashbackAmount || 0);
               if(userData.lastCashbackDate !== undefined) usersDb[phone].lastCashbackDate = userData.lastCashbackDate || '';
+              if(userData.lossCashbackLedger !== undefined) usersDb[phone].lossCashbackLedger = Array.isArray(userData.lossCashbackLedger) ? userData.lossCashbackLedger : [];
+              if(userData.totalLossCashbackPaid !== undefined) usersDb[phone].totalLossCashbackPaid = Number(userData.totalLossCashbackPaid || 0);
               if(Array.isArray(userData.inboxSms)) usersDb[phone].inboxSms = userData.inboxSms;
               const cbAmount = Number(userData.lastCashbackAmount || 0);
               const cbDate = String(userData.lastCashbackDate || '');
@@ -1426,7 +1440,7 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
                   const cbMarker = 'dailyLossCashbackSeen_' + phone + '_' + cbDate;
                   if(localStorage.getItem(cbMarker) !== '1') {
                       if(!Array.isArray(usersDb[phone].inboxSms)) usersDb[phone].inboxSms = [];
-                      usersDb[phone].inboxSms.unshift({id:Date.now(), title:'🎁 ১৫% Daily Loss Cashback', text:'গত দিনের ক্ষতির ১৫% Cashback হিসেবে ৳' + cbAmount.toFixed(2) + ' আপনার ব্যালেন্সে যোগ হয়েছে।', time:'এখন'});
+                      usersDb[phone].inboxSms.unshift({id:Date.now(), title:'🎁 ১০% Loss Cashback', text:'গত দিনের ক্ষতির ১০% Cashback হিসেবে ৳' + cbAmount.toFixed(2) + ' আপনার ব্যালেন্সে যোগ হয়েছে।', time:'এখন'});
                       usersDb[phone].inboxSms = usersDb[phone].inboxSms.slice(0,200);
                       localStorage.setItem(cbMarker, '1');
                   }
