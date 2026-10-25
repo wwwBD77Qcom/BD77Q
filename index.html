@@ -4282,5 +4282,74 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
  });
 })();
 </script>
+
+<!-- BD77Q FOOTER: COMMUNITY, PAYMENT METHODS & INFORMATION LINKS -->
+<style id="bd77q-footer-style">
+#bd77q-footer{margin:18px 12px 18px;padding:0 0 24px;color:#9ca3af;font-family:Arial,sans-serif}
+#bd77q-footer .bd-footer-rule{height:2px;background:#303541;margin:22px 0}
+#bd77q-footer .bd-footer-heading{font-size:25px;font-weight:900;color:#e9c85c;margin:0 0 18px}
+#bd77q-footer .bd-social-row{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 28px}
+#bd77q-footer .bd-social{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:29px;font-weight:900;box-shadow:0 3px 10px #0005}
+#bd77q-footer .bd-facebook{background:#1877f2}#bd77q-footer .bd-telegram{background:#16a9df}#bd77q-footer .bd-instagram{background:linear-gradient(35deg,#ffd45d,#f04466,#8b35c9)}#bd77q-footer .bd-youtube{background:#f21e36}
+#bd77q-footer .bd-payment-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 10px;align-items:center;margin:0 0 26px}
+#bd77q-footer .bd-payment{min-height:54px;display:flex;align-items:center;justify-content:center;gap:5px;text-align:center;overflow-wrap:anywhere;font-size:15px;font-weight:900;color:#f4f4f4;padding:5px 3px}
+#bd77q-footer .bd-payment b{font-size:19px}
+#bd77q-footer .bd-bank{color:#42c75c;font-size:14px}.bd-bank-icon{font-size:30px;color:#fff}
+#bd77q-footer .bd-bkash{color:#fff}.bd-bkash b{color:#ed2c7b;font-size:23px}
+#bd77q-footer .bd-rocket{color:#d44be1;font-size:17px}#bd77q-footer .bd-nagad{color:#ff4548;font-size:19px}#bd77q-footer .bd-upay{color:#f3d400;font-size:19px}
+#bd77q-footer .bd-crypto{color:#f5a13b;font-size:18px}#bd77q-footer .bd-ok{color:#fff;font-size:18px}#bd77q-footer .bd-ok b{color:#e7e000}
+#bd77q-footer .bd-surecash{background:#fff;color:#1765a6;border-radius:9px;font-size:20px;padding:8px 3px}#bd77q-footer .bd-tap{color:#fff}
+#bd77q-footer .bd-footer-links{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));row-gap:24px;align-items:stretch}
+#bd77q-footer .bd-footer-links a{display:flex;align-items:center;justify-content:center;min-height:66px;text-align:center;padding:6px;color:#9ca3af;font-size:17px;line-height:1.4;text-decoration:underline;text-underline-offset:5px;border-right:2px solid #414653}
+#bd77q-footer .bd-footer-links a:nth-child(3n){border-right:0}
+#bd77q-footer .bd-footer-links a:nth-child(n+4){border-top:0}
+@media(max-width:380px){#bd77q-footer .bd-footer-heading{font-size:22px}#bd77q-footer .bd-social{width:54px;height:54px;font-size:25px}#bd77q-footer .bd-payment-grid{gap:8px 5px}#bd77q-footer .bd-payment{font-size:12px}#bd77q-footer .bd-payment b{font-size:16px}#bd77q-footer .bd-footer-links a{font-size:14px;padding:5px}}
+</style>
+<footer id="bd77q-footer" aria-label="BD77Q footer">
+  <div class="bd-footer-heading">Community Websites</div>
+  <div class="bd-social-row">
+    <a class="bd-social bd-facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a>
+    <a class="bd-social bd-telegram" href="https://telegram.org/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">➤</a>
+    <a class="bd-social bd-instagram" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">◎</a>
+    <a class="bd-social bd-youtube" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a>
+  </div>
+  <div class="bd-footer-rule"></div>
+  <div class="bd-footer-heading">Payment Methods</div>
+  <div class="bd-payment-grid" aria-label="Payment methods">
+    <div class="bd-payment bd-bank"><span class="bd-bank-icon">▤</span><span><b>BANK</b><br>DEPOSIT</span></div>
+    <div class="bd-payment bd-bkash">bKash <b>➤</b></div>
+    <div class="bd-payment bd-rocket">ROCKET<br><b>রকেট</b></div>
+    <div class="bd-payment bd-nagad"><b>◉</b> নগদ</div>
+    <div class="bd-payment bd-upay"><b>u</b> উপায়</div>
+    <div class="bd-payment bd-crypto"><b>₿</b> CRYPTOCURRENCY</div>
+    <div class="bd-payment bd-ok"><b>☺</b> <span><b>ok</b> wallet<small style="display:block;font-size:9px;color:#aaa">by ONE Bank</small></span></div>
+    <div class="bd-payment bd-surecash">SureCash™</div>
+    <div class="bd-payment bd-tap"><b style="background:#e51d37;border-radius:50%;padding:5px 8px">tap</b></div>
+  </div>
+  <div class="bd-footer-rule"></div>
+  <nav class="bd-footer-links" aria-label="Information links">
+    <a href="#responsibleGaming" data-bd-footer-info="Responsible Gaming">Responsible<br>Gaming</a>
+    <a href="#aboutUs" data-bd-footer-info="About Us">About Us</a>
+    <a href="#security" data-bd-footer-info="Security">Security</a>
+    <a href="#privacyPolicy" data-bd-footer-info="Privacy Policy">Privacy Policy</a>
+    <a href="#faq" data-bd-footer-info="FAQ">FAQ</a>
+  </nav>
+</footer>
+<script id="bd77q-footer-links-runtime">
+(function(){
+  const footer=document.getElementById('bd77q-footer');
+  if(!footer)return;
+  footer.querySelectorAll('[data-bd-footer-info]').forEach(function(link){
+    link.addEventListener('click',function(event){
+      const target=link.getAttribute('href');
+      if(target && document.querySelector(target))return;
+      event.preventDefault();
+      const title=link.getAttribute('data-bd-footer-info');
+      alert(title+'\\nBD77Q information page');
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
