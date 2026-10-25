@@ -2337,18 +2337,6 @@ window.tryQualifyReferralBonus = async function(userPhone){
     }
 };
 
-// Live betting ledger: each bet is recorded in Firebase and local cache.
-function bd77qRecordBet(entry){
-  try{
-    const phone=String(currentUserPhone||''); if(!phone)return Promise.resolve(null);
-    const row={...entry,userPhone:phone,game:'Crash Game',createdAt:Date.now()};
-    const key='bd77q_bet_ledger_'+phone; let rows=[];
-    try{rows=JSON.parse(localStorage.getItem(key)||'[]')}catch(_){rows=[]}
-    rows.unshift(row); rows=rows.slice(0,500); localStorage.setItem(key,JSON.stringify(rows));
-    if(window.fbDb&&window.fbRef&&window.fbPush&&window.fbSet){const r=window.fbPush(window.fbRef(window.fbDb,'users/'+phone+'/betLedger'));return window.fbSet(r,row).then(()=>r.key).catch(e=>{console.warn('Bet ledger Firebase save failed',e);return null})}
-  }catch(e){console.warn('Bet ledger save failed',e)}
-  return Promise.resolve(null);
-}
 function placeBet(slot){
     if(crashed||bets[slot].active)return;
     const amount=Number(document.getElementById('bet'+slot).value);
@@ -2356,8 +2344,7 @@ function placeBet(slot){
     if(amount>balance){alert('পর্যাপ্ত ব্যালেন্স নেই।');return}
     
     balance-=amount;
-    bets[slot]={active:true,amount,ledgerKey:null,betAt:Date.now(),roundNo:roundNo};
-    bd77qRecordBet({type:'bet',status:'placed',slot,amount,roundNo,multiplier:1,balanceAfter:balance}).then(k=>{if(bets[slot]&&bets[slot].active)bets[slot].ledgerKey=k;});
+    bets[slot]={active:true,amount};
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
@@ -2388,9 +2375,9 @@ function placeBet(slot){
     document.getElementById('cashBtn'+slot).disabled=false;
 }
 
-function cashOut(slot){if(!bets[slot].active||crashed)return;const b={...bets[slot]},m=Number(multiplier),win=Number(b.amount||0)*m;balance+=win;bd77qRecordBet({type:'settlement',status:'won',slot,amount:Number(b.amount||0),winAmount:win,net:Number(win)-Number(b.amount||0),multiplier:m,roundNo:b.roundNo,balanceAfter:balance});bets[slot]={active:false,amount:0};updateBalance();syncAppBalance();document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='BET SETTLED'}
+function cashOut(slot){if(!bets[slot].active||crashed)return;balance+=bets[slot].amount*multiplier;bets[slot]={active:false,amount:0};updateBalance();document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='BET SETTLED'}
 function render(t){if(crashed)return;const elapsed=(t-start)/1000;multiplier=Math.min(2000,Math.exp(elapsed*.34));if(multiplier>=crashAt){multiplier=crashAt;doCrash();return}multEl.textContent=multiplier.toFixed(2)+'×';plane.style.left=Math.min(82,12+elapsed*5.5)+'%';plane.style.bottom=Math.min(78,13+elapsed*2.5)+'%';[1,2].forEach(slot=>{if(bets[slot].active){const a=Number(document.getElementById('auto'+slot).value);if(a>=1.01&&multiplier>=a)cashOut(slot)}});requestAnimationFrame(render)}
-function doCrash(){crashed=true;[1,2].forEach(slot=>{if(bets[slot].active){const b={...bets[slot]};bd77qRecordBet({type:'settlement',status:'lost',slot,amount:Number(b.amount||0),winAmount:0,net:-Number(b.amount||0),multiplier:Number(multiplier),roundNo:b.roundNo,balanceAfter:balance});}});stateEl.textContent='CRASHED';sky.classList.add('crashed');multEl.textContent=multiplier.toFixed(2)+'×';plane.style.transition='left .25s ease,bottom 1.15s cubic-bezier(.55,.05,.7,.2)';plane.style.bottom='-15%';plane.style.transform='rotate(35deg)';history.unshift(multiplier);history=history.slice(0,8);document.getElementById('history').innerHTML=history.map(x=>`<div class="pill ${x>=10?'hot':''}">${x.toFixed(2)}×</div>`).join('');syncAppBalance();[1,2].forEach(slot=>{bets[slot]={active:false,amount:0};document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='NEXT ROUND'});setTimeout(startCountdown,1500)}
+function doCrash(){crashed=true;stateEl.textContent='CRASHED';sky.classList.add('crashed');multEl.textContent=multiplier.toFixed(2)+'×';plane.style.transition='left .25s ease,bottom 1.15s cubic-bezier(.55,.05,.7,.2)';plane.style.bottom='-15%';plane.style.transform='rotate(35deg)';history.unshift(multiplier);history=history.slice(0,8);document.getElementById('history').innerHTML=history.map(x=>`<div class="pill ${x>=10?'hot':''}">${x.toFixed(2)}×</div>`).join('');syncAppBalance();[1,2].forEach(slot=>{bets[slot]={active:false,amount:0};document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='NEXT ROUND'});setTimeout(startCountdown,1500)}
 function startCountdown(){clearInterval(countdownTimer);countdown.style.display='flex';let n=10;countNum.textContent=n;stateEl.textContent='NEXT ROUND';countdownTimer=setInterval(()=>{n--;countNum.textContent=n;if(n<=0){clearInterval(countdownTimer);countdown.style.display='none';nextRound()}},1000)}
 function nextRound(){roundNo++;document.getElementById('round').textContent='ROUND #'+String(roundNo).padStart(3,'0');stateEl.textContent='FLYING';sky.classList.remove('crashed');plane.style.transition='none';plane.style.transform='none';plane.style.left='12%';plane.style.bottom='13%';multiplier=1;crashAt=randomCrash();start=performance.now();crashed=false;[1,2].forEach(slot=>document.getElementById('betBtn'+slot).textContent='BET '+slot);multEl.textContent='1.00×';requestAnimationFrame(render)}
 function showScreen(id){if(!currentUserPhone){checkAuthStatus();return;}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));const map={homeScreen:'navHome',gameScreen:'navGame',profileScreen:'navProfile'};const nav=document.getElementById(map[id]);if(nav)nav.classList.add('active');if(id==='profileScreen'){renderMyAccount();syncAppBalance();window.scrollTo(0,0);return;}syncAppBalance()}
@@ -2840,7 +2827,7 @@ function openAccountFeature(type){
  const title=document.getElementById('accountFeatureTitle'),body=document.getElementById('accountFeatureBody'); if(!title||!body)return;
  let html='';
  if(type==='reward'){title.textContent='🏆 Reward Center';html=`<div class="bonus-box"><div class="bonus-title">Referral & Achievement Rewards</div>${rowHtml('Successful Referrals',String(u.referStats?.count||0)+' জন')}${rowHtml('Invitation/Bonus Earned',money2(u.referStats?.bonusEarned||0))}${rowHtml('Deposit Rebate Earned',money2(u.referStats?.depositRebateEarned||0))}</div><button class="cash" onclick="closeProfileModal('accountFeatureModal');openProfileModal('referModal');switchReferTab('rewards')">Open Reward Details</button>`}
- else if(type==='betting'){title.textContent='⚡ Betting Record';const hs=(history||[]).slice(0,50);let ledger=[];try{ledger=JSON.parse(localStorage.getItem('bd77q_bet_ledger_'+String(currentUserPhone||''))||'[]')}catch(e){};html=`<div class="report-tabs"><button class="active" type="button" onclick="renderBettingReport('all',this)">All</button><button type="button" onclick="renderBettingReport('today',this)">Today</button><button type="button" onclick="renderBettingReport('7days',this)">7-days</button></div><div class="report-filter"><select id="betReportType" onchange="renderBettingReport()"><option value="all">All games</option><option value="crash">Crash Game</option></select><input id="betReportDate" type="date" onchange="renderBettingReport()" aria-label="Date filter"></div><div class="report-summary"><div class="report-stat"><span>Turnover Completed</span><strong>${money2(u.turnoverCurrent||0)}</strong></div><div class="report-stat"><span>Turnover Target</span><strong>${money2(u.turnoverTarget||0)}</strong></div></div><div class="report-summary"><div class="report-stat"><span>বাকি টার্নওভার</span><strong>৳${money2(u.turnoverTarget||0)}</strong></div><div class="report-stat"><span>নিট লাভ/ক্ষতি (সেভ হওয়া রেকর্ড)</span><strong>৳${money2(ledger.filter(x=>x.type==='settlement').reduce((a,x)=>a+Number(x.net||0),0))}</strong></div></div><div id="betReportRecords">${ledger.length?ledger.slice(0,50).map((x,i)=>`<div class="report-record"><div class="report-record-head"><span>🔵 ${x.status==='placed'?'Bet placed':x.status==='won'?'Won':'Lost'}</span><span>${new Date(Number(x.createdAt||Date.now())).toLocaleString()}</span></div><div class="report-record-body"><div><span>Bet amount</span><strong>৳${money2(x.amount||0)}</strong></div><div><span>Multiplier / Win</span><strong>${x.multiplier?Number(x.multiplier).toFixed(2)+'×':'—'} / ৳${money2(x.winAmount||0)}</strong></div><div><span>Net</span><strong>৳${money2(x.net||0)}</strong></div></div></div>`).join(''):hs.length?hs.map((x,i)=>`<div class="report-record"><div class="report-record-head"><span>🔵 Crash Game</span><span>Round ${i+1}</span></div><div class="report-record-body"><div><span>Round result</span><strong>${Number(x).toFixed(2)}×</strong></div><div><span>Record type</span><strong>Round history only</strong></div></div></div>`).join(''):'<div class="report-empty">এখনও কোনো বেট রেকর্ড নেই।</div>'}</div>`} 
+ else if(type==='betting'){title.textContent='⚡ Betting Record';const hs=(history||[]).slice(0,50);html=`<div class="report-tabs"><button class="active" type="button" onclick="renderBettingReport('all',this)">All</button><button type="button" onclick="renderBettingReport('today',this)">Today</button><button type="button" onclick="renderBettingReport('7days',this)">7-days</button></div><div class="report-filter"><select id="betReportType" onchange="renderBettingReport()"><option value="all">All games</option><option value="crash">Crash Game</option></select><input id="betReportDate" type="date" onchange="renderBettingReport()" aria-label="Date filter"></div><div class="report-summary"><div class="report-stat"><span>Turnover Completed</span><strong>${money2(u.turnoverCurrent||0)}</strong></div><div class="report-stat"><span>Turnover Target</span><strong>${money2(u.turnoverTarget||0)}</strong></div></div><div id="betReportRecords">${hs.length?hs.map((x,i)=>`<div class="report-record"><div class="report-record-head"><span>🔵 Crash Game</span><span>Round ${i+1}</span></div><div class="report-record-body"><div><span>Round result</span><strong>${Number(x).toFixed(2)}×</strong></div><div><span>Record type</span><strong>Round history</strong></div></div></div>`).join(''):'<div class="report-empty">এখনও কোনো completed round history নেই।</div>'}</div><div class="modal-note">এখানে বর্তমানে অ্যাপে সংরক্ষিত রাউন্ড হিস্ট্রি দেখানো হচ্ছে। প্রকৃত Bet amount / winnings দেখাতে সংশ্লিষ্ট গেমকে bet ledger পাঠাতে হবে।</div>`} 
  else if(type==='rebate'){title.textContent='🪙 Rebate';const rd=getReferralDepositData();const total=rd.rebates.reduce((a,r)=>a+Number(r.rebateAmount||0),0);const todayStart=new Date();todayStart.setHours(0,0,0,0);const today=rd.rebates.filter(r=>Number(r.createdAt||0)>=todayStart.getTime()).reduce((a,r)=>a+Number(r.rebateAmount||0),0);html=`<div class="report-tabs"><button class="active" type="button" onclick="renderRebateReport('mine',this)">My Rebates</button><button type="button" onclick="renderRebateReport('history',this)">Rebate History</button></div><div class="report-record"><div class="report-record-head"><span>Date</span><span>${new Date().toISOString().slice(0,10)}</span></div><div class="report-record-body"><div><span>Today</span><strong class="report-positive">${money2(today)}</strong></div><div><span>Total Rebate</span><strong class="report-positive">${money2(total)}</strong></div></div></div><div id="rebateReportRecords">${rd.rebates.length?rd.rebates.slice().sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).map(r=>`<div class="report-record"><div class="report-record-head"><span>Deposit Rebate</span><strong class="report-positive">+${money2(r.rebateAmount||0)}</strong></div><div class="report-record-body"><div><span>Deposit amount</span><strong>${money2(r.depositAmount||r.baseAmount||0)}</strong></div><div><span>Date</span><strong>${r.createdAt?new Date(r.createdAt).toLocaleString():'—'}</strong></div></div></div>`).join(''):'<div class="report-empty">এখনও কোনো confirmed rebate record নেই।</div>'}</div><button class="cash" type="button" onclick="closeProfileModal('accountFeatureModal');openProfileModal('referModal');switchReferTab('earnings')">Open Rebate Details</button><div class="modal-note">শুধু সংরক্ষিত referral rebate রেকর্ড এখানে দেখানো হবে; অনুমোদিত রেকর্ড না থাকলে পরিমাণ ০.০০ থাকবে।</div>`}
  else if(type==='profit'){title.textContent='🧾 Profit And Loss';const deps=userDepositRecords().filter(x=>['success','approved'].includes(String(x.status).toLowerCase()));const wds=userWithdrawRecords().filter(x=>['success','approved'].includes(String(x.status).toLowerCase()));const dep=deps.reduce((s,x)=>s+Number(x.baseAmount||x.amount||0),0);const wd=wds.reduce((s,x)=>s+Number(x.amount||0),0);const rebate=Number(u.referStats?.depositRebateEarned||0);const allNet=Number(balance||0)+wd-dep;html=`<div class="report-tabs"><button class="active" type="button" onclick="renderProfitReport('today',this)">Today</button><button type="button" onclick="renderProfitReport('yesterday',this)">Yesterday</button><button type="button" onclick="renderProfitReport('7days',this)">7-days</button><button type="button" onclick="renderProfitReport('all',this)">All</button></div><div class="report-summary"><div class="report-stat"><span>Deposit</span><strong>${money2(dep)}</strong></div><div class="report-stat"><span>Withdrawal</span><strong>${money2(wd)}</strong></div><div class="report-stat"><span>Referral Rebate</span><strong class="report-positive">${money2(rebate)}</strong></div><div class="report-stat"><span>Current Balance</span><strong>${money2(balance)}</strong></div></div><div class="feature-list">${rowHtml('Account net flow (balance + withdrawals − deposits)',money2(allNet),allNet>=0?'report-positive':'report-negative')}${rowHtml('Approved deposit records',String(deps.length))}${rowHtml('Approved withdrawal records',String(wds.length))}</div><div class="modal-note" style="margin-top:10px">গেমভিত্তিক প্রকৃত Profit/Loss দেখাতে প্রতিটি গেম থেকে wager, winnings এবং settlement ledger সংরক্ষণ করতে হবে। এখানে account-level তথ্য দেখানো হচ্ছে; এটিকে গেমের নিশ্চিত P/L হিসেবে ধরবেন না।</div>`}
  else if(type==='depositRecord'){title.textContent='📋 Deposit Record';const rs=userDepositRecords();html=rs.length?`<div class="feature-list">${rs.map(x=>rowHtml(money2(x.baseAmount||x.amount)+' • '+(x.method||'Deposit'),String(x.status||'Pending'))).join('')}</div>`:'<div class="modal-note" style="padding:20px;text-align:center">কোনো Deposit Record নেই।</div>'}
@@ -4219,82 +4206,48 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
 })();
 </script>
 
-<!-- ADMIN-CONTROLLED HOME POPUP BANNER -->
-<style>#bd77qPopupBanner{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.78);padding:18px}#bd77qPopupBanner .bd77q-pop-card{position:relative;width:min(94vw,460px);background:#101827;border:1px solid #f6c453;border-radius:16px;padding:12px;box-shadow:0 0 28px #f6c45355}#bd77qPopupBanner img{display:block;width:100%;max-height:65vh;object-fit:contain;border-radius:10px}#bd77qPopupBanner .bd77q-pop-close{position:absolute;right:7px;top:7px;width:34px;height:34px;border:0;border-radius:50%;background:#111;color:white;font-size:24px;cursor:pointer;z-index:2}</style>
-<div id="bd77qPopupBanner" role="dialog" aria-modal="true" aria-label="Announcement banner"><div class="bd77q-pop-card"><button class="bd77q-pop-close" id="bd77qPopupClose" aria-label="বন্ধ করুন">×</button><a id="bd77qPopupLink" href="#" target="_blank" rel="noopener noreferrer"><img id="bd77qPopupImage" alt="Announcement banner"></a></div></div>
+<!-- ADMIN-CONTROLLED LINK POPUP: auto-hide for 24 hours after dismiss/use -->
+<style>#bd77qPopupBanner{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.82);padding:18px}#bd77qPopupBanner .bd77q-pop-card{position:relative;width:min(94vw,460px);box-sizing:border-box;background:linear-gradient(145deg,#101827,#25113d);border:1px solid #f6c453;border-radius:18px;padding:22px 16px 18px;text-align:center;color:#fff;box-shadow:0 0 28px #f6c45355}#bd77qPopupBanner img{display:block;width:100%;max-height:45vh;object-fit:contain;border-radius:10px;margin:0 auto 12px}#bd77qPopupBanner .bd77q-pop-close{position:absolute;right:7px;top:7px;width:34px;height:34px;border:0;border-radius:50%;background:#111;color:white;font-size:24px;cursor:pointer;z-index:2}#bd77qPopupTitle{font-size:22px;font-weight:900;color:#ffda83;margin:8px 24px 10px}#bd77qPopupDescription{font-size:15px;line-height:1.55;color:#e5e7eb;margin:8px 0 16px;white-space:pre-wrap}#bd77qPopupAction{display:inline-block;padding:12px 22px;border-radius:10px;background:linear-gradient(90deg,#f6c453,#ffdf8c);color:#201400;font-weight:900;text-decoration:none}</style>
+<div id="bd77qPopupBanner" role="dialog" aria-modal="true" aria-label="Announcement popup"><div class="bd77q-pop-card"><button class="bd77q-pop-close" id="bd77qPopupClose" aria-label="বন্ধ করুন">×</button><img id="bd77qPopupImage" alt="" style="display:none"><h2 id="bd77qPopupTitle"></h2><div id="bd77qPopupDescription"></div><a id="bd77qPopupAction" href="#" target="_blank" rel="noopener noreferrer">এখনই দেখুন</a></div></div>
 <script id="bd77q-admin-popup-banner-runtime">
 (function(){
- const SEEN='bd77q_home_popup_banner_dismissed_v1';let config=null,shown=false;
+ const KEY='bd77q_link_popup_hidden_until_v2';let config=null,shown=false;
  const $=id=>document.getElementById(id);
+ function dismissed(){try{return Date.now()<Number(localStorage.getItem(KEY)||0)}catch(e){return false}}
+ function hide(){ $('bd77qPopupBanner').style.display='none';try{localStorage.setItem(KEY,String(Date.now()+24*60*60*1000))}catch(e){} }
  function homeVisible(){const candidates=['homePage','home-page','homeScreen','home-screen','mainHome','dashboardPage'];for(const id of candidates){const el=$(id);if(el&&el.offsetParent!==null&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden')return true;}return false;}
- function showIfReady(){if(shown||!config||config.active!==true||!config.imageUrl||sessionStorage.getItem(SEEN)||!homeVisible())return;const img=$('bd77qPopupImage'),link=$('bd77qPopupLink');img.src=String(config.imageUrl);link.href=/^https?:\/\//i.test(String(config.clickUrl||''))?String(config.clickUrl):'#';$('bd77qPopupBanner').style.display='flex';shown=true;}
- $('bd77qPopupClose').addEventListener('click',()=>{$('bd77qPopupBanner').style.display='none';sessionStorage.setItem(SEEN,'1');});
- $('bd77qPopupBanner').addEventListener('click',e=>{if(e.target===$('bd77qPopupBanner')){$('bd77qPopupBanner').style.display='none';sessionStorage.setItem(SEEN,'1');}});
- function init(){if(!window.fbDb||!window.fbRef||!window.fbOnValue){setTimeout(init,500);return;}window.fbOnValue(window.fbRef(window.fbDb,'settings/popupBanner'),s=>{config=s.exists()?(s.val()||{}):null;showIfReady();});new MutationObserver(showIfReady).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});setInterval(showIfReady,1000);}
+ function showIfReady(){if(shown||!config||config.active!==true||!config.clickUrl||dismissed()||!homeVisible())return;const url=String(config.clickUrl||'');if(!/^https?:\/\//i.test(url))return;const img=$('bd77qPopupImage');if(config.imageUrl&&/^https?:\/\//i.test(String(config.imageUrl))){img.src=config.imageUrl;img.style.display='block'}else{img.removeAttribute('src');img.style.display='none'}$('bd77qPopupTitle').textContent=config.title||'বিশেষ অফার';$('bd77qPopupDescription').textContent=config.description||'বিস্তারিত দেখতে নিচের বাটনে ক্লিক করুন।';$('bd77qPopupAction').href=url;$('bd77qPopupAction').textContent=config.buttonText||'এখনই দেখুন';$('bd77qPopupBanner').style.display='flex';shown=true;}
+ $('bd77qPopupClose').addEventListener('click',hide);
+ $('bd77qPopupAction').addEventListener('click',hide);
+ $('bd77qPopupBanner').addEventListener('click',e=>{if(e.target===$('bd77qPopupBanner'))hide()});
+ function init(){if(!window.fbDb||!window.fbRef||!window.fbOnValue){setTimeout(init,500);return;}window.fbOnValue(window.fbRef(window.fbDb,'settings/popupBanner'),s=>{config=s.exists()?(s.val()||{}):null;shown=false;showIfReady();});new MutationObserver(showIfReady).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});setInterval(showIfReady,1000);}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
 
 
-<!-- VIP PREMIUM POPUP: separate from the existing standard popup banner -->
-<style id="bd77q-vip-premium-popup-style">
-#bd77qVipPremiumPopup{display:none;position:fixed;inset:0;z-index:100100;align-items:center;justify-content:center;padding:18px;background:rgba(2,4,15,.86);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
-#bd77qVipPremiumPopup.show{display:flex;animation:bd77qVipFade .22s ease-out}
-#bd77qVipPremiumPopup .vip-premium-card{position:relative;width:min(94vw,460px);max-height:90vh;overflow:auto;padding:13px;border-radius:22px;border:1px solid #f6d778;background:linear-gradient(145deg,#160d2d,#081729 52%,#241038);box-shadow:0 0 0 1px #ffffff12,0 0 20px #00d9ff55,0 0 42px #a43dff66,0 0 65px #ffca4b22;animation:bd77qVipGlow 3s ease-in-out infinite alternate}
-#bd77qVipPremiumPopup .vip-premium-card:before{content:"✦  VIP PREMIUM  ✦";display:block;text-align:center;font-weight:1000;letter-spacing:2px;font-size:13px;color:#ffe8a0;text-shadow:0 0 9px #ffc94a;margin:3px 40px 11px}
-#bd77qVipPremiumPopup .vip-premium-close{position:absolute;right:9px;top:9px;z-index:3;width:35px;height:35px;padding:0;border-radius:50%;background:#080b18;color:#fff;border:1px solid #ffe08a;font-size:25px;box-shadow:0 0 12px #ffcb4a55}
-#bd77qVipPremiumPopup .vip-premium-image{display:none;width:100%;max-height:45vh;object-fit:contain;border-radius:13px;border:1px solid #ffffff25;background:#080b14}
-#bd77qVipPremiumPopup .vip-premium-title{color:#ffe58b;text-align:center;font-size:22px;font-weight:1000;margin:13px 4px 8px;text-shadow:0 0 13px #e49dff}
-#bd77qVipPremiumPopup .vip-premium-details{color:#e6e8ff;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 4px 14px;text-align:center}
-#bd77qVipPremiumPopup .vip-premium-cta{display:none;width:100%;color:#1c1230;background:linear-gradient(100deg,#ffe98c,#ffb52e,#fff0a8);border:1px solid #fff3bd;box-shadow:0 0 18px #ffbf4d55;font-weight:1000}
-@keyframes bd77qVipGlow{from{box-shadow:0 0 18px #00d9ff44,0 0 32px #a43dff44}to{box-shadow:0 0 26px #00d9ff77,0 0 48px #a43dff77,0 0 24px #ffca4b33}}
-@keyframes bd77qVipFade{from{opacity:0}to{opacity:1}}
-@media(max-width:420px){#bd77qVipPremiumPopup{padding:12px}#bd77qVipPremiumPopup .vip-premium-title{font-size:20px}}
-</style>
-<div id="bd77qVipPremiumPopup" role="dialog" aria-modal="true" aria-label="VIP Premium announcement">
- <div class="vip-premium-card">
-  <button type="button" class="vip-premium-close" id="bd77qVipPremiumClose" aria-label="বন্ধ করুন">×</button>
-  <img class="vip-premium-image" id="bd77qVipPremiumImage" alt="VIP Premium banner">
-  <div class="vip-premium-title" id="bd77qVipPremiumTitle"></div>
-  <div class="vip-premium-details" id="bd77qVipPremiumDetails"></div>
-  <button type="button" class="vip-premium-cta" id="bd77qVipPremiumCta">বিস্তারিত দেখুন</button>
- </div>
-</div>
-<script id="bd77q-vip-premium-popup-runtime">
+<script id="bd77q-refresh-restore-state">
 (function(){
- 'use strict';
- const CONFIG_PATH='settings/vipPremiumPopup',COOLDOWN=24*60*60*1000;
- let config=null,shown=false,checking=false,observer=null,lastUser='';
- const $=id=>document.getElementById(id);
- function phone(){return String(window.currentUserPhone||localStorage.getItem('aviator_current_user')||'').trim();}
- function dbReady(){return !!(window.fbDb&&window.fbRef&&window.fbOnValue&&window.fbGet&&window.fbSet);}
- function homeVisible(){const ids=['homePage','home-page','homeScreen','home-screen','mainHome','dashboardPage'];for(const id of ids){const e=$(id);if(e&&e.offsetParent!==null&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden')return true;}return false;}
- function inSchedule(c){const now=Date.now(),start=Number(c.startAt||c.start||0),end=Number(c.endAt||c.end||0);return (!start||now>=start)&&(!end||now<=end);}
- function userStatePath(p){return 'users/'+p.replace(/[.#$\[\]\/]/g,'_')+'/vipPremiumPopupState';}
- async function maybeShow(){
-  if(checking||shown||!config||config.active!==true||!inSchedule(config)||!homeVisible())return;
-  const p=phone();if(!p||!dbReady())return;
-  checking=true;
-  try{
-   const snap=await window.fbGet(window.fbRef(window.fbDb,userStatePath(p)));
-   if(p!==phone())return;
-   const state=snap&&snap.exists()?snap.val():{};const last=Number(state&&state.lastClosedAt||0);
-   if(last&&Date.now()-last<COOLDOWN)return;
-   const image=$('bd77qVipPremiumImage'),title=$('bd77qVipPremiumTitle'),details=$('bd77qVipPremiumDetails'),cta=$('bd77qVipPremiumCta');
-   const imageUrl=String(config.imageUrl||config.image||'').trim();
-   if(imageUrl&&/^https?:\/\//i.test(imageUrl)){image.src=imageUrl;image.style.display='block';image.onerror=()=>{image.style.display='none';};}else{image.removeAttribute('src');image.style.display='none';}
-   title.textContent=String(config.title||'VIP Premium Offer');details.textContent=String(config.details||config.description||'');
-   const url=String(config.clickUrl||config.link||'').trim();cta.style.display=/^https?:\/\//i.test(url)?'block':'none';cta.onclick=()=>{closePopup();window.open(url,'_blank','noopener,noreferrer');};
-   $('bd77qVipPremiumPopup').classList.add('show');shown=true;lastUser=p;
-  }catch(e){console.warn('VIP Premium popup:',e);}finally{checking=false;}
+ const KEY='bd77q_refresh_view_state_v1';
+ function save(){
+  const active=document.querySelector('.screen.active');
+  const state={screen:active&&active.id?active.id:null,x:window.scrollX||0,y:window.scrollY||0,href:location.pathname+location.search+location.hash};
+  try{sessionStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
  }
- async function closePopup(){const p=phone();$('bd77qVipPremiumPopup').classList.remove('show');shown=false;if(!p||!dbReady())return;try{await window.fbSet(window.fbRef(window.fbDb,userStatePath(p)),{lastClosedAt:Date.now()});}catch(e){console.warn('VIP Premium cooldown save failed:',e);}}
- $('bd77qVipPremiumClose').addEventListener('click',closePopup);
- $('bd77qVipPremiumPopup').addEventListener('click',e=>{if(e.target===$('bd77qVipPremiumPopup'))closePopup();});
- function init(){if(!dbReady()){setTimeout(init,700);return;}window.fbOnValue(window.fbRef(window.fbDb,CONFIG_PATH),snap=>{config=snap&&snap.exists()?(snap.val()||{}):null;maybeShow();});if(!observer&&document.body){observer=new MutationObserver(maybeShow);observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});}setInterval(()=>{if(lastUser!==phone()){shown=false;lastUser='';}maybeShow();},2500);}
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+ window.addEventListener('pagehide',save);
+ window.addEventListener('beforeunload',save);
+ window.addEventListener('pageshow',function(){
+  let state;try{state=JSON.parse(sessionStorage.getItem(KEY)||'null');}catch(e){}
+  if(!state||state.href!==location.pathname+location.search+location.hash||!state.screen)return;
+  let tries=0;const timer=setInterval(function(){
+   tries++;
+   if(typeof window.showScreen==='function' && (window.currentUserPhone || typeof currentUserPhone!=='undefined' && currentUserPhone)){
+    clearInterval(timer);try{window.showScreen(state.screen);}catch(e){}
+    requestAnimationFrame(function(){window.scrollTo(state.x||0,state.y||0);});
+   }else if(tries>=40)clearInterval(timer);
+  },250);
+ });
 })();
 </script>
-
 </body>
 </html>
