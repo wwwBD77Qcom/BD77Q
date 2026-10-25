@@ -2344,7 +2344,7 @@ function placeBet(slot){
     if(amount>balance){alert('পর্যাপ্ত ব্যালেন্স নেই।');return}
     
     balance-=amount;
-    bets[slot]={active:true,amount};
+    bets[slot]={active:true,amount,betId:'bet_'+String(currentUserPhone||'guest')+'_'+Date.now()+'_'+slot,roundNo:roundNo,settled:false};
     
     if(currentUserPhone && usersDb[currentUserPhone]){
         let user = usersDb[currentUserPhone];
@@ -2375,9 +2375,18 @@ function placeBet(slot){
     document.getElementById('cashBtn'+slot).disabled=false;
 }
 
-function cashOut(slot){if(!bets[slot].active||crashed)return;balance+=bets[slot].amount*multiplier;bets[slot]={active:false,amount:0};updateBalance();document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='BET SETTLED'}
+function saveBetSettlement(slot,payout,reason){
+ const b=bets[slot];if(!b||!b.betId||b.settled)return;b.settled=true;
+ const wager=Number(b.amount||0),paid=Number(payout||0),now=Date.now();
+ const rec={id:b.betId,settlementId:b.betId,betId:b.betId,roundNo:b.roundNo,betAmount:wager,payout:paid,lossAmount:Number(Math.max(0,wager-paid).toFixed(2)),lossType:'bet_loss',settled:true,result:reason,settledAt:now};
+ if(currentUserPhone&&window.fbDb&&window.fbRef&&window.fbSet){
+  const ledgerRef=window.fbRef(window.fbDb,'users/'+currentUserPhone+'/betLedger/'+b.betId);
+  window.fbSet(ledgerRef,rec).catch(e=>console.error('Bet settlement save failed:',e));
+ }
+}
+function cashOut(slot){if(!bets[slot].active||crashed)return;const payout=Number((bets[slot].amount*multiplier).toFixed(2));balance+=payout;saveBetSettlement(slot,payout,'cashout');bets[slot]={active:false,amount:0};updateBalance();document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='BET SETTLED'}
 function render(t){if(crashed)return;const elapsed=(t-start)/1000;multiplier=Math.min(2000,Math.exp(elapsed*.34));if(multiplier>=crashAt){multiplier=crashAt;doCrash();return}multEl.textContent=multiplier.toFixed(2)+'×';plane.style.left=Math.min(82,12+elapsed*5.5)+'%';plane.style.bottom=Math.min(78,13+elapsed*2.5)+'%';[1,2].forEach(slot=>{if(bets[slot].active){const a=Number(document.getElementById('auto'+slot).value);if(a>=1.01&&multiplier>=a)cashOut(slot)}});requestAnimationFrame(render)}
-function doCrash(){crashed=true;stateEl.textContent='CRASHED';sky.classList.add('crashed');multEl.textContent=multiplier.toFixed(2)+'×';plane.style.transition='left .25s ease,bottom 1.15s cubic-bezier(.55,.05,.7,.2)';plane.style.bottom='-15%';plane.style.transform='rotate(35deg)';history.unshift(multiplier);history=history.slice(0,8);document.getElementById('history').innerHTML=history.map(x=>`<div class="pill ${x>=10?'hot':''}">${x.toFixed(2)}×</div>`).join('');syncAppBalance();[1,2].forEach(slot=>{bets[slot]={active:false,amount:0};document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='NEXT ROUND'});setTimeout(startCountdown,1500)}
+function doCrash(){crashed=true;stateEl.textContent='CRASHED';sky.classList.add('crashed');multEl.textContent=multiplier.toFixed(2)+'×';plane.style.transition='left .25s ease,bottom 1.15s cubic-bezier(.55,.05,.7,.2)';plane.style.bottom='-15%';plane.style.transform='rotate(35deg)';history.unshift(multiplier);history=history.slice(0,8);document.getElementById('history').innerHTML=history.map(x=>`<div class="pill ${x>=10?'hot':''}">${x.toFixed(2)}×</div>`).join('');syncAppBalance();[1,2].forEach(slot=>{if(bets[slot].active)saveBetSettlement(slot,0,'crash_loss');bets[slot]={active:false,amount:0};document.getElementById('cashBtn'+slot).disabled=true;document.getElementById('betBtn'+slot).textContent='NEXT ROUND'});setTimeout(startCountdown,1500)}
 function startCountdown(){clearInterval(countdownTimer);countdown.style.display='flex';let n=10;countNum.textContent=n;stateEl.textContent='NEXT ROUND';countdownTimer=setInterval(()=>{n--;countNum.textContent=n;if(n<=0){clearInterval(countdownTimer);countdown.style.display='none';nextRound()}},1000)}
 function nextRound(){roundNo++;document.getElementById('round').textContent='ROUND #'+String(roundNo).padStart(3,'0');stateEl.textContent='FLYING';sky.classList.remove('crashed');plane.style.transition='none';plane.style.transform='none';plane.style.left='12%';plane.style.bottom='13%';multiplier=1;crashAt=randomCrash();start=performance.now();crashed=false;[1,2].forEach(slot=>document.getElementById('betBtn'+slot).textContent='BET '+slot);multEl.textContent='1.00×';requestAnimationFrame(render)}
 function showScreen(id){if(!currentUserPhone){checkAuthStatus();return;}document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));const map={homeScreen:'navHome',gameScreen:'navGame',profileScreen:'navProfile'};const nav=document.getElementById(map[id]);if(nav)nav.classList.add('active');if(id==='profileScreen'){renderMyAccount();syncAppBalance();window.scrollTo(0,0);return;}syncAppBalance()}
@@ -4221,54 +4230,29 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
 (function(){
  'use strict';
  const KEY='bd77q_home_popup_banner_dismissed_until_v2',HIDE_MS=24*60*60*1000;
- let config=null,shown=false,observer=null;
+ let config=null,shown=false;
  const $=id=>document.getElementById(id);
- const overlay=()=>$('bd77qPopupBanner');
  function hiddenFor24h(){try{return Number(localStorage.getItem(KEY)||0)>Date.now();}catch(e){return false;}}
- function hideFor24h(){
-  try{localStorage.setItem(KEY,String(Date.now()+HIDE_MS));}catch(e){}
-  const el=overlay();if(el)el.style.display='none';shown=true;
- }
- function hideImmediately(){
-  const el=overlay();if(el)el.style.display='none';shown=false;
- }
- function homeVisible(){
-  const home=$('homeScreen')||$('homePage')||$('home-page')||$('home-screen')||$('mainHome')||$('dashboardPage');
-  if(home)return home.classList.contains('active')||(
-   home.offsetParent!==null&&getComputedStyle(home).display!=='none'&&getComputedStyle(home).visibility!=='hidden'
-  );
-  const active=document.querySelector('.screen.active');
-  return !!active && /home/i.test(active.id||'');
- }
+ function hideFor24h(){try{localStorage.setItem(KEY,String(Date.now()+HIDE_MS));}catch(e){}$('bd77qPopupBanner').style.display='none';shown=true;}
+ function homeVisible(){const candidates=['homePage','home-page','homeScreen','home-screen','mainHome','dashboardPage'];for(const id of candidates){const el=$(id);if(el&&el.offsetParent!==null&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden')return true;}return false;}
  function showIfReady(){
-  if(!config||config.active!==true){hideImmediately();return;}
-  if(shown||hiddenFor24h()||!homeVisible())return;
+  if(shown||!config||config.active!==true||hiddenFor24h()||!homeVisible())return;
   const title=$('bd77qPopupTitle'),desc=$('bd77qPopupDescription'),img=$('bd77qPopupImage'),action=$('bd77qPopupAction');
-  if(!title||!desc||!img||!action||!overlay())return;
-  title.textContent=String(config.title||'');
-  desc.textContent=String(config.description||'');
+  title.textContent=String(config.title||'');desc.textContent=String(config.description||'');
   const imageUrl=String(config.imageUrl||'').trim();
-  if(/^https?:\/\//i.test(imageUrl)){img.src=imageUrl;img.style.display='block';}
-  else{img.removeAttribute('src');img.style.display='none';}
+  if(/^https?:\/\//i.test(imageUrl)){img.src=imageUrl;img.style.display='block';}else{img.removeAttribute('src');img.style.display='none';}
   const clickUrl=String(config.clickUrl||'').trim();
   if(!/^https?:\/\//i.test(clickUrl))return;
-  action.href=clickUrl;
-  action.textContent=String(config.buttonText||'এখনই দেখুন');
-  overlay().style.display='flex';shown=true;
+  action.href=clickUrl;action.textContent=String(config.buttonText||'এখনই দেখুন');
+  $('bd77qPopupBanner').style.display='flex';shown=true;
  }
- const closeBtn=$('bd77qPopupClose'),banner=overlay(),action=$('bd77qPopupAction');
- if(closeBtn)closeBtn.addEventListener('click',hideFor24h);
- if(banner)banner.addEventListener('click',e=>{if(e.target===banner)hideFor24h();});
- if(action)action.addEventListener('click',hideFor24h);
+ $('bd77qPopupClose').addEventListener('click',hideFor24h);
+ $('bd77qPopupBanner').addEventListener('click',e=>{if(e.target===$('bd77qPopupBanner'))hideFor24h();});
+ $('bd77qPopupAction').addEventListener('click',()=>{hideFor24h();});
  function init(){
   if(!window.fbDb||!window.fbRef||!window.fbOnValue){setTimeout(init,500);return;}
-  window.fbOnValue(window.fbRef(window.fbDb,'settings/popupBanner'),s=>{
-   config=s&&s.exists()?(s.val()||{}):null;
-   if(!config||config.active!==true){hideImmediately();return;}
-   showIfReady();
-  });
-  if(document.body)observer=new MutationObserver(showIfReady);
-  if(observer)observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});
+  window.fbOnValue(window.fbRef(window.fbDb,'settings/popupBanner'),s=>{config=s.exists()?(s.val()||{}):null;if(!config||config.active!==true){$('bd77qPopupBanner').style.display='none';shown=false;return;}showIfReady();});
+  if(document.body)new MutationObserver(showIfReady).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});
   setInterval(showIfReady,1000);
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
