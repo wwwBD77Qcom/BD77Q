@@ -4235,5 +4235,66 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
 })();
 </script>
 
+
+<!-- VIP PREMIUM POPUP: separate from the existing standard popup banner -->
+<style id="bd77q-vip-premium-popup-style">
+#bd77qVipPremiumPopup{display:none;position:fixed;inset:0;z-index:100100;align-items:center;justify-content:center;padding:18px;background:rgba(2,4,15,.86);backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)}
+#bd77qVipPremiumPopup.show{display:flex;animation:bd77qVipFade .22s ease-out}
+#bd77qVipPremiumPopup .vip-premium-card{position:relative;width:min(94vw,460px);max-height:90vh;overflow:auto;padding:13px;border-radius:22px;border:1px solid #f6d778;background:linear-gradient(145deg,#160d2d,#081729 52%,#241038);box-shadow:0 0 0 1px #ffffff12,0 0 20px #00d9ff55,0 0 42px #a43dff66,0 0 65px #ffca4b22;animation:bd77qVipGlow 3s ease-in-out infinite alternate}
+#bd77qVipPremiumPopup .vip-premium-card:before{content:"✦  VIP PREMIUM  ✦";display:block;text-align:center;font-weight:1000;letter-spacing:2px;font-size:13px;color:#ffe8a0;text-shadow:0 0 9px #ffc94a;margin:3px 40px 11px}
+#bd77qVipPremiumPopup .vip-premium-close{position:absolute;right:9px;top:9px;z-index:3;width:35px;height:35px;padding:0;border-radius:50%;background:#080b18;color:#fff;border:1px solid #ffe08a;font-size:25px;box-shadow:0 0 12px #ffcb4a55}
+#bd77qVipPremiumPopup .vip-premium-image{display:none;width:100%;max-height:45vh;object-fit:contain;border-radius:13px;border:1px solid #ffffff25;background:#080b14}
+#bd77qVipPremiumPopup .vip-premium-title{color:#ffe58b;text-align:center;font-size:22px;font-weight:1000;margin:13px 4px 8px;text-shadow:0 0 13px #e49dff}
+#bd77qVipPremiumPopup .vip-premium-details{color:#e6e8ff;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 4px 14px;text-align:center}
+#bd77qVipPremiumPopup .vip-premium-cta{display:none;width:100%;color:#1c1230;background:linear-gradient(100deg,#ffe98c,#ffb52e,#fff0a8);border:1px solid #fff3bd;box-shadow:0 0 18px #ffbf4d55;font-weight:1000}
+@keyframes bd77qVipGlow{from{box-shadow:0 0 18px #00d9ff44,0 0 32px #a43dff44}to{box-shadow:0 0 26px #00d9ff77,0 0 48px #a43dff77,0 0 24px #ffca4b33}}
+@keyframes bd77qVipFade{from{opacity:0}to{opacity:1}}
+@media(max-width:420px){#bd77qVipPremiumPopup{padding:12px}#bd77qVipPremiumPopup .vip-premium-title{font-size:20px}}
+</style>
+<div id="bd77qVipPremiumPopup" role="dialog" aria-modal="true" aria-label="VIP Premium announcement">
+ <div class="vip-premium-card">
+  <button type="button" class="vip-premium-close" id="bd77qVipPremiumClose" aria-label="বন্ধ করুন">×</button>
+  <img class="vip-premium-image" id="bd77qVipPremiumImage" alt="VIP Premium banner">
+  <div class="vip-premium-title" id="bd77qVipPremiumTitle"></div>
+  <div class="vip-premium-details" id="bd77qVipPremiumDetails"></div>
+  <button type="button" class="vip-premium-cta" id="bd77qVipPremiumCta">বিস্তারিত দেখুন</button>
+ </div>
+</div>
+<script id="bd77q-vip-premium-popup-runtime">
+(function(){
+ 'use strict';
+ const CONFIG_PATH='settings/vipPremiumPopup',COOLDOWN=24*60*60*1000;
+ let config=null,shown=false,checking=false,observer=null,lastUser='';
+ const $=id=>document.getElementById(id);
+ function phone(){return String(window.currentUserPhone||localStorage.getItem('aviator_current_user')||'').trim();}
+ function dbReady(){return !!(window.fbDb&&window.fbRef&&window.fbOnValue&&window.fbGet&&window.fbSet);}
+ function homeVisible(){const ids=['homePage','home-page','homeScreen','home-screen','mainHome','dashboardPage'];for(const id of ids){const e=$(id);if(e&&e.offsetParent!==null&&getComputedStyle(e).display!=='none'&&getComputedStyle(e).visibility!=='hidden')return true;}return false;}
+ function inSchedule(c){const now=Date.now(),start=Number(c.startAt||c.start||0),end=Number(c.endAt||c.end||0);return (!start||now>=start)&&(!end||now<=end);}
+ function userStatePath(p){return 'users/'+p.replace(/[.#$\[\]\/]/g,'_')+'/vipPremiumPopupState';}
+ async function maybeShow(){
+  if(checking||shown||!config||config.active!==true||!inSchedule(config)||!homeVisible())return;
+  const p=phone();if(!p||!dbReady())return;
+  checking=true;
+  try{
+   const snap=await window.fbGet(window.fbRef(window.fbDb,userStatePath(p)));
+   if(p!==phone())return;
+   const state=snap&&snap.exists()?snap.val():{};const last=Number(state&&state.lastClosedAt||0);
+   if(last&&Date.now()-last<COOLDOWN)return;
+   const image=$('bd77qVipPremiumImage'),title=$('bd77qVipPremiumTitle'),details=$('bd77qVipPremiumDetails'),cta=$('bd77qVipPremiumCta');
+   const imageUrl=String(config.imageUrl||config.image||'').trim();
+   if(imageUrl&&/^https?:\/\//i.test(imageUrl)){image.src=imageUrl;image.style.display='block';image.onerror=()=>{image.style.display='none';};}else{image.removeAttribute('src');image.style.display='none';}
+   title.textContent=String(config.title||'VIP Premium Offer');details.textContent=String(config.details||config.description||'');
+   const url=String(config.clickUrl||config.link||'').trim();cta.style.display=/^https?:\/\//i.test(url)?'block':'none';cta.onclick=()=>{closePopup();window.open(url,'_blank','noopener,noreferrer');};
+   $('bd77qVipPremiumPopup').classList.add('show');shown=true;lastUser=p;
+  }catch(e){console.warn('VIP Premium popup:',e);}finally{checking=false;}
+ }
+ async function closePopup(){const p=phone();$('bd77qVipPremiumPopup').classList.remove('show');shown=false;if(!p||!dbReady())return;try{await window.fbSet(window.fbRef(window.fbDb,userStatePath(p)),{lastClosedAt:Date.now()});}catch(e){console.warn('VIP Premium cooldown save failed:',e);}}
+ $('bd77qVipPremiumClose').addEventListener('click',closePopup);
+ $('bd77qVipPremiumPopup').addEventListener('click',e=>{if(e.target===$('bd77qVipPremiumPopup'))closePopup();});
+ function init(){if(!dbReady()){setTimeout(init,700);return;}window.fbOnValue(window.fbRef(window.fbDb,CONFIG_PATH),snap=>{config=snap&&snap.exists()?(snap.val()||{}):null;maybeShow();});if(!observer&&document.body){observer=new MutationObserver(maybeShow);observer.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});}setInterval(()=>{if(lastUser!==phone()){shown=false;lastUser='';}maybeShow();},2500);}
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
+})();
+</script>
+
 </body>
 </html>
