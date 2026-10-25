@@ -657,6 +657,70 @@ input:focus,textarea:focus,select:focus{border-color:#51e5d4!important;box-shado
   <div class="card" style="display:none !important"><div style="font-size:17px;font-weight:900;margin-bottom:10px">📊 Recent Crash</div><div id="homeHistory" class="list"><div class="item"><span>Round</span><strong>Waiting...</strong></div>
 </div>
   </div>
+<footer id="bd77q-footer" aria-label="BD77Q footer">
+  <div class="bd-footer-heading">Community Websites</div>
+  <div class="bd-social-row">
+    <a class="bd-social bd-facebook" data-community-social="facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a>
+    <a class="bd-social bd-telegram" data-community-social="telegram" href="https://telegram.org/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">➤</a>
+    <a class="bd-social bd-instagram" data-community-social="instagram" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">◎</a>
+    <a class="bd-social bd-youtube" data-community-social="youtube" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a>
+  </div>
+  <div class="bd-footer-rule"></div>
+  <div class="bd-footer-heading">Payment Methods</div>
+  <div class="bd-payment-grid" aria-label="Payment methods">
+    <div class="bd-payment bd-bank"><span class="bd-bank-icon">▤</span><span><b>BANK</b><br>DEPOSIT</span></div>
+    <div class="bd-payment bd-bkash">bKash <b>➤</b></div>
+    <div class="bd-payment bd-rocket">ROCKET<br><b>রকেট</b></div>
+    <div class="bd-payment bd-nagad"><b>◉</b> নগদ</div>
+    <div class="bd-payment bd-upay"><b>u</b> উপায়</div>
+    <div class="bd-payment bd-crypto"><b>₿</b> CRYPTOCURRENCY</div>
+    <div class="bd-payment bd-ok"><b>☺</b> <span><b>ok</b> wallet<small style="display:block;font-size:9px;color:#aaa">by ONE Bank</small></span></div>
+    <div class="bd-payment bd-surecash">SureCash™</div>
+    <div class="bd-payment bd-tap"><b style="background:#e51d37;border-radius:50%;padding:5px 8px">tap</b></div>
+  </div>
+  <div class="bd-footer-rule"></div>
+  <nav class="bd-footer-links" aria-label="Information links">
+    <a href="#responsibleGaming" data-bd-footer-info="Responsible Gaming">Responsible<br>Gaming</a>
+    <a href="#aboutUs" data-bd-footer-info="About Us">About Us</a>
+    <a href="#security" data-bd-footer-info="Security">Security</a>
+    <a href="#privacyPolicy" data-bd-footer-info="Privacy Policy">Privacy Policy</a>
+    <a href="#faq" data-bd-footer-info="FAQ">FAQ</a>
+  </nav>
+</footer>
+<script id="bd77q-footer-links-runtime">
+(function(){
+  const footer=document.getElementById('bd77q-footer');
+  if(!footer)return;
+  // Admin-managed social links: Firebase settings/communityLinks. This footer exists only on Home.
+  try{
+    const cfg={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYw',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+    import('https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js').then(async function(appMod){
+      const app=appMod.getApps().find(function(x){return x.name==='bd77q-community-links-footer'})||appMod.initializeApp(cfg,'bd77q-community-links-footer');
+      const dbMod=await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js');
+      dbMod.onValue(dbMod.ref(dbMod.getDatabase(app),'settings/communityLinks'),function(snap){
+        if(!snap.exists())return; // Keep the default icons until Admin first saves settings.
+        const v=snap.val()||{};
+        ['facebook','telegram','instagram','youtube'].forEach(function(key){
+          const el=footer.querySelector('[data-community-social="'+key+'"]');if(!el)return;
+          if(!Object.prototype.hasOwnProperty.call(v,key+'Url'))return;
+          const url=String(v[key+'Url']||'').trim();
+          if(url&&/^https?:\/\//i.test(url)){el.href=url;el.style.display='inline-flex';el.target='_blank';el.rel='noopener noreferrer';}
+          else if(url===''){el.style.display='none';}
+        });
+      },function(err){console.warn('Community links Firebase sync failed',err);});
+    }).catch(function(err){console.warn('Community links Firebase initialization failed',err);});
+  }catch(err){console.warn('Community links runtime unavailable',err);}
+  footer.querySelectorAll('[data-bd-footer-info]').forEach(function(link){
+    link.addEventListener('click',function(event){
+      const target=link.getAttribute('href');
+      if(target && document.querySelector(target))return;
+      event.preventDefault();
+      const title=link.getAttribute('data-bd-footer-info');
+      alert(title+'\\nBD77Q information page');
+    });
+  });
+})();
+</script>
 </div>
 <!-- GAME SCREEN -->
   <div id="gameScreen" class="screen">
@@ -4305,51 +4369,7 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
 #bd77q-footer .bd-footer-links a:nth-child(n+4){border-top:0}
 @media(max-width:380px){#bd77q-footer .bd-footer-heading{font-size:22px}#bd77q-footer .bd-social{width:54px;height:54px;font-size:25px}#bd77q-footer .bd-payment-grid{gap:8px 5px}#bd77q-footer .bd-payment{font-size:12px}#bd77q-footer .bd-payment b{font-size:16px}#bd77q-footer .bd-footer-links a{font-size:14px;padding:5px}}
 </style>
-<footer id="bd77q-footer" aria-label="BD77Q footer">
-  <div class="bd-footer-heading">Community Websites</div>
-  <div class="bd-social-row">
-    <a class="bd-social bd-facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">f</a>
-    <a class="bd-social bd-telegram" href="https://telegram.org/" target="_blank" rel="noopener noreferrer" aria-label="Telegram">➤</a>
-    <a class="bd-social bd-instagram" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">◎</a>
-    <a class="bd-social bd-youtube" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube">▶</a>
-  </div>
-  <div class="bd-footer-rule"></div>
-  <div class="bd-footer-heading">Payment Methods</div>
-  <div class="bd-payment-grid" aria-label="Payment methods">
-    <div class="bd-payment bd-bank"><span class="bd-bank-icon">▤</span><span><b>BANK</b><br>DEPOSIT</span></div>
-    <div class="bd-payment bd-bkash">bKash <b>➤</b></div>
-    <div class="bd-payment bd-rocket">ROCKET<br><b>রকেট</b></div>
-    <div class="bd-payment bd-nagad"><b>◉</b> নগদ</div>
-    <div class="bd-payment bd-upay"><b>u</b> উপায়</div>
-    <div class="bd-payment bd-crypto"><b>₿</b> CRYPTOCURRENCY</div>
-    <div class="bd-payment bd-ok"><b>☺</b> <span><b>ok</b> wallet<small style="display:block;font-size:9px;color:#aaa">by ONE Bank</small></span></div>
-    <div class="bd-payment bd-surecash">SureCash™</div>
-    <div class="bd-payment bd-tap"><b style="background:#e51d37;border-radius:50%;padding:5px 8px">tap</b></div>
-  </div>
-  <div class="bd-footer-rule"></div>
-  <nav class="bd-footer-links" aria-label="Information links">
-    <a href="#responsibleGaming" data-bd-footer-info="Responsible Gaming">Responsible<br>Gaming</a>
-    <a href="#aboutUs" data-bd-footer-info="About Us">About Us</a>
-    <a href="#security" data-bd-footer-info="Security">Security</a>
-    <a href="#privacyPolicy" data-bd-footer-info="Privacy Policy">Privacy Policy</a>
-    <a href="#faq" data-bd-footer-info="FAQ">FAQ</a>
-  </nav>
-</footer>
-<script id="bd77q-footer-links-runtime">
-(function(){
-  const footer=document.getElementById('bd77q-footer');
-  if(!footer)return;
-  footer.querySelectorAll('[data-bd-footer-info]').forEach(function(link){
-    link.addEventListener('click',function(event){
-      const target=link.getAttribute('href');
-      if(target && document.querySelector(target))return;
-      event.preventDefault();
-      const title=link.getAttribute('data-bd-footer-info');
-      alert(title+'\\nBD77Q information page');
-    });
-  });
-})();
-</script>
+
 
 </body>
 </html>
