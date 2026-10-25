@@ -1,318 +1,326 @@
-```html
 <!DOCTYPE html>
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fortune Wheel Rewards</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@500;600;700&family=Montserrat:wght@700;800;900&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti -->
+    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Moul&family=Montserrat:wght@600;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for big wins -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
-    <!-- Firebase CDN SDKs (Compat Version for Direct Browser Script Execution) -->
+
+    <!-- Firebase CDN SDKs (Compat Version) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
 
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
         body {
             font-family: 'Hind Siliguri', sans-serif;
-            background: #020b14;
+            background-color: #060913;
             color: #ffffff;
-            overflow-x: hidden;
             touch-action: manipulation;
         }
-
-        /* Outer Glow Card Container */
-        .main-card {
-            background: linear-gradient(180deg, #051827 0%, #020c16 100%);
-            border: 1.5px solid #d4af37;
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.25), inset 0 0 15px rgba(255, 215, 0, 0.1);
+        
+        /* Glassmorphism with Dynamic Neon Glow */
+        .glass-card {
+            background: rgba(13, 19, 38, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05);
         }
 
-        /* Header Gold Ribbon Badge */
-        .gold-banner {
-            background: linear-gradient(180deg, #ff4e50 0%, #f9d423 100%);
-            border: 2px solid #fff5cc;
-            box-shadow: 0 4px 15px rgba(255, 78, 80, 0.5);
+        /* Pulsing Background Light Beams */
+        @keyframes lightPulse {
+            0%, 100% { opacity: 0.35; transform: scale(1); }
+            50% { opacity: 0.65; transform: scale(1.15); }
+        }
+        .bg-glow-amber {
+            animation: lightPulse 4s infinite ease-in-out;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.08) 55%, transparent 75%);
+        }
+        .bg-glow-purple {
+            animation: lightPulse 6s infinite ease-in-out 2s;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(126, 34, 206, 0.05) 60%, transparent 80%);
         }
 
-        /* Wheel Outer Wrapper with Dynamic Fire Glow System */
-        .wheel-container {
-            position: relative;
-            width: 310px;
-            height: 310px;
-            margin: 10px auto;
-            display: flex;
-            justify-content: centere;
-            align-items: center;
+        /* Rotating Halo Behind Wheel */
+        @keyframes haloRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .wheel-halo {
+            animation: haloRotate 12s linear infinite;
+            background: conic-gradient(from 0deg, rgba(245, 158, 11, 0.8), rgba(239, 68, 68, 0.4), rgba(168, 85, 247, 0.8), rgba(16, 185, 129, 0.4), rgba(245, 158, 11, 0.8));
+            filter: blur(25px);
         }
 
-        /* Layered Fiery Fire Ring Glow Animation */
-        .fire-aura-outer {
+        /* Glowing Neon Border Animation */
+        @keyframes borderGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.5), inset 0 0 20px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.7), inset 0 0 35px rgba(239, 68, 68, 0.4); }
+        }
+        .neon-wheel-border {
+            animation: borderGlow 3s infinite ease-in-out;
+        }
+
+        /* Pointer Pulse Animation */
+        @keyframes pointerPulse {
+            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.9)); }
+            50% { transform: translateY(-4px) scale(1.08); filter: drop-shadow(0 0 22px rgba(239, 68, 68, 1)); }
+        }
+        .animate-pointer {
+            animation: pointerPulse 1.2s infinite ease-in-out;
+        }
+
+        /* Circular LED Bulbs Around Wheel */
+        .led-bulb {
             position: absolute;
-            inset: -14px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 120, 0, 0.8) 0%, rgba(255, 30, 0, 0.5) 55%, rgba(0, 0, 0, 0) 72%);
-            animation: firePulse 0.9s infinite alternate ease-in-out;
-            pointer-events: none;
-            z-index: 1;
-            filter: drop-shadow(0 0 20px #ff3d00) drop-shadow(0 0 40px #ff8f00);
-        }
-
-        .fire-flame-ring {
-            position: absolute;
-            inset: -8px;
-            border-radius: 50%;
-            border: 5px dashed #ffab00;
-            opacity: 0.85;
-            animation: spinFireRing 5s linear infinite;
-            filter: blur(2.5px);
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        @keyframes firePulse {
-            0% { transform: scale(0.97) rotate(0deg); opacity: 0.85; filter: drop-shadow(0 0 15px #ff3d00) drop-shadow(0 0 30px #ff8f00); }
-            100% { transform: scale(1.03) rotate(3deg); opacity: 1; filter: drop-shadow(0 0 28px #ff1700) drop-shadow(0 0 50px #ffd700); }
-        }
-
-        @keyframes spinFireRing {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Canvas Wheel Display */
-        #wheelCanvas {
-            position: relative;
-            z-index: 5;
-            border-radius: 50%;
-        }
-
-        /* Pointer Needle Indicator */
-        .pointer-arrow {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 26px solid #ff1744;
-            filter: drop-shadow(0 3px 6px rgba(0,0,0,0.8));
-            z-index: 20;
-        }
-
-        /* Center GO Spin Button */
-        .center-go-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 62px;
-            height: 62px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #ffea00 0%, #ff6f00 70%, #d50000 100%);
-            border: 3px solid #ffffff;
-            box-shadow: 0 0 15px rgba(255, 234, 0, 0.9), inset 0 2px 5px rgba(255, 255, 255, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            background: #fbbf24;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px #fbbf24, 0 0 20px #f59e0b;
             z-index: 25;
-            transition: transform 0.15s ease;
+            transition: all 0.2s ease-in-out;
         }
 
-        .center-go-btn:active {
-            transform: translate(-50%, -50%) scale(0.93);
+        .led-bulb.active-glow {
+            background: #ef4444 !important;
+            box-shadow: 0 0 15px #ef4444, 0 0 30px #f87171, 0 0 45px #ff0000 !important;
+            transform: scale(1.3);
         }
 
-        .center-go-btn span {
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 900;
-            font-size: 20px;
-            color: #ffffff;
-            text-shadow: 1px 2px 4px rgba(0,0,0,0.8);
+        /* Balance Counter Scale Animation */
+        @keyframes balancePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #34d399; }
+            100% { transform: scale(1); }
+        }
+        .animate-balance-pop {
+            animation: balancePop 0.6s ease-in-out;
         }
 
-        /* Claim Button */
-        .claim-btn {
-            background: linear-gradient(180deg, #ffe082 0%, #ffa000 50%, #e65100 100%);
-            border: 1px solid #ffe57f;
-            box-shadow: 0 4px 15px rgba(255, 160, 0, 0.4);
-            font-family: 'Montserrat', sans-serif;
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
         }
-
-        /* Digital Timer Blocks */
-        .timer-box {
-            background: #000000;
-            border: 1px solid #d4af37;
-            border-radius: 6px;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 800;
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
         }
-
-        /* Ticker Animation for Recent Winners */
-        .ticker-container {
-            border: 1px solid #ffd700;
-            background: rgba(10, 25, 40, 0.85);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
-        }
-
-        /* Custom Modal Alert */
-        .modal-overlay {
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(4px);
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(245, 158, 11, 0.6);
+            border-radius: 4px;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-2 sm:p-4">
+<body class="min-h-screen w-full flex flex-col items-center justify-between p-3 sm:p-6 overflow-x-hidden select-none relative">
 
-    <!-- Main Container -->
-    <div class="main-card w-full max-w-sm rounded-2xl p-4 text-center relative overflow-hidden">
-        
-        <!-- Crown Top Graphic & Close Button -->
-        <div class="flex justify-between items-center mb-1">
-            <div class="w-8"></div>
-            <!-- Crown SVG Icon -->
-            <div class="text-amber-400 flex justify-center">
-                <svg class="w-10 h-10 drop-shadow-[0_0_8px_rgba(255,215,0,0.8)]" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M5 16L3 5l5.5 5L12 4l3.5 6L21 5l-2 11H5zm14 3c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1v-1h14v1z"/>
-                </svg>
-            </div>
-            <!-- Close Icon -->
-            <button class="text-gray-400 hover:text-white text-2xl font-bold px-2">&times;</button>
+    <!-- Ambient Lighting Background Effects -->
+    <div class="fixed top-[-10%] left-[-10%] w-[120vw] h-[60vh] bg-glow-amber pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[120vw] h-[60vh] bg-glow-purple pointer-events-none z-0"></div>
+
+    <!-- Floating Sparkles Container -->
+    <div id="sparkleContainer" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- User Account Identification Bar -->
+    <div class="w-full max-w-md lg:max-w-2xl glass-card px-3 py-2 rounded-xl border border-amber-500/30 z-10 mb-2 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-1.5 text-amber-200">
+            <span>👤 অ্যাকাউন্ট:</span>
+            <span id="displayUserId" class="font-bold font-['Montserrat'] text-emerald-400">Loading...</span>
         </div>
+        <button onclick="changeAccountPrompt()" class="bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-lg text-[11px] transition-all">
+            আইডি পরিবর্তন 🔄
+        </button>
+    </div>
 
-        <!-- Rewards Ribbon Header -->
-        <div class="gold-banner py-1 px-6 rounded-full inline-block shadow-lg mb-3">
-            <h1 class="text-xl font-extrabold text-white tracking-wide uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]">
-                Rewards
-            </h1>
-        </div>
+    <!-- Top Header & Firebase Balance Card -->
+    <header class="w-full max-w-md lg:max-w-2xl flex items-center justify-between glass-card p-3 sm:p-4 rounded-2xl shadow-2xl z-10 mb-3 border border-amber-500/30">
+        <div class="flex items-center gap-2.5">
+        <!-- Spin Button & Status -->
+        <div class="mt-8 text-center flex flex-col items-center">
+            <button id="spinBtn" onclick="spin()" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold text-xl px-8 py-4 rounded-full shadow-lg transform active:scale-95 transition-all duration-200 uppercase tracking-wider flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                🎲 স্পিন করুন 🎲
+            </button>
 
-        <!-- Secondary Title Header -->
-        <div class="mb-3">
-            <p class="text-amber-300 font-bold text-sm tracking-wide drop-shadow">
-                C - মেম্বারশিপ ডে মিশন টিকেট
-            </p>
-        </div>
-
-        <!-- Dynamic Firebase Connected User Balance Bar -->
-        <div class="bg-slate-900/90 border border-amber-500/40 rounded-xl py-1.5 px-3 mb-3 flex items-center justify-between text-xs">
-            <span class="text-slate-300 flex items-center gap-1">
-                <svg class="w-4 h-4 text-amber-400" fill="currentColor" viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-                মেইন ব্যালেন্স:
-            </span>
-            <span class="text-amber-400 font-mono font-bold text-sm">৳ <span id="fbUserBalance">0.00</span></span>
-        </div>
-
-        <!-- Dynamic Timer Bar -->
-        <div class="flex items-center justify-center gap-2 mb-3 text-xs">
-            <div class="flex items-center gap-1 text-amber-200">
-                <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span id="timerLabel">সময় বাকি আছে</span>
-            </div>
-            
-            <!-- Dynamic Digital Clock -->
-            <div class="flex items-center gap-1">
-                <div class="timer-box px-2 py-1 text-white text-sm" id="hours">12</div>
-                <span class="text-amber-400 font-bold">:</span>
-                <div class="timer-box px-2 py-1 text-white text-sm" id="minutes">00</div>
-                <span class="text-amber-400 font-bold">:</span>
-                <div class="timer-box px-2 py-1 text-white text-sm" id="seconds">00</div>
+            <!-- 24-hour Cooldown Message -->
+            <div id="cooldownMsg" class="hidden mt-4 bg-slate-800/80 border border-amber-500/30 text-amber-300 px-6 py-3 rounded-xl text-sm md:text-base font-semibold backdrop-blur-sm">
+                ⏳ পরবর্তী স্পিনের জন্য অপেক্ষা করুন: <span id="timer" class="font-mono text-amber-400 font-bold"></span>
             </div>
         </div>
 
-        <!-- ACTIVE GAME WHEEL VIEW -->
-        <div id="gameWheelSection">
-            <div class="wheel-container">
-                <!-- Dynamic Animated Fire Aura Glow Layer -->
-                <div class="fire-aura-outer"></div>
-                <div class="fire-flame-ring"></div>
-
-                <!-- Arrow Needle Pointer -->
-                <div class="pointer-arrow"></div>
-
-                <!-- Canvas Element -->
-                <canvas id="wheelCanvas" width="290" height="290"></canvas>
-
-                <!-- Center GO Button -->
-                <div class="center-go-btn" id="spinBtn">
-                    <span id="goBtnText">GO</span>
+        <!-- Dynamic Live User Balance Display -->
+        <div class="flex items-center gap-2">
+            <div class="bg-slate-950/90 border border-amber-400/50 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl flex items-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.3)] relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-yellow-400/20 to-transparent pointer-events-none"></div>
+                
+                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-b from-yellow-300 to-amber-600 flex items-center justify-center font-bold text-slate-950 text-xs sm:text-sm shadow-[0_0_10px_#f59e0b] animate-pulse">
+                    ৳
+                </div>
+                
+                <div class="flex flex-col items-end">
+                    <span class="text-[9px] sm:text-[10px] text-amber-200/80 uppercase tracking-wider font-semibold">আপনার অ্যাকাউন্ট ব্যালেন্স</span>
+                    <div class="text-lg sm:text-2xl font-black text-amber-300 flex items-center gap-0.5 font-['Montserrat'] drop-shadow-[0_0_12px_rgba(245,158,11,0.9)]">
+                        <span id="userBalance" class="transition-all duration-300">0</span>
+                    </div>
                 </div>
             </div>
-
-            <!-- Claim Reward Action Button -->
-            <button id="claimBtn" class="claim-btn w-full py-2.5 rounded-full text-slate-950 font-black text-lg tracking-wider transition hover:brightness-110 active:scale-95 my-3">
-                Claim
-            </button>
-
-            <!-- Progress Bar Indicator -->
-            <div class="w-full bg-slate-900/90 rounded-full h-3 p-0.5 border border-slate-700 mb-3">
-                <div id="progressBar" class="bg-gradient-to-r from-amber-500 to-yellow-300 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
-            </div>
         </div>
+    </header>
 
-        <!-- HIDDEN COOLDOWN/EXPIRED STATE CONTAINER -->
-        <div id="cooldownSection" class="hidden my-8 py-8 px-4 border border-amber-500/40 bg-slate-900/80 rounded-2xl">
-            <div class="w-16 h-16 bg-amber-500/10 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-3 border border-amber-500/30">
-                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-            </div>
-            <h3 class="text-lg font-bold text-amber-300 mb-2" id="cooldownTitle">আজকের সুযোগ শেষ!</h3>
-            <p class="text-xs text-slate-300 mb-4" id="cooldownMsg">আপনি ইতোমধ্যে আপনার আজকের অফারটি ক্লেইম করেছেন। পরবর্তী অফার পেতে অপেক্ষা করুন:</p>
+    <!-- Main Game Section -->
+    <main class="w-full max-w-md lg:max-w-xl flex-1 flex flex-col items-center justify-center my-auto z-10 relative">
+        
+        <!-- Wheel Outer Box with LED Ring -->
+        <div id="wheelWrapper" class="relative w-full aspect-square max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] p-2 flex items-center justify-center">
             
-            <div class="flex items-center justify-center gap-1.5 font-mono text-xl font-black text-amber-400">
-                <span id="coolHours" class="bg-black border border-amber-500/50 px-3 py-1.5 rounded-lg">24</span> :
-                <span id="coolMins" class="bg-black border border-amber-500/50 px-3 py-1.5 rounded-lg">00</span> :
-                <span id="coolSecs" class="bg-black border border-amber-500/50 px-3 py-1.5 rounded-lg">00</span>
+            <!-- Dynamic Rotating Halo Light -->
+            <div class="absolute inset-2 rounded-full wheel-halo opacity-70 pointer-events-none"></div>
+
+            <!-- Pointer Arrow -->
+            <div class="absolute -top-1 z-30 w-8 sm:w-10 h-10 sm:h-12 flex justify-center items-center animate-pointer">
+                <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 48L37.3205 18H2.67949L20 48Z" fill="#EF4444" filter="drop-shadow(0 0 6px #ef4444)"/>
+                    <path d="M20 40L32 16H8L20 40Z" fill="#F59E0B"/>
+                    <circle cx="20" cy="12" r="8" fill="#FBBF24" filter="drop-shadow(0 0 8px #fbbf24)"/>
+                </svg>
+            </div>
+
+            <!-- Circular LED Bulbs (12 bulbs around wheel) -->
+            <div id="ledRingContainer" class="absolute inset-0 pointer-events-none"></div>
+
+            <!-- Glowing Outer Border Wheel Ring -->
+            <div class="w-full h-full rounded-full border-4 sm:border-8 border-amber-400/60 p-2 sm:p-3 glass-card neon-wheel-border relative flex items-center justify-center">
+                
+                <!-- Canvas Wheel -->
+                <canvas id="wheelCanvas" class="w-full h-full rounded-full cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.8)]"></canvas>
+
+                <!-- Center Spin Button -->
+                <button id="spinBtn" onclick="spinWheel()" class="absolute z-20 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-300 rounded-full border-4 border-slate-950 shadow-[0_0_30px_rgba(245,158,11,0.9)] flex flex-col items-center justify-center font-black text-slate-950 hover:scale-105 active:scale-95 transition-all duration-200">
+                    <span class="text-xs sm:text-sm leading-none font-extrabold uppercase tracking-wider">SPIN</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold opacity-90">ঘুরান</span>
+                </button>
             </div>
         </div>
 
-        <!-- Winner Live Ticker Feed -->
-        <div class="ticker-container rounded-xl p-2.5 text-left text-xs">
-            <div class="flex items-center gap-2 border-b border-amber-500/30 pb-1.5 mb-1.5">
-                <svg class="w-5 h-5 text-amber-400" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0011 15.9V18H8v2h8v-2h-3v-2.1c2.22-.4 3.88-2.18 3.99-4.44C19.39 10.87 21 8.8 21 6.3V5c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/>
-                </svg>
-                <span class="font-bold text-amber-300 uppercase tracking-wider">সাম্প্রতিক বিজয়ী তালিকা (ফায়ারবেস লাইভ)</span>
-            </div>
+        <!-- Cooldown Timer -->
+        <div id="cooldownTimer" class="mt-3 text-xs sm:text-sm font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/40 px-5 py-2 rounded-xl hidden text-center backdrop-blur-md shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+            ⏳ পরবর্তী স্পিন: <span id="timerText" class="font-bold font-['Montserrat'] text-amber-400">24:00:00</span>
+        </div>
+    </main>
 
-            <!-- Auto-Scrolling Live Feed Container -->
-            <div class="space-y-1.5 text-amber-100/90 font-mono transition-all duration-500 overflow-hidden h-14" id="tickerList">
-                <!-- Real Firebase items render dynamically here -->
+    <!-- Recent Winners Live Feed Section -->
+    <footer class="w-full max-w-md lg:max-w-2xl glass-card rounded-2xl p-3 sm:p-4 border border-amber-500/30 z-10 mt-4">
+        <div class="flex items-center justify-between mb-2">
+            <h2 class="text-xs sm:text-sm font-bold text-amber-200 flex items-center gap-1.5 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]"></span>
+                সর্বশেষ বিজয়ী তালিকা (রিয়েল-টাইম)
+            </h2>
+            <span class="text-[10px] text-slate-400">ফায়ারবেস আপডেট</span>
+        </div>
+
+        <div id="winnersList" class="h-20 sm:h-24 overflow-y-auto custom-scrollbar space-y-1.5 pr-1">
+            <div class="text-center text-slate-400 text-xs py-4">ডাটা লোড হচ্ছে...</div>
+        </div>
+    </footer>
+
+    <!-- Account Selection / Change Modal -->
+    <div id="accountModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-lg flex items-center justify-center p-4 hidden">
+        <div class="glass-card border border-amber-400/60 rounded-3xl p-5 w-full max-w-xs text-center shadow-[0_0_50px_rgba(245,158,11,0.4)]">
+            <h3 class="text-base font-bold text-amber-300 mb-2">ইউজার অ্যাকাউন্ট আইডি দিন</h3>
+            <p class="text-xs text-slate-300 mb-3">আপনার অ্যাকাউন্ট ব্যালেন্স দেখতে আপনার ইউনিক ইউজার আইডি বা ফোন নাম্বারটি দিন:</p>
+            <input type="text" id="accountInput" placeholder="যেমন: 01700000000" class="w-full bg-slate-900 border border-amber-500/50 rounded-xl px-3 py-2 text-center text-amber-300 font-bold font-['Montserrat'] focus:outline-none focus:border-amber-400 mb-3 text-sm">
+            <div class="flex gap-2">
+                <button onclick="saveUserAccount()" class="flex-1 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-bold py-2 rounded-xl text-xs uppercase">সেভ করুন</button>
+                <button onclick="closeAccountModal()" class="px-3 bg-slate-800 text-slate-300 font-bold py-2 rounded-xl text-xs">বাতিল</button>
             </div>
         </div>
     </div>
 
-    <!-- Win / Status Custom Modal -->
-    <div id="rewardModal" class="modal-overlay fixed inset-0 flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-slate-900 border-2 border-amber-400 rounded-2xl p-6 text-center max-w-xs w-full shadow-2xl">
-            <div class="w-16 h-16 bg-amber-400/20 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
-                </svg>
-            </div>
-            <h3 class="text-xl font-bold text-amber-300 mb-1" id="modalTitle">অভিনন্দন!</h3>
-            <p class="text-white text-sm mb-4" id="modalMsg">আপনি বিজয়ী হয়েছেন!</p>
-            
-            <button id="addWalletBtn" onclick="claimRewardToFirebase()" class="w-full py-2.5 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 font-black text-sm rounded-lg shadow-lg hover:brightness-110 active:scale-95 transition">
-                ব্যালেন্সে ক্লেইম করুন 💰
+    <!-- Win Modal Popup -->
+    <div id="winModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-lg flex items-center justify-center p-4 hidden">
+        <div class="glass-card border border-amber-400/60 rounded-3xl p-6 w-full max-w-xs text-center shadow-[0_0_50px_rgba(245,158,11,0.4)] transform transition-all scale-95 opacity-0 relative overflow-hidden" id="modalContent">
+            <div class="absolute inset-0 bg-gradient-to-b from-amber-500/20 to-transparent pointer-events-none"></div>
+            <div class="text-5xl mb-2 animate-bounce">🎉</div>
+            <h3 class="text-lg sm:text-xl font-black text-amber-300 drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]">অভিনন্দন!</h3>
+            <p class="text-sm text-slate-300 mt-1">আপনি জিতেছেন</p>
+            <div class="text-3xl sm:text-4xl font-black text-emerald-300 my-3 font-['Montserrat'] drop-shadow-[0_0_15px_rgba(52,211,153,0.8)]" id="rewardDisplay">৳5</div>
+            <button onclick="claimReward()" class="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-400 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black py-3 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.6)] active:scale-95 transition-all text-sm uppercase tracking-wider">
+                ব্যালেন্স ক্লেইম করুন 💰
             </button>
         </div>
     </div>
 
-    <!-- Firebase Script & App Mechanics -->
+    <!-- Firebase Logic & Interactive LED Control -->
     <script>
-        // --- 1. FIREBASE INITIALIZATION ---
+        // Create 12 Circular LED Lights around Wheel Rim
+        function createLEDRing() {
+            const container = document.getElementById('ledRingContainer');
+            container.innerHTML = '';
+            const bulbCount = 12;
+            const radiusPercent = 47; // Radius ratio inside container
+
+            for (let i = 0; i < bulbCount; i++) {
+                const bulb = document.createElement('div');
+                bulb.className = 'led-bulb';
+                const angle = (i * (360 / bulbCount)) * (Math.PI / 180);
+                
+                // Position around circle center (50%, 50%)
+                const x = 50 + radiusPercent * Math.cos(angle);
+                const y = 50 + radiusPercent * Math.sin(angle);
+
+                bulb.style.left = `calc(${x}% - 7px)`;
+                bulb.style.top = `calc(${y}% - 7px)`;
+                container.appendChild(bulb);
+            }
+        }
+
+        // Animate Circular LED Lights
+        let ledInterval = null;
+        function startLEDSpeed(speed = 400) {
+            clearInterval(ledInterval);
+            const bulbs = document.querySelectorAll('.led-bulb');
+            let step = 0;
+            ledInterval = setInterval(() => {
+                bulbs.forEach((bulb, idx) => {
+                    if ((idx + step) % 2 === 0) {
+                        bulb.classList.add('active-glow');
+                    } else {
+                        bulb.classList.remove('active-glow');
+                    }
+                });
+                step++;
+            }, speed);
+        }
+
+        // Floating Sparkles
+        function createSparkles() {
+            const container = document.getElementById('sparkleContainer');
+            for (let i = 0; i < 25; i++) {
+                const sparkle = document.createElement('div');
+                const size = Math.random() * 4 + 2;
+                sparkle.style.position = 'absolute';
+                sparkle.style.width = `${size}px`;
+                sparkle.style.height = `${size}px`;
+                sparkle.style.backgroundColor = ['#f59e0b', '#ec4899', '#3b82f6', '#10b981'][Math.floor(Math.random() * 4)];
+                sparkle.style.borderRadius = '50%';
+                sparkle.style.top = `${Math.random() * 100}%`;
+                sparkle.style.left = `${Math.random() * 100}%`;
+                sparkle.style.opacity = Math.random() * 0.7 + 0.3;
+                sparkle.style.boxShadow = `0 0 10px ${sparkle.style.backgroundColor}`;
+                sparkle.style.animation = `lightPulse ${Math.random() * 3 + 2}s infinite ease-in-out ${Math.random() * 2}s`;
+                container.appendChild(sparkle);
+            }
+        }
+
+        // Firebase Setup
         const firebaseConfig = {
             apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
             authDomain: "uk77-56f6d.firebaseapp.com",
@@ -325,451 +333,1115 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        if (firebase.analytics) firebase.analytics();
+        const db = firebase.database();
 
-        // Unique User Identification Logic
-        let userId = localStorage.getItem("firebase_wheel_uid");
-        if (!userId) {
-            userId = "usr_" + Math.random().toString(36).substring(2, 10);
-            localStorage.setItem("firebase_wheel_uid", userId);
+        // Automatic Account Identification Logic
+        function detectUserAccount() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let detectedId = urlParams.get('uid') || urlParams.get('user_id') || urlParams.get('phone') || urlParams.get('number');
+
+            // 1. Check if Android App WebView Bridge provides the user number/ID automatically
+            if (!detectedId && window.Android) {
+                if (typeof window.Android.getUserNumber === 'function') {
+                    detectedId = window.Android.getUserNumber();
+                } else if (typeof window.Android.getUserId === 'function') {
+                    detectedId = window.Android.getUserId();
+                }
+            }
+
+            // 2. Fallback to LocalStorage if already logged in before
+            if (!detectedId) {
+                detectedId = localStorage.getItem('app_user_uid');
+            }
+
+            // 3. Fallback to Auto-Generated Guest ID if no ID found
+            if (!detectedId) {
+                detectedId = 'usr_' + Math.floor(100000 + Math.random() * 900000);
+            }
+
+            // Save for persistence
+            localStorage.setItem('app_user_uid', detectedId);
+            return detectedId;
         }
 
-        let userPhone = "01" + Math.floor(3 + Math.random() * 7) + "******" + Math.floor(10 + Math.random() * 90);
-        let fbLastSpinTime = null;
-        let fbSessionStartTime = null;
-        let fbUserCurrentBalance = 0;
+        let userId = detectUserAccount();
+        document.getElementById('displayUserId').innerText = userId;
 
-        // Sync User Data with Firebase
-        const userRef = database.ref('users/' + userId);
-
-        userRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                fbUserCurrentBalance = data.balance || 0;
-                fbLastSpinTime = data.lastSpinTime || null;
-                fbSessionStartTime = data.sessionStart || null;
-                if (data.phone) userPhone = data.phone;
-            } else {
-                // Initialize default user record in Firebase
-                fbSessionStartTime = Date.now();
-                userRef.set({
-                    userId: userId,
-                    phone: userPhone,
-                    balance: 0,
-                    sessionStart: fbSessionStartTime,
-                    lastSpinTime: null
-                });
-            }
-
-            document.getElementById("fbUserBalance").innerText = fbUserCurrentBalance.toFixed(2);
-            evaluateStateAndTimers();
-        });
-
-        // Sync Live Recent Winners Ticker Stream from Firebase
-        const winnersRef = database.ref('recent_winners').limitToLast(5);
-        winnersRef.on('value', (snapshot) => {
-            const tickerList = document.getElementById("tickerList");
-            if (!tickerList) return;
-            tickerList.innerHTML = "";
-
-            const items = [];
-            snapshot.forEach(child => {
-                items.unshift(child.val());
-            });
-
-            if (items.length === 0) {
-                // Fallback display if database is empty initially
-                renderTickerItem("017******19", 500);
-                renderTickerItem("019******43", 300);
-                renderTickerItem("018******82", 3);
-            } else {
-                items.forEach(w => {
-                    renderTickerItem(w.phone || "017******00", w.amount || 1);
-                });
-            }
-        });
-
-        // --- 2. WHEEL CONFIGURATION ---
-        const slices = [
-            { label: "৳ ১", value: 1, weight: 35, bg: "#FFFDF0" },
-            { label: "৳ ৩", value: 3, weight: 30, bg: "#FFFFFF" },
-            { label: "৳ ৫", value: 5, weight: 20, bg: "#FFFDF0" },
-            { label: "৳ ৭", value: 7, weight: 12, bg: "#FFFFFF" },
-            { label: "৳ ২৫", value: 25, weight: 2, bg: "#FFFDF0" },
-            { label: "৳ ১০০", value: 100, weight: 0.7, bg: "#FFFFFF" },
-            { label: "৳ ২০০", value: 200, weight: 0.2, bg: "#FFFDF0" },
-            { label: "৳ ৫০০", value: 500, weight: 0.1, bg: "#FFFFFF" }
-        ];
-
-        let pendingWinAmount = 0;
-
-        function renderTickerItem(phone, amount) {
-            const tickerList = document.getElementById("tickerList");
-            if (!tickerList) return;
-            const newItem = document.createElement("div");
-            newItem.className = "flex justify-between items-center text-amber-200 text-[11px] font-mono py-0.5 border-b border-amber-500/10";
-            newItem.innerHTML = `<span>${phone}</span><span class="text-amber-400 font-bold">৳ ${amount}.00</span>`;
-            tickerList.appendChild(newItem);
-
-            if (tickerList.children.length > 4) {
-                tickerList.removeChild(tickerList.firstChild);
-            }
-        }
-
-        // --- 3. CLAIM REWARD TO FIREBASE ---
-        function claimRewardToFirebase() {
-            const now = Date.now();
-            const newBalance = fbUserCurrentBalance + pendingWinAmount;
-
-            // Update User Profile in Firebase
-            userRef.update({
-                balance: newBalance,
-                lastSpinTime: now
-            });
-
-            // Push Winner Notification Entry to Firebase
-            database.ref('recent_winners').push({
-                userId: userId,
-                phone: userPhone,
-                amount: pendingWinAmount,
-                timestamp: now
-            });
-
-            // PostMessage trigger for external container app integration
-            if (window.parent) {
-                window.parent.postMessage({
-                    type: "CLAIM_REWARD",
-                    amount: pendingWinAmount
-                }, "*");
-            }
-
-            closeModal();
-        }
-
-        const numSlices = slices.length;
-        const sliceAngle = (Math.PI * 2) / numSlices;
-        
-        const canvas = document.getElementById("wheelCanvas");
-        const ctx = canvas.getContext("2d");
-        const spinBtn = document.getElementById("spinBtn");
-        const claimBtn = document.getElementById("claimBtn");
-        const progressBar = document.getElementById("progressBar");
-
-        const gameWheelSection = document.getElementById("gameWheelSection");
-        const cooldownSection = document.getElementById("cooldownSection");
-
-        let currentAngle = 0;
+        let userBalanceVal = 0;
+        let lastSpinTimestamp = 0;
+        let currentReward = 0;
         let isSpinning = false;
+        let currentRotation = 0;
+        const COOLDOWN_HOURS = 24;
+        const COOLDOWN_MS = COOLDOWN_HOURS * 60 * 60 * 1000;
 
-        const TWELVE_HOURS_MS = 12 * 60 * 60 * 1000;
-        const TWENTYFOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+        // Initialize check on load
+        window.onload = function() {
+            drawWheel();
+            checkCooldown();
+            setInterval(checkCooldown, 1000); // Update countdown live
+        };
 
-        // Audio System
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        // Check 24-hour cooldown state
+        function checkCooldown() {
+            const lastSpinTime = localStorage.getItem('lastSpinTime');
+            const spinBtn = document.getElementById('spinBtn');
+            const cooldownMsg = document.getElementById('cooldownMsg');
+            const timerSpan = document.getElementById('timer');
 
-        function playTickSound() {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(700, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
-                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + 0.04);
-            } catch(e) {}
+            if (lastSpinTime) {
+                const now = new Date().getTime();
+                const timePassed = now - parseInt(lastSpinTime);
+                
+                if (timePassed < COOLDOWN_MS) {
+                    const remainingTime = COOLDOWN_MS - timePassed;
+                    
+                    // Disable button
+                    spinBtn.disabled = true;
+                    cooldownMsg.classList.remove('hidden');
+
+                    // Calculate hours, minutes, seconds
+                    const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                    // Format time text
+                    const hStr = String(hours).padStart(2, '0');
+                    const mStr = String(minutes).padStart(2, '0');
+                    const sStr = String(seconds).padStart(2, '0');
+
+                    timerSpan.innerText = `${hStr} ঘণ্টা ${mStr} মিনিট ${sStr} সেকেন্ড`;
+                    return true;
+                }
+            }
+
+            // Enable button if no cooldown
+            spinBtn.disabled = false;
+            cooldownMsg.classList.add('hidden');
+            return false;
         }
 
-        function playWinSound() {
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const notes = [523.25, 659.25, 783.99, 1046.50];
-                notes.forEach((freq, idx) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.type = 'triangle';
-                    osc.frequency.value = freq;
-                    gain.gain.setValueAtTime(0.25, audioCtx.currentTime + idx * 0.09);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + idx * 0.09 + 0.35);
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.start(audioCtx.currentTime + idx * 0.09);
-                    osc.stop(audioCtx.currentTime + idx * 0.09 + 0.35);
-                });
-            } catch(e) {}
+        // Spin Logic
+        function spin() {
+            if (isSpinning) return;
+            if (checkCooldown()) return; // Double check cooldown
+
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+
+            // Random rotation (min 5 spins + random segment offset)
+            const numSegments = rewards.length;
+            const segmentAngle = 360 / numSegments;
+            const randomIndex = Math.floor(Math.random() * numSegments);
+            const extraSpins = 5 * 360; 
+            
+            // Calculate final rotation
+            const targetRotation = currentRotation + extraSpins + (360 - (randomIndex * segmentAngle)) - (currentRotation % 360);
+            currentRotation = targetRotation;
+
+            const wheelCanvas = document.getElementById('wheelCanvas');
+            wheelCanvas.style.transition = 'transform 4s cubic-bezier(0.15, 0.99, 0.35, 1)';
+            wheelCanvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            // On Spin Completion
+            setTimeout(() => {
+                isSpinning = false;
+                
+                // Save current timestamp to localStorage
+                localStorage.setItem('lastSpinTime', new Date().getTime().toString());
+
+                // Show reward message
+                const wonReward = rewards[randomIndex];
+                showModal(wonReward.text);
+
+                // Update UI state with timer
+                checkCooldown();
+            }, 4000);
         }
 
-        // Draw Money Bag Icon
-        function drawMoneyBag(context, x, y, size) {
-            context.save();
-            context.translate(x, y);
-            context.fillStyle = "#d97706";
-            context.beginPath();
-            context.arc(0, size * 0.2, size * 0.75, 0, Math.PI * 2);
-            context.fill();
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
 
-            context.fillStyle = "#92400e";
-            context.fillRect(-size * 0.4, -size * 0.6, size * 0.8, size * 0.35);
-
-            context.fillStyle = "#fef08a";
-            context.font = "bold 9px sans-serif";
-            context.textAlign = "center";
-            context.textBaseline = "middle";
-            context.fillText("৳", 0, size * 0.2);
-            context.restore();
+        function setupCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            drawWheel();
         }
 
-        // Draw Fortune Wheel
         function drawWheel() {
-            const width = canvas.width;
-            const height = canvas.height;
+            const rect = canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
             const centerX = width / 2;
             const centerY = height / 2;
-            const outerRadius = width / 2 - 12;
-            const innerRadius = 30;
+            const radius = width / 2;
+            const arc = (2 * Math.PI) / segments.length;
 
             ctx.clearRect(0, 0, width, height);
 
-            // Outer Rim
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, outerRadius + 8, 0, Math.PI * 2);
-            const goldGrad = ctx.createRadialGradient(centerX, centerY, outerRadius, centerX, centerY, outerRadius + 10);
-            goldGrad.addColorStop(0, '#ffe57f');
-            goldGrad.addColorStop(0.5, '#ff9800');
-            goldGrad.addColorStop(1, '#b71c1c');
-            ctx.fillStyle = goldGrad;
-            ctx.fill();
-            ctx.restore();
-
-            // Draw Slices
-            for (let i = 0; i < numSlices; i++) {
-                const startAngle = currentAngle + i * sliceAngle;
-                const endAngle = startAngle + sliceAngle;
-
+            segments.forEach((seg, i) => {
+                const angle = currentAngle + i * arc;
+                
                 ctx.beginPath();
+                ctx.fillStyle = seg.color;
                 ctx.moveTo(centerX, centerY);
-                ctx.arc(centerX, centerY, outerRadius, startAngle, endAngle);
-                ctx.closePath();
-
-                ctx.fillStyle = slices[i].bg;
+                ctx.arc(centerX, centerY, radius, angle, angle + arc);
+                ctx.lineTo(centerX, centerY);
                 ctx.fill();
 
-                ctx.strokeStyle = "#f59e0b";
-                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+                ctx.lineWidth = 2.5;
                 ctx.stroke();
 
                 ctx.save();
                 ctx.translate(centerX, centerY);
-                ctx.rotate(startAngle + sliceAngle / 2);
-
-                ctx.fillStyle = "#78350f";
-                ctx.font = "bold 13px 'Hind Siliguri', sans-serif";
+                ctx.rotate(angle + arc / 2);
                 ctx.textAlign = "right";
-                ctx.textBaseline = "middle";
-                ctx.fillText(slices[i].label, outerRadius - 34, 0);
-
-                drawMoneyBag(ctx, outerRadius - 16, 0, 9);
+                ctx.fillStyle = "#FFFFFF";
+                ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+                ctx.shadowBlur = 6;
+                ctx.font = `bold ${Math.max(13, width / 20)}px 'Hind Siliguri', sans-serif`;
+                ctx.fillText(seg.text, radius - 22, 6);
                 ctx.restore();
-            }
-
-            // Outer Perimeter Lights
-            const numLights = 18;
-            for (let i = 0; i < numLights; i++) {
-                const angle = (i * Math.PI * 2) / numLights;
-                const lx = centerX + (outerRadius + 4) * Math.cos(angle);
-                const ly = centerY + (outerRadius + 4) * Math.sin(angle);
-
-                ctx.beginPath();
-                ctx.arc(lx, ly, 3.5, 0, Math.PI * 2);
-                ctx.fillStyle = (Math.floor(Date.now() / 200) + i) % 2 === 0 ? "#ffffff" : "#ffea00";
-                ctx.shadowColor = "#ffab00";
-                ctx.shadowBlur = 5;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-            }
-
-            // Center Ring Frame
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, innerRadius + 4, 0, Math.PI * 2);
-            ctx.fillStyle = "#d84315";
-            ctx.fill();
+            });
         }
 
-        // Weighted Random Selector (Small amounts have high odds)
-        function getWeightedRandomSliceIndex() {
-            const totalWeight = slices.reduce((sum, slice) => sum + slice.weight, 0);
-            let randomNum = Math.random() * totalWeight;
+        window.addEventListener('resize', () => {
+            createLEDRing();
+            setupCanvas();
+        });
 
-            for (let i = 0; i < slices.length; i++) {
-                if (randomNum < slices[i].weight) {
-                    return i;
+        window.onload = () => {
+            createSparkles();
+            createLEDRing();
+            startLEDSpeed(400);
+            setupCanvas();
+            listenFirebaseUserData();
+            listenLiveWinners();
+        };
+
+        function listenFirebaseUserData() {
+            if (userRefListener) userRefListener.off();
+
+            document.getElementById('displayUserId').innerText = userId;
+            const userRef = db.ref('users/' + userId);
+            
+            userRefListener = userRef;
+            userRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data === null) {
+                    // Create default account if non-existent
+                    db.ref('users/' + userId).set({
+                        balance: 0,
+                        lastSpinTime: 0,
+                        createdAt: Date.now()
+                    });
+                    userBalanceVal = 0;
+                    lastSpinTimestamp = 0;
+                } else {
+                    userBalanceVal = data.balance || 0;
+                    lastSpinTimestamp = data.lastSpinTime || 0;
                 }
-                randomNum -= slices[i].weight;
-            }
-            return 0;
+
+                const balanceEl = document.getElementById('userBalance');
+                balanceEl.innerText = userBalanceVal;
+
+                document.getElementById('userStatus').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#34d399]"></span> সংযুক্ত আছে`;
+                checkCooldown();
+            });
         }
 
-        // Spin Action
+        function changeAccountPrompt() {
+            document.getElementById('accountInput').value = userId;
+            document.getElementById('accountModal').classList.remove('hidden');
+        }
+
+        function closeAccountModal() {
+            document.getElementById('accountModal').classList.add('hidden');
+        }
+
+        function saveUserAccount() {
+            const inputVal = document.getElementById('accountInput').value.trim();
+            if (inputVal) {
+                userId = inputVal;
+                localStorage.setItem('app_user_uid', userId);
+                closeAccountModal();
+                listenFirebaseUserData();
+            }
+        }
+
+        function checkCooldown() {
+            const now = Date.now();
+            const timePassed = now - lastSpinTimestamp;
+            const cooldownPeriod = 24 * 60 * 60 * 1000;
+
+            if (timePassed < cooldownPeriod) {
+                const remaining = cooldownPeriod - timePassed;
+                const hours = Math.floor(remaining / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+                document.getElementById('cooldownTimer').classList.remove('hidden');
+                document.getElementById('timerText').innerText = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                document.getElementById('spinBtn').disabled = true;
+                document.getElementById('spinBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                document.getElementById('cooldownTimer').classList.add('hidden');
+                document.getElementById('spinBtn').disabled = false;
+                document.getElementById('spinBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        setInterval(checkCooldown, 1000);
+
         function spinWheel() {
             if (isSpinning) return;
 
+            const now = Date.now();
+            if (now - lastSpinTimestamp < 24 * 60 * 60 * 1000) {
+                alert("আপনি ২৪ ঘণ্টায় একবার মাত্র ঘুরিয়ে সুবিধা নিতে পারবেন!");
+                return;
+            }
+
             isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
 
-            const winningIndex = getWeightedRandomSliceIndex();
-            const targetSliceCenter = winningIndex * sliceAngle + sliceAngle / 2;
-            const arrowAngle = 3 * Math.PI / 2;
+            // Fast blinking LED lights during spinning
+            startLEDSpeed(80);
+
+            // 99% Controlled Weighted Index Selection
+            const selectedIndex = getWeightedRandomSegmentIndex();
+            const segmentArc = (2 * Math.PI) / segments.length;
             
-            let targetAngle = arrowAngle - targetSliceCenter;
-            targetAngle = targetAngle % (Math.PI * 2);
-            if (targetAngle < 0) targetAngle += Math.PI * 2;
+            const extraSpins = 6 * 2 * Math.PI;
+            const stopAngle = extraSpins + (3 * Math.PI / 2) - (selectedIndex * segmentArc + segmentArc / 2);
 
-            const fullRotations = 6 * (Math.PI * 2);
-            const finalAngle = currentAngle + fullRotations + (targetAngle - (currentAngle % (Math.PI * 2)));
-
-            const spinDuration = 4200;
             const startTime = performance.now();
-            const startAngle = currentAngle;
-            let lastTickIndex = -1;
+            const duration = 4800;
 
-            function animateSpin(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / spinDuration, 1);
-                const easeOut = 1 - Math.pow(1 - progress, 4);
-
-                currentAngle = startAngle + (finalAngle - startAngle) * easeOut;
-
-                const currentPassedSlice = Math.floor((currentAngle % (Math.PI * 2)) / sliceAngle);
-                if (currentPassedSlice !== lastTickIndex) {
-                    playTickSound();
-                    lastTickIndex = currentPassedSlice;
-                }
+            function animate(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                currentAngle = easeOut * stopAngle;
 
                 drawWheel();
 
                 if (progress < 1) {
-                    requestAnimationFrame(animateSpin);
+                    requestAnimationFrame(animate);
                 } else {
                     isSpinning = false;
-                    const wonSlice = slices[winningIndex];
-                    pendingWinAmount = wonSlice.value;
-
-                    if (typeof confetti === 'function') {
-                        confetti({ particleCount: 80, spread: 70, origin: { y: 0.6 } });
-                    }
-                    playWinSound();
-
-                    setTimeout(() => {
-                        showModal("অভিনন্দন! 🎉", `আপনি পেয়েছেন ${wonSlice.label}! এটি ফায়ারবেস ব্যালেন্স যোগ করতে নিচের বাটনে ক্লিক করুন।`);
-                        if (progressBar) progressBar.style.width = "100%";
-                    }, 300);
+                    startLEDSpeed(400); // Reset LED speed
+                    currentReward = segments[selectedIndex].value;
+                    showWinModal(currentReward);
                 }
             }
 
-            requestAnimationFrame(animateSpin);
+            requestAnimationFrame(animate);
         }
 
-        function showModal(title, msg) {
-            document.getElementById("modalTitle").innerText = title;
-            document.getElementById("modalMsg").innerText = msg;
-            document.getElementById("rewardModal").classList.remove("hidden");
+        function showWinModal(amount) {
+            document.getElementById('rewardDisplay').innerText = "৳" + amount;
+            const modal = document.getElementById('winModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            confetti({
+                particleCount: 120,
+                spread: 90,
+                origin: { y: 0.6 }
+            });
         }
 
-        function closeModal() {
-            document.getElementById("rewardModal").classList.add("hidden");
-            evaluateStateAndTimers();
-        }
+        function claimReward() {
+            const modal = document.getElementById('winModal');
+            modal.classList.add('hidden');
 
-        // Timer Engine with Firebase Synchronized Expiration Rules
-        function evaluateStateAndTimers() {
+            const updatedBalance = userBalanceVal + currentReward;
             const now = Date.now();
 
-            if (fbLastSpinTime) {
-                const elapsedSpun = now - fbLastSpinTime;
-                if (elapsedSpun < TWENTYFOUR_HOURS_MS) {
-                    gameWheelSection.classList.add("hidden");
-                    cooldownSection.classList.remove("hidden");
-                    
-                    document.getElementById("cooldownTitle").innerText = "আজকের অফার শেষ!";
-                    document.getElementById("cooldownMsg").innerText = "আপনি আপনার স্পিন সুযোগটি ইতোমধ্যে গ্রহণ করেছেন। ২৪ ঘণ্টা পর আবার পাবেন:";
-                    document.getElementById("timerLabel").innerText = "পরবর্তী স্পিন সময়";
+            // Instant UI Balance Pop Animation
+            const balanceEl = document.getElementById('userBalance');
+            balanceEl.innerText = updatedBalance;
+            balanceEl.classList.add('animate-balance-pop');
+            setTimeout(() => balanceEl.classList.remove('animate-balance-pop'), 600);
 
-                    const remainingCooldown = TWENTYFOUR_HOURS_MS - elapsedSpun;
-                    updateClockDisplay(remainingCooldown);
-                    return;
-                } else {
-                    // Reset Spin state after 24h
-                    userRef.update({
-                        lastSpinTime: null,
-                        sessionStart: now
+            // Save balance & spin timestamp directly to Firebase under User ID node
+            db.ref('users/' + userId).update({
+                balance: updatedBalance,
+                lastSpinTime: now
+            });
+
+            // Push win item to recent_winners node
+            db.ref('recent_winners').push({
+                phone: userId,
+                amount: currentReward,
+                timestamp: now
+            });
+
+            if (window.parent || window.Android) {
+                const payload = { type: "CLAIM_REWARD", amount: currentReward, userId: userId };
+                if (window.parent) window.parent.postMessage(payload, "*");
+                if (window.Android && window.Android.addBalance) window.Android.addBalance(currentReward);
+            }
+        }
+
+        function listenLiveWinners() {
+            const winnersRef = db.ref('recent_winners').limitToLast(6);
+            winnersRef.on('value', (snapshot) => {
+                const winnersList = document.getElementById('winnersList');
+                winnersList.innerHTML = '';
+                
+                const data = snapshot.val();
+                if (data) {
+                    Object.values(data).reverse().forEach(winner => {
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between text-xs bg-slate-900/80 px-3 py-1.5 rounded-lg border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]";
+                        const maskUser = winner.phone ? (winner.phone.length > 5 ? winner.phone.substring(0, 3) + '***' + winner.phone.substring(winner.phone.length - 2) : winner.phone) : 'Anonymous';
+                        div.innerHTML = `
+                            <span class="text-slate-200 font-medium">ইউজার ${maskUser}</span>
+                            <span class="text-emerald-400 font-bold font-['Montserrat'] drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]">+৳${winner.amount}</span>
+                        `;
+                        winnersList.appendChild(div);
                     });
+                } else {
+                    winnersList.innerHTML = `<div class="text-center text-slate-400 text-xs py-3">এখনো কোনো বিজয়ী নেই</div>`;
+                }
+            });
+        }
+    </script>
+</body>
+</html<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fortune Wheel Rewards</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rye&family=Moul&family=Montserrat:wght@600;800;900&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti for big wins -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <!-- Firebase CDN SDKs (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #060913;
+            color: #ffffff;
+            touch-action: manipulation;
+        }
+        
+        /* Glassmorphism with Dynamic Neon Glow */
+        .glass-card {
+            background: rgba(13, 19, 38, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            box-shadow: 0 0 25px rgba(245, 158, 11, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        /* Pulsing Background Light Beams */
+        @keyframes lightPulse {
+            0%, 100% { opacity: 0.35; transform: scale(1); }
+            50% { opacity: 0.65; transform: scale(1.15); }
+        }
+        .bg-glow-amber {
+            animation: lightPulse 4s infinite ease-in-out;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.3) 0%, rgba(217, 119, 6, 0.08) 55%, transparent 75%);
+        }
+        .bg-glow-purple {
+            animation: lightPulse 6s infinite ease-in-out 2s;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.25) 0%, rgba(126, 34, 206, 0.05) 60%, transparent 80%);
+        }
+
+        /* Rotating Halo Behind Wheel */
+        @keyframes haloRotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .wheel-halo {
+            animation: haloRotate 12s linear infinite;
+            background: conic-gradient(from 0deg, rgba(245, 158, 11, 0.8), rgba(239, 68, 68, 0.4), rgba(168, 85, 247, 0.8), rgba(16, 185, 129, 0.4), rgba(245, 158, 11, 0.8));
+            filter: blur(25px);
+        }
+
+        /* Glowing Neon Border Animation */
+        @keyframes borderGlow {
+            0%, 100% { box-shadow: 0 0 30px rgba(245, 158, 11, 0.5), inset 0 0 20px rgba(245, 158, 11, 0.3); }
+            50% { box-shadow: 0 0 60px rgba(239, 68, 68, 0.7), inset 0 0 35px rgba(239, 68, 68, 0.4); }
+        }
+        .neon-wheel-border {
+            animation: borderGlow 3s infinite ease-in-out;
+        }
+
+        /* Pointer Pulse Animation */
+        @keyframes pointerPulse {
+            0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 12px rgba(245, 158, 11, 0.9)); }
+            50% { transform: translateY(-4px) scale(1.08); filter: drop-shadow(0 0 22px rgba(239, 68, 68, 1)); }
+        }
+        .animate-pointer {
+            animation: pointerPulse 1.2s infinite ease-in-out;
+        }
+
+        /* Circular LED Bulbs Around Wheel */
+        .led-bulb {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fbbf24;
+            border: 2px solid #fff;
+            box-shadow: 0 0 10px #fbbf24, 0 0 20px #f59e0b;
+            z-index: 25;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .led-bulb.active-glow {
+            background: #ef4444 !important;
+            box-shadow: 0 0 15px #ef4444, 0 0 30px #f87171, 0 0 45px #ff0000 !important;
+            transform: scale(1.3);
+        }
+
+        /* Balance Counter Scale Animation */
+        @keyframes balancePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); color: #34d399; }
+            100% { transform: scale(1); }
+        }
+        .animate-balance-pop {
+            animation: balancePop 0.6s ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(245, 158, 11, 0.6);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen w-full flex flex-col items-center justify-between p-3 sm:p-6 overflow-x-hidden select-none relative">
+
+    <!-- Ambient Lighting Background Effects -->
+    <div class="fixed top-[-10%] left-[-10%] w-[120vw] h-[60vh] bg-glow-amber pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[120vw] h-[60vh] bg-glow-purple pointer-events-none z-0"></div>
+
+    <!-- Floating Sparkles Container -->
+    <div id="sparkleContainer" class="fixed inset-0 pointer-events-none z-0 overflow-hidden"></div>
+
+    <!-- User Account Identification Bar -->
+    <div class="w-full max-w-md lg:max-w-2xl glass-card px-3 py-2 rounded-xl border border-amber-500/30 z-10 mb-2 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-1.5 text-amber-200">
+            <span>👤 অ্যাকাউন্ট:</span>
+            <span id="displayUserId" class="font-bold font-['Montserrat'] text-emerald-400">Loading...</span>
+        </div>
+        <button onclick="changeAccountPrompt()" class="bg-amber-500/20 hover:bg-amber-500/40 text-amber-300 border border-amber-500/40 px-2.5 py-1 rounded-lg text-[11px] transition-all">
+            আইডি পরিবর্তন 🔄
+        </button>
+    </div>
+
+    <!-- Top Header & Firebase Balance Card -->
+    <header class="w-full max-w-md lg:max-w-2xl flex items-center justify-between glass-card p-3 sm:p-4 rounded-2xl shadow-2xl z-10 mb-3 border border-amber-500/30">
+        <div class="flex items-center gap-2.5">
+        <!-- Spin Button & Status -->
+        <div class="mt-8 text-center flex flex-col items-center">
+            <button id="spinBtn" onclick="spin()" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold text-xl px-8 py-4 rounded-full shadow-lg transform active:scale-95 transition-all duration-200 uppercase tracking-wider flex items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed">
+                🎲 স্পিন করুন 🎲
+            </button>
+
+            <!-- 24-hour Cooldown Message -->
+            <div id="cooldownMsg" class="hidden mt-4 bg-slate-800/80 border border-amber-500/30 text-amber-300 px-6 py-3 rounded-xl text-sm md:text-base font-semibold backdrop-blur-sm">
+                ⏳ পরবর্তী স্পিনের জন্য অপেক্ষা করুন: <span id="timer" class="font-mono text-amber-400 font-bold"></span>
+            </div>
+        </div>
+
+        <!-- Dynamic Live User Balance Display -->
+        <div class="flex items-center gap-2">
+            <div class="bg-slate-950/90 border border-amber-400/50 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl flex items-center gap-2 shadow-[0_0_20px_rgba(245,158,11,0.3)] relative overflow-hidden group">
+                <div class="absolute inset-0 bg-gradient-to-r from-amber-500/10 via-yellow-400/20 to-transparent pointer-events-none"></div>
+                
+                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-b from-yellow-300 to-amber-600 flex items-center justify-center font-bold text-slate-950 text-xs sm:text-sm shadow-[0_0_10px_#f59e0b] animate-pulse">
+                    ৳
+                </div>
+                
+                <div class="flex flex-col items-end">
+                    <span class="text-[9px] sm:text-[10px] text-amber-200/80 uppercase tracking-wider font-semibold">আপনার অ্যাকাউন্ট ব্যালেন্স</span>
+                    <div class="text-lg sm:text-2xl font-black text-amber-300 flex items-center gap-0.5 font-['Montserrat'] drop-shadow-[0_0_12px_rgba(245,158,11,0.9)]">
+                        <span id="userBalance" class="transition-all duration-300">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Game Section -->
+    <main class="w-full max-w-md lg:max-w-xl flex-1 flex flex-col items-center justify-center my-auto z-10 relative">
+        
+        <!-- Wheel Outer Box with LED Ring -->
+        <div id="wheelWrapper" class="relative w-full aspect-square max-w-[320px] sm:max-w-[380px] lg:max-w-[420px] p-2 flex items-center justify-center">
+            
+            <!-- Dynamic Rotating Halo Light -->
+            <div class="absolute inset-2 rounded-full wheel-halo opacity-70 pointer-events-none"></div>
+
+            <!-- Pointer Arrow -->
+            <div class="absolute -top-1 z-30 w-8 sm:w-10 h-10 sm:h-12 flex justify-center items-center animate-pointer">
+                <svg width="40" height="48" viewBox="0 0 40 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 48L37.3205 18H2.67949L20 48Z" fill="#EF4444" filter="drop-shadow(0 0 6px #ef4444)"/>
+                    <path d="M20 40L32 16H8L20 40Z" fill="#F59E0B"/>
+                    <circle cx="20" cy="12" r="8" fill="#FBBF24" filter="drop-shadow(0 0 8px #fbbf24)"/>
+                </svg>
+            </div>
+
+            <!-- Circular LED Bulbs (12 bulbs around wheel) -->
+            <div id="ledRingContainer" class="absolute inset-0 pointer-events-none"></div>
+
+            <!-- Glowing Outer Border Wheel Ring -->
+            <div class="w-full h-full rounded-full border-4 sm:border-8 border-amber-400/60 p-2 sm:p-3 glass-card neon-wheel-border relative flex items-center justify-center">
+                
+                <!-- Canvas Wheel -->
+                <canvas id="wheelCanvas" class="w-full h-full rounded-full cursor-pointer shadow-[0_0_20px_rgba(0,0,0,0.8)]"></canvas>
+
+                <!-- Center Spin Button -->
+                <button id="spinBtn" onclick="spinWheel()" class="absolute z-20 w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-tr from-amber-400 via-orange-500 to-yellow-300 rounded-full border-4 border-slate-950 shadow-[0_0_30px_rgba(245,158,11,0.9)] flex flex-col items-center justify-center font-black text-slate-950 hover:scale-105 active:scale-95 transition-all duration-200">
+                    <span class="text-xs sm:text-sm leading-none font-extrabold uppercase tracking-wider">SPIN</span>
+                    <span class="text-[9px] sm:text-[10px] font-bold opacity-90">ঘুরান</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Cooldown Timer -->
+        <div id="cooldownTimer" class="mt-3 text-xs sm:text-sm font-semibold text-amber-300 bg-amber-500/10 border border-amber-500/40 px-5 py-2 rounded-xl hidden text-center backdrop-blur-md shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+            ⏳ পরবর্তী স্পিন: <span id="timerText" class="font-bold font-['Montserrat'] text-amber-400">24:00:00</span>
+        </div>
+    </main>
+
+    <!-- Recent Winners Live Feed Section -->
+    <footer class="w-full max-w-md lg:max-w-2xl glass-card rounded-2xl p-3 sm:p-4 border border-amber-500/30 z-10 mt-4">
+        <div class="flex items-center justify-between mb-2">
+            <h2 class="text-xs sm:text-sm font-bold text-amber-200 flex items-center gap-1.5 drop-shadow-[0_0_5px_rgba(245,158,11,0.5)]">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_#34d399]"></span>
+                সর্বশেষ বিজয়ী তালিকা (রিয়েল-টাইম)
+            </h2>
+            <span class="text-[10px] text-slate-400">ফায়ারবেস আপডেট</span>
+        </div>
+
+        <div id="winnersList" class="h-20 sm:h-24 overflow-y-auto custom-scrollbar space-y-1.5 pr-1">
+            <div class="text-center text-slate-400 text-xs py-4">ডাটা লোড হচ্ছে...</div>
+        </div>
+    </footer>
+
+    <!-- Account Selection / Change Modal -->
+    <div id="accountModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-lg flex items-center justify-center p-4 hidden">
+        <div class="glass-card border border-amber-400/60 rounded-3xl p-5 w-full max-w-xs text-center shadow-[0_0_50px_rgba(245,158,11,0.4)]">
+            <h3 class="text-base font-bold text-amber-300 mb-2">ইউজার অ্যাকাউন্ট আইডি দিন</h3>
+            <p class="text-xs text-slate-300 mb-3">আপনার অ্যাকাউন্ট ব্যালেন্স দেখতে আপনার ইউনিক ইউজার আইডি বা ফোন নাম্বারটি দিন:</p>
+            <input type="text" id="accountInput" placeholder="যেমন: 01700000000" class="w-full bg-slate-900 border border-amber-500/50 rounded-xl px-3 py-2 text-center text-amber-300 font-bold font-['Montserrat'] focus:outline-none focus:border-amber-400 mb-3 text-sm">
+            <div class="flex gap-2">
+                <button onclick="saveUserAccount()" class="flex-1 bg-gradient-to-r from-amber-500 to-yellow-400 text-slate-950 font-bold py-2 rounded-xl text-xs uppercase">সেভ করুন</button>
+                <button onclick="closeAccountModal()" class="px-3 bg-slate-800 text-slate-300 font-bold py-2 rounded-xl text-xs">বাতিল</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Win Modal Popup -->
+    <div id="winModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-lg flex items-center justify-center p-4 hidden">
+        <div class="glass-card border border-amber-400/60 rounded-3xl p-6 w-full max-w-xs text-center shadow-[0_0_50px_rgba(245,158,11,0.4)] transform transition-all scale-95 opacity-0 relative overflow-hidden" id="modalContent">
+            <div class="absolute inset-0 bg-gradient-to-b from-amber-500/20 to-transparent pointer-events-none"></div>
+            <div class="text-5xl mb-2 animate-bounce">🎉</div>
+            <h3 class="text-lg sm:text-xl font-black text-amber-300 drop-shadow-[0_0_10px_rgba(245,158,11,0.8)]">অভিনন্দন!</h3>
+            <p class="text-sm text-slate-300 mt-1">আপনি জিতেছেন</p>
+            <div class="text-3xl sm:text-4xl font-black text-emerald-300 my-3 font-['Montserrat'] drop-shadow-[0_0_15px_rgba(52,211,153,0.8)]" id="rewardDisplay">৳5</div>
+            <button onclick="claimReward()" class="w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-400 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-black py-3 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.6)] active:scale-95 transition-all text-sm uppercase tracking-wider">
+                ব্যালেন্স ক্লেইম করুন 💰
+            </button>
+        </div>
+    </div>
+
+    <!-- Firebase Logic & Interactive LED Control -->
+    <script>
+        // Create 12 Circular LED Lights around Wheel Rim
+        function createLEDRing() {
+            const container = document.getElementById('ledRingContainer');
+            container.innerHTML = '';
+            const bulbCount = 12;
+            const radiusPercent = 47; // Radius ratio inside container
+
+            for (let i = 0; i < bulbCount; i++) {
+                const bulb = document.createElement('div');
+                bulb.className = 'led-bulb';
+                const angle = (i * (360 / bulbCount)) * (Math.PI / 180);
+                
+                // Position around circle center (50%, 50%)
+                const x = 50 + radiusPercent * Math.cos(angle);
+                const y = 50 + radiusPercent * Math.sin(angle);
+
+                bulb.style.left = `calc(${x}% - 7px)`;
+                bulb.style.top = `calc(${y}% - 7px)`;
+                container.appendChild(bulb);
+            }
+        }
+
+        // Animate Circular LED Lights
+        let ledInterval = null;
+        function startLEDSpeed(speed = 400) {
+            clearInterval(ledInterval);
+            const bulbs = document.querySelectorAll('.led-bulb');
+            let step = 0;
+            ledInterval = setInterval(() => {
+                bulbs.forEach((bulb, idx) => {
+                    if ((idx + step) % 2 === 0) {
+                        bulb.classList.add('active-glow');
+                    } else {
+                        bulb.classList.remove('active-glow');
+                    }
+                });
+                step++;
+            }, speed);
+        }
+
+        // Floating Sparkles
+        function createSparkles() {
+            const container = document.getElementById('sparkleContainer');
+            for (let i = 0; i < 25; i++) {
+                const sparkle = document.createElement('div');
+                const size = Math.random() * 4 + 2;
+                sparkle.style.position = 'absolute';
+                sparkle.style.width = `${size}px`;
+                sparkle.style.height = `${size}px`;
+                sparkle.style.backgroundColor = ['#f59e0b', '#ec4899', '#3b82f6', '#10b981'][Math.floor(Math.random() * 4)];
+                sparkle.style.borderRadius = '50%';
+                sparkle.style.top = `${Math.random() * 100}%`;
+                sparkle.style.left = `${Math.random() * 100}%`;
+                sparkle.style.opacity = Math.random() * 0.7 + 0.3;
+                sparkle.style.boxShadow = `0 0 10px ${sparkle.style.backgroundColor}`;
+                sparkle.style.animation = `lightPulse ${Math.random() * 3 + 2}s infinite ease-in-out ${Math.random() * 2}s`;
+                container.appendChild(sparkle);
+            }
+        }
+
+        // Firebase Setup
+        const firebaseConfig = {
+            apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
+            authDomain: "uk77-56f6d.firebaseapp.com",
+            databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
+            projectId: "uk77-56f6d",
+            storageBucket: "uk77-56f6d.firebasestorage.app",
+            messagingSenderId: "1062783431056",
+            appId: "1:1062783431056:web:c44fd51195cf4061998315",
+            measurementId: "G-C0ST13Q8PJ"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        // Automatic Account Identification Logic
+        function detectUserAccount() {
+            const urlParams = new URLSearchParams(window.location.search);
+            let detectedId = urlParams.get('uid') || urlParams.get('user_id') || urlParams.get('phone') || urlParams.get('number');
+
+            // 1. Check if Android App WebView Bridge provides the user number/ID automatically
+            if (!detectedId && window.Android) {
+                if (typeof window.Android.getUserNumber === 'function') {
+                    detectedId = window.Android.getUserNumber();
+                } else if (typeof window.Android.getUserId === 'function') {
+                    detectedId = window.Android.getUserId();
                 }
             }
 
-            const sessionStartMs = fbSessionStartTime || now;
-            const elapsedUnspun = now - sessionStartMs;
-
-            if (elapsedUnspun >= TWENTYFOUR_HOURS_MS) {
-                userRef.update({ sessionStart: now });
-                gameWheelSection.classList.remove("hidden");
-                cooldownSection.classList.add("hidden");
-            } else if (elapsedUnspun >= TWELVE_HOURS_MS) {
-                gameWheelSection.classList.add("hidden");
-                cooldownSection.classList.remove("hidden");
-
-                document.getElementById("cooldownTitle").innerText = "অফারটির সময় শেষ!";
-                document.getElementById("cooldownMsg").innerText = "১২ ঘণ্টার মধ্যে ক্লেইম না করায় অফারটির মেয়াদ শেষ হয়েছে। নতুন অফার আসবে:";
-                document.getElementById("timerLabel").innerText = "রিসেট হতে সময় বাকি";
-
-                const remainingReset = TWENTYFOUR_HOURS_MS - elapsedUnspun;
-                updateClockDisplay(remainingReset);
-                return;
-            } else {
-                gameWheelSection.classList.remove("hidden");
-                cooldownSection.classList.add("hidden");
-                document.getElementById("timerLabel").innerText = "মেয়াদ শেষ হতে বাকি";
-
-                const remainingActiveTime = TWELVE_HOURS_MS - elapsedUnspun;
-                updateClockDisplay(remainingActiveTime);
+            // 2. Fallback to LocalStorage if already logged in before
+            if (!detectedId) {
+                detectedId = localStorage.getItem('app_user_uid');
             }
+
+            // 3. Fallback to Auto-Generated Guest ID if no ID found
+            if (!detectedId) {
+                detectedId = 'usr_' + Math.floor(100000 + Math.random() * 900000);
+            }
+
+            // Save for persistence
+            localStorage.setItem('app_user_uid', detectedId);
+            return detectedId;
         }
 
-        function updateClockDisplay(ms) {
-            const hrs = Math.floor(ms / (1000 * 60 * 60));
-            const mins = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60));
-            const secs = Math.floor((ms % (1000 * 60)) / 1000);
+        let userId = detectUserAccount();
+        document.getElementById('displayUserId').innerText = userId;
 
-            const format = num => num.toString().padStart(2, '0');
+        let userBalanceVal = 0;
+        let lastSpinTimestamp = 0;
+        let currentReward = 0;
+        let isSpinning = false;
+        let currentRotation = 0;
+        const COOLDOWN_HOURS = 24;
+        const COOLDOWN_MS = COOLDOWN_HOURS * 60 * 60 * 1000;
 
-            document.getElementById("hours").innerText = format(hrs);
-            document.getElementById("minutes").innerText = format(mins);
-            document.getElementById("seconds").innerText = format(secs);
-
-            document.getElementById("coolHours").innerText = format(hrs);
-            document.getElementById("coolMins").innerText = format(secs);
-            document.getElementById("coolSecs").innerText = format(secs);
-        }
-
-        setInterval(evaluateStateAndTimers, 1000);
-
-        spinBtn.addEventListener("click", spinWheel);
-        claimBtn.addEventListener("click", spinWheel);
-
-        setInterval(() => {
-            if (!isSpinning && !gameWheelSection.classList.contains("hidden")) {
-                drawWheel();
-            }
-        }, 200);
-
+        // Initialize check on load
         window.onload = function() {
             drawWheel();
-            evaluateStateAndTimers();
+            checkCooldown();
+            setInterval(checkCooldown, 1000); // Update countdown live
         };
+
+        // Check 24-hour cooldown state
+        function checkCooldown() {
+            const lastSpinTime = localStorage.getItem('lastSpinTime');
+            const spinBtn = document.getElementById('spinBtn');
+            const cooldownMsg = document.getElementById('cooldownMsg');
+            const timerSpan = document.getElementById('timer');
+
+            if (lastSpinTime) {
+                const now = new Date().getTime();
+                const timePassed = now - parseInt(lastSpinTime);
+                
+                if (timePassed < COOLDOWN_MS) {
+                    const remainingTime = COOLDOWN_MS - timePassed;
+                    
+                    // Disable button
+                    spinBtn.disabled = true;
+                    cooldownMsg.classList.remove('hidden');
+
+                    // Calculate hours, minutes, seconds
+                    const hours = Math.floor(remainingTime / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+                    // Format time text
+                    const hStr = String(hours).padStart(2, '0');
+                    const mStr = String(minutes).padStart(2, '0');
+                    const sStr = String(seconds).padStart(2, '0');
+
+                    timerSpan.innerText = `${hStr} ঘণ্টা ${mStr} মিনিট ${sStr} সেকেন্ড`;
+                    return true;
+                }
+            }
+
+            // Enable button if no cooldown
+            spinBtn.disabled = false;
+            cooldownMsg.classList.add('hidden');
+            return false;
+        }
+
+        // Spin Logic
+        function spin() {
+            if (isSpinning) return;
+            if (checkCooldown()) return; // Double check cooldown
+
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+
+            // Random rotation (min 5 spins + random segment offset)
+            const numSegments = rewards.length;
+            const segmentAngle = 360 / numSegments;
+            const randomIndex = Math.floor(Math.random() * numSegments);
+            const extraSpins = 5 * 360; 
+            
+            // Calculate final rotation
+            const targetRotation = currentRotation + extraSpins + (360 - (randomIndex * segmentAngle)) - (currentRotation % 360);
+            currentRotation = targetRotation;
+
+            const wheelCanvas = document.getElementById('wheelCanvas');
+            wheelCanvas.style.transition = 'transform 4s cubic-bezier(0.15, 0.99, 0.35, 1)';
+            wheelCanvas.style.transform = `rotate(${currentRotation}deg)`;
+
+            // On Spin Completion
+            setTimeout(() => {
+                isSpinning = false;
+                
+                // Save current timestamp to localStorage
+                localStorage.setItem('lastSpinTime', new Date().getTime().toString());
+
+                // Show reward message
+                const wonReward = rewards[randomIndex];
+                showModal(wonReward.text);
+
+                // Update UI state with timer
+                checkCooldown();
+            }, 4000);
+        }
+
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function setupCanvas() {
+            const rect = canvas.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+            canvas.width = rect.width * dpr;
+            canvas.height = rect.height * dpr;
+            ctx.scale(dpr, dpr);
+            drawWheel();
+        }
+
+        function drawWheel() {
+            const rect = canvas.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = width / 2;
+            const arc = (2 * Math.PI) / segments.length;
+
+            ctx.clearRect(0, 0, width, height);
+
+            segments.forEach((seg, i) => {
+                const angle = currentAngle + i * arc;
+                
+                ctx.beginPath();
+                ctx.fillStyle = seg.color;
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, radius, angle, angle + arc);
+                ctx.lineTo(centerX, centerY);
+                ctx.fill();
+
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
+                ctx.lineWidth = 2.5;
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle + arc / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = "#FFFFFF";
+                ctx.shadowColor = "rgba(0, 0, 0, 0.8)";
+                ctx.shadowBlur = 6;
+                ctx.font = `bold ${Math.max(13, width / 20)}px 'Hind Siliguri', sans-serif`;
+                ctx.fillText(seg.text, radius - 22, 6);
+                ctx.restore();
+            });
+        }
+
+        window.addEventListener('resize', () => {
+            createLEDRing();
+            setupCanvas();
+        });
+
+        window.onload = () => {
+            createSparkles();
+            createLEDRing();
+            startLEDSpeed(400);
+            setupCanvas();
+            listenFirebaseUserData();
+            listenLiveWinners();
+        };
+
+        function listenFirebaseUserData() {
+            if (userRefListener) userRefListener.off();
+
+            document.getElementById('displayUserId').innerText = userId;
+            const userRef = db.ref('users/' + userId);
+            
+            userRefListener = userRef;
+            userRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data === null) {
+                    // Create default account if non-existent
+                    db.ref('users/' + userId).set({
+                        balance: 0,
+                        lastSpinTime: 0,
+                        createdAt: Date.now()
+                    });
+                    userBalanceVal = 0;
+                    lastSpinTimestamp = 0;
+                } else {
+                    userBalanceVal = data.balance || 0;
+                    lastSpinTimestamp = data.lastSpinTime || 0;
+                }
+
+                const balanceEl = document.getElementById('userBalance');
+                balanceEl.innerText = userBalanceVal;
+
+                document.getElementById('userStatus').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#34d399]"></span> সংযুক্ত আছে`;
+                checkCooldown();
+            });
+        }
+
+        function changeAccountPrompt() {
+            document.getElementById('accountInput').value = userId;
+            document.getElementById('accountModal').classList.remove('hidden');
+        }
+
+        function closeAccountModal() {
+            document.getElementById('accountModal').classList.add('hidden');
+        }
+
+        function saveUserAccount() {
+            const inputVal = document.getElementById('accountInput').value.trim();
+            if (inputVal) {
+                userId = inputVal;
+                localStorage.setItem('app_user_uid', userId);
+                closeAccountModal();
+                listenFirebaseUserData();
+            }
+        }
+
+        function checkCooldown() {
+            const now = Date.now();
+            const timePassed = now - lastSpinTimestamp;
+            const cooldownPeriod = 24 * 60 * 60 * 1000;
+
+            if (timePassed < cooldownPeriod) {
+                const remaining = cooldownPeriod - timePassed;
+                const hours = Math.floor(remaining / (1000 * 60 * 60));
+                const minutes = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((remaining % (1000 * 60)) / 1000);
+
+                document.getElementById('cooldownTimer').classList.remove('hidden');
+                document.getElementById('timerText').innerText = 
+                    `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                document.getElementById('spinBtn').disabled = true;
+                document.getElementById('spinBtn').classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                document.getElementById('cooldownTimer').classList.add('hidden');
+                document.getElementById('spinBtn').disabled = false;
+                document.getElementById('spinBtn').classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        setInterval(checkCooldown, 1000);
+
+        function spinWheel() {
+            if (isSpinning) return;
+
+            const now = Date.now();
+            if (now - lastSpinTimestamp < 24 * 60 * 60 * 1000) {
+                alert("আপনি ২৪ ঘণ্টায় একবার মাত্র ঘুরিয়ে সুবিধা নিতে পারবেন!");
+                return;
+            }
+
+            isSpinning = true;
+            document.getElementById('spinBtn').disabled = true;
+
+            // Fast blinking LED lights during spinning
+            startLEDSpeed(80);
+
+            // 99% Controlled Weighted Index Selection
+            const selectedIndex = getWeightedRandomSegmentIndex();
+            const segmentArc = (2 * Math.PI) / segments.length;
+            
+            const extraSpins = 6 * 2 * Math.PI;
+            const stopAngle = extraSpins + (3 * Math.PI / 2) - (selectedIndex * segmentArc + segmentArc / 2);
+
+            const startTime = performance.now();
+            const duration = 4800;
+
+            function animate(time) {
+                const elapsed = time - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const easeOut = 1 - Math.pow(1 - progress, 3);
+                currentAngle = easeOut * stopAngle;
+
+                drawWheel();
+
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                } else {
+                    isSpinning = false;
+                    startLEDSpeed(400); // Reset LED speed
+                    currentReward = segments[selectedIndex].value;
+                    showWinModal(currentReward);
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        function showWinModal(amount) {
+            document.getElementById('rewardDisplay').innerText = "৳" + amount;
+            const modal = document.getElementById('winModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            confetti({
+                particleCount: 120,
+                spread: 90,
+                origin: { y: 0.6 }
+            });
+        }
+
+        function claimReward() {
+            const modal = document.getElementById('winModal');
+            modal.classList.add('hidden');
+
+            const updatedBalance = userBalanceVal + currentReward;
+            const now = Date.now();
+
+            // Instant UI Balance Pop Animation
+            const balanceEl = document.getElementById('userBalance');
+            balanceEl.innerText = updatedBalance;
+            balanceEl.classList.add('animate-balance-pop');
+            setTimeout(() => balanceEl.classList.remove('animate-balance-pop'), 600);
+
+            // Save balance & spin timestamp directly to Firebase under User ID node
+            db.ref('users/' + userId).update({
+                balance: updatedBalance,
+                lastSpinTime: now
+            });
+
+            // Push win item to recent_winners node
+            db.ref('recent_winners').push({
+                phone: userId,
+                amount: currentReward,
+                timestamp: now
+            });
+
+            if (window.parent || window.Android) {
+                const payload = { type: "CLAIM_REWARD", amount: currentReward, userId: userId };
+                if (window.parent) window.parent.postMessage(payload, "*");
+                if (window.Android && window.Android.addBalance) window.Android.addBalance(currentReward);
+            }
+        }
+
+        function listenLiveWinners() {
+            const winnersRef = db.ref('recent_winners').limitToLast(6);
+            winnersRef.on('value', (snapshot) => {
+                const winnersList = document.getElementById('winnersList');
+                winnersList.innerHTML = '';
+                
+                const data = snapshot.val();
+                if (data) {
+                    Object.values(data).reverse().forEach(winner => {
+                        const div = document.createElement('div');
+                        div.className = "flex items-center justify-between text-xs bg-slate-900/80 px-3 py-1.5 rounded-lg border border-amber-500/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]";
+                        const maskUser = winner.phone ? (winner.phone.length > 5 ? winner.phone.substring(0, 3) + '***' + winner.phone.substring(winner.phone.length - 2) : winner.phone) : 'Anonymous';
+                        div.innerHTML = `
+                            <span class="text-slate-200 font-medium">ইউজার ${maskUser}</span>
+                            <span class="text-emerald-400 font-bold font-['Montserrat'] drop-shadow-[0_0_5px_rgba(52,211,153,0.5)]">+৳${winner.amount}</span>
+                        `;
+                        winnersList.appendChild(div);
+                    });
+                } else {
+                    winnersList.innerHTML = `<div class="text-center text-slate-400 text-xs py-3">এখনো কোনো বিজয়ী নেই</div>`;
+                }
+            });
+        }
     </script>
 </body>
 </html>
