@@ -4206,25 +4206,49 @@ button.cash,#authScreen button[onclick*="bd77qGoogleSignup"],#authScreen button[
 })();
 </script>
 
-<!-- ADMIN-CONTROLLED LINK POPUP: auto-hide for 24 hours after dismiss/use -->
-<style>#bd77qPopupBanner{position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.82);padding:18px}#bd77qPopupBanner .bd77q-pop-card{position:relative;width:min(94vw,460px);box-sizing:border-box;background:linear-gradient(145deg,#101827,#25113d);border:1px solid #f6c453;border-radius:18px;padding:22px 16px 18px;text-align:center;color:#fff;box-shadow:0 0 28px #f6c45355}#bd77qPopupBanner img{display:block;width:100%;max-height:45vh;object-fit:contain;border-radius:10px;margin:0 auto 12px}#bd77qPopupBanner .bd77q-pop-close{position:absolute;right:7px;top:7px;width:34px;height:34px;border:0;border-radius:50%;background:#111;color:white;font-size:24px;cursor:pointer;z-index:2}#bd77qPopupTitle{font-size:22px;font-weight:900;color:#ffda83;margin:8px 24px 10px}#bd77qPopupDescription{font-size:15px;line-height:1.55;color:#e5e7eb;margin:8px 0 16px;white-space:pre-wrap}#bd77qPopupAction{display:inline-block;padding:12px 22px;border-radius:10px;background:linear-gradient(90deg,#f6c453,#ffdf8c);color:#201400;font-weight:900;text-decoration:none}</style>
-<div id="bd77qPopupBanner" role="dialog" aria-modal="true" aria-label="Announcement popup"><div class="bd77q-pop-card"><button class="bd77q-pop-close" id="bd77qPopupClose" aria-label="বন্ধ করুন">×</button><img id="bd77qPopupImage" alt="" style="display:none"><h2 id="bd77qPopupTitle"></h2><div id="bd77qPopupDescription"></div><a id="bd77qPopupAction" href="#" target="_blank" rel="noopener noreferrer">এখনই দেখুন</a></div></div>
+<!-- ADMIN-CONTROLLED HOME LINK POPUP: Firebase settings/popupBanner -->
+<style>
+#bd77qPopupBanner{position:fixed;inset:0;z-index:2147483000;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.82);padding:18px;box-sizing:border-box}
+#bd77qPopupBanner .bd77q-pop-card{position:relative;width:min(94vw,460px);max-height:88vh;overflow:auto;box-sizing:border-box;background:linear-gradient(145deg,#101827,#17152b);border:1px solid #f6c453;border-radius:18px;padding:20px;color:#fff;box-shadow:0 0 28px #f6c45355;text-align:center}
+#bd77qPopupBanner img{display:none;width:100%;max-height:42vh;object-fit:contain;border-radius:10px;margin:0 auto 14px}
+#bd77qPopupBanner .bd77q-pop-close{position:absolute;right:8px;top:8px;width:36px;height:36px;border:0;border-radius:50%;background:#111827;color:white;font-size:25px;cursor:pointer;z-index:2}
+#bd77qPopupTitle{font-size:23px;font-weight:800;color:#ffdc83;margin:8px 28px 10px 0;overflow-wrap:anywhere}
+#bd77qPopupDescription{font-size:16px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;margin:8px 0 18px;color:#f1f5f9}
+#bd77qPopupAction{display:inline-block;box-sizing:border-box;max-width:100%;padding:12px 20px;border-radius:11px;background:linear-gradient(100deg,#f6c453,#ffe6a0);color:#241700;font-weight:900;text-decoration:none;overflow-wrap:anywhere}
+</style>
+<div id="bd77qPopupBanner" role="dialog" aria-modal="true" aria-label="Announcement popup"><div class="bd77q-pop-card"><button class="bd77q-pop-close" id="bd77qPopupClose" aria-label="বন্ধ করুন" type="button">×</button><img id="bd77qPopupImage" alt="Popup banner"><div id="bd77qPopupTitle"></div><div id="bd77qPopupDescription"></div><a id="bd77qPopupAction" href="#" target="_blank" rel="noopener noreferrer">এখনই দেখুন</a></div></div>
 <script id="bd77q-admin-popup-banner-runtime">
 (function(){
- const KEY='bd77q_link_popup_hidden_until_v2';let config=null,shown=false;
+ 'use strict';
+ const KEY='bd77q_home_popup_banner_dismissed_until_v2',HIDE_MS=24*60*60*1000;
+ let config=null,shown=false;
  const $=id=>document.getElementById(id);
- function dismissed(){try{return Date.now()<Number(localStorage.getItem(KEY)||0)}catch(e){return false}}
- function hide(){ $('bd77qPopupBanner').style.display='none';try{localStorage.setItem(KEY,String(Date.now()+24*60*60*1000))}catch(e){} }
+ function hiddenFor24h(){try{return Number(localStorage.getItem(KEY)||0)>Date.now();}catch(e){return false;}}
+ function hideFor24h(){try{localStorage.setItem(KEY,String(Date.now()+HIDE_MS));}catch(e){}$('bd77qPopupBanner').style.display='none';shown=true;}
  function homeVisible(){const candidates=['homePage','home-page','homeScreen','home-screen','mainHome','dashboardPage'];for(const id of candidates){const el=$(id);if(el&&el.offsetParent!==null&&getComputedStyle(el).display!=='none'&&getComputedStyle(el).visibility!=='hidden')return true;}return false;}
- function showIfReady(){if(shown||!config||config.active!==true||!config.clickUrl||dismissed()||!homeVisible())return;const url=String(config.clickUrl||'');if(!/^https?:\/\//i.test(url))return;const img=$('bd77qPopupImage');if(config.imageUrl&&/^https?:\/\//i.test(String(config.imageUrl))){img.src=config.imageUrl;img.style.display='block'}else{img.removeAttribute('src');img.style.display='none'}$('bd77qPopupTitle').textContent=config.title||'বিশেষ অফার';$('bd77qPopupDescription').textContent=config.description||'বিস্তারিত দেখতে নিচের বাটনে ক্লিক করুন।';$('bd77qPopupAction').href=url;$('bd77qPopupAction').textContent=config.buttonText||'এখনই দেখুন';$('bd77qPopupBanner').style.display='flex';shown=true;}
- $('bd77qPopupClose').addEventListener('click',hide);
- $('bd77qPopupAction').addEventListener('click',hide);
- $('bd77qPopupBanner').addEventListener('click',e=>{if(e.target===$('bd77qPopupBanner'))hide()});
- function init(){if(!window.fbDb||!window.fbRef||!window.fbOnValue){setTimeout(init,500);return;}window.fbOnValue(window.fbRef(window.fbDb,'settings/popupBanner'),s=>{config=s.exists()?(s.val()||{}):null;shown=false;showIfReady();});new MutationObserver(showIfReady).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});setInterval(showIfReady,1000);}
+ function showIfReady(){
+  if(shown||!config||config.active!==true||hiddenFor24h()||!homeVisible())return;
+  const title=$('bd77qPopupTitle'),desc=$('bd77qPopupDescription'),img=$('bd77qPopupImage'),action=$('bd77qPopupAction');
+  title.textContent=String(config.title||'');desc.textContent=String(config.description||'');
+  const imageUrl=String(config.imageUrl||'').trim();
+  if(/^https?:\/\//i.test(imageUrl)){img.src=imageUrl;img.style.display='block';}else{img.removeAttribute('src');img.style.display='none';}
+  const clickUrl=String(config.clickUrl||'').trim();
+  if(!/^https?:\/\//i.test(clickUrl))return;
+  action.href=clickUrl;action.textContent=String(config.buttonText||'এখনই দেখুন');
+  $('bd77qPopupBanner').style.display='flex';shown=true;
+ }
+ $('bd77qPopupClose').addEventListener('click',hideFor24h);
+ $('bd77qPopupBanner').addEventListener('click',e=>{if(e.target===$('bd77qPopupBanner'))hideFor24h();});
+ $('bd77qPopupAction').addEventListener('click',()=>{hideFor24h();});
+ function init(){
+  if(!window.fbDb||!window.fbRef||!window.fbOnValue){setTimeout(init,500);return;}
+  window.fbOnValue(window.fbRef(window.fbDb,'settings/popupBanner'),s=>{config=s.exists()?(s.val()||{}):null;if(!config||config.active!==true){$('bd77qPopupBanner').style.display='none';shown=false;return;}showIfReady();});
+  if(document.body)new MutationObserver(showIfReady).observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['style','class','hidden']});
+  setInterval(showIfReady,1000);
+ }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 })();
 </script>
-
 
 <script id="bd77q-refresh-restore-state">
 (function(){
