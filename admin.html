@@ -1531,6 +1531,19 @@ body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;bac
       <span class="vip-admin-pill">ADMIN SPACE</span>
     </div>
 
+    <!-- Community Websites: Admin-managed social links -->
+    <section class="card" id="communityLinksAdminCard">
+      <h3 style="margin:0 0 8px;color:#f7c96b">🌐 Community Websites — Social Link Control</h3>
+      <p class="modal-note">এখানে Facebook, Telegram, Instagram ও YouTube-এর লিংক দিন। Save করলে User App-এর Home Page footer-এ লিংকগুলো আপডেট হবে। কোনো লিংক খালি রাখলে সেই আইকন লুকানো থাকবে।</p>
+      <label>Facebook URL</label><input id="communityFacebookUrl" type="url" placeholder="https://www.facebook.com/yourpage">
+      <label>Telegram URL</label><input id="communityTelegramUrl" type="url" placeholder="https://t.me/yourchannel">
+      <label>Instagram URL</label><input id="communityInstagramUrl" type="url" placeholder="https://www.instagram.com/yourpage/">
+      <label>YouTube URL</label><input id="communityYoutubeUrl" type="url" placeholder="https://www.youtube.com/@yourchannel">
+      <button class="cash" type="button" id="communityLinksSave">💾 Community Links Save</button>
+      <button type="button" id="communityLinksReset" style="margin-top:8px;background:#303846;color:#fff">সব লিংক খালি করুন</button>
+      <div id="communityLinksAdminStatus" class="modal-note" style="margin-top:10px;min-height:18px"></div>
+    </section>
+
     <section class="card" id="ownerStaffAccessCard">
       <h3 style="margin:0 0 8px;color:#f7c96b">👑 Owner & Staff Admin Access</h3>
       <p class="modal-note">এখান থেকে Owner Gmail ও অনুমোদিত Staff Gmail তালিকা পরিচালনা করুন। নিরাপত্তার জন্য Firebase Rules/সার্ভার-সাইড অনুমতিও সেট করতে হবে।</p>
@@ -2472,6 +2485,30 @@ try {
  $('bd77qBannerDisable').onclick=async()=>{status.textContent='পপআপ বন্ধ হচ্ছে…';try{await set(node,{active:false,updatedAt:Date.now()});$('bd77qBannerActive').checked=false;status.textContent='✅ Popup বন্ধ করা হয়েছে।';}catch(e){status.textContent='❌ Disable failed: '+(e.message||e);}};
  const del=document.createElement('button');del.type='button';del.textContent='Delete Popup Settings';del.style.cssText='background:#b91c1c;color:white';del.onclick=async()=>{if(!confirm('Popup-এর সব সেটিংস মুছে ফেলবেন?'))return;status.textContent='মুছে ফেলা হচ্ছে…';try{await remove(node);['bd77qBannerTitle','bd77qBannerDescription','bd77qBannerImageUrl','bd77qBannerClickUrl','bd77qBannerButtonText'].forEach(id=>$(id).value='');$('bd77qBannerActive').checked=false;status.textContent='✅ Popup settings সম্পূর্ণ মুছে ফেলা হয়েছে।';}catch(e){status.textContent='❌ Delete failed: '+(e.message||e);}};$('bd77qBannerDisable').after(del);
 } catch(e){status.textContent='❌ Firebase init/load error: '+(e.message||e);}
+</script>
+
+
+<!-- COMMUNITY LINKS ADMIN SYNC: settings/communityLinks -->
+<script type="module" id="communityLinksAdminRuntime">
+import {getApps,initializeApp} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import {getDatabase,ref,get,set,onValue} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+const cfg={apiKey:'AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYw',authDomain:'uk77-56f6d.firebaseapp.com',databaseURL:'https://uk77-56f6d-default-rtdb.firebaseio.com',projectId:'uk77-56f6d',storageBucket:'uk77-56f6d.firebasestorage.app',messagingSenderId:'1062783431056',appId:'1:1062783431056:web:c44fd51195cf4061998315'};
+const ids={facebook:'communityFacebookUrl',telegram:'communityTelegramUrl',instagram:'communityInstagramUrl',youtube:'communityYoutubeUrl'};
+const status=document.getElementById('communityLinksAdminStatus');
+try{
+ const app=getApps().find(a=>a.name==='bd77q-community-links-admin')||initializeApp(cfg,'bd77q-community-links-admin');
+ const db=getDatabase(app),node=ref(db,'settings/communityLinks');
+ const load=v=>{v=v||{};document.getElementById(ids.facebook).value=v.facebookUrl||'';document.getElementById(ids.telegram).value=v.telegramUrl||'';document.getElementById(ids.instagram).value=v.instagramUrl||'';document.getElementById(ids.youtube).value=v.youtubeUrl||'';};
+ const snap=await get(node);if(snap.exists())load(snap.val());
+ onValue(node,s=>{load(s.exists()?s.val():{});if(status)status.textContent='Firebase সংযুক্ত — Community links লোড হয়েছে।';},e=>{if(status)status.textContent='লোড করা যায়নি: '+(e.message||e);});
+ document.getElementById('communityLinksSave').onclick=async()=>{
+  const data={};for(const [key,id] of Object.entries(ids)){const url=document.getElementById(id).value.trim();if(url&&!/^https?:\/\//i.test(url)){status.style.color='#ff7888';status.textContent='প্রতিটি লিংক http:// অথবা https:// দিয়ে শুরু হতে হবে।';return;}data[key+'Url']=url;}
+  data.updatedAt=Date.now();status.style.color='#9da7b6';status.textContent='সেভ হচ্ছে…';
+  try{await set(node,data);status.style.color='#7ed6a7';status.textContent='✅ Community links Firebase-এ সেভ হয়েছে। User App Home Page-এ আপডেট হবে।';}
+  catch(e){status.style.color='#ff7888';status.textContent='❌ সেভ হয়নি: '+(e.message||e)+' — Firebase Rules/Connection পরীক্ষা করুন।';}
+ };
+ document.getElementById('communityLinksReset').onclick=async()=>{if(!confirm('চারটি Community Website link খালি করবেন?'))return;try{const data={facebookUrl:'',telegramUrl:'',instagramUrl:'',youtubeUrl:'',updatedAt:Date.now()};await set(node,data);load(data);status.style.color='#7ed6a7';status.textContent='সব Community link খালি করা হয়েছে।';}catch(e){status.style.color='#ff7888';status.textContent='খালি করা যায়নি: '+(e.message||e);}};
+}catch(e){if(status)status.textContent='❌ Firebase সংযোগ হয়নি: '+(e.message||e);}
 </script>
 
 </body>
