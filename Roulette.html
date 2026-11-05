@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BD777Q Casino Roulette</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: #ffffff;
+            text-align: center;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+        }
+
+        /* Loading Screen Styles */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f0c29;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        .loading-logo {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: #ffd700;
+            margin-bottom: 20px;
+            text-shadow: 0 0 15px #ff9900, 0 0 25px #ff0000;
+            text-transform: uppercase;
+        }
+        .loader-wheel-img {
+            width: 90px;
+            height: 90px;
+            object-fit: contain;
+            animation: spinLoader 2s linear infinite;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+        }
+        @keyframes spinLoader {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-bar-container {
+            width: 220px;
+            height: 8px;
+            background: #222;
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid #444;
+        }
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #f39c12, #2ecc71);
+            transition: width 0.1s;
+        }
+        .loading-text {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+
+        /* Main Game Container */
+        .game-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: rgba(20, 20, 25, 0.95);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            border: 2px solid #d4af37;
+            display: none; /* লোডিং শেষ হলে এটি ভিজিবল হবে */
+        }
+        
+        .brand-title {
+            font-size: 28px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            color: #ffd700;
+            margin: 0 0 15px 0;
+            text-shadow: 0 0 10px #ff9900, 0 0 20px #ff0000;
+            text-transform: uppercase;
+        }
+
+        .balance-box {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2ecc71;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #2ecc71;
+        }
+        
+        .number-board {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            margin: 15px 0;
+            max-height: 230px;
+            overflow-y: auto;
+            padding: 8px;
+            background: #121216;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        .num-card {
+            background-color: #2c2c35;
+            border: 1px solid #555;
+            border-radius: 6px;
+            padding: 6px 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+        .num-card:hover {
+            transform: scale(1.05);
+            background-color: #3d3d4a;
+        }
+        .num-card.red { border-top: 4px solid #e74c3c; }
+        .num-card.black { border-top: 4px solid #7f8c8d; }
+        .num-card.green { border-top: 4px solid #2ecc71; }
+
+        .num-card.has-bet {
+            background: linear-gradient(135deg, #f39c12, #d35400) !important;
+            border-color: #fff;
+            color: #fff;
+            box-shadow: 0 0 8px #f39c12;
+        }
+        .num-card .num {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .num-card .bet-val {
+            font-size: 11px;
+            margin-top: 3px;
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        .num-card.has-bet .bet-val {
+            color: #fff;
+        }
+
+        .ui-controls {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .ui-controls label {
+            font-size: 14px;
+            color: #ddd;
+        }
+        .ui-controls input {
+            padding: 8px;
+            font-size: 16px;
+            width: 80px;
+            text-align: center;
+            border-radius: 6px;
+            border: 1px solid #777;
+            background: #111;
+            color: #fff;
+            font-weight: bold;
+        }
+        .btn-action {
+            padding: 10px 16px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .spin-btn { 
+            background: linear-gradient(135deg, #27ae60, #2ecc71); 
+            color: white; 
+            width: 85%;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(46, 204, 113, 0.4);
+            margin-top: 10px;
+        }
+        .spin-btn:hover { background: linear-gradient(135deg, #219653, #27ae60); }
+        
+        .clear-btn { 
+            background: linear-gradient(135deg, #c0392b, #e74c3c); 
+            color: white; 
+        }
+        .clear-btn:hover { background: linear-gradient(135deg, #962d22, #c0392b); }
+        
+        .btn-action:disabled { background: #555; cursor: not-allowed; box-shadow: none; }
+
+        .roulette {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 20px auto 10px auto;
+        }
+        .pointer {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 11px solid transparent;
+            border-right: 11px solid transparent;
+            border-top: 22px solid #e74c3c;
+            z-index: 20;
+            filter: drop-shadow(0 3px 3px rgba(0,0,0,0.8));
+        }
+        .wheel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+        }
+        .wheel img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.5));
+        }
+        #result-message {
+            margin-top: 12px;
+            font-size: 17px;
+            font-weight: bold;
+            min-height: 25px;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- প্রিমিয়াম লোডিং স্ক্রিন -->
+<div id="loading-screen">
+    <div class="loading-logo">🎰 BD777Q 🎰</div>
+    <img src="https://i.imgur.com/N01W3Ks.png" class="loader-wheel-img" alt="Loading Wheel">
+    <div class="loading-bar-container">
+        <div class="loading-bar" id="loading-bar"></div>
+    </div>
+    <div class="loading-text" id="loading-text">Loading Game... 0%</div>
+</div>
+
+<!-- মূল গেম কনটেইনার -->
+<div class="game-container" id="game-container">
+    <div class="brand-title">🎰 BD777Q 🎰</div>
+    <div class="balance-box">Balance: $<span id="balance">Loading...</span></div>
+
+    <div class="ui-controls">
+        <label for="chip-amount">Bet Amount ($):</label>
+        <input type="number" id="chip-amount" value="10" min="1">
+        <button class="btn-action clear-btn" onclick="clearBets()">Reset</button>
+    </div>
+
+    <p style="margin:5px 0; font-size:13px; color:#aaa;">Click on numbers to place your bets:</p>
+    
+    <div class="number-board" id="number-board"></div>
+
+    <button class="btn-action spin-btn" id="spin-btn" onclick="spinWheel()">SPIN WHEEL</button>
+
+    <div class="roulette">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel">
+            <img src="https://i.imgur.com/N01W3Ks.png" alt="Roulette Wheel">
+        </div>
+    </div>
+
+    <div id="result-message">Select your lucky numbers and spin!</div>
+</div>
+
+<!-- লোডিং প্রোগ্রেস ও ফায়ারবেস স্ক্রিপ্ট -->
+<script>
+    // লোডিং সিমুলেশন স্ক্রিপ্ট
+    let loadProgress = 0;
+    const loadingBar = document.getElementById('loading-bar');
+    const loadingText = document.getElementById('loading-text');
+    const loadingScreen = document.getElementById('loading-screen');
+    const gameContainer = document.getElementById('game-container');
+
+    const loadInterval = setInterval(() => {
+        loadProgress += Math.floor(Math.random() * 15) + 5;
+        if (loadProgress >= 100) {
+            loadProgress = 100;
+            clearInterval(loadInterval);
+            
+            // লোডিং শেষ হলে স্ক্রিন ফেড আউট হয়ে গেম ওপেন হবে
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                gameContainer.style.display = 'block';
+            }, 500);
+        }
+        loadingBar.style.width = loadProgress + '%';
+        loadingText.innerText = `Loading Game... ${loadProgress}%`;
+    }, 150);
+</script>
+
+<!-- Firebase SDK Integration & Game Logic -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDAJGU2sNTdx0sL7pqAaZX7sKRM0LrgYwU",
+      authDomain: "uk77-56f6d.firebaseapp.com",
+      databaseURL: "https://uk77-56f6d-default-rtdb.firebaseio.com",
+      projectId: "uk77-56f6d",
+      storageBucket: "uk77-56f6d.firebasestorage.app",
+      messagingSenderId: "1062783431056",
+      appId: "1:1062783431056:web:c44fd51195cf4061998315",
+      measurementId: "G-C0ST13Q8PJ"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const userId = "user_123"; 
+
+    const rouletteNumbers = [
+        "0", "28", "9", "26", "30", "11", "7", "20", "32", "17", "5", "22", "34", "15", "3", "24", "36", "13", "1",
+        "00", "27", "10", "25", "29", "12", "8", "19", "31", "18", "6", "21", "33", "16", "4", "23", "35", "14", "2"
+    ];
+
+    const redNumbers = ["1", "3", "5", "7", "9", "12", "14", "16", "18", "19", "21", "23", "25", "27", "30", "32", "34", "36"];
+
+    let balance = 1000;
+    let currentRotation = 0;
+    let bets = {};
+
+    rouletteNumbers.forEach(num => bets[num] = 0);
+
+    async function loadUserBalance() {
+        const balanceRef = ref(db, 'users/' + userId + '/balance');
+        try {
+            const snapshot = await get(balanceRef);
+            if (snapshot.exists()) {
+                balance = snapshot.val();
+            } else {
+                await set(balanceRef, 1000);
+                balance = 1000;
+            }
+            document.getElementById('balance').innerText = balance;
+        } catch (error) {
+            console.error("Error loading balance: ", error);
+            document.getElementById('balance').innerText = balance;
+        }
+    }
+
+    function updateDatabaseBalance(newBalance) {
+        const userRef = ref(db, 'users/' + userId);
+        update(userRef, {
+            balance: newBalance
+        });
+    }
+
+    function renderBoard() {
+        const board = document.getElementById('number-board');
+        board.innerHTML = '';
+
+        rouletteNumbers.forEach(num => {
+            const hasBet = bets[num] > 0;
+            let colorClass = "black";
+            if (num === "0" || num === "00") colorClass = "green";
+            else if (redNumbers.includes(num)) colorClass = "red";
+
+            board.innerHTML += `
+                <div class="num-card ${colorClass} ${hasBet ? 'has-bet' : ''}" onclick="placeBet('${num}')">
+                    <div class="num">${num}</div>
+                    <div class="bet-val">${hasBet ? '$' + bets[num] : '-'}</div>
+                </div>
+            `;
+        });
+    }
+
+    window.placeBet = function(num) {
+        const chipInput = document.getElementById('chip-amount');
+        const chipValue = parseInt(chipInput.value);
+        const resultMessage = document.getElementById('result-message');
+
+        if (isNaN(chipValue) || chipValue <= 0) {
+            resultMessage.innerText = "Please enter a valid bet amount!";
+            resultMessage.style.color = "#f39c12";
+            return;
+        }
+
+        if (balance < chipValue) {
+            resultMessage.innerText = "Insufficient balance!";
+            resultMessage.style.color = "#e74c3c";
+            return;
+        }
+
+        balance -= chipValue;
+        bets[num] += chipValue;
+
+        document.getElementById('balance').innerText = balance;
+        updateDatabaseBalance(balance);
+        
+        resultMessage.innerText = `Bet placed on ${num}: $${bets[num]}`;
+        resultMessage.style.color = "#fff";
+        
+        renderBoard();
+    }
+
+    window.clearBets = function() {
+        let totalRefund = 0;
+        rouletteNumbers.forEach(num => {
+            totalRefund += bets[num];
+            bets[num] = 0;
+        });
+        balance += totalRefund;
+        document.getElementById('balance').innerText = balance;
+        updateDatabaseBalance(balance);
+
+        document.getElementById('result-message').innerText = "All bets have been reset.";
+        document.getElementById('result-message').style.color = "#fff";
+        renderBoard();
+    }
+
+    window.spinWheel = function() {
+        const resultMessage = document.getElementById('result-message');
+        const spinBtn = document.getElementById('spin-btn');
+        const wheel = document.getElementById('wheel');
+
+        let totalBetOnTable = 0;
+        rouletteNumbers.forEach(num => totalBetOnTable += bets[num]);
+
+        if (totalBetOnTable === 0) {
+            resultMessage.innerText = "Please place a bet on at least one number!";
+            resultMessage.style.color = "#f39c12";
+            return;
+        }
+
+        spinBtn.disabled = true;
+        resultMessage.innerText = "Spinning...";
+        resultMessage.style.color = "#3498db";
+
+        const randomExtraDegree = Math.floor(Math.random() * 360);
+        const totalDegree = currentRotation + 1800 + randomExtraDegree;
+        currentRotation = totalDegree;
+        
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        setTimeout(() => {
+            spinBtn.disabled = false;
+            
+            const normalizedDegree = (360 - (currentRotation % 360)) % 360;
+            const index = Math.floor((normalizedDegree / (360 / rouletteNumbers.length))) % rouletteNumbers.length;
+            const winningNumber = rouletteNumbers[index];
+            
+            const winningBet = bets[winningNumber];
+
+            if (winningBet > 0) {
+                const winAmount = winningBet * 36;
+                balance += winAmount;
+                document.getElementById('balance').innerText = balance;
+                resultMessage.innerText = `🎉 Winning Number: ${winningNumber}! You Won $${winAmount}! 🎉`;
+                resultMessage.style.color = "#2ecc71";
+            } else {
+                resultMessage.innerText = `😢 Winning Number: ${winningNumber}. No bet placed on this number!`;
+                resultMessage.style.color = "#e74c3c";
+            }
+
+            updateDatabaseBalance(balance);
+
+            rouletteNumbers.forEach(num => bets[num] = 0);
+            renderBoard();
+        }, 4000);
+    }
+
+    loadUserBalance();
+    renderBoard();
+</script>
+
+</body>
+</html>
