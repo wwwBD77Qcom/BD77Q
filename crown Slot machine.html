@@ -1,0 +1,261 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHINING CROWN Slot Machine</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#050505;color:white;font-family:Arial,sans-serif;display:flex;justify-content:center;align-items:center;min-height:100vh;padding:8px}
+.game{width:min(100%,980px);height:min(95vh,690px);background:linear-gradient(135deg,#100700,#3b1000,#090400);border:4px ridge #b77b22;box-shadow:0 0 25px #ff9b19;border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.top{height:9%;min-height:35px;display:grid;grid-template-columns:1fr 1fr 1.8fr 1fr 1fr;gap:3px}
+.meter{display:flex;align-items:center;justify-content:space-around;background:linear-gradient(#222,#000);border:2px ridge #bd923e;border-radius:5px;font-size:clamp(9px,1.7vw,15px);font-weight:bold}
+.gem{color:#ffdf55;font-size:20px}
+.brand{text-align:center;color:#ffd35c;font-family:Georgia,serif;font-size:clamp(13px,3vw,27px);font-weight:1000;text-shadow:2px 2px #7a1b00,0 0 10px #ffae00;white-space:nowrap}
+.main{flex:1;min-height:0;display:grid;grid-template-columns:35px 1fr 35px;gap:5px}
+.side{border:3px ridge #d9a43a;border-radius:12px;background:linear-gradient(90deg,#8b3d00,#ffcf47,#9b4500);display:flex;flex-direction:column;align-items:center;justify-content:space-around;color:#210900;font-weight:1000}
+.side small{font-size:9px;text-align:center}
+.side b{font-size:clamp(13px,2.5vw,21px)}
+.reels{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;min-width:0}
+.reel{border:3px ridge #d99c34;border-radius:5px;background:radial-gradient(ellipse,#722500,#290900 72%,#120400);display:flex;flex-direction:column;justify-content:space-around;align-items:center;overflow:hidden;box-shadow:inset 0 0 15px #ffb32a66}
+.symbol{width:100%;height:32%;display:flex;align-items:center;justify-content:center;font-size:clamp(32px,8vw,76px);filter:drop-shadow(2px 4px 2px #100000);line-height:1}
+.symbol.win{animation:shine .45s infinite alternate}
+@keyframes shine{to{filter:drop-shadow(0 0 12px yellow) brightness(1.6);transform:scale(1.08)}}
+.bottom{height:19%;min-height:90px;display:grid;grid-template-columns:130px 1fr 145px;gap:6px}
+.lefttools{display:flex;flex-direction:column;justify-content:space-between}
+.balance{height:57%;background:#050505;border:3px ridge #d6a333;border-radius:9px;text-align:center;padding:4px;font-weight:bold}
+.balance small{display:block;color:#ffe36c;font-size:9px}
+.balance strong{font-size:clamp(14px,2.8vw,22px)}
+.tools{display:flex;gap:3px;height:35%}
+.tools button{flex:1;border:2px ridge #e6bd63;border-radius:5px;background:linear-gradient(#4cb9d4,#164c9b);color:white;font-size:18px;font-weight:bold}
+.centerbottom{display:flex;flex-direction:column;gap:4px;min-width:0}
+.prompt{height:28%;border:2px solid #a36d23;border-radius:5px;background:#090400;text-align:center;font-size:clamp(8px,1.5vw,12px);font-weight:bold;display:flex;align-items:center;justify-content:center}
+.bets{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;flex:1}
+.bet{border:3px ridge #bca06c;border-radius:9px;background:linear-gradient(#777,#272727);color:white;font-weight:bold;font-size:clamp(12px,2.4vw,20px)}
+.bet small{display:block;font-size:8px;color:#ffe36c}
+.bet.active{background:linear-gradient(#fff16a,#d47700);color:#170800;border-color:#fff1a1}
+.rightbox{border:3px ridge #c39b43;border-radius:10px;background:#030303;display:flex;justify-content:flex-end;align-items:center;flex-direction:column;padding:5px}
+.lastwin{border:1px solid #d7bd64;border-radius:8px;width:90%;text-align:center;color:#f9dd76;font-size:10px;padding:5px}
+.winmsg{position:absolute;left:10%;right:10%;top:40%;text-align:center;pointer-events:none;font-size:clamp(24px,6vw,54px);font-weight:1000;color:#fff34d;text-shadow:3px 4px #9e1700,0 0 20px yellow;opacity:0;z-index:5}
+.winmsg.show{animation:pop 2.4s forwards}
+@keyframes pop{0%{opacity:0;transform:scale(.5)}15%,75%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.9)}}
+@media(max-width:560px){
+body{padding:2px}
+.game{width:100%;height:97vh;padding:4px;gap:4px}
+.top{grid-template-columns:1fr 1fr 1.5fr 1fr 1fr}
+.meter{font-size:8px}
+.main{grid-template-columns:25px 1fr 25px;gap:3px}
+.reels{gap:2px}
+.reel{border-width:2px}
+.symbol{font-size:clamp(25px,9vw,50px)}
+.side{border-width:2px}
+.side small{font-size:7px}
+.bottom{height:20%;min-height:105px;grid-template-columns:76px 1fr 75px;gap:3px}
+.bet{font-size:14px;border-width:2px}
+.bet small{font-size:7px}
+.tools button{font-size:12px}
+}
+</style>
+</head>
+<body>
+<div class="game">
+<header class="top">
+<div class="meter"><span class="gem">♠</span><b>260662</b><span class="gem">♦</span></div>
+<div class="meter"><span class="gem">♦</span><b>2074638</b></div>
+<div class="brand">SHINING CROWN</div>
+<div class="meter"><span class="gem">♥</span><b>5499903</b></div>
+<div class="meter"><span class="gem">♠</span><b>3254641</b></div>
+</header>
+
+<section class="main">
+<aside class="side">
+<small>10<br>LINES<br>Fixed</small>
+<b>7</b><b>5</b><b>3</b><b>1</b>
+<small>HELP</small>
+</aside>
+
+<div class="reels" id="reels"></div>
+
+<aside class="side">
+<small>10<br>LINES<br>Fixed</small>
+<b>7</b><b>5</b><b>3</b><b>1</b>
+<small>11:46</small>
+</aside>
+</section>
+
+<footer class="bottom">
+<div class="lefttools">
+<div class="balance">
+<small>BALANCE</small>
+<strong>💎 <span id="balance">5000</span></strong>
+</div>
+<div class="tools">
+<button id="sound">🔊</button>
+<button id="fullscreen">⛶</button>
+<button id="help">i</button>
+<button id="reset">⟳</button>
+</div>
+</div>
+
+<div class="centerbottom">
+<div class="prompt" id="prompt">PLEASE PLACE YOUR BET</div>
+<div class="bets">
+<button class="bet active" data-bet="1"><small>1 CREDIT</small>1</button>
+<button class="bet" data-bet="10">10<small>START</small></button>
+<button class="bet" data-bet="20">20</button>
+<button class="bet" data-bet="50">50</button>
+<button class="bet" data-bet="100">100</button>
+<button class="bet" data-bet="200">200</button>
+</div>
+</div>
+
+<div class="rightbox">
+<div class="lastwin">LAST WIN<br><b id="lastwin">—</b></div>
+</div>
+</footer>
+
+<div class="winmsg" id="winmsg"></div>
+</div>
+
+<script>
+(()=>{
+const icons=['🍒','🍋','🍊','🫐','🔔','⭐','💎'];
+let balance=5000,bet=1,busy=false,sound=true;
+const reels=document.getElementById('reels');
+const prompt=document.getElementById('prompt');
+const cols=[];
+
+for(let c=0;c<5;c++){
+ let col=document.createElement('div');
+ col.className='reel';
+ for(let r=0;r<3;r++){
+  let s=document.createElement('div');
+  s.className='symbol';
+  s.textContent=['🍒','🍋','🍊','🫐','🔔'][c];
+  col.appendChild(s);
+ }
+ reels.appendChild(col);
+ cols.push([...col.children]);
+}
+
+function tone(f=500){
+ if(!sound)return;
+ try{
+  let a=new AudioContext(),o=a.createOscillator(),g=a.createGain();
+  o.frequency.value=f;g.gain.value=.03;
+  o.connect(g);g.connect(a.destination);
+  o.start();o.stop(a.currentTime+.09);
+  o.onended=()=>a.close();
+ }catch(e){}
+}
+
+function rnd(){
+ return icons[Math.floor(Math.random()*icons.length)];
+}
+
+function updateBalance(){
+ document.getElementById('balance').textContent=balance.toLocaleString('en-US');
+}
+
+async function spin(){
+ if(busy)return;
+ if(balance<bet){
+  prompt.textContent='NOT ENOUGH BALANCE';
+  tone(160);return;
+ }
+ busy=true;
+ balance-=bet;
+ updateBalance();
+ prompt.textContent='GOOD LUCK!';
+ document.querySelectorAll('.symbol').forEach(s=>s.classList.remove('win'));
+
+ let final=Array.from({length:5},()=>Array.from({length:3},rnd));
+
+ let jobs=cols.map((col,i)=>new Promise(resolve=>{
+  let t=0;
+  let iv=setInterval(()=>{
+   col.forEach(s=>s.textContent=rnd());
+   t++;
+   if(t>10+i*5){
+    clearInterval(iv);
+    col.forEach((s,j)=>s.textContent=final[i][j]);
+    resolve();
+   }
+  },75);
+ }));
+
+ await Promise.all(jobs);
+
+ let middle=final.map(x=>x[1]);
+ let best=0;
+
+ for(let n=3;n<=5;n++){
+  if(middle.slice(0,n).every(x=>x===middle[0]))best=n;
+  else break;
+ }
+
+ let multiplier=best===3?5:best===4?15:best===5?50:0;
+ let win=bet*multiplier;
+
+ if(win){
+  balance+=win;
+  document.getElementById('lastwin').textContent=win.toLocaleString();
+  prompt.textContent='WIN '+win;
+
+  let msg=document.getElementById('winmsg');
+  msg.textContent='YOU WIN '+win+'!';
+  msg.classList.remove('show');
+  void msg.offsetWidth;
+  msg.classList.add('show');
+
+  for(let i=0;i<best;i++)cols[i][1].classList.add('win');
+  tone(880);
+ }else{
+  prompt.textContent='PLEASE PLACE YOUR BET';
+  tone(260);
+ }
+
+ updateBalance();
+ busy=false;
+}
+
+document.querySelectorAll('.bet').forEach(b=>{
+ b.onclick=()=>{
+  if(busy)return;
+  bet=Number(b.dataset.bet);
+  document.querySelectorAll('.bet').forEach(x=>{
+   x.classList.toggle('active',x===b);
+  });
+ };
+});
+
+document.getElementById('sound').onclick=()=>{
+ sound=!sound;
+ document.getElementById('sound').textContent=sound?'🔊':'🔇';
+};
+
+document.getElementById('fullscreen').onclick=()=>{
+ if(!document.fullscreenElement)
+  document.documentElement.requestFullscreen?.();
+ else document.exitFullscreen?.();
+};
+
+document.getElementById('help').onclick=()=>{
+ alert('Choose a bet, then tap the reels to spin. Match 3 or more identical middle-row symbols from the left to win. Demo credits only.');
+};
+
+document.getElementById('reset').onclick=()=>{
+ if(!busy){
+  balance=5000;
+  updateBalance();
+  prompt.textContent='BALANCE RESET';
+ }
+};
+
+reels.onclick=spin;
+updateBalance();
+})();
+</script>
+</body>
+</html>
