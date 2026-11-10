@@ -1,0 +1,126 @@
+
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Golden Dragon • 900 Ways</title>
+<style>
+:root{--gold:#ffd76a;--gold2:#b87918;--red:#5d0908;--deep:#190605;--cream:#fff0bc}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 15%,#713018 0,#2b0b08 48%,#100303 100%);color:#fff4d0;font-family:Georgia,'Noto Serif Bengali',serif;display:flex;justify-content:center;padding:16px}
+.game{width:min(100%,980px);position:relative;border:5px ridge #e4b64b;border-radius:24px;padding:15px;background:linear-gradient(145deg,#7c210d,#310807 45%,#170303);box-shadow:0 0 0 5px #4b1608,0 0 40px #ffb72d66,inset 0 0 25px #ffcf6733}
+header{text-align:center;margin:2px 0 12px}.kicker{font-size:12px;letter-spacing:5px;color:#ffdf89}.logo{font-size:clamp(30px,6vw,56px);font-weight:1000;line-height:1.05;color:#ffe9a2;text-shadow:0 3px #8a3908,0 6px #3b0905,0 0 20px #ffb52b}.ways{display:inline-block;margin-top:7px;padding:5px 20px;border:2px solid #f9d46b;border-radius:20px;background:linear-gradient(#a21c0e,#4d0705);font-weight:bold;letter-spacing:3px;color:#ffe89c;box-shadow:0 0 15px #ffbf36}
+.status{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:12px 0}.pill{background:#240604;border:1px solid #d99a32;border-radius:12px;padding:8px 13px;color:#ffe5a0;font-size:14px}.pill b{color:#fff}
+.machine{padding:12px;border:4px ridge #f2c35a;border-radius:18px;background:linear-gradient(135deg,#e9b84f,#6f290b 10%,#280806 22%,#6d1b0b 80%,#e2a53c);box-shadow:inset 0 0 18px #120303,0 8px 22px #0009}
+.reels{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;padding:9px;border-radius:12px;background:linear-gradient(90deg,#390806,#170403,#390806);border:2px solid #f6d06b}
+.reel{display:flex;flex-direction:column;gap:6px;justify-content:center;min-width:0}.symbol{aspect-ratio:1/1;display:grid;place-items:center;border:2px solid #e7b94d;border-radius:9px;background:radial-gradient(circle at 50% 35%,#fff3c7,#d8a342 60%,#71300b);box-shadow:inset 0 0 12px #fff8,0 2px 5px #0009;overflow:hidden;min-height:50px}.symbol svg{width:88%;height:88%;filter:drop-shadow(0 2px 2px #54200b)}.symbol img{width:100%;height:100%;object-fit:cover;display:block}.symbol.letter{background:linear-gradient(145deg,#fff0b7,#b36d19);color:#7c180b;font:bold clamp(23px,4vw,38px) Georgia;text-shadow:0 1px #fff}
+.symbol.win{outline:3px solid #fff2a2;box-shadow:0 0 18px #fff2a2,inset 0 0 15px #fff}
+.controls{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:14px}.side-controls{display:flex;gap:8px;flex-wrap:wrap}.control{border:1px solid #ffd76a;border-radius:10px;padding:10px 13px;background:linear-gradient(#8d260d,#4b0805);color:#ffe8a2;font-weight:bold;cursor:pointer;box-shadow:0 3px 0 #260402}.control:active{transform:translateY(2px);box-shadow:0 1px 0 #260402}.spin{width:clamp(86px,16vw,126px);height:clamp(86px,16vw,126px);border-radius:50%;border:5px ridge #fff0a2;background:radial-gradient(circle at 35% 25%,#fff7be,#ffbd29 35%,#b52b08 72%,#5b0804);color:#fff8cf;font-size:22px;font-weight:1000;text-shadow:0 2px #740d05;box-shadow:0 0 24px #ffcf49,0 5px 0 #4b0803;cursor:pointer}.spin:disabled{opacity:.55;cursor:wait}.betrow{display:flex;justify-content:center;gap:9px;align-items:center;margin-top:12px;flex-wrap:wrap}.betrow button{padding:7px 12px}.message{text-align:center;min-height:27px;margin-top:10px;color:#ffe18b;font-weight:bold}.footer{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-top:7px}.small{font-size:12px;color:#d9b98a;text-align:center;margin-top:13px;line-height:1.5}
+@media(max-width:560px){body{padding:5px}.game{padding:8px;border-width:3px;border-radius:16px}.machine{padding:6px}.reels{gap:4px;padding:5px}.reel{gap:4px}.symbol{border-width:1px;min-height:0;border-radius:5px}.controls{grid-template-columns:1fr auto 1fr;gap:4px}.control{font-size:11px;padding:8px 6px}.spin{font-size:16px}.pill{font-size:12px;padding:6px 9px}}
+
+#loadingScreen{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 42%,#8b3b13 0,#3b0b08 48%,#100202 100%);transition:opacity .55s ease,visibility .55s ease}
+#loadingScreen.hide{opacity:0;visibility:hidden;pointer-events:none}
+.load-panel{width:min(92vw,520px);text-align:center;padding:28px 22px;border:4px ridge #f5d16d;border-radius:24px;background:linear-gradient(145deg,#71190cdd,#210504f2);box-shadow:0 0 35px #ffbd3c88,inset 0 0 25px #ffc34b22}
+.load-dragon{font-size:clamp(54px,12vw,88px);line-height:1.2;filter:drop-shadow(0 0 15px #ffcf52);animation:dragonPulse 1.1s ease-in-out infinite alternate}
+.load-title{font-size:clamp(25px,6vw,42px);font-weight:1000;letter-spacing:2px;color:#ffe8a0;text-shadow:0 3px #781a08,0 0 18px #ffc94c}
+.load-sub{margin:9px 0 22px;color:#f3d79b;letter-spacing:3px;font-size:12px}
+.load-track{height:14px;border:2px solid #f4d273;border-radius:20px;background:#190403;overflow:hidden}
+#loadFill{height:100%;width:0;background:linear-gradient(90deg,#a83a0b,#ffcf48,#fff0a0);box-shadow:0 0 15px #ffd04e;transition:width .12s linear}
+#loadPercent{margin-top:10px;color:#ffe6a0;font-weight:bold;font-variant-numeric:tabular-nums}
+@keyframes dragonPulse{from{transform:scale(.96);opacity:.8}to{transform:scale(1.06);opacity:1}}
+
+</style>
+</head>
+<body>
+
+<div id="loadingScreen" aria-label="Game loading">
+  <div class="load-panel">
+    <div class="load-dragon">🐉</div>
+    <div class="load-title">GOLDEN DRAGON</div>
+    <div class="load-sub">900 WAYS • TREASURE AWAKENS</div>
+    <div class="load-track"><div id="loadFill"></div></div>
+    <div id="loadPercent">LOADING 0%</div>
+  </div>
+</div>
+
+<main class="game">
+<header><div class="kicker">THE TREASURE OF THE EAST</div><div class="logo">GOLDEN DRAGON</div><div class="ways">900 WAYS</div></header>
+<div class="status"><div class="pill">CREDIT: <b id="credit">1000.00</b></div><div class="pill">BET: <b id="betTop">1.00</b></div><div class="pill">WIN: <b id="winTop">0.00</b></div></div>
+<section class="machine"><div class="reels" id="reels"></div></section>
+<div class="controls">
+ <div class="side-controls"><button class="control" id="auto">AUTO</button><button class="control" id="minus">BET −</button></div>
+ <button class="spin" id="spin">SPIN</button>
+ <div class="side-controls" style="justify-content:flex-end"><button class="control" id="plus">BET +</button><button class="control" id="max">MAX BET</button></div>
+</div>
+<div class="betrow"><span class="pill">TOTAL BET: <b id="betBottom">1.00</b></span><button class="control" id="paytable">PAYTABLE</button><button class="control" id="reset">RESET DEMO</button></div>
+<div class="message" id="message">Spin চাপুন — শুভকামনা!</div>
+<div class="footer"></div>
+</main>
+
+<script>
+const svg=(body)=>`<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${body}</svg>`;
+const art={
+ dragon:svg(`<defs><linearGradient id="d" x2="0" y2="1"><stop stop-color="#fff18a"/><stop offset=".45" stop-color="#d88a18"/><stop offset="1" stop-color="#8c1608"/></linearGradient></defs><path d="M18 74Q5 52 25 39L18 20 39 29Q54 8 72 28L89 19 83 43Q99 58 78 74L87 87 61 82 43 94 38 77Z" fill="url(#d)" stroke="#6a1608" stroke-width="4"/><path d="M33 45Q48 29 69 43L58 52 70 58Q53 70 36 59Z" fill="#ffed9a" stroke="#702008" stroke-width="3"/><circle cx="64" cy="43" r="4" fill="#1d0803"/><path d="M20 23L8 8 34 18M78 25L94 8 87 36" fill="#f4c44d" stroke="#6a1608" stroke-width="3"/>`),
+ turtle:svg(`<ellipse cx="50" cy="55" rx="35" ry="27" fill="#bd7c18" stroke="#71340a" stroke-width="5"/><path d="M22 51Q50 14 78 51L72 69H28Z" fill="#e9b744" stroke="#71340a" stroke-width="4"/><path d="M50 22V75M25 50H75M34 32L66 68M66 32L34 68" stroke="#8a4a0d" stroke-width="4"/><circle cx="84" cy="52" r="11" fill="#dba83b" stroke="#71340a" stroke-width="3"/><circle cx="87" cy="49" r="2.5" fill="#160704"/><path d="M20 76L10 88M38 79L33 93M65 79L70 93M80 72L91 84" stroke="#dba83b" stroke-width="9" stroke-linecap="round"/>`),
+ fish:svg(`<path d="M10 50Q40 10 75 48Q45 88 10 50Z" fill="#f2bd39" stroke="#87350b" stroke-width="5"/><path d="M72 48L94 29 91 69Z" fill="#d97819" stroke="#87350b" stroke-width="4"/><path d="M38 25L49 10 61 30M38 75L51 91 63 70" fill="#e68c1e" stroke="#87350b" stroke-width="3"/><circle cx="29" cy="43" r="5" fill="#1b0903"/><path d="M41 45Q53 52 65 44" fill="none" stroke="#fff0a0" stroke-width="3"/>`),
+ coin:svg(`<circle cx="50" cy="50" r="40" fill="#d98b12" stroke="#7d3b08" stroke-width="6"/><circle cx="50" cy="50" r="31" fill="#ffd85d" stroke="#fff0a0" stroke-width="3"/><path d="M50 26V74M35 37H59Q69 40 61 49H40Q30 58 42 64H66" fill="none" stroke="#9b4b0a" stroke-width="7" stroke-linecap="round"/>`),
+ bag:svg(`<path d="M28 31Q50 39 72 31L82 81Q50 96 18 81Z" fill="#bd1710" stroke="#701007" stroke-width="5"/><path d="M28 31Q50 18 72 31L64 42H36Z" fill="#e9b94a" stroke="#7d390b" stroke-width="4"/><path d="M50 45V72M39 57H61" stroke="#ffd96a" stroke-width="6" stroke-linecap="round"/><path d="M38 18Q50 8 62 18" fill="none" stroke="#f5d06b" stroke-width="5"/>`),
+};
+// User supplied artwork: J and K symbols (remote image URLs)
+art.J='<img alt="J symbol" src="https://i.postimg.cc/NF7XkGyF/SJp9j-Opy11p-M8MLu-VXfje3qu-LZEFMRe-NCu-W78A6j3ex-RVf0SOv-ZVmr-IQFu6-Fcaw-Xc485Uk-Mbe-S4IFuk1SQ0MShe.jpg">';
+art.K='<img alt="K symbol" src="https://i.postimg.cc/5NsY4R8x/c-Kb-Ej-AAGc6X-kcg-Uus2f-Awu-Rjn-TS344b-QAARVJy-Gvv-Yvo-ZI0avo-Sc5nq-X-fxsla-Fqj-L0KTiu-Fu-Vbcb-M8a.jpg">';
+// Additional user-supplied symbol artwork links
+art.ref3='<img alt="User symbol 3" src="https://i.postimg.cc/HkfLjDnC/O-1x-Ve1d-Ek-Vc-DJqtof-Gspwzn-ABo09j3x29VKj-NCq-X6i4-UIc-Iqk-Un-Bt-Ax-h-Bo-VCAlrg1Pb4VJBNDQonwr-GLLq.jpg">';
+art.ref4='<img alt="User symbol 4" src="https://i.postimg.cc/mkXLsKJ8/Xcu-A1M-Vzn-M-i-Elwu0Hl09Ut1Np-W8Ig8Ibh-Z4e5s6Yg-T6yl6719PWc-XL-Yq2u-ZRPTt-Um-Tal5CPXQtt-Z3Y6ky-C5Zd.jpg">';
+art.ref5='<img alt="User symbol 5" src="https://i.postimg.cc/yYx6PYS8/JMXEN9l-F7Fj5Gny-Hcr-uq8Msgei4js0mff-Q39br-Grifp-MGUL5DTq-I3Zyosw-H1PQy-BYgkewfj-KR5Hs-Mi-JKBRCvxu-V.jpg">';
+art.ref6='<img alt="User symbol 6" src="https://i.postimg.cc/XvfnJrtp/LH4C225qr77hvp-K0V-c-DMN5FRLxu4hl-RYk63Sjo8695o-Rm-IDOk2jz-K8KL0EMmka2m-EXOPw-T9F2y-RCR3Guo-u-WLGt-O.jpg">';
+const symbols=['dragon','turtle','fish','coin','bag','K','Q','J','10','9','ref3','ref4','ref5','ref6'];
+const counts=[3,3,4,5,5]; // 3×3×4×5×5 = 900 combinations
+const reels=document.getElementById('reels');let credit=1000,bet=1,win=0,busy=false,autoTimer=null;
+function draw(){
+  reels.innerHTML='';
+  // Every reel position randomly selects from the full symbol pool.
+  // All six user-provided image symbols are included; repeats can occur.
+  counts.forEach((n)=>{
+    const reel=document.createElement('div'); reel.className='reel';
+    for(let i=0;i<n;i++){
+      const s=symbols[Math.floor(Math.random()*symbols.length)];
+      const cell=document.createElement('div');
+      cell.className='symbol'+(!art[s]&&typeof s==='string'&&s.length>1?' letter':'');
+      if(art[s]) cell.innerHTML=art[s]; else cell.textContent=s;
+      cell.dataset.sym=s;
+      reel.appendChild(cell);
+    }
+    reels.appendChild(reel);
+  });
+}
+function update(){credit=Math.max(0,credit);document.getElementById('credit').textContent=credit.toFixed(2);document.getElementById('betTop').textContent=bet.toFixed(2);document.getElementById('betBottom').textContent=bet.toFixed(2);document.getElementById('winTop').textContent=win.toFixed(2)}
+function evaluate(){let cols=[...reels.children].map(r=>[...r.children].map(c=>c.dataset.sym));let total=0,hit=[];for(let s of symbols){let ways=1,used=[];for(let c=0;c<5;c++){let ix=[];cols[c].forEach((v,i)=>{if(v===s||v==='dragon')ix.push(i)});if(!ix.length)break;ways*=ix.length;used.push([c,ix]);}if(used.length>=3){let pay=s==='dragon'?25:s==='turtle'?12:s==='fish'?8:s==='coin'?5:s==='bag'?10:2;let prize=bet*pay*ways/20;total+=prize;used.forEach(([c,ix])=>ix.forEach(i=>hit.push(reels.children[c].children[i])));}}hit.forEach(x=>x.classList.add('win'));return total;}
+function spin(){if(busy)return;if(credit<bet){document.getElementById('message').textContent='ক্রেডিট কম। RESET DEMO চাপুন।';stopAuto();return;}busy=true;credit-=bet;win=0;update();document.getElementById('spin').disabled=true;document.getElementById('message').textContent='ঘুরছে...';let ticks=0;let timer=setInterval(()=>{draw();if(++ticks>=12){clearInterval(timer);let result=evaluate();win=result;credit+=result;update();document.getElementById('message').textContent=result>0?'🎉 WIN '+result.toFixed(2)+' CREDIT!':'আবার চেষ্টা করুন!';busy=false;document.getElementById('spin').disabled=false;if(autoTimer&&credit>=bet)setTimeout(spin,450);else if(autoTimer)stopAuto();}},85);}
+function stopAuto(){if(autoTimer){clearTimeout(autoTimer);autoTimer=null;}document.getElementById('auto').textContent='AUTO';}
+document.getElementById('spin').onclick=spin;document.getElementById('auto').onclick=()=>{if(autoTimer){stopAuto();return;}document.getElementById('auto').textContent='STOP';autoTimer=true;if(!busy)spin();};
+document.getElementById('minus').onclick=()=>{bet=Math.max(.2,+(bet-.2).toFixed(2));update()};document.getElementById('plus').onclick=()=>{bet=Math.min(20,+(bet+.2).toFixed(2));update()};document.getElementById('max').onclick=()=>{bet=20;update()};
+document.getElementById('reset').onclick=()=>{stopAuto();credit=1000;bet=1;win=0;draw();update();document.getElementById('message').textContent='ডেমো ক্রেডিট রিসেট হয়েছে।'};
+document.getElementById('paytable').onclick=()=>alert('ডেমো পেআউট (প্রতি bet): Dragon 25x • Turtle 12x • Lucky Bag 10x • Fish 8x • Coin 5x • K/Q/J/10/9 2x। বাম দিক থেকে টানা ৩ বা বেশি রিলে মিললে পুরস্কার গণনা হয়।');
+draw();update();
+
+// Premium opening loader: reaches 100%, then reveals the game.
+(function(){
+  const screen=document.getElementById('loadingScreen');
+  const fill=document.getElementById('loadFill');
+  const label=document.getElementById('loadPercent');
+  let p=0;
+  const timer=setInterval(()=>{
+    p=Math.min(100,p+Math.ceil(Math.random()*7));
+    fill.style.width=p+'%';
+    label.textContent='LOADING '+p+'%';
+    if(p>=100){
+      clearInterval(timer);
+      setTimeout(()=>screen.classList.add('hide'),350);
+    }
+  },90);
+})();
+
+// Copy-code control removed as requested.
+
+</script>
+</body></html>
