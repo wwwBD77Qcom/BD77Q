@@ -1,0 +1,818 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3600 WAYS - Sci-Fi Cascading Slot</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Chakra+Petch:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Chakra Petch', sans-serif;
+            background: #050814;
+            color: #ffffff;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        .scifi-font {
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        /* Sci-fi Spaceship Corridor Background */
+        .spaceship-bg {
+            background: 
+                radial-gradient(circle at 50% 62%, rgba(168, 85, 247, 0.35) 0%, rgba(59, 130, 246, 0.2) 30%, transparent 65%),
+                linear-gradient(180deg, #1e293b 0%, #0f172a 45%, #1e1b4b 75%, #090d16 100%);
+            position: relative;
+        }
+        
+        /* Metallic Corridor Wall Ribs */
+        .spaceship-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(56, 189, 248, 0.06) 1px, transparent 1px);
+            background-size: 40px 60px;
+            pointer-events: none;
+        }
+
+        /* Glowing Reactor Rings on Left & Right */
+        .reactor-left {
+            position: absolute;
+            left: -25px;
+            bottom: 22%;
+            width: 55px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid #38bdf8;
+            box-shadow: 0 0 25px #0284c7, inset 0 0 20px #38bdf8;
+            background: radial-gradient(circle, rgba(56,189,248,0.4), transparent);
+            pointer-events: none;
+        }
+        .reactor-right {
+            position: absolute;
+            right: -25px;
+            bottom: 22%;
+            width: 55px;
+            height: 130px;
+            border-radius: 50%;
+            border: 4px solid #38bdf8;
+            box-shadow: 0 0 25px #0284c7, inset 0 0 20px #38bdf8;
+            background: radial-gradient(circle, rgba(56,189,248,0.4), transparent);
+            pointer-events: none;
+        }
+
+        /* Tile Styling (Silver & Gold Beveled Tiles) */
+        .tile-silver {
+            background: linear-gradient(145deg, #e2e8f0 0%, #94a3b8 50%, #64748b 100%);
+            border: 2px solid #f8fafc;
+            box-shadow: inset 0 2px 4px rgba(255,255,255,0.8), inset 0 -3px 5px rgba(15,23,42,0.6), 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .tile-gold {
+            background: linear-gradient(145deg, #fef08a 0%, #eab308 45%, #a16207 100%);
+            border: 2px solid #fef9c3;
+            box-shadow: inset 0 2px 5px rgba(255,255,255,0.9), inset 0 -3px 6px rgba(113,63,18,0.8), 0 0 12px rgba(234, 179, 8, 0.5);
+        }
+
+        /* 3D Glossy Text Effect */
+        .text-3d-gold {
+            background: linear-gradient(180deg, #fffbeb 0%, #fde047 45%, #ea580c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 2px 0px #4c1d95) drop-shadow(0px -1px 0px #4c1d95) drop-shadow(2px 0px 0px #4c1d95) drop-shadow(-2px 0px 0px #4c1d95) drop-shadow(0 4px 6px rgba(0,0,0,0.8));
+        }
+
+        .text-3d-red {
+            background: linear-gradient(180deg, #ffffff 0%, #fecaca 50%, #ef4444 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 2px 0px #7f1d1d) drop-shadow(0px -1px 0px #7f1d1d) drop-shadow(2px 0px 0px #7f1d1d) drop-shadow(-2px 0px 0px #7f1d1d) drop-shadow(0 3px 4px rgba(0,0,0,0.9));
+        }
+
+        /* Animations */
+        @keyframes dropIn {
+            0% { transform: translateY(-45px) scale(0.9); opacity: 0; }
+            70% { transform: translateY(4px) scale(1.02); opacity: 1; }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        .animate-drop {
+            animation: dropIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes matchFlash {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.15); filter: brightness(1.8) drop-shadow(0 0 15px #fde047); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        .animate-match {
+            animation: matchFlash 0.4s ease-in-out forwards;
+        }
+
+        @keyframes pulseMultiplier {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        .mult-active {
+            animation: pulseMultiplier 1.2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-1 sm:p-3">
+
+    <!-- Main Mobile Arcade Frame -->
+    <div class="w-full max-w-[430px] mx-auto spaceship-bg rounded-[28px] overflow-hidden flex flex-col relative border-2 border-slate-600/80 shadow-[0_0_50px_rgba(0,0,0,0.9)]">
+
+        <!-- Top Roof Light & 3600 WAYS Banner -->
+        <div class="relative pt-3 pb-1 flex flex-col items-center justify-center z-20">
+            <div class="w-48 h-6 bg-gradient-to-b from-amber-100/90 to-cyan-200/40 rounded-b-full blur-[1px] border-b-2 border-cyan-300 shadow-[0_0_20px_rgba(103,232,249,0.7)]"></div>
+            <div class="-mt-3 px-5 py-0.5 rounded-full bg-slate-900/80 border border-cyan-400/50 shadow-lg">
+                <span class="scifi-font text-xs sm:text-sm font-black tracking-widest text-cyan-200 drop-shadow-[0_0_6px_rgba(34,211,238,0.9)]">3600 WAYS</span>
+            </div>
+        </div>
+
+        <!-- Staggered 6-Column Reel Container (3-4-5-5-4-3 Pyramid Shape) -->
+        <div class="relative px-2 pt-1 pb-2 flex justify-center items-center gap-1 sm:gap-1.5 z-10 min-h-[275px]" id="reelContainer"></div>
+
+        <!-- Floating Big Surge Overlay Badge -->
+        <div id="floatingSurgeBadge" class="hidden absolute top-[28%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none flex items-center justify-center">
+            <div class="relative flex items-center justify-center animate-bounce">
+                <svg class="w-24 h-24 drop-shadow-[0_0_25px_rgba(239,68,68,1)]" viewBox="0 0 100 100">
+                    <polygon points="50,5 93,28 93,72 50,95 7,72 7,28" fill="url(#redGemGrad)" stroke="#fca5a5" stroke-width="3"/>
+                </svg>
+                <span id="surgeText" class="absolute scifi-font text-2xl font-black text-3d-gold tracking-tighter text-center leading-tight">10 FREE!</span>
+            </div>
+        </div>
+
+        <!-- Left Floating MISSION 0% Badge -->
+        <div class="absolute left-1.5 top-[48%] z-20 flex flex-col items-center">
+            <div class="w-12 bg-gradient-to-b from-purple-600 to-indigo-950 rounded-xl border-2 border-purple-400 shadow-[0_4px_12px_rgba(0,0,0,0.8)] p-1 flex flex-col items-center">
+                <div class="w-8 h-7 bg-amber-100 rounded-sm border border-amber-400 flex flex-col justify-evenly px-1 shadow-inner -mt-2">
+                    <div class="h-0.5 bg-slate-400 w-full"></div>
+                    <div class="h-0.5 bg-slate-400 w-3/4"></div>
+                    <div class="h-0.5 bg-slate-400 w-full"></div>
+                </div>
+                <span class="text-[8px] font-extrabold text-white tracking-tighter mt-0.5">MISSION</span>
+                <div class="w-full bg-slate-950 rounded-full h-3 mt-0.5 border border-purple-400/50 flex items-center justify-center overflow-hidden relative">
+                    <div id="missionBar" class="bg-gradient-to-r from-green-400 to-emerald-500 h-full w-[0%] transition-all duration-500 absolute left-0"></div>
+                    <span id="missionText" class="relative text-[8px] font-bold text-white z-10">0%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Cosmic Viewport & 3 Multiplier Crystals -->
+        <div class="relative mx-6 my-1 rounded-3xl border-2 border-slate-500/60 bg-gradient-to-b from-indigo-950/60 via-purple-900/40 to-slate-900/80 py-2.5 px-2 flex flex-col items-center justify-center shadow-inner overflow-hidden">
+            <div class="reactor-left"></div>
+            <div class="reactor-right"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(192,132,252,0.3),transparent_70%)] pointer-events-none"></div>
+
+            <!-- 3 Multiplier Crystals Row -->
+            <div class="relative z-10 flex items-center justify-center gap-3 sm:gap-5 w-full">
+                <!-- Left Crystal -->
+                <div id="multLeft" class="relative flex items-center justify-center opacity-70 scale-90 transition-all duration-300">
+                    <svg class="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-[0_0_12px_rgba(239,68,68,0.6)]" viewBox="0 0 100 100">
+                        <polygon points="50,6 92,28 92,72 50,94 8,72 8,28" fill="url(#redGemGrad)" stroke="#f87171" stroke-width="3"/>
+                    </svg>
+                    <span id="multLeftVal" class="absolute scifi-font text-sm sm:text-base font-black text-3d-gold">1536X</span>
+                </div>
+
+                <!-- Center Crystal -->
+                <div id="multCenter" class="relative flex items-center justify-center mult-active scale-105 transition-all duration-300">
+                    <svg class="w-24 h-24 sm:w-28 sm:h-28 drop-shadow-[0_0_22px_rgba(34,197,94,0.85)]" viewBox="0 0 100 100">
+                        <polygon points="50,8 94,86 6,86" fill="url(#greenGemGrad)" stroke="#86efac" stroke-width="4" stroke-linejoin="round"/>
+                        <polygon points="50,22 80,78 20,78" fill="none" stroke="#bbf7d0" stroke-width="1.5" opacity="0.6"/>
+                    </svg>
+                    <span id="multCenterVal" class="absolute mt-3 scifi-font text-2xl sm:text-3xl font-black text-3d-gold">1X</span>
+                </div>
+
+                <!-- Right Crystal -->
+                <div id="multRight" class="relative flex items-center justify-center opacity-80 scale-95 transition-all duration-300">
+                    <svg class="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-[0_0_12px_rgba(34,197,94,0.5)]" viewBox="0 0 100 100">
+                        <polygon points="50,10 92,85 8,85" fill="url(#greenGemGrad)" stroke="#4ade80" stroke-width="3" stroke-linejoin="round"/>
+                    </svg>
+                    <span id="multRightVal" class="absolute mt-2 scifi-font text-base sm:text-lg font-black text-3d-gold">2X</span>
+                </div>
+            </div>
+
+            <!-- Buy Feature Button -->
+            <button onclick="triggerBuyFeature()" class="relative z-20 mt-1 px-7 py-1 rounded-full bg-gradient-to-b from-pink-500 via-rose-600 to-pink-800 border-2 border-pink-200 shadow-[0_4px_15px_rgba(244,63,94,0.7),inset_0_2px_3px_rgba(255,255,255,0.7)] hover:brightness-110 active:scale-95 transition-all cursor-pointer">
+                <span class="text-xs sm:text-sm font-extrabold tracking-wide text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]">Buy Feature</span>
+            </button>
+        </div>
+
+        <!-- Bottom Metallic Control Deck -->
+        <div class="relative pt-2 pb-3 px-3 bg-gradient-to-b from-slate-800/90 via-slate-900 to-slate-950 border-t-2 border-cyan-500/40 flex flex-col items-center">
+            <div class="w-full flex items-center justify-between px-1 relative">
+                <!-- Far Left: Turbo Button -->
+                <button id="turboBtn" onclick="toggleTurbo()" title="Turbo Spin" class="w-11 h-11 rounded-full bg-gradient-to-b from-teal-400 to-cyan-700 border-2 border-cyan-200 shadow-[0_4px_10px_rgba(0,0,0,0.7)] flex flex-col items-center justify-center active:scale-90 transition-all cursor-pointer">
+                    <svg class="w-5 h-5 text-white drop-shadow" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2L3 14h7v8l10-12h-7z"/></svg>
+                    <div id="turboIndicator" class="w-4 h-1 rounded-full bg-slate-900/60 mt-0.5 overflow-hidden">
+                        <div class="w-1/2 h-full bg-amber-300"></div>
+                    </div>
+                </button>
+
+                <!-- Inner Left: Auto Spin Button -->
+                <button id="autoBtn" onclick="toggleAutoSpin()" title="Auto Spin" class="-mt-6 w-11 h-11 rounded-full bg-gradient-to-b from-emerald-400 to-teal-700 border-2 border-emerald-200 shadow-[0_4px_10px_rgba(0,0,0,0.7)] flex items-center justify-center active:scale-90 transition-all cursor-pointer">
+                    <svg class="w-6 h-6 text-white drop-shadow" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                        <polygon points="10,9 15,12 10,15" fill="currentColor" stroke="none"/>
+                    </svg>
+                </button>
+
+                <!-- Bet Minus Button -->
+                <button onclick="adjustBet(-0.20)" class="w-11 h-11 rounded-full bg-gradient-to-b from-fuchsia-500 via-purple-700 to-indigo-900 border-2 border-purple-300 shadow-[0_4px_10px_rgba(0,0,0,0.8)] flex items-center justify-center active:scale-90 transition-all cursor-pointer">
+                    <div class="w-5 h-1.5 bg-white rounded-full shadow"></div>
+                </button>
+
+                <!-- Center Giant Spin Button -->
+                <div class="relative -mt-4 flex items-center justify-center">
+                    <div class="w-24 h-24 sm:w-26 sm:h-26 rounded-full bg-gradient-to-b from-slate-300 via-slate-500 to-slate-800 p-1.5 shadow-[0_6px_20px_rgba(0,0,0,0.9)] border border-slate-400">
+                        <button id="spinBtn" onclick="startSpin()" class="w-full h-full rounded-full bg-gradient-to-b from-amber-300 via-orange-500 to-red-700 border-2 border-yellow-200 shadow-[inset_0_4px_8px_rgba(255,255,255,0.8),0_0_20px_rgba(249,115,22,0.8)] flex items-center justify-center active:scale-95 transition-all cursor-pointer group">
+                            <svg id="spinIcon" class="w-12 h-12 text-amber-100 drop-shadow-[0_2px_4px_rgba(124,45,18,0.9)] transition-transform duration-500" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0114.93-4M20 12a8 8 0 01-14.93 4"/>
+                                <polyline points="16 4 20 8 15 9" fill="currentColor" stroke="none"/>
+                                <polyline points="8 20 4 16 9 15" fill="currentColor" stroke="none"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Bet Plus Button -->
+                <button onclick="adjustBet(0.20)" class="w-11 h-11 rounded-full bg-gradient-to-b from-fuchsia-500 via-purple-700 to-indigo-900 border-2 border-purple-300 shadow-[0_4px_10px_rgba(0,0,0,0.8)] flex items-center justify-center active:scale-90 transition-all cursor-pointer">
+                    <svg class="w-6 h-6 text-white drop-shadow" fill="none" stroke="currentColor" stroke-width="3.5" viewBox="0 0 24 24"><path stroke-linecap="round" d="M12 5v14M5 12h14"/></svg>
+                </button>
+
+                <!-- Far Right: Menu Button -->
+                <button onclick="openInfoModal()" class="-mt-4 w-11 h-11 rounded-full bg-gradient-to-b from-emerald-400 to-teal-700 border-2 border-emerald-200 shadow-[0_4px_10px_rgba(0,0,0,0.7)] flex items-center justify-center active:scale-90 transition-all cursor-pointer">
+                    <svg class="w-6 h-6 text-white drop-shadow" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" d="M5 7h14M5 12h14M5 17h14"/></svg>
+                </button>
+            </div>
+
+            <!-- Bottom Digital Readout Bar -->
+            <div class="w-full grid grid-cols-3 gap-1.5 mt-2 pt-1.5 border-t border-slate-700/80">
+                <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-extrabold tracking-wider text-slate-300 uppercase">BALANCE</span>
+                    <div class="w-full bg-slate-950/90 border border-slate-700 rounded-md py-0.5 text-center shadow-inner">
+                        <span id="balanceDisplay" class="scifi-font text-xs sm:text-sm font-bold text-amber-400">100.00</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-extrabold tracking-wider text-slate-300 uppercase">WIN</span>
+                    <div class="w-full bg-slate-950/90 border border-slate-700 rounded-md py-0.5 text-center shadow-inner">
+                        <span id="winDisplay" class="scifi-font text-xs sm:text-sm font-bold text-amber-400">0.00</span>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="text-[10px] font-extrabold tracking-wider text-slate-300 uppercase">TOTAL BETS</span>
+                    <div class="w-full bg-slate-950/90 border border-slate-700 rounded-md py-0.5 text-center shadow-inner">
+                        <span id="betDisplay" class="scifi-font text-xs sm:text-sm font-bold text-amber-400">1.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Version Footer & Free Spin Counter -->
+            <div class="w-full flex justify-between items-center mt-1 px-1 text-[9px] text-slate-400 font-semibold">
+                <span id="statusText" class="text-cyan-400">READY TO SPIN</span>
+                <span id="freeSpinCounter" class="hidden text-amber-300 font-extrabold scifi-font tracking-wider animate-pulse">FREE SPINS: 10</span>
+                <span>ver. 400e820</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reusable SVG Gradients -->
+    <svg width="0" height="0" class="hidden">
+        <defs>
+            <linearGradient id="redGemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ff6b6b"/>
+                <stop offset="50%" stop-color="#dc2626"/>
+                <stop offset="100%" stop-color="#7f1d1d"/>
+            </linearGradient>
+            <linearGradient id="purpleGemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#d8b4fe"/>
+                <stop offset="50%" stop-color="#9333ea"/>
+                <stop offset="100%" stop-color="#4c1d95"/>
+            </linearGradient>
+            <linearGradient id="greenGemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#86efac"/>
+                <stop offset="50%" stop-color="#16a34a"/>
+                <stop offset="100%" stop-color="#14532d"/>
+            </linearGradient>
+            <linearGradient id="blueGemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#7dd3fc"/>
+                <stop offset="50%" stop-color="#0284c7"/>
+                <stop offset="100%" stop-color="#1e3a8a"/>
+            </linearGradient>
+            <linearGradient id="goldChestGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#fef08a"/>
+                <stop offset="50%" stop-color="#f59e0b"/>
+                <stop offset="100%" stop-color="#92400e"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Game Rules & Paytable Modal -->
+    <div id="infoModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-cyan-500 rounded-3xl max-w-sm w-full p-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-3">
+                <h3 class="scifi-font text-base font-black text-cyan-300">3600 WAYS PAYTABLE</h3>
+                <button onclick="closeInfoModal()" class="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            <div class="space-y-2.5 text-xs text-slate-200 max-h-64 overflow-y-auto pr-1">
+                <div class="flex items-center gap-3 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+                    <div class="w-8 h-8 flex-shrink-0" id="legendScatter"></div>
+                    <div><strong class="text-amber-400">SCATTER (Space Fox):</strong> 3 Scatters award 10 Automatic Free Spins!</div>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+                    <div class="w-8 h-8 flex-shrink-0" id="legendWild"></div>
+                    <div><strong class="text-yellow-300">WILD (Cosmic Chest):</strong> Substitutes for all elemental gems!</div>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+                    <div class="w-8 h-8 flex-shrink-0" id="legendFire"></div>
+                    <div><strong class="text-red-400">Red Fire Hexagon:</strong> High payout elemental stone.</div>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+                    <div class="w-8 h-8 flex-shrink-0" id="legendLightning"></div>
+                    <div><strong class="text-purple-400">Purple Lightning Hexagon:</strong> High-mid energy stone.</div>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+                    <div class="w-8 h-8 flex-shrink-0" id="legendLeaf"></div>
+                    <div><strong class="text-green-400">Green Leaf Triangle:</strong> Nature core crystal.</div>
+                </div>
+                <div class="flex items-center gap-3 bg-slate-800/70 p-2 rounded-xl border border-slate-700">
+                    <div class="w-8 h-8 flex-shrink-0" id="legendWater"></div>
+                    <div><strong class="text-sky-400">Blue Water Drop:</strong> Hydro energy gem.</div>
+                </div>
+            </div>
+            <button onclick="closeInfoModal()" class="w-full mt-4 py-2 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl scifi-font text-xs font-black text-white shadow-lg">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- Custom Notification Modal -->
+    <div id="msgModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-amber-500 rounded-3xl max-w-xs w-full p-5 shadow-2xl text-center">
+            <h4 id="msgTitle" class="scifi-font text-base font-black text-amber-400 mb-2">NOTICE</h4>
+            <p id="msgBody" class="text-xs text-slate-200 mb-4"></p>
+            <button onclick="closeMsgModal()" class="w-full py-2 bg-gradient-to-r from-amber-500 to-orange-600 rounded-xl scifi-font text-xs font-black text-white shadow-lg">OK</button>
+        </div>
+    </div>
+
+    <script>
+        // Exact Column Heights matching the 3-4-5-5-4-3 Pyramid Layout
+        const COL_HEIGHTS = [3, 4, 5, 5, 4, 3];
+
+        // Game State
+        let balance = 100.00;
+        let totalBet = 1.00;
+        let currentWin = 0.00;
+        let isSpinning = false;
+        let turboMode = false;
+        let autoSpin = false;
+        let freeSpinsRemaining = 0;
+        let spinsSinceLastBonus = 0;
+        let nextScatterTarget = Math.floor(Math.random() * 15) + 18; // Random 18-32 spins gap for 3 scatters
+        let missionProgress = 0;
+        let multiplierLadder = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1536];
+        let multIndex = 0;
+
+        // Symbol Base Payouts
+        const PAYOUTS = {
+            fire: 1.20,
+            lightning: 0.90,
+            leaf: 0.70,
+            water: 0.50
+        };
+
+        // 2D Board State
+        let board = [];
+
+        // Custom SVG Symbol Artwork
+        function getSymbolSVG(type) {
+            switch (type) {
+                case 'fire':
+                    return `
+                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                        <polygon points="50,6 92,28 92,72 50,94 8,72 8,28" fill="url(#redGemGrad)" stroke="#fca5a5" stroke-width="4"/>
+                        <polygon points="50,16 82,34 82,66 50,84 18,66 18,34" fill="none" stroke="#fee2e2" stroke-width="2" opacity="0.5"/>
+                        <path d="M50 26 C64 42, 68 58, 50 74 C32 58, 36 42, 50 26 Z" fill="#fef08a"/>
+                        <path d="M50 40 C58 50, 58 62, 50 70 C42 62, 42 50, 50 40 Z" fill="#ea580c"/>
+                    </svg>`;
+                case 'lightning':
+                    return `
+                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                        <polygon points="50,6 92,28 92,72 50,94 8,72 8,28" fill="url(#purpleGemGrad)" stroke="#e9d5ff" stroke-width="4"/>
+                        <polygon points="55,22 33,54 49,54 43,80 68,46 51,46" fill="#fde047" stroke="#ca8a04" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>`;
+                case 'leaf':
+                    return `
+                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                        <polygon points="50,10 92,86 8,86" fill="url(#greenGemGrad)" stroke="#bbf7d0" stroke-width="4" stroke-linejoin="round"/>
+                        <path d="M50 35 C66 48, 66 68, 50 76 C34 68, 34 48, 50 35 Z" fill="#fef08a"/>
+                        <path d="M50 45 L50 74" stroke="#15803d" stroke-width="3" stroke-linecap="round"/>
+                    </svg>`;
+                case 'water':
+                    return `
+                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" fill="url(#blueGemGrad)" stroke="#bae6fd" stroke-width="4"/>
+                        <circle cx="50" cy="50" r="32" fill="none" stroke="#e0f2fe" stroke-width="2" opacity="0.6"/>
+                        <path d="M50 24 C66 46, 68 62, 50 74 C32 62, 34 46, 50 24 Z" fill="#fde047"/>
+                        <circle cx="46" cy="57" r="6" fill="#0284c7"/>
+                    </svg>`;
+                case 'wild':
+                    return `
+                    <div class="relative w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-11 h-10 drop-shadow-[0_3px_5px_rgba(0,0,0,0.9)]" viewBox="0 0 100 85">
+                            <rect x="10" y="28" width="80" height="46" rx="8" fill="url(#goldChestGrad)" stroke="#fef9c3" stroke-width="4"/>
+                            <path d="M10 34 Q50 5 90 34 Z" fill="#ef4444" stroke="#fde047" stroke-width="4"/>
+                            <rect x="40" y="32" width="20" height="22" rx="4" fill="#38bdf8" stroke="#ffffff" stroke-width="3"/>
+                        </svg>
+                        <span class="scifi-font text-[10px] sm:text-[11px] font-black text-3d-gold -mt-2.5 tracking-tighter">WILD</span>
+                    </div>`;
+                case 'scatter':
+                    return `
+                    <div class="relative w-full h-full flex flex-col items-center justify-center">
+                        <svg class="w-11 h-10 drop-shadow-[0_3px_5px_rgba(0,0,0,0.9)]" viewBox="0 0 100 90">
+                            <polygon points="18,35 12,8 38,24" fill="#f97316" stroke="#fed7aa" stroke-width="3"/>
+                            <polygon points="82,35 88,8 62,24" fill="#f97316" stroke="#fed7aa" stroke-width="3"/>
+                            <circle cx="50" cy="48" r="30" fill="#fb923c" stroke="#fef08a" stroke-width="3"/>
+                            <path d="M24 52 Q50 78 76 52 Q65 74 50 74 Q35 74 24 52 Z" fill="#fffbeb"/>
+                            <rect x="24" y="30" width="52" height="18" rx="6" fill="#0284c7" stroke="#e2e8f0" stroke-width="3"/>
+                            <line x1="50" y1="30" x2="50" y2="48" stroke="#e2e8f0" stroke-width="3"/>
+                            <circle cx="38" cy="56" r="3" fill="#1e293b"/>
+                            <circle cx="62" cy="56" r="3" fill="#1e293b"/>
+                            <ellipse cx="50" cy="63" rx="4" ry="2.5" fill="#7c2d12"/>
+                        </svg>
+                        <span class="scifi-font text-[8px] sm:text-[9px] font-black text-3d-red -mt-2 tracking-tighter">SCATTER</span>
+                    </div>`;
+            }
+        }
+
+        // Initialize Board on Load
+        window.onload = function () {
+            document.getElementById('legendScatter').innerHTML = getSymbolSVG('scatter');
+            document.getElementById('legendWild').innerHTML = getSymbolSVG('wild');
+            document.getElementById('legendFire').innerHTML = getSymbolSVG('fire');
+            document.getElementById('legendLightning').innerHTML = getSymbolSVG('lightning');
+            document.getElementById('legendLeaf').innerHTML = getSymbolSVG('leaf');
+            document.getElementById('legendWater').innerHTML = getSymbolSVG('water');
+
+            generateInitialBoard();
+            renderBoard();
+            updateHUD();
+        };
+
+        function generateInitialBoard() {
+            board = [];
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                const col = [];
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    col.push(getRandomCell(c));
+                }
+                board.push(col);
+            }
+        }
+
+        function getRandomCell(colIdx) {
+            const r = Math.random();
+            let type = 'water';
+            if (r < 0.25) type = 'fire';
+            else if (r < 0.50) type = 'lightning';
+            else if (r < 0.75) type = 'leaf';
+            else if (r < 0.96) type = 'water';
+            else if (r < 0.985 && colIdx >= 1 && colIdx <= 4) type = 'wild';
+            else if (colIdx >= 1 && colIdx <= 4) type = 'scatter';
+
+            const isGold = (colIdx >= 1 && colIdx <= 4) && (Math.random() < 0.18);
+            return { type, isGold };
+        }
+
+        function renderBoard(winningCoords = new Set()) {
+            const container = document.getElementById('reelContainer');
+            container.innerHTML = '';
+
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                const colDiv = document.createElement('div');
+                colDiv.className = 'flex flex-col justify-center items-center gap-1 sm:gap-1.5 flex-1';
+
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    const cell = board[c][r];
+                    const coordKey = `${c}-${r}`;
+                    const isWinning = winningCoords.has(coordKey);
+
+                    const tile = document.createElement('div');
+                    const tileStyle = cell.isGold ? 'tile-gold' : 'tile-silver';
+                    const animClass = isWinning ? 'animate-match' : 'animate-drop';
+
+                    tile.className = `w-full aspect-square max-w-[62px] rounded-xl ${tileStyle} ${animClass} flex items-center justify-center relative overflow-hidden transition-transform`;
+                    tile.innerHTML = getSymbolSVG(cell.type);
+                    colDiv.appendChild(tile);
+                }
+                container.appendChild(colDiv);
+            }
+        }
+
+        function updateHUD() {
+            document.getElementById('balanceDisplay').innerText = balance.toFixed(2);
+            document.getElementById('winDisplay').innerText = currentWin.toFixed(2);
+            document.getElementById('betDisplay').innerText = totalBet.toFixed(2);
+
+            const currentMult = multiplierLadder[multIndex];
+            const nextMult = multiplierLadder[Math.min(multiplierLadder.length - 1, multIndex + 1)];
+            document.getElementById('multCenterVal').innerText = `${currentMult}X`;
+            document.getElementById('multRightVal').innerText = `${nextMult}X`;
+
+            document.getElementById('missionBar').style.width = `${missionProgress}%`;
+            document.getElementById('missionText').innerText = `${missionProgress}%`;
+
+            const fsEl = document.getElementById('freeSpinCounter');
+            if (freeSpinsRemaining > 0) {
+                fsEl.classList.remove('hidden');
+                fsEl.innerText = `FREE SPINS: ${freeSpinsRemaining}`;
+            } else {
+                fsEl.classList.add('hidden');
+            }
+        }
+
+        function startSpin() {
+            if (isSpinning) return;
+
+            const isFreeSpin = freeSpinsRemaining > 0;
+
+            if (!isFreeSpin) {
+                if (balance < totalBet) {
+                    autoSpin = false;
+                    updateAutoBtn();
+                    showMessage('INSUFFICIENT BALANCE', 'Not enough credits to spin. Lower your bet or reload the page for fresh demo credits.');
+                    return;
+                }
+                balance -= totalBet;
+                currentWin = 0;
+                multIndex = 0;
+                spinsSinceLastBonus++;
+            } else {
+                freeSpinsRemaining--;
+                multIndex = Math.max(1, multIndex);
+            }
+
+            isSpinning = true;
+            document.getElementById('statusText').innerText = isFreeSpin ? `FREE SPIN (${freeSpinsRemaining} LEFT)` : 'SPINNING...';
+            document.getElementById('spinIcon').classList.add('animate-spin');
+            updateHUD();
+
+            let scatterPlaced = 0;
+            const allowTripleScatter = (!isFreeSpin && spinsSinceLastBonus >= nextScatterTarget);
+
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                board[c] = [];
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    let cell = getRandomCell(c);
+                    if (cell.type === 'scatter') {
+                        if (!allowTripleScatter && scatterPlaced >= 2) {
+                            cell.type = 'fire';
+                        } else {
+                            scatterPlaced++;
+                        }
+                    }
+                    board[c].push(cell);
+                }
+            }
+
+            if (allowTripleScatter) {
+                while (scatterPlaced < 3) {
+                    const randCol = Math.floor(Math.random() * 4) + 1;
+                    const randRow = Math.floor(Math.random() * COL_HEIGHTS[randCol]);
+                    if (board[randCol][randRow].type !== 'scatter') {
+                        board[randCol][randRow] = { type: 'scatter', isGold: true };
+                        scatterPlaced++;
+                    }
+                }
+                spinsSinceLastBonus = 0;
+                nextScatterTarget = Math.floor(Math.random() * 18) + 20;
+            }
+
+            renderBoard();
+
+            const delay = turboMode ? 220 : 480;
+            setTimeout(() => {
+                evaluateCascades();
+            }, delay);
+        }
+
+        function evaluateCascades() {
+            const winningSet = new Set();
+            let roundPayout = 0;
+            let scatterCount = 0;
+
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    if (board[c][r].type === 'scatter') {
+                        scatterCount++;
+                        winningSet.add(`${c}-${r}`);
+                    }
+                }
+            }
+
+            if (scatterCount >= 3) {
+                roundPayout += totalBet * 2.0;
+                freeSpinsRemaining += 10;
+                triggerSurgeEffect('10 FREE!');
+                document.getElementById('statusText').innerText = '3 SCATTERS! +10 FREE SPINS!';
+            } else {
+                winningSet.clear();
+            }
+
+            const baseSymbols = ['fire', 'lightning', 'leaf', 'water'];
+            baseSymbols.forEach(sym => {
+                let consecutiveCols = 0;
+                let waysCount = 1;
+                let tempCoords = [];
+
+                for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                    let matchesInCol = [];
+                    for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                        const cellType = board[c][r].type;
+                        if (cellType === sym || cellType === 'wild') {
+                            matchesInCol.push(`${c}-${r}`);
+                        }
+                    }
+
+                    if (matchesInCol.length > 0) {
+                        consecutiveCols++;
+                        waysCount *= matchesInCol.length;
+                        tempCoords.push(...matchesInCol);
+                    } else {
+                        break;
+                    }
+                }
+
+                if (consecutiveCols >= 3) {
+                    tempCoords.forEach(coord => winningSet.add(coord));
+                    roundPayout += (PAYOUTS[sym] * 0.15 * totalBet * waysCount * (consecutiveCols - 2));
+                }
+            });
+
+            if (winningSet.size > 0 && roundPayout > 0) {
+                const activeMult = multiplierLadder[multIndex];
+                const totalCascadeWin = roundPayout * activeMult;
+                currentWin += totalCascadeWin;
+                balance += totalCascadeWin;
+
+                missionProgress = Math.min(100, missionProgress + 10);
+                document.getElementById('statusText').innerText = `CASCADE WIN! ${activeMult}X`;
+                
+                renderBoard(winningSet);
+                updateHUD();
+
+                const cascadeDelay = turboMode ? 280 : 550;
+                setTimeout(() => {
+                    for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                        let remaining = [];
+                        for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                            if (winningSet.has(`${c}-${r}`)) {
+                                if (board[c][r].isGold && board[c][r].type !== 'wild') {
+                                    remaining.push({ type: 'wild', isGold: false });
+                                }
+                            } else {
+                                remaining.push(board[c][r]);
+                            }
+                        }
+                        while (remaining.length < COL_HEIGHTS[c]) {
+                            remaining.unshift(getRandomCell(c));
+                        }
+                        board[c] = remaining;
+                    }
+
+                    multIndex = Math.min(multiplierLadder.length - 1, multIndex + 1);
+                    if (multiplierLadder[multIndex] >= 64) {
+                        triggerSurgeEffect(multiplierLadder[multIndex] + 'X');
+                    }
+
+                    renderBoard();
+                    updateHUD();
+
+                    setTimeout(() => {
+                        evaluateCascades();
+                    }, cascadeDelay);
+                }, cascadeDelay);
+
+            } else {
+                isSpinning = false;
+                document.getElementById('spinIcon').classList.remove('animate-spin');
+                
+                if (freeSpinsRemaining > 0) {
+                    document.getElementById('statusText').innerText = `AUTO FREE SPIN (${freeSpinsRemaining} LEFT)`;
+                    updateHUD();
+                    setTimeout(() => {
+                        if (freeSpinsRemaining > 0 && !isSpinning) startSpin();
+                    }, turboMode ? 350 : 750);
+                } else {
+                    document.getElementById('statusText').innerText = currentWin > 0 ? `TOTAL WIN: ${currentWin.toFixed(2)}` : 'READY TO SPIN';
+                    updateHUD();
+
+                    if (autoSpin) {
+                        setTimeout(() => {
+                            if (autoSpin) startSpin();
+                        }, turboMode ? 300 : 700);
+                    }
+                }
+            }
+        }
+
+        function triggerSurgeEffect(label) {
+            const badge = document.getElementById('floatingSurgeBadge');
+            document.getElementById('surgeText').innerText = label;
+            badge.classList.remove('hidden');
+            setTimeout(() => {
+                badge.classList.add('hidden');
+            }, 1100);
+        }
+
+        function triggerBuyFeature() {
+            if (isSpinning) return;
+            const cost = totalBet * 25;
+            if (balance < cost) {
+                showMessage('BUY FEATURE', `You need ${cost.toFixed(2)} balance to activate the Multiplier Surge Feature!`);
+                return;
+            }
+            balance -= cost;
+            currentWin = 0;
+            multIndex = 2;
+            isSpinning = true;
+            document.getElementById('statusText').innerText = 'FEATURE SURGE ACTIVE!';
+            triggerSurgeEffect('4X');
+            updateHUD();
+
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                board[c] = [];
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    const cell = getRandomCell(c);
+                    if (c >= 1 && c <= 4 && Math.random() < 0.35) cell.isGold = true;
+                    board[c].push(cell);
+                }
+            }
+            renderBoard();
+            setTimeout(() => evaluateCascades(), 500);
+        }
+
+        function adjustBet(delta) {
+            if (isSpinning) return;
+            totalBet = Math.max(0.20, Math.min(50.00, +(totalBet + delta).toFixed(2)));
+            updateHUD();
+        }
+
+        function toggleTurbo() {
+            turboMode = !turboMode;
+            const btn = document.getElementById('turboBtn');
+            const ind = document.getElementById('turboIndicator').firstElementChild;
+            if (turboMode) {
+                btn.classList.add('ring-2', 'ring-amber-300');
+                ind.classList.remove('w-1/2');
+                ind.classList.add('w-full', 'bg-emerald-400');
+                document.getElementById('statusText').innerText = 'TURBO MODE ON';
+            } else {
+                btn.classList.remove('ring-2', 'ring-amber-300');
+                ind.classList.remove('w-full', 'bg-emerald-400');
+                ind.classList.add('w-1/2');
+                document.getElementById('statusText').innerText = 'TURBO MODE OFF';
+            }
+        }
+
+        function toggleAutoSpin() {
+            autoSpin = !autoSpin;
+            updateAutoBtn();
+            if (autoSpin && !isSpinning) {
+                startSpin();
+            }
+        }
+
+        function updateAutoBtn() {
+            const btn = document.getElementById('autoBtn');
+            if (autoSpin) {
+                btn.classList.add('ring-2', 'ring-amber-300', 'animate-pulse');
+            } else {
+                btn.classList.remove('ring-2', 'ring-amber-300', 'animate-pulse');
+            }
+        }
+
+        function openInfoModal() {
+            document.getElementById('infoModal').classList.remove('hidden');
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoModal').classList.add('hidden');
+        }
+
+        function showMessage(title, text) {
+            document.getElementById('msgTitle').innerText = title;
+            document.getElementById('msgBody').innerText = text;
+            document.getElementById('msgModal').classList.remove('hidden');
+        }
+
+        function closeMsgModal() {
+            document.getElementById('msgModal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+```
