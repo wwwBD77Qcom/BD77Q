@@ -1,0 +1,1383 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ocean Hunter - Fish Shooting Arcade</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #021124;
+            font-family: 'Fredoka', sans-serif;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .arcade-btn {
+            transition: transform 0.1s ease, filter 0.15s ease, box-shadow 0.15s ease;
+        }
+        .arcade-btn:active {
+            transform: scale(0.92);
+        }
+        .glass-hud {
+            background: rgba(6, 28, 56, 0.78);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 12px rgba(250, 204, 21, 0.5); }
+            50% { box-shadow: 0 0 24px rgba(250, 204, 21, 0.9); }
+        }
+        .boss-alert {
+            animation: pulseGlow 1.5s infinite;
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Main Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- Top HUD: Balance, Boss Warning, Sound & Info -->
+    <div class="fixed top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
+        <!-- Coin Wallet Display -->
+        <div id="walletBox" class="glass-hud rounded-2xl px-3.5 py-2 sm:px-5 sm:py-2.5 flex items-center gap-2.5 pointer-events-auto">
+            <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 flex items-center justify-center shadow-inner border-2 border-yellow-100 text-amber-900 font-bold text-base sm:text-lg">
+                $
+            </div>
+            <div>
+                <div class="text-[10px] sm:text-xs uppercase tracking-wider text-sky-300 font-semibold leading-none">Coins Balance</div>
+                <div id="coinBalanceText" class="text-lg sm:text-2xl font-bold text-yellow-300 tracking-wide leading-tight">1,000</div>
+            </div>
+            <button id="refillBtn" class="hidden ml-2 bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-bold text-xs sm:text-sm px-3 py-1.5 rounded-xl shadow-lg arcade-btn cursor-pointer">
+                +1,000 Free
+            </button>
+        </div>
+
+        <!-- Boss Spawn Banner -->
+        <div id="bossBanner" class="hidden glass-hud border-amber-400/70 rounded-full px-4 py-1.5 text-amber-300 font-bold text-xs sm:text-sm tracking-wider uppercase boss-alert">
+            🐉 Golden Dragon Incoming! (x50)
+        </div>
+
+        <!-- Right Controls: Fish Guide & Mute -->
+        <div class="flex items-center gap-2 pointer-events-auto">
+            <button id="guideBtn" title="Fish Multipliers" class="glass-hud arcade-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-sky-200 hover:text-white cursor-pointer text-lg font-bold">
+                ?
+            </button>
+            <button id="muteBtn" title="Toggle Sound" class="glass-hud arcade-btn w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center text-sky-200 hover:text-white cursor-pointer">
+                <!-- Speaker Icon -->
+                <svg id="soundOnIcon" class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+                </svg>
+                <svg id="soundOffIcon" class="w-5 h-5 sm:w-6 sm:h-6 hidden text-rose-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Toast Message Box (Replaces alert) -->
+    <div id="toastMsg" class="fixed top-20 left-1/2 -translate-x-1/2 glass-hud border-rose-400/60 text-rose-200 px-5 py-2.5 rounded-2xl text-sm font-semibold shadow-2xl opacity-0 pointer-events-none transition-opacity duration-300 z-30 text-center">
+        Not enough coins! Lower your bet or claim free refill.
+    </div>
+
+    <!-- Fish Paytable Modal -->
+    <div id="guideModal" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm hidden items-center justify-center p-4 z-40">
+        <div class="glass-hud rounded-3xl max-w-md w-full p-6 text-white relative border border-sky-400/40">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-amber-300 flex items-center gap-2">
+                    <span>🐠</span> Fish Multipliers & Guide
+                </h2>
+                <button id="closeGuideBtn" class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white font-bold cursor-pointer">
+                    ✕
+                </button>
+            </div>
+            <p class="text-xs sm:text-sm text-sky-200 mb-4">
+                Aim your cannon and tap/click to shoot! Higher bet levels increase cannon power and multiply your rewards.
+            </p>
+            <div class="grid grid-cols-2 gap-3 text-sm">
+                <div class="bg-slate-900/60 rounded-2xl p-3 border border-sky-500/20 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-orange-300">Clownfish</div>
+                        <div class="text-xs text-slate-400">Fast & Easy</div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 font-bold">x2</span>
+                </div>
+                <div class="bg-slate-900/60 rounded-2xl p-3 border border-sky-500/20 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-cyan-300">Puffer / Tang</div>
+                        <div class="text-xs text-slate-400">Medium HP</div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 font-bold">x5</span>
+                </div>
+                <div class="bg-slate-900/60 rounded-2xl p-3 border border-sky-500/20 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-emerald-300">Shark / Turtle</div>
+                        <div class="text-xs text-slate-400">High HP</div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-xl bg-amber-500/20 text-amber-300 font-bold">x15</span>
+                </div>
+                <div class="bg-slate-900/60 rounded-2xl p-3 border border-amber-400/40 flex items-center justify-between">
+                    <div>
+                        <div class="font-bold text-yellow-300">Golden Boss</div>
+                        <div class="text-xs text-amber-200/70">Mega Jackpot</div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-xl bg-amber-500/30 text-yellow-300 font-bold">x50</span>
+                </div>
+            </div>
+            <button id="startPlayingBtn" class="mt-5 w-full py-3 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 font-bold text-white shadow-lg arcade-btn cursor-pointer">
+                Back to Ocean
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom HUD: Bet Controls & Auto-Fire -->
+    <div class="fixed bottom-3 left-3 right-3 flex items-end justify-between pointer-events-none z-10">
+        <!-- Bet Level Selector -->
+        <div class="glass-hud rounded-2xl p-2 sm:p-2.5 flex items-center gap-2 sm:gap-3 pointer-events-auto">
+            <button id="decreaseBetBtn" class="arcade-btn w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-b from-rose-500 to-rose-700 text-white font-bold text-xl flex items-center justify-center shadow-md border border-rose-300/40 cursor-pointer">
+                −
+            </button>
+            <div class="text-center min-w-[64px] sm:min-w-[80px]">
+                <div class="text-[10px] uppercase tracking-wider text-sky-300 font-semibold leading-none">Bet Power</div>
+                <div id="betAmountText" class="text-base sm:text-xl font-bold text-white leading-tight mt-0.5">10</div>
+            </div>
+            <button id="increaseBetBtn" class="arcade-btn w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-b from-emerald-500 to-emerald-700 text-white font-bold text-xl flex items-center justify-center shadow-md border border-emerald-300/40 cursor-pointer">
+                +
+            </button>
+        </div>
+
+        <!-- Auto-Fire Toggle Button -->
+        <button id="autoFireBtn" class="glass-hud arcade-btn rounded-2xl px-4 py-2.5 sm:px-5 sm:py-3 flex items-center gap-2 pointer-events-auto cursor-pointer border border-sky-400/40 text-sky-200 font-bold text-xs sm:text-sm">
+            <span id="autoFireDot" class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+            <span>AUTO FIRE</span>
+        </button>
+    </div>
+
+    <script>
+        /**
+         * OCEAN HUNTER - FISH SHOOTING ARCADE
+         * Complete Single-File HTML5 Canvas Game with Procedural Graphics & Web Audio API
+         */
+
+        // ==========================================
+        // 1. WEB AUDIO SYNTHESIZER (No external files)
+        // ==========================================
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+                this.muted = false;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioContext();
+                }
+                if (this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            toggleMute() {
+                this.muted = !this.muted;
+                return this.muted;
+            }
+
+            playShoot(betIndex) {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                // Higher bet gives deeper, punchier plasma sound
+                const baseFreq = 580 - betIndex * 70;
+                osc.type = betIndex >= 2 ? 'sawtooth' : 'triangle';
+                osc.frequency.setValueAtTime(baseFreq, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.14);
+
+                gain.gain.setValueAtTime(0.14, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            }
+
+            playHit() {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(90, now + 0.06);
+
+                gain.gain.setValueAtTime(0.08, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.07);
+            }
+
+            playCatch(isBig = false) {
+                if (this.muted) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const notes = isBig ? [523.25, 659.25, 783.99, 1046.50, 1318.51] : [659.25, 987.77];
+
+                notes.forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + idx * 0.055);
+
+                    gain.gain.setValueAtTime(0.14, now + idx * 0.055);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.055 + 0.22);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now + idx * 0.055);
+                    osc.stop(now + idx * 0.055 + 0.24);
+                });
+            }
+        }
+
+        const sfx = new SoundFX();
+
+        // ==========================================
+        // 2. GAME STATE & CONFIGURATION
+        // ==========================================
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        const BET_LEVELS = [10, 20, 50, 100];
+        const CANNON_THEMES = [
+            { primary: '#38bdf8', secondary: '#0284c7', glow: '#7dd3fc', bulletRadius: 6, damage: 1 },
+            { primary: '#34d399', secondary: '#059669', glow: '#6ee7b7', bulletRadius: 8, damage: 2 },
+            { primary: '#c084fc', secondary: '#7e22ce', glow: '#e9d5ff', bulletRadius: 10, damage: 5 },
+            { primary: '#fbbf24', secondary: '#d97706', glow: '#fef08a', bulletRadius: 13, damage: 10 }
+        ];
+
+        const FISH_TYPES = [
+            {
+                id: 'clownfish',
+                name: 'Clownfish',
+                multiplier: 2,
+                hp: 2,
+                speed: 2.3,
+                radius: 22,
+                weight: 45,
+                bodyColor: '#ff6b2b',
+                stripeColor: '#ffffff',
+                finColor: '#ff9e44'
+            },
+            {
+                id: 'neon',
+                name: 'Neon Tetra',
+                multiplier: 2,
+                hp: 2,
+                speed: 2.8,
+                radius: 19,
+                weight: 35,
+                bodyColor: '#00f5d4',
+                stripeColor: '#ff007f',
+                finColor: '#38bdf8'
+            },
+            {
+                id: 'puffer',
+                name: 'Pufferfish',
+                multiplier: 5,
+                hp: 6,
+                speed: 1.6,
+                radius: 30,
+                weight: 25,
+                bodyColor: '#facc15',
+                stripeColor: '#fef08a',
+                finColor: '#f97316'
+            },
+            {
+                id: 'bluetang',
+                name: 'Royal Tang',
+                multiplier: 5,
+                hp: 6,
+                speed: 1.9,
+                radius: 28,
+                weight: 25,
+                bodyColor: '#2563eb',
+                stripeColor: '#1e1b4b',
+                finColor: '#facc15'
+            },
+            {
+                id: 'turtle',
+                name: 'Emerald Turtle',
+                multiplier: 15,
+                hp: 18,
+                speed: 1.15,
+                radius: 42,
+                weight: 12,
+                bodyColor: '#10b981',
+                stripeColor: '#065f46',
+                finColor: '#34d399'
+            },
+            {
+                id: 'shark',
+                name: 'Golden Shark',
+                multiplier: 15,
+                hp: 20,
+                speed: 1.45,
+                radius: 48,
+                weight: 10,
+                bodyColor: '#64748b',
+                stripeColor: '#e2e8f0',
+                finColor: '#f59e0b'
+            },
+            {
+                id: 'boss',
+                name: 'Golden Dragon',
+                multiplier: 50,
+                hp: 65,
+                speed: 0.95,
+                radius: 68,
+                weight: 3,
+                bodyColor: '#f59e0b',
+                stripeColor: '#fef08a',
+                finColor: '#ef4444'
+            }
+        ];
+
+        // Load saved coins or default to 1,000
+        let savedCoins = parseInt(localStorage.getItem('oceanHunterCoins'), 10);
+        if (isNaN(savedCoins) || savedCoins < 0) savedCoins = 1000;
+
+        const state = {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            coins: savedCoins,
+            betIndex: 0,
+            cannonAngle: -Math.PI / 2,
+            cannonRecoil: 0,
+            autoFire: false,
+            isPointerDown: false,
+            lastFireTime: 0,
+            fireCooldown: 190, // ms between shots
+            shakeTime: 0,
+            shakeIntensity: 0,
+            fishes: [],
+            bullets: [],
+            bubbles: [],
+            particles: [],
+            flyingCoins: [],
+            popups: [],
+            corals: []
+        };
+
+        // ==========================================
+        // 3. UI DOM ELEMENTS & HANDLERS
+        // ==========================================
+        const coinBalanceText = document.getElementById('coinBalanceText');
+        const betAmountText = document.getElementById('betAmountText');
+        const refillBtn = document.getElementById('refillBtn');
+        const bossBanner = document.getElementById('bossBanner');
+        const toastMsg = document.getElementById('toastMsg');
+        const autoFireBtn = document.getElementById('autoFireBtn');
+        const autoFireDot = document.getElementById('autoFireDot');
+        const walletBox = document.getElementById('walletBox');
+
+        let toastTimer = null;
+        function showToast(message) {
+            toastMsg.textContent = message;
+            toastMsg.classList.remove('opacity-0');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toastMsg.classList.add('opacity-0');
+            }, 2400);
+        }
+
+        function updateHUD() {
+            coinBalanceText.textContent = state.coins.toLocaleString();
+            betAmountText.textContent = BET_LEVELS[state.betIndex];
+            localStorage.setItem('oceanHunterCoins', state.coins);
+
+            if (state.coins < BET_LEVELS[0]) {
+                refillBtn.classList.remove('hidden');
+            } else {
+                refillBtn.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('increaseBetBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            state.betIndex = (state.betIndex + 1) % BET_LEVELS.length;
+            updateHUD();
+        });
+
+        document.getElementById('decreaseBetBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            state.betIndex = (state.betIndex - 1 + BET_LEVELS.length) % BET_LEVELS.length;
+            updateHUD();
+        });
+
+        refillBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            state.coins += 1000;
+            sfx.playCatch(false);
+            updateHUD();
+            showToast('Claimed +1,000 Free Coins!');
+        });
+
+        autoFireBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            state.autoFire = !state.autoFire;
+            if (state.autoFire) {
+                autoFireBtn.classList.add('border-amber-400', 'text-amber-300', 'bg-amber-500/20');
+                autoFireDot.classList.remove('bg-slate-400');
+                autoFireDot.classList.add('bg-amber-400', 'animate-ping');
+            } else {
+                autoFireBtn.classList.remove('border-amber-400', 'text-amber-300', 'bg-amber-500/20');
+                autoFireDot.classList.add('bg-slate-400');
+                autoFireDot.classList.remove('bg-amber-400', 'animate-ping');
+            }
+        });
+
+        document.getElementById('muteBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isMuted = sfx.toggleMute();
+            document.getElementById('soundOnIcon').classList.toggle('hidden', isMuted);
+            document.getElementById('soundOffIcon').classList.toggle('hidden', !isMuted);
+        });
+
+        const guideModal = document.getElementById('guideModal');
+        document.getElementById('guideBtn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            guideModal.classList.remove('hidden');
+            guideModal.classList.add('flex');
+        });
+        const closeGuide = (e) => {
+            e.stopPropagation();
+            guideModal.classList.add('hidden');
+            guideModal.classList.remove('flex');
+        };
+        document.getElementById('closeGuideBtn').addEventListener('click', closeGuide);
+        document.getElementById('startPlayingBtn').addEventListener('click', closeGuide);
+
+        // ==========================================
+        // 4. RESPONSIVE CANVAS & ENVIRONMENT SETUP
+        // ==========================================
+        function generateSeabed() {
+            state.corals = [];
+            const count = Math.ceil(state.width / 70);
+            const palette = ['#0d9488', '#0284c7', '#7c3aed', '#db2777', '#d97706'];
+            for (let i = 0; i < count; i++) {
+                state.corals.push({
+                    x: i * 75 + (Math.random() * 30 - 15),
+                    height: 35 + Math.random() * 55,
+                    width: 18 + Math.random() * 22,
+                    color: palette[i % palette.length],
+                    swayOffset: Math.random() * Math.PI * 2,
+                    type: i % 2 === 0 ? 'kelp' : 'coral'
+                });
+            }
+        }
+
+        function resizeCanvas() {
+            state.width = window.innerWidth;
+            state.height = window.innerHeight;
+            canvas.width = state.width;
+            canvas.height = state.height;
+            generateSeabed();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Initialize ambient bubbles
+        for (let i = 0; i < 35; i++) {
+            state.bubbles.push({
+                x: Math.random() * state.width,
+                y: Math.random() * state.height,
+                r: 2 + Math.random() * 5,
+                speed: 0.4 + Math.random() * 1.1,
+                wobble: Math.random() * Math.PI * 2
+            });
+        }
+
+        // ==========================================
+        // 5. INPUT HANDLING (MOUSE & TOUCH)
+        // ==========================================
+        function getCannonOrigin() {
+            return {
+                x: state.width / 2,
+                y: state.height - 22
+            };
+        }
+
+        function aimCannonAt(clientX, clientY) {
+            const origin = getCannonOrigin();
+            const dx = clientX - origin.x;
+            const dy = clientY - origin.y;
+            let angle = Math.atan2(dy, dx);
+
+            // Clamp angle so cannon only aims upward (-170 deg to -10 deg)
+            const minAngle = -Math.PI + 0.16;
+            const maxAngle = -0.16;
+            if (angle > 0) {
+                angle = dx < 0 ? minAngle : maxAngle;
+            } else {
+                angle = Math.max(minAngle, Math.min(maxAngle, angle));
+            }
+            state.cannonAngle = angle;
+        }
+
+        canvas.addEventListener('mousemove', (e) => {
+            aimCannonAt(e.clientX, e.clientY);
+        });
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (e.button !== 0) return;
+            aimCannonAt(e.clientX, e.clientY);
+            state.isPointerDown = true;
+            tryFireBullet();
+        });
+
+        window.addEventListener('mouseup', () => {
+            state.isPointerDown = false;
+        });
+
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (e.touches.length > 0) {
+                const t = e.touches[0];
+                aimCannonAt(t.clientX, t.clientY);
+                state.isPointerDown = true;
+                tryFireBullet();
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            if (e.touches.length > 0) {
+                const t = e.touches[0];
+                aimCannonAt(t.clientX, t.clientY);
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', () => {
+            state.isPointerDown = false;
+        });
+
+        // ==========================================
+        // 6. SHOOTING & BULLET MECHANICS
+        // ==========================================
+        function tryFireBullet() {
+            const now = performance.now();
+            if (now - state.lastFireTime < state.fireCooldown) return;
+
+            const currentBet = BET_LEVELS[state.betIndex];
+            if (state.coins < currentBet) {
+                state.isPointerDown = false;
+                if (state.autoFire) {
+                    autoFireBtn.click(); // Turn off auto-fire
+                }
+                showToast('Not enough coins! Lower your bet or claim free coins.');
+                return;
+            }
+
+            state.lastFireTime = now;
+            state.coins -= currentBet;
+            updateHUD();
+
+            const origin = getCannonOrigin();
+            const barrelLength = 54;
+            const theme = CANNON_THEMES[state.betIndex];
+            const speed = 13;
+
+            state.bullets.push({
+                x: origin.x + Math.cos(state.cannonAngle) * barrelLength,
+                y: origin.y + Math.sin(state.cannonAngle) * barrelLength,
+                vx: Math.cos(state.cannonAngle) * speed,
+                vy: Math.sin(state.cannonAngle) * speed,
+                radius: theme.bulletRadius,
+                damage: theme.damage,
+                bet: currentBet,
+                color: theme.primary,
+                glow: theme.glow
+            });
+
+            state.cannonRecoil = 10;
+            sfx.playShoot(state.betIndex);
+        }
+
+        // ==========================================
+        // 7. FISH SPAWNING & PROCEDURAL RENDERING
+        // ==========================================
+        function spawnFish(forceBoss = false) {
+            let selectedType;
+            if (forceBoss) {
+                selectedType = FISH_TYPES.find(f => f.id === 'boss');
+            } else {
+                const totalWeight = FISH_TYPES.reduce((sum, f) => sum + f.weight, 0);
+                let rand = Math.random() * totalWeight;
+                for (const f of FISH_TYPES) {
+                    if (rand < f.weight) {
+                        selectedType = f;
+                        break;
+                    }
+                    rand -= f.weight;
+                }
+            }
+
+            // Prevent multiple bosses simultaneously
+            if (selectedType.id === 'boss' && state.fishes.some(f => f.type.id === 'boss')) {
+                selectedType = FISH_TYPES[0];
+            }
+
+            const fromLeft = Math.random() < 0.5;
+            const margin = selectedType.radius + 40;
+            const startX = fromLeft ? -margin : state.width + margin;
+            const minY = 95;
+            const maxY = state.height - 140;
+            const startY = minY + Math.random() * Math.max(100, maxY - minY);
+
+            const speedVariance = 0.85 + Math.random() * 0.35;
+            const vx = (fromLeft ? 1 : -1) * selectedType.speed * speedVariance;
+
+            const newFish = {
+                type: selectedType,
+                x: startX,
+                y: startY,
+                baseY: startY,
+                vx: vx,
+                hp: selectedType.hp,
+                maxHp: selectedType.hp,
+                swimPhase: Math.random() * Math.PI * 2,
+                waveAmp: 12 + Math.random() * 22,
+                waveFreq: 0.015 + Math.random() * 0.015,
+                hitFlash: 0
+            };
+
+            state.fishes.push(newFish);
+
+            if (selectedType.id === 'boss') {
+                bossBanner.classList.remove('hidden');
+                setTimeout(() => bossBanner.classList.add('hidden'), 4500);
+            }
+        }
+
+        function drawFish(fish, time) {
+            const { type, x, y, vx, swimPhase, hitFlash } = fish;
+            const facingRight = vx >= 0;
+            const tailWag = Math.sin(time * 0.014 + swimPhase) * 0.42;
+            const finFlutter = Math.sin(time * 0.018 + swimPhase) * 0.25;
+
+            ctx.save();
+            ctx.translate(x, y);
+            if (!facingRight) {
+                ctx.scale(-1, 1);
+            }
+
+            const r = type.radius;
+
+            // Realistic Underwater Drop Shadow beneath fish
+            ctx.save();
+            ctx.translate(-4, r * 0.65);
+            ctx.fillStyle = 'rgba(2, 132, 199, 0.22)';
+            ctx.beginPath();
+            ctx.ellipse(0, 0, r * 0.9, r * 0.22, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // Aura glow for Boss & Large Fish
+            if (type.id === 'boss' || type.multiplier >= 15) {
+                const grad = ctx.createRadialGradient(0, 0, r * 0.2, 0, 0, r * 1.55);
+                grad.addColorStop(0, type.id === 'boss' ? 'rgba(250, 204, 21, 0.45)' : 'rgba(14, 165, 233, 0.28)');
+                grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.arc(0, 0, r * 1.55, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 1. Realistic Forked / Fan Tail Fin with Rays
+            ctx.save();
+            ctx.translate(-r * 0.85, 0);
+            ctx.rotate(tailWag * 1.15);
+            const tailGrad = ctx.createLinearGradient(0, 0, -r * 0.95, 0);
+            tailGrad.addColorStop(0, hitFlash > 0 ? '#ffffff' : type.bodyColor);
+            tailGrad.addColorStop(0.6, hitFlash > 0 ? '#ffffff' : type.finColor);
+            tailGrad.addColorStop(1, hitFlash > 0 ? '#ffffff' : type.finColor + '66');
+            ctx.fillStyle = tailGrad;
+            ctx.beginPath();
+            ctx.moveTo(0, -r * 0.13);
+            ctx.bezierCurveTo(-r * 0.38, -r * 0.62, -r * 0.72, -r * 0.78, -r * 0.92, -r * 0.62);
+            ctx.quadraticCurveTo(-r * 0.56, 0, -r * 0.92, r * 0.62);
+            ctx.bezierCurveTo(-r * 0.72, r * 0.78, -r * 0.38, r * 0.62, 0, r * 0.13);
+            ctx.closePath();
+            ctx.fill();
+
+            // Fine anatomical tail rays
+            if (hitFlash <= 0) {
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+                ctx.lineWidth = 1.1;
+                for (let ray = -3; ray <= 3; ray++) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, ray * r * 0.03);
+                    ctx.quadraticCurveTo(-r * 0.45, ray * r * 0.12, -r * 0.82, ray * r * 0.18);
+                    ctx.stroke();
+                }
+            }
+            ctx.restore();
+
+            // 2. Realistic Swept Dorsal (Top) & Pelvic/Anal (Bottom) Fins
+            ctx.save();
+            ctx.fillStyle = hitFlash > 0 ? '#ffffff' : type.finColor + 'cc';
+            // Top Dorsal Fin
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.38, -r * 0.38);
+            ctx.bezierCurveTo(-r * 0.15, -r * 1.05, r * 0.18, -r * 0.95, r * 0.32, -r * 0.36);
+            ctx.quadraticCurveTo(0, -r * 0.48, -r * 0.38, -r * 0.38);
+            ctx.fill();
+
+            // Bottom Anal & Pelvic Fins
+            ctx.beginPath();
+            ctx.moveTo(-r * 0.45, r * 0.34);
+            ctx.bezierCurveTo(-r * 0.25, r * 0.82, -r * 0.05, r * 0.75, r * 0.05, r * 0.38);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(r * 0.05, r * 0.42);
+            ctx.quadraticCurveTo(r * 0.18, r * 0.82, r * 0.32, r * 0.42);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // 3. Natural Anatomical Fish Body (Counter-shaded dark back to pearly white belly)
+            const bodyGrad = ctx.createLinearGradient(0, -r * 0.58, 0, r * 0.58);
+            if (hitFlash > 0) {
+                bodyGrad.addColorStop(0, '#ffffff');
+                bodyGrad.addColorStop(1, '#f1f5f9');
+            } else {
+                bodyGrad.addColorStop(0, '#1e293b'); // Realistic dark dorsal spine
+                bodyGrad.addColorStop(0.24, type.bodyColor);
+                bodyGrad.addColorStop(0.68, type.bodyColor);
+                bodyGrad.addColorStop(0.88, '#f8fafc');
+                bodyGrad.addColorStop(1, '#ffffff'); // Pure silvery-white belly
+            }
+
+            ctx.fillStyle = bodyGrad;
+            ctx.beginPath();
+            if (type.id === 'puffer') {
+                ctx.arc(0, 0, r * 0.84, 0, Math.PI * 2);
+            } else if (type.id === 'turtle') {
+                ctx.ellipse(0, -r * 0.05, r * 0.95, r * 0.55, 0, Math.PI, 0);
+                ctx.quadraticCurveTo(r * 0.95, r * 0.35, 0, r * 0.38);
+                ctx.quadraticCurveTo(-r * 0.95, r * 0.35, -r * 0.95, -r * 0.05);
+            } else {
+                // Organic streamlined fish profile with snout, forehead, and narrow tail peduncle
+                ctx.moveTo(r * 1.08, r * 0.02); // Snout tip
+                ctx.bezierCurveTo(r * 0.85, -r * 0.35, r * 0.35, -r * 0.62, -r * 0.25, -r * 0.48); // Forehead & back
+                ctx.quadraticCurveTo(-r * 0.65, -r * 0.35, -r * 0.9, -r * 0.14); // Tail base top
+                ctx.lineTo(-r * 0.9, r * 0.14); // Tail base bottom
+                ctx.quadraticCurveTo(-r * 0.65, r * 0.35, -r * 0.25, r * 0.48); // Belly rear
+                ctx.bezierCurveTo(r * 0.35, r * 0.62, r * 0.82, r * 0.38, r * 1.08, r * 0.06); // Throat & lower jaw
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            // 4. Realistic Scales, Lateral Line, Mouth & Gill Plate
+            if (hitFlash <= 0) {
+                ctx.save();
+                ctx.clip();
+
+                if (type.id === 'clownfish' || type.id === 'bluetang') {
+                    ctx.fillStyle = type.stripeColor;
+                    ctx.beginPath();
+                    ctx.ellipse(r * 0.18, 0, r * 0.14, r * 0.65, 0.1, 0, Math.PI * 2);
+                    ctx.ellipse(-r * 0.32, 0, r * 0.12, r * 0.6, 0.1, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Shimmering overlapping fish scales
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.24)';
+                    ctx.lineWidth = 1;
+                    const step = Math.max(6, r * 0.22);
+                    for (let sx = -r * 0.65; sx < r * 0.42; sx += step) {
+                        for (let sy = -r * 0.42; sy < r * 0.42; sy += step) {
+                            ctx.beginPath();
+                            ctx.arc(sx, sy, step * 0.56, -Math.PI * 0.42, Math.PI * 0.42);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                // Natural curved Lateral Line sensory mark
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.32)';
+                ctx.lineWidth = 1.2;
+                ctx.beginPath();
+                ctx.moveTo(r * 0.35, -r * 0.08);
+                ctx.quadraticCurveTo(-r * 0.15, -r * 0.2, -r * 0.78, 0);
+                ctx.stroke();
+
+                // Glossy Wet Specular Highlight along upper back
+                const specGrad = ctx.createLinearGradient(0, -r * 0.52, 0, -r * 0.08);
+                specGrad.addColorStop(0, 'rgba(255, 255, 255, 0.55)');
+                specGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = specGrad;
+                ctx.beginPath();
+                ctx.ellipse(r * 0.08, -r * 0.28, r * 0.7, r * 0.16, -0.05, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+
+                // Realistic Fish Mouth Lip Line
+                ctx.strokeStyle = 'rgba(15, 23, 42, 0.55)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(r * 1.06, r * 0.04);
+                ctx.quadraticCurveTo(r * 0.92, r * 0.08, r * 0.82, r * 0.05);
+                ctx.stroke();
+
+                // Curved Gill Operculum Plate
+                ctx.strokeStyle = 'rgba(15, 23, 42, 0.42)';
+                ctx.lineWidth = 1.8;
+                ctx.beginPath();
+                ctx.arc(r * 0.34, 0, r * 0.34, -0.68, 0.68);
+                ctx.stroke();
+            }
+
+            // 5. Animated Pectoral Side Fin
+            ctx.save();
+            ctx.translate(r * 0.22, r * 0.14);
+            ctx.rotate(finFlutter * 1.2);
+            ctx.fillStyle = hitFlash > 0 ? '#ffffff' : type.finColor + 'dd';
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.bezierCurveTo(-r * 0.12, r * 0.38, -r * 0.42, r * 0.36, -r * 0.46, r * 0.08);
+            ctx.closePath();
+            ctx.fill();
+            ctx.restore();
+
+            // 6. Glossy Realistic Fish Eye with Golden Iris, Pupil & Catchlight
+            const eyeX = r * 0.64;
+            const eyeY = -r * 0.11;
+            const eyeR = r * 0.15;
+
+            ctx.fillStyle = '#fef08a';
+            ctx.beginPath();
+            ctx.arc(eyeX, eyeY, eyeR, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(15, 23, 42, 0.6)';
+            ctx.lineWidth = 1.1;
+            ctx.stroke();
+
+            // Deep Black Pupil
+            ctx.fillStyle = '#020617';
+            ctx.beginPath();
+            ctx.arc(eyeX + eyeR * 0.14, eyeY, eyeR * 0.62, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Crisp White Water Sparkle
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(eyeX + eyeR * 0.3, eyeY - eyeR * 0.26, eyeR * 0.24, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Floating Multiplier Badge above Fish
+            ctx.save();
+            const badgeY = y - r - 12;
+            ctx.font = '700 13px Fredoka, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillStyle = 'rgba(6, 28, 56, 0.78)';
+            ctx.beginPath();
+            ctx.roundRect(x - 20, badgeY - 12, 40, 17, 8);
+            ctx.fill();
+
+            ctx.fillStyle = type.multiplier >= 15 ? '#fde047' : '#ffffff';
+            ctx.fillText(`x${type.multiplier}`, x, badgeY + 1);
+
+            // Health bar for damaged big fish
+            if (fish.hp < fish.maxHp && fish.maxHp > 2) {
+                const barW = r * 1.2;
+                const hpPct = Math.max(0, fish.hp / fish.maxHp);
+                ctx.fillStyle = 'rgba(0,0,0,0.5)';
+                ctx.fillRect(x - barW / 2, badgeY + 8, barW, 4);
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(x - barW / 2, badgeY + 8, barW * hpPct, 4);
+            }
+            ctx.restore();
+        }
+
+        // ==========================================
+        // 8. PARTICLE & COIN BURST EFFECTS
+        // ==========================================
+        function createCatchEffects(fish, reward) {
+            const isBig = fish.type.multiplier >= 15;
+            const particleCount = isBig ? 28 : 12;
+
+            // Sparkle burst
+            for (let i = 0; i < particleCount; i++) {
+                const angle = (Math.PI * 2 * i) / particleCount + Math.random() * 0.4;
+                const speed = 1.5 + Math.random() * (isBig ? 5.5 : 3);
+                state.particles.push({
+                    x: fish.x,
+                    y: fish.y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    r: 2 + Math.random() * 4,
+                    alpha: 1,
+                    color: i % 2 === 0 ? '#fde047' : fish.type.bodyColor
+                });
+            }
+
+            // Flying coins toward top-left wallet
+            const walletRect = walletBox.getBoundingClientRect();
+            const targetX = walletRect.left + 28;
+            const targetY = walletRect.top + 24;
+            const coinCount = Math.min(14, Math.max(3, Math.floor(fish.type.multiplier / 2)));
+
+            for (let i = 0; i < coinCount; i++) {
+                state.flyingCoins.push({
+                    x: fish.x + (Math.random() - 0.5) * 30,
+                    y: fish.y + (Math.random() - 0.5) * 30,
+                    targetX,
+                    targetY,
+                    delay: i * 3,
+                    progress: 0
+                });
+            }
+
+            // Floating "+Coins" popup
+            state.popups.push({
+                x: fish.x,
+                y: fish.y - 10,
+                text: `+${reward.toLocaleString()}`,
+                alpha: 1,
+                scale: isBig ? 1.45 : 1.05,
+                color: isBig ? '#fde047' : '#ffffff'
+            });
+
+            if (fish.type.id === 'boss') {
+                state.shakeTime = 24;
+                state.shakeIntensity = 9;
+            } else if (isBig) {
+                state.shakeTime = 10;
+                state.shakeIntensity = 4;
+            }
+        }
+
+        // ==========================================
+        // 9. RENDER BACKGROUND & CANNON
+        // ==========================================
+        function drawOceanBackground(time) {
+            // Crystal-Clear White & Tropical Aqua Water Gradient
+            const bgGrad = ctx.createLinearGradient(0, 0, 0, state.height);
+            bgGrad.addColorStop(0, '#ffffff');      // Bright sunlit white surface
+            bgGrad.addColorStop(0.18, '#e0f7fa');   // Crystal clear white-aqua
+            bgGrad.addColorStop(0.55, '#bae6fd');   // Luminous shallow lagoon blue
+            bgGrad.addColorStop(0.88, '#7dd3fc');   // Clear turquoise depth
+            bgGrad.addColorStop(1, '#38bdf8');      // Soft ocean floor tint
+            ctx.fillStyle = bgGrad;
+            ctx.fillRect(0, 0, state.width, state.height);
+
+            // Bright Sunlit Water Surface Shimmer & Caustic Light Ripples at Top
+            ctx.save();
+            const surfaceGrad = ctx.createLinearGradient(0, 0, 0, 120);
+            surfaceGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+            surfaceGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            ctx.fillStyle = surfaceGrad;
+            ctx.fillRect(0, 0, state.width, 120);
+
+            // Shimmering White Caustic Wave Mesh
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+            ctx.lineWidth = 2.5;
+            for (let w = 0; w < 4; w++) {
+                ctx.beginPath();
+                for (let wx = 0; wx <= state.width; wx += 30) {
+                    const wy = 22 + w * 18 + Math.sin(wx * 0.015 + time * 0.0022 + w) * 7;
+                    if (wx === 0) ctx.moveTo(wx, wy);
+                    else ctx.lineTo(wx, wy);
+                }
+                ctx.stroke();
+            }
+
+            // Bright White Volumetric Sunbeams piercing clear water
+            for (let i = 0; i < 6; i++) {
+                const beamX = state.width * (0.08 + i * 0.18) + Math.sin(time * 0.0007 + i) * 45;
+                const beamGrad = ctx.createLinearGradient(beamX, 0, beamX + 60, state.height * 0.9);
+                beamGrad.addColorStop(0, 'rgba(255, 255, 255, 0.65)');
+                beamGrad.addColorStop(0.55, 'rgba(255, 255, 255, 0.25)');
+                beamGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                ctx.fillStyle = beamGrad;
+                ctx.beginPath();
+                ctx.moveTo(beamX - 25, 0);
+                ctx.lineTo(beamX + 65, 0);
+                ctx.lineTo(beamX + 220, state.height * 0.9);
+                ctx.lineTo(beamX - 110, state.height * 0.9);
+                ctx.closePath();
+                ctx.fill();
+            }
+            ctx.restore();
+
+            // Soft Pastel Coral Reef Silhouette in Distance
+            ctx.fillStyle = 'rgba(14, 165, 233, 0.18)';
+            ctx.beginPath();
+            ctx.moveTo(0, state.height);
+            ctx.lineTo(0, state.height - 65);
+            ctx.quadraticCurveTo(state.width * 0.22, state.height - 105, state.width * 0.45, state.height - 55);
+            ctx.quadraticCurveTo(state.width * 0.72, state.height - 115, state.width, state.height - 60);
+            ctx.lineTo(state.width, state.height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Sunlit White Coral Sand Seabed
+            const sandGrad = ctx.createLinearGradient(0, state.height - 55, 0, state.height);
+            sandGrad.addColorStop(0, '#f8fafc');
+            sandGrad.addColorStop(0.45, '#e2e8f0');
+            sandGrad.addColorStop(1, '#cbd5e1');
+            ctx.fillStyle = sandGrad;
+            ctx.beginPath();
+            ctx.moveTo(0, state.height);
+            ctx.lineTo(0, state.height - 32);
+            ctx.quadraticCurveTo(state.width * 0.5, state.height - 56, state.width, state.height - 28);
+            ctx.lineTo(state.width, state.height);
+            ctx.closePath();
+            ctx.fill();
+
+            // Animated Seabed Corals & Seaweed
+            state.corals.forEach((c) => {
+                const sway = Math.sin(time * 0.002 + c.swayOffset) * 9;
+                ctx.fillStyle = c.color;
+                ctx.globalAlpha = 0.68;
+                ctx.beginPath();
+                ctx.moveTo(c.x - c.width / 2, state.height);
+                ctx.quadraticCurveTo(
+                    c.x + sway,
+                    state.height - c.height * 0.6,
+                    c.x + sway * 1.35,
+                    state.height - c.height
+                );
+                ctx.quadraticCurveTo(
+                    c.x + c.width / 2 + sway,
+                    state.height - c.height * 0.5,
+                    c.x + c.width / 2,
+                    state.height
+                );
+                ctx.closePath();
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+
+            // Rising Crystal-Clear White Bubbles
+            state.bubbles.forEach((b) => {
+                b.y -= b.speed;
+                b.x += Math.sin(time * 0.003 + b.wobble) * 0.45;
+                if (b.y < -10) {
+                    b.y = state.height + 10;
+                    b.x = Math.random() * state.width;
+                }
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Bubble specular dot
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                ctx.beginPath();
+                ctx.arc(b.x - b.r * 0.3, b.y - b.r * 0.3, b.r * 0.28, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        function drawCannon() {
+            const origin = getCannonOrigin();
+            const theme = CANNON_THEMES[state.betIndex];
+
+            ctx.save();
+            ctx.translate(origin.x, origin.y);
+
+            // Base pedestal glow
+            const glowGrad = ctx.createRadialGradient(0, 0, 10, 0, 0, 65);
+            glowGrad.addColorStop(0, theme.glow + '55');
+            glowGrad.addColorStop(1, 'transparent');
+            ctx.fillStyle = glowGrad;
+            ctx.beginPath();
+            ctx.arc(0, 0, 65, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Rotating Barrel
+            ctx.save();
+            ctx.rotate(state.cannonAngle);
+            const recoilOffset = -state.cannonRecoil;
+
+            // Barrel Shadow & Body
+            ctx.fillStyle = theme.secondary;
+            ctx.beginPath();
+            ctx.roundRect(recoilOffset, -14, 56, 28, 8);
+            ctx.fill();
+
+            ctx.fillStyle = theme.primary;
+            ctx.beginPath();
+            ctx.roundRect(recoilOffset + 4, -10, 48, 20, 6);
+            ctx.fill();
+
+            // Muzzle Ring
+            ctx.fillStyle = '#f8fafc';
+            ctx.beginPath();
+            ctx.roundRect(recoilOffset + 48, -15, 8, 30, 4);
+            ctx.fill();
+            ctx.restore();
+
+            // Turret Dome Base
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.arc(0, 5, 32, Math.PI, 0);
+            ctx.fill();
+
+            ctx.strokeStyle = theme.primary;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(0, 5, 32, Math.PI, 0);
+            ctx.stroke();
+
+            // Bet badge on cannon dome
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '700 13px Fredoka, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Lv.${state.betIndex + 1}`, 0, -4);
+
+            ctx.restore();
+        }
+
+        // ==========================================
+        // 10. MAIN GAME LOOP
+        // ==========================================
+        let lastSpawnTime = 0;
+
+        function updateAndRender(time) {
+            // Auto-fire or hold-to-fire check
+            if (state.autoFire || state.isPointerDown) {
+                tryFireBullet();
+            }
+
+            // Spawn new fish periodically
+            const spawnInterval = state.fishes.length < 8 ? 650 : 1250;
+            if (time - lastSpawnTime > spawnInterval && state.fishes.length < 22) {
+                spawnFish();
+                lastSpawnTime = time;
+            }
+
+            // Screen shake offset
+            ctx.save();
+            if (state.shakeTime > 0) {
+                state.shakeTime--;
+                const dx = (Math.random() - 0.5) * state.shakeIntensity;
+                const dy = (Math.random() - 0.5) * state.shakeIntensity;
+                ctx.translate(dx, dy);
+            }
+
+            // 1. Background
+            drawOceanBackground(time);
+
+            // 2. Update & Draw Fishes
+            for (let i = state.fishes.length - 1; i >= 0; i--) {
+                const fish = state.fishes[i];
+                fish.x += fish.vx;
+                fish.y = fish.baseY + Math.sin(fish.x * fish.waveFreq + fish.swimPhase) * fish.waveAmp;
+                if (fish.hitFlash > 0) fish.hitFlash--;
+
+                // Remove off-screen fish
+                const margin = fish.type.radius + 90;
+                if ((fish.vx > 0 && fish.x > state.width + margin) || (fish.vx < 0 && fish.x < -margin)) {
+                    state.fishes.splice(i, 1);
+                    continue;
+                }
+
+                drawFish(fish, time);
+            }
+
+            // 3. Update & Draw Bullets + Collision Detection
+            for (let i = state.bullets.length - 1; i >= 0; i--) {
+                const b = state.bullets[i];
+                b.x += b.vx;
+                b.y += b.vy;
+
+                // Bounce off left/right screen walls (classic arcade fish game mechanic!)
+                if (b.x - b.radius <= 0) {
+                    b.x = b.radius;
+                    b.vx *= -1;
+                } else if (b.x + b.radius >= state.width) {
+                    b.x = state.width - b.radius;
+                    b.vx *= -1;
+                }
+
+                // Remove if off top/bottom
+                if (b.y < -30 || b.y > state.height + 30) {
+                    state.bullets.splice(i, 1);
+                    continue;
+                }
+
+                // Check collision with fishes
+                let hitSomething = false;
+                for (let j = state.fishes.length - 1; j >= 0; j--) {
+                    const fish = state.fishes[j];
+                    const dx = b.x - fish.x;
+                    const dy = b.y - fish.y;
+                    const dist = Math.hypot(dx, dy);
+
+                    if (dist < b.radius + fish.type.radius * 0.85) {
+                        hitSomething = true;
+                        fish.hp -= b.damage;
+                        fish.hitFlash = 4;
+
+                        if (fish.hp <= 0) {
+                            // Caught Fish!
+                            const reward = b.bet * fish.type.multiplier;
+                            state.coins += reward;
+                            updateHUD();
+                            sfx.playCatch(fish.type.multiplier >= 15);
+                            createCatchEffects(fish, reward);
+                            state.fishes.splice(j, 1);
+                        } else {
+                            sfx.playHit();
+                        }
+                        break;
+                    }
+                }
+
+                if (hitSomething) {
+                    state.bullets.splice(i, 1);
+                    continue;
+                }
+
+                // Draw glowing energy bullet
+                ctx.save();
+                ctx.shadowBlur = 14;
+                ctx.shadowColor = b.glow;
+                ctx.fillStyle = b.color;
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(b.x, b.y, b.radius * 0.45, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 4. Update & Draw Particles
+            for (let i = state.particles.length - 1; i >= 0; i--) {
+                const p = state.particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.alpha -= 0.025;
+                if (p.alpha <= 0) {
+                    state.particles.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // 5. Flying Coins to Wallet
+            for (let i = state.flyingCoins.length - 1; i >= 0; i--) {
+                const fc = state.flyingCoins[i];
+                if (fc.delay > 0) {
+                    fc.delay--;
+                    continue;
+                }
+                fc.x += (fc.targetX - fc.x) * 0.14;
+                fc.y += (fc.targetY - fc.y) * 0.14;
+
+                if (Math.hypot(fc.targetX - fc.x, fc.targetY - fc.y) < 16) {
+                    state.flyingCoins.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.fillStyle = '#facc15';
+                ctx.strokeStyle = '#fef08a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(fc.x, fc.y, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            // 6. Floating "+Coins" Text Popups
+            for (let i = state.popups.length - 1; i >= 0; i--) {
+                const pop = state.popups[i];
+                pop.y -= 1.1;
+                pop.alpha -= 0.018;
+                if (pop.alpha <= 0) {
+                    state.popups.splice(i, 1);
+                    continue;
+                }
+                ctx.save();
+                ctx.globalAlpha = pop.alpha;
+                ctx.font = `700 ${Math.round(18 * pop.scale)}px Fredoka, sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.strokeStyle = '#020617';
+                ctx.lineWidth = 4;
+                ctx.strokeText(pop.text, pop.x, pop.y);
+                ctx.fillStyle = pop.color;
+                ctx.fillText(pop.text, pop.x, pop.y);
+                ctx.restore();
+            }
+
+            // 7. Cannon & Recoil Recovery
+            if (state.cannonRecoil > 0) {
+                state.cannonRecoil = Math.max(0, state.cannonRecoil - 1.2);
+            }
+            drawCannon();
+
+            ctx.restore();
+            requestAnimationFrame(updateAndRender);
+        }
+
+        // Start game on window load
+        window.onload = function () {
+            updateHUD();
+            // Spawn initial school of fish immediately
+            for (let i = 0; i < 10; i++) {
+                spawnFish(false);
+            }
+            requestAnimationFrame(updateAndRender);
+        };
+    </script>
+</body>
+</html>
+```
