@@ -1,0 +1,1527 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Scarab Fortune - 5 Lines Egyptian Slot</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(circle at center, #1e150c 0%, #090604 100%);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .font-egypt {
+            font-family: 'Cinzel', serif;
+        }
+
+        /* Main Portrait Cabinet Container */
+        #game-cabinet {
+            width: 100%;
+            max-width: 430px;
+            height: 100vh;
+            max-height: 880px;
+            position: relative;
+            background: linear-gradient(180deg, #4b331b 0%, #8b6234 15%, #c59659 45%, #a87b43 75%, #6d4c26 100%);
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.95), inset 0 0 20px rgba(255, 215, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
+            border-left: 3px solid #6b491f;
+            border-right: 3px solid #6b491f;
+        }
+
+        /* Sandstone Temple Wall Texture */
+        .temple-wall {
+            background-image: 
+                linear-gradient(to bottom, rgba(255,220,150,0.15), rgba(40,20,5,0.4)),
+                repeating-linear-gradient(0deg, transparent, transparent 28px, rgba(60, 35, 10, 0.25) 29px, rgba(60, 35, 10, 0.25) 30px),
+                repeating-linear-gradient(90deg, transparent, transparent 58px, rgba(60, 35, 10, 0.2) 59px, rgba(60, 35, 10, 0.2) 60px);
+        }
+
+        /* Flickering Torch Flames */
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-2deg); opacity: 0.95; filter: drop-shadow(0 0 12px #ff6a00); }
+            25% { transform: scale(1.08, 0.94) rotate(2deg); opacity: 1; filter: drop-shadow(0 0 18px #ffaa00); }
+            50% { transform: scale(0.95, 1.07) rotate(-1deg); opacity: 0.9; filter: drop-shadow(0 0 14px #ff4500); }
+            75% { transform: scale(1.05, 0.97) rotate(3deg); opacity: 1; filter: drop-shadow(0 0 20px #ffcc00); }
+        }
+
+        .flame-anim {
+            animation: flicker 0.45s infinite alternate ease-in-out;
+            transform-origin: bottom center;
+        }
+
+        /* Gold Metallic Text & Borders */
+        .gold-text {
+            background: linear-gradient(180deg, #fff6b3 0%, #ffd700 45%, #d98a00 85%, #fff099 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.85));
+        }
+
+        .gold-frame {
+            border: 3px solid #e5b342;
+            box-shadow: 
+                inset 0 2px 4px rgba(255, 250, 200, 0.7),
+                inset 0 -3px 6px rgba(90, 50, 0, 0.9),
+                0 4px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Top Multiplier Wheel Container */
+        #wheel-section {
+            position: relative;
+            height: 155px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            z-index: 10;
+        }
+
+        #wheel-wrapper {
+            position: relative;
+            width: 280px;
+            height: 140px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+        }
+
+        #multiplier-wheel {
+            width: 270px;
+            height: 270px;
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+            transition: transform 2.2s cubic-bezier(0.15, 0.88, 0.22, 1.03);
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        /* 5 LINES Banner */
+        .lines-banner {
+            background: linear-gradient(180deg, #633914 0%, #3d2008 50%, #241103 100%);
+            border: 2.5px solid #f0c24b;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.8), inset 0 1px 3px rgba(255,230,150,0.6);
+            position: relative;
+            z-index: 20;
+            margin-top: -12px;
+        }
+
+        /* Hieroglyphic Side Pillars */
+        .pillar {
+            width: 34px;
+            background: linear-gradient(90deg, #9c7240 0%, #dcb278 40%, #b58850 80%, #6e4b23 100%);
+            border-left: 1.5px solid #593a18;
+            border-right: 1.5px solid #593a18;
+            box-shadow: inset 0 0 8px rgba(45, 25, 5, 0.6);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .pillar-cap {
+            width: 100%;
+            height: 20px;
+            background: repeating-linear-gradient(90deg, #1d4ed8 0px, #1d4ed8 5px, #facc15 5px, #facc15 10px, #b91c1c 10px, #b91c1c 15px);
+            border-top: 2px solid #fde047;
+            border-bottom: 2px solid #78350f;
+        }
+
+        .pillar-block {
+            width: 28px;
+            flex: 1;
+            margin: 2px 0;
+            border: 1px solid rgba(92, 58, 20, 0.5);
+            background: linear-gradient(135deg, rgba(255,235,195,0.25), rgba(90,55,20,0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(85, 52, 18, 0.65);
+            font-size: 13px;
+        }
+
+        /* 3x3 Reel Grid Frame */
+        #reels-frame {
+            flex: 1;
+            background: #1a110a;
+            border: 4px solid #d49b35;
+            border-radius: 10px;
+            box-shadow: 
+                inset 0 0 18px #000000,
+                0 6px 15px rgba(0, 0, 0, 0.85);
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 4px;
+            padding: 4px;
+        }
+
+        .reel-column {
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+            border-radius: 6px;
+            background: #120c07;
+        }
+
+        .reel-strip {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            will-change: transform;
+        }
+
+        .symbol-cell {
+            width: 100%;
+            height: 33.3333%;
+            flex-shrink: 0;
+            padding: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .symbol-tile {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 
+                inset 0 2px 5px rgba(255, 255, 255, 0.45),
+                inset 0 -4px 8px rgba(0, 0, 0, 0.65),
+                0 2px 4px rgba(0, 0, 0, 0.7);
+            transition: transform 0.2s ease, filter 0.2s ease;
+        }
+
+        /* Tile Colors Matching Screenshot */
+        .tile-eye {
+            background: radial-gradient(circle at 30% 30%, #2b6cb0 0%, #1a365d 85%);
+            border: 2px solid #4299e1;
+        }
+        .tile-ankh {
+            background: radial-gradient(circle at 30% 30%, #2f855a 0%, #14432a 85%);
+            border: 2px solid #48bb78;
+        }
+        .tile-falcon {
+            background: radial-gradient(circle at 30% 30%, #9b2c8d 0%, #4a1042 85%);
+            border: 2px solid #ed64a6;
+        }
+        .tile-scarab {
+            background: radial-gradient(circle at 50% 50%, #9b2c2c 0%, #4a0e0e 90%);
+            border: 2px solid #f6ad55;
+        }
+        .tile-pharaoh {
+            background: radial-gradient(circle at 30% 30%, #b7791f 0%, #5f370e 85%);
+            border: 2px solid #f6e05e;
+        }
+        .tile-lotus {
+            background: radial-gradient(circle at 30% 30%, #0987a0 0%, #064e5c 85%);
+            border: 2px solid #4fd1c5;
+        }
+
+        /* Winning Symbol Pulse */
+        @keyframes winPulse {
+            0%, 100% { transform: scale(1); filter: brightness(1.15) drop-shadow(0 0 8px #ffd700); }
+            50% { transform: scale(1.07); filter: brightness(1.4) drop-shadow(0 0 18px #fff066); }
+        }
+
+        .symbol-win .symbol-tile {
+            animation: winPulse 0.75s infinite ease-in-out;
+            border-color: #fff700 !important;
+            z-index: 5;
+        }
+
+        /* Scarab Glowing Magic Rune Ring */
+        @keyframes spinRune {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .scarab-rune-ring {
+            position: absolute;
+            width: 112%;
+            height: 112%;
+            border-radius: 50%;
+            border: 3px dashed #ff47b6;
+            box-shadow: 0 0 15px #ff2a9d, inset 0 0 12px #ff66c4;
+            animation: spinRune 8s linear infinite;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* Extra Bet Winged Button */
+        .extra-bet-btn {
+            background: linear-gradient(180deg, #ef4444 0%, #b91c1c 55%, #7f1d1d 100%);
+            border: 2.5px solid #fde047;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.8), inset 0 2px 3px rgba(255,200,200,0.6);
+            transition: all 0.2s ease;
+        }
+        .extra-bet-btn.active {
+            background: linear-gradient(180deg, #22c55e 0%, #15803d 55%, #14532d 100%);
+            box-shadow: 0 0 18px #4ade80, inset 0 2px 4px #ffffff;
+            transform: scale(1.04);
+        }
+
+        /* Status Panels */
+        .stat-box {
+            background: linear-gradient(180deg, #3b2310 0%, #1f1106 100%);
+            border: 2px solid #c99438;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.9);
+            border-radius: 6px;
+        }
+        .stat-box-bet {
+            background: linear-gradient(180deg, #691414 0%, #380707 100%);
+            border: 2px solid #facc15;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.9);
+            border-radius: 6px;
+        }
+
+        /* Bottom Control Deck */
+        .spin-btn-outer {
+            width: 86px;
+            height: 86px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #1d4ed8 0deg 20deg, #facc15 20deg 40deg,
+                #1d4ed8 40deg 60deg, #facc15 60deg 80deg,
+                #1d4ed8 80deg 100deg, #facc15 100deg 120deg,
+                #1d4ed8 120deg 140deg, #facc15 140deg 160deg,
+                #1d4ed8 160deg 180deg, #facc15 180deg 200deg,
+                #1d4ed8 200deg 220deg, #facc15 220deg 240deg,
+                #1d4ed8 240deg 260deg, #facc15 260deg 280deg,
+                #1d4ed8 280deg 300deg, #facc15 300deg 320deg,
+                #1d4ed8 320deg 340deg, #facc15 340deg 360deg
+            );
+            padding: 7px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.85), 0 0 15px rgba(250, 204, 21, 0.4);
+            transition: transform 0.12s ease;
+        }
+        .spin-btn-outer:active {
+            transform: scale(0.93);
+        }
+
+        .spin-btn-inner {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #fef08a 0%, #eab308 60%, #a16207 100%);
+            border: 3px solid #fffbeb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 3px 6px rgba(255,255,255,0.8), inset 0 -4px 6px rgba(113,63,18,0.8);
+        }
+
+        .blue-orb-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #60a5fa 0%, #2563eb 65%, #1e3a8a 100%);
+            border: 3px solid #facc15;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.75), inset 0 2px 4px rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fef08a;
+            font-weight: 900;
+            font-size: 22px;
+            transition: transform 0.1s ease;
+        }
+        .blue-orb-btn:active {
+            transform: scale(0.9);
+        }
+
+        .side-orb-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #fb923c 0%, #c2410c 70%, #7c2d12 100%);
+            border: 2.5px solid #fde047;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.75), inset 0 2px 3px rgba(255,255,255,0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fef08a;
+            transition: all 0.15s ease;
+        }
+        .side-orb-btn.active {
+            background: radial-gradient(circle at 35% 30%, #4ade80 0%, #15803d 70%, #14532d 100%);
+            box-shadow: 0 0 14px #4ade80;
+        }
+
+        /* Big Win Overlay Animation */
+        @keyframes popBanner {
+            0% { transform: scale(0.3); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .big-win-anim {
+            animation: popBanner 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-cabinet" class="temple-wall">
+
+    <!-- TOP SECTION: Torches, Mission Badge & Multiplier Wheel -->
+    <div id="wheel-section" class="pt-1 px-2">
+        <!-- Left Brazier & Torch -->
+        <div class="absolute left-1 top-3 flex flex-col items-center pointer-events-none z-10">
+            <svg width="46" height="65" viewBox="0 0 60 80">
+                <!-- Flame -->
+                <path class="flame-anim" d="M30 5 C42 22, 48 34, 42 46 C38 52, 22 52, 18 46 C12 34, 18 22, 30 5 Z" fill="url(#fireGrad)"/>
+                <path class="flame-anim" d="M30 16 C37 27, 40 35, 36 43 C33 47, 27 47, 24 43 C20 35, 23 27, 30 16 Z" fill="#fff380"/>
+                <!-- Gold Brazier Bowl -->
+                <path d="M12 46 L48 46 L42 60 L18 60 Z" fill="url(#goldMetal)" stroke="#5c3a00" stroke-width="2"/>
+                <rect x="24" y="60" width="12" height="14" fill="url(#goldMetal)" stroke="#5c3a00" stroke-width="1.5"/>
+                <defs>
+                    <linearGradient id="fireGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#ffea00"/>
+                        <stop offset="55%" stop-color="#ff6a00"/>
+                        <stop offset="100%" stop-color="#cc1100"/>
+                    </linearGradient>
+                    <linearGradient id="goldMetal" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#b87a14"/>
+                        <stop offset="50%" stop-color="#ffe680"/>
+                        <stop offset="100%" stop-color="#8c5808"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Right Brazier & Torch -->
+        <div class="absolute right-1 top-3 flex flex-col items-center pointer-events-none z-10">
+            <svg width="46" height="65" viewBox="0 0 60 80">
+                <path class="flame-anim" d="M30 5 C42 22, 48 34, 42 46 C38 52, 22 52, 18 46 C12 34, 18 22, 30 5 Z" fill="url(#fireGrad)"/>
+                <path class="flame-anim" d="M30 16 C37 27, 40 35, 36 43 C33 47, 27 47, 24 43 C20 35, 23 27, 30 16 Z" fill="#fff380"/>
+                <path d="M12 46 L48 46 L42 60 L18 60 Z" fill="url(#goldMetal)" stroke="#5c3a00" stroke-width="2"/>
+                <rect x="24" y="60" width="12" height="14" fill="url(#goldMetal)" stroke="#5c3a00" stroke-width="1.5"/>
+            </svg>
+        </div>
+
+        <!-- MISSION / VIEW Badge (Upper Left) -->
+        <button id="mission-btn" class="absolute left-2 top-14 z-30 flex flex-col items-center bg-gradient-to-b from-purple-600 via-purple-800 to-indigo-950 border-2 border-yellow-400 rounded-xl px-2 py-1 shadow-lg active:scale-95 transition">
+            <div class="w-8 h-6 bg-amber-100 rounded-sm border border-amber-600 flex flex-col justify-center items-center shadow-inner -mt-2 mb-0.5 relative">
+                <div class="w-5 h-0.5 bg-amber-700 mb-0.5"></div>
+                <div class="w-5 h-0.5 bg-amber-700 mb-0.5"></div>
+                <div class="w-3 h-0.5 bg-amber-700"></div>
+                <span id="mission-dot" class="hidden absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-white animate-ping"></span>
+            </div>
+            <span class="text-[9px] font-extrabold text-white tracking-wider leading-none">MISSION</span>
+            <span class="mt-0.5 px-2 py-0.5 bg-gradient-to-b from-green-400 to-green-700 border border-yellow-200 rounded-full text-[8px] font-black text-white leading-none shadow">VIEW</span>
+        </button>
+
+        <!-- Sound Quick Mute Pill (Upper Right) -->
+        <button id="sound-toggle-top" class="absolute right-2 top-16 z-30 w-8 h-8 rounded-full bg-amber-950/90 border-2 border-yellow-400 text-yellow-300 flex items-center justify-center shadow-md active:scale-90">
+            <i id="sound-icon" class="fas fa-volume-up text-xs"></i>
+        </button>
+
+        <!-- Semi-Circular Multiplier Wheel -->
+        <div id="wheel-wrapper">
+            <!-- Outer Gold & Lapis Lazuli Arch Bezel -->
+            <svg class="absolute top-0 left-0 w-full h-full pointer-events-none z-20" viewBox="0 0 280 140">
+                <path d="M 8 140 A 132 132 0 0 1 272 140" fill="none" stroke="#facc15" stroke-width="12"/>
+                <path d="M 8 140 A 132 132 0 0 1 272 140" fill="none" stroke="#1e3a8a" stroke-width="8" stroke-dasharray="14 14"/>
+                <path d="M 15 140 A 125 125 0 0 1 265 140" fill="none" stroke="#fde047" stroke-width="3"/>
+                <!-- Top Center Gold Crest & Ruby Pointer -->
+                <path d="M 105 4 L 175 4 L 154 44 L 126 44 Z" fill="url(#goldMetal)" stroke="#78350f" stroke-width="2"/>
+                <polygon points="140,10 151,21 140,36 129,21" fill="#ef4444" stroke="#fef08a" stroke-width="1.5"/>
+                <polygon points="140,13 146,21 140,30 134,21" fill="#fca5a5"/>
+            </svg>
+
+            <!-- Rotating Wheel SVG (8 Segments: 45 deg each) -->
+            <svg id="multiplier-wheel" viewBox="0 0 200 200">
+                <g id="wheel-segments"></g>
+                <circle cx="100" cy="100" r="26" fill="url(#goldMetal)" stroke="#78350f" stroke-width="3"/>
+            </svg>
+        </div>
+
+        <!-- "5 LINES" Winged Banner -->
+        <div class="lines-banner px-4 py-1 rounded-md flex items-center gap-2">
+            <!-- Left Blue Wing -->
+            <div class="flex gap-0.5 text-sky-400 text-xs">
+                <i class="fas fa-feather-alt -rotate-45"></i>
+                <i class="fas fa-angle-double-right text-yellow-400"></i>
+            </div>
+            <span class="font-egypt font-black text-sm tracking-widest gold-text">5 LINES</span>
+            <!-- Right Blue Wing -->
+            <div class="flex gap-0.5 text-sky-400 text-xs">
+                <i class="fas fa-angle-double-left text-yellow-400"></i>
+                <i class="fas fa-feather-alt rotate-45"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- MIDDLE SECTION: Hieroglyphic Pillars + 3x3 Slot Grid -->
+    <div class="flex-1 flex items-stretch px-1.5 py-1.5 gap-1.5 min-h-0 relative">
+        <!-- Left Temple Pillar -->
+        <div class="pillar rounded-sm">
+            <div class="pillar-cap"></div>
+            <div class="pillar-block"><i class="fas fa-ankh"></i></div>
+            <div class="pillar-block"><i class="fas fa-eye"></i></div>
+            <div class="pillar-block"><i class="fas fa-crow"></i></div>
+            <div class="pillar-block"><i class="fas fa-sun"></i></div>
+            <div class="pillar-cap"></div>
+        </div>
+
+        <!-- 3x3 Reels Container -->
+        <div id="reels-frame">
+            <div class="reel-column" id="reel-col-0">
+                <div class="reel-strip" id="reel-strip-0"></div>
+            </div>
+            <div class="reel-column" id="reel-col-1">
+                <div class="reel-strip" id="reel-strip-1"></div>
+            </div>
+            <div class="reel-column" id="reel-col-2">
+                <div class="reel-strip" id="reel-strip-2"></div>
+            </div>
+
+            <!-- Payline SVG Overlay -->
+            <svg id="payline-overlay" class="absolute inset-0 w-full h-full pointer-events-none z-20" viewBox="0 0 300 300" preserveAspectRatio="none"></svg>
+
+            <!-- Win Banner Popup inside Reels -->
+            <div id="win-popup" class="hidden absolute inset-0 z-30 flex flex-col items-center justify-center bg-black/55 backdrop-blur-[1px] pointer-events-none">
+                <div id="win-tier-label" class="font-egypt font-black text-3xl gold-text tracking-wider drop-shadow-[0_4px_4px_rgba(0,0,0,1)]">BIG WIN!</div>
+                <div id="win-mult-badge" class="mt-1 px-3 py-0.5 rounded-full bg-gradient-to-r from-purple-700 via-pink-600 to-purple-700 border border-yellow-300 text-xs font-extrabold text-yellow-200 shadow-lg">
+                    MULTIPLIER 2X
+                </div>
+                <div id="win-amount-popup" class="mt-1 font-black text-4xl text-white drop-shadow-[0_3px_6px_rgba(234,179,8,0.9)]">
+                    +15.00
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Temple Pillar -->
+        <div class="pillar rounded-sm">
+            <div class="pillar-cap"></div>
+            <div class="pillar-block"><i class="fas fa-sun"></i></div>
+            <div class="pillar-block"><i class="fas fa-crow"></i></div>
+            <div class="pillar-block"><i class="fas fa-eye"></i></div>
+            <div class="pillar-block"><i class="fas fa-ankh"></i></div>
+            <div class="pillar-cap"></div>
+        </div>
+    </div>
+
+    <!-- EXTRA BET WINGED TOGGLE BUTTON -->
+    <div class="flex justify-center items-center py-1 relative z-20">
+        <div class="flex items-center">
+            <!-- Left Golden Wing SVG -->
+            <svg width="42" height="28" viewBox="0 0 50 32" class="-mr-2 drop-shadow">
+                <path d="M48 6 L10 4 L18 13 L4 14 L22 21 L12 25 L48 26 Z" fill="url(#goldMetal)" stroke="#5c3a00" stroke-width="1.5"/>
+            </svg>
+
+            <button id="extra-bet-btn" class="extra-bet-btn px-5 py-1 rounded-lg flex flex-col items-center leading-tight cursor-pointer">
+                <span class="text-white font-extrabold text-sm tracking-wide drop-shadow">Extra Bet</span>
+                <span id="extra-bet-status" class="text-[9px] font-bold text-yellow-200 uppercase tracking-wider">OFF (BOOST WHEEL)</span>
+            </button>
+
+            <!-- Right Golden Wing SVG -->
+            <svg width="42" height="28" viewBox="0 0 50 32" class="-ml-2 drop-shadow">
+                <path d="M2 6 L40 4 L32 13 L46 14 L28 21 L38 25 L2 26 Z" fill="url(#goldMetal)" stroke="#5c3a00" stroke-width="1.5"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- STATUS BAR: BALANCE | WIN | TOTAL BETS -->
+    <div class="grid grid-cols-3 gap-1.5 px-2 py-1 bg-gradient-to-b from-amber-900/70 to-amber-950/90 border-t border-b border-yellow-600/60">
+        <!-- Balance -->
+        <div class="flex flex-col items-center">
+            <span class="text-[11px] font-extrabold text-amber-100 tracking-wider drop-shadow">BALANCE</span>
+            <div class="stat-box w-full py-0.5 px-1 text-center">
+                <span id="balance-display" class="text-yellow-300 font-extrabold text-sm tracking-tight">1000.00</span>
+            </div>
+        </div>
+
+        <!-- Win -->
+        <div class="flex flex-col items-center">
+            <span class="text-[11px] font-extrabold text-amber-100 tracking-wider drop-shadow">WIN</span>
+            <div class="stat-box w-full py-0.5 px-1 text-center">
+                <span id="win-display" class="text-yellow-300 font-extrabold text-sm tracking-tight">0.00</span>
+            </div>
+        </div>
+
+        <!-- Total Bets -->
+        <div class="flex flex-col items-center">
+            <span class="text-[11px] font-extrabold text-pink-200 tracking-wider drop-shadow">TOTAL BETS</span>
+            <div class="stat-box-bet w-full py-0.5 px-1 text-center">
+                <span id="bet-display" class="text-yellow-300 font-extrabold text-sm tracking-tight">1.50</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOTTOM CONTROL DECK -->
+    <div class="relative pt-2 pb-3 px-3 bg-gradient-to-b from-[#b8894c] via-[#9c6e35] to-[#7a5222] border-t-2 border-yellow-500/70">
+        <div class="flex items-center justify-between relative">
+            
+            <!-- Left Controls: Turbo & Auto Spin -->
+            <div class="flex items-center gap-2">
+                <button id="turbo-btn" title="Turbo Speed" class="side-orb-btn mt-4">
+                    <i class="fas fa-bolt text-base"></i>
+                </button>
+                <button id="auto-btn" title="Auto Spin" class="side-orb-btn -mt-3">
+                    <i class="fas fa-sync-alt text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Center Controls: (-) SPIN (+) -->
+            <div class="flex items-center gap-2 bg-gradient-to-b from-amber-700/80 to-amber-950/90 px-3 py-1 rounded-full border-2 border-yellow-500/80 shadow-xl">
+                <!-- Decrease Bet -->
+                <button id="bet-down-btn" class="blue-orb-btn" aria-label="Decrease Bet">
+                    <i class="fas fa-minus text-sm"></i>
+                </button>
+
+                <!-- Main Spin Button -->
+                <button id="spin-btn" class="spin-btn-outer cursor-pointer" aria-label="Spin">
+                    <div class="spin-btn-inner">
+                        <svg width="44" height="44" viewBox="0 0 48 48">
+                            <path d="M24 6 A18 18 0 0 1 41 20 L45 17 L41 27 L32 22 L36 20 A12 12 0 0 0 24 12 Z" fill="#1d4ed8" stroke="#fef08a" stroke-width="1"/>
+                            <path d="M24 42 A18 18 0 0 1 7 28 L3 31 L7 21 L16 26 L12 28 A12 12 0 0 0 24 36 Z" fill="#1d4ed8" stroke="#fef08a" stroke-width="1"/>
+                        </svg>
+                    </div>
+                </button>
+
+                <!-- Increase Bet -->
+                <button id="bet-up-btn" class="blue-orb-btn" aria-label="Increase Bet">
+                    <i class="fas fa-plus text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Right Control: Menu Button -->
+            <div class="flex items-center">
+                <button id="menu-btn" title="Paytable & Rules" class="side-orb-btn">
+                    <i class="fas fa-bars text-base"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Subtle Version Watermark -->
+        <div class="flex justify-between items-center mt-1 px-1 text-[10px] font-semibold text-amber-200/75">
+            <span id="status-msg">GOOD LUCK! SPIN TO WIN</span>
+            <span>ver. 20fd88f</span>
+        </div>
+    </div>
+
+    <!-- MODAL: MISSION VIEW -->
+    <div id="mission-modal" class="hidden absolute inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="w-full max-w-sm bg-gradient-to-b from-amber-900 to-stone-950 border-2 border-yellow-400 rounded-2xl p-4 text-amber-100 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-yellow-500/40 pb-2 mb-3">
+                <h2 class="font-egypt font-black text-lg gold-text"><i class="fas fa-scroll mr-2"></i>PHARAOH MISSIONS</h2>
+                <button id="close-mission-btn" class="w-7 h-7 rounded-full bg-red-700 text-white font-bold flex items-center justify-center border border-yellow-300">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            <div id="mission-list" class="space-y-3 text-xs">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PAYTABLE & SETTINGS -->
+    <div id="menu-modal" class="hidden absolute inset-0 z-50 bg-black/80 backdrop-blur-xs flex items-center justify-center p-4">
+        <div class="w-full max-w-sm max-h-[85%] overflow-y-auto bg-gradient-to-b from-amber-900 to-stone-950 border-2 border-yellow-400 rounded-2xl p-4 text-amber-100 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-yellow-500/40 pb-2 mb-3">
+                <h2 class="font-egypt font-black text-lg gold-text"><i class="fas fa-crown mr-2"></i>PAYTABLE & RULES</h2>
+                <button id="close-menu-btn" class="w-7 h-7 rounded-full bg-red-700 text-white font-bold flex items-center justify-center border border-yellow-300">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+
+            <!-- Sound & Free Refill Controls -->
+            <div class="flex gap-2 mb-3">
+                <button id="modal-sound-btn" class="flex-1 py-2 px-3 rounded-lg bg-amber-800 border border-yellow-400 font-bold text-xs flex items-center justify-center gap-2">
+                    <i class="fas fa-volume-up"></i> <span>Sound: ON</span>
+                </button>
+                <button id="refill-btn" class="flex-1 py-2 px-3 rounded-lg bg-emerald-700 border border-yellow-300 font-bold text-xs flex items-center justify-center gap-1">
+                    <i class="fas fa-coins"></i> <span>+500.00 Coins</span>
+                </button>
+            </div>
+
+            <!-- Symbol Payouts (3-of-a-Kind) -->
+            <div class="grid grid-cols-2 gap-2 mb-3 text-xs">
+                <div class="bg-black/40 border border-yellow-500/30 rounded-lg p-2 flex items-center gap-2">
+                    <div class="w-10 h-10 shrink-0" id="legend-scarab"></div>
+                    <div>
+                        <div class="font-bold text-pink-400">Scarab Wild</div>
+                        <div class="text-yellow-300 font-extrabold">20x Line Bet</div>
+                        <div class="text-[10px] text-amber-200/70">Substitutes all</div>
+                    </div>
+                </div>
+                <div class="bg-black/40 border border-yellow-500/30 rounded-lg p-2 flex items-center gap-2">
+                    <div class="w-10 h-10 shrink-0" id="legend-pharaoh"></div>
+                    <div>
+                        <div class="font-bold text-yellow-400">Pharaoh Mask</div>
+                        <div class="text-yellow-300 font-extrabold">12x Line Bet</div>
+                    </div>
+                </div>
+                <div class="bg-black/40 border border-yellow-500/30 rounded-lg p-2 flex items-center gap-2">
+                    <div class="w-10 h-10 shrink-0" id="legend-falcon"></div>
+                    <div>
+                        <div class="font-bold text-fuchsia-300">Horus Wings</div>
+                        <div class="text-yellow-300 font-extrabold">8x Line Bet</div>
+                    </div>
+                </div>
+                <div class="bg-black/40 border border-yellow-500/30 rounded-lg p-2 flex items-center gap-2">
+                    <div class="w-10 h-10 shrink-0" id="legend-eye"></div>
+                    <div>
+                        <div class="font-bold text-sky-300">Eye of Horus</div>
+                        <div class="text-yellow-300 font-extrabold">5x Line Bet</div>
+                    </div>
+                </div>
+                <div class="bg-black/40 border border-yellow-500/30 rounded-lg p-2 flex items-center gap-2">
+                    <div class="w-10 h-10 shrink-0" id="legend-ankh"></div>
+                    <div>
+                        <div class="font-bold text-emerald-300">Emerald Ankh</div>
+                        <div class="text-yellow-300 font-extrabold">4x Line Bet</div>
+                    </div>
+                </div>
+                <div class="bg-black/40 border border-yellow-500/30 rounded-lg p-2 flex items-center gap-2">
+                    <div class="w-10 h-10 shrink-0" id="legend-lotus"></div>
+                    <div>
+                        <div class="font-bold text-teal-300">Sacred Lotus</div>
+                        <div class="text-yellow-300 font-extrabold">3x Line Bet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5 Paylines Diagram -->
+            <div class="bg-black/40 border border-yellow-500/30 rounded-lg p-2.5 text-[11px] space-y-1">
+                <div class="font-bold text-yellow-300">5 ACTIVE PAYLINES & MULTIPLIER WHEEL:</div>
+                <p>• Match 3 symbols across Top, Middle, Bottom, or either Diagonal line.</p>
+                <p>• Every spin rotates the Top Multiplier Wheel (<strong>1X, 2X, 3X, 5X, 10X</strong>) which multiplies your total line wins!</p>
+                <p>• <strong>Extra Bet</strong> increases bet by 1.5x and boosts high-multiplier odds on the wheel.</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+/**
+ * ============================================================================
+ * EGYPTIAN FORTUNE - 3x3 5-PAYLINE SLOT ENGINE
+ * ============================================================================
+ */
+
+// 1. CUSTOM SVG SYMBOLS MATCHING SCREENSHOT AESTHETICS
+const SYMBOLS = {
+    eye: {
+        id: 'eye',
+        name: 'Eye of Horus',
+        payout: 5,
+        weight: 26,
+        tileClass: 'tile-eye',
+        svg: `
+        <svg viewBox="0 0 100 100" class="w-4/5 h-4/5 drop-shadow-[0_3px_4px_rgba(0,0,0,0.8)]">
+            <defs>
+                <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#fff59d"/>
+                    <stop offset="45%" stop-color="#ffd54f"/>
+                    <stop offset="100%" stop-color="#b26a00"/>
+                </linearGradient>
+            </defs>
+            <!-- Eyebrow -->
+            <path d="M12 34 Q48 16 88 32 L85 38 Q48 24 14 40 Z" fill="url(#goldGrad)" stroke="#5c3a00" stroke-width="2"/>
+            <!-- Eye Outline -->
+            <path d="M16 48 Q50 28 84 48 Q50 66 16 48 Z" fill="#e0f2fe" stroke="url(#goldGrad)" stroke-width="5"/>
+            <!-- Blue Iris & Pupil -->
+            <circle cx="50" cy="48" r="12" fill="#0284c7" stroke="#1e3a8a" stroke-width="2"/>
+            <circle cx="50" cy="48" r="5" fill="#0f172a"/>
+            <circle cx="46" cy="44" r="2.5" fill="#ffffff"/>
+            <!-- Horus Tear & Spiral -->
+            <path d="M46 60 L40 84 L50 82 L52 60 Z" fill="url(#goldGrad)" stroke="#5c3a00" stroke-width="1.5"/>
+            <path d="M52 58 Q74 62 76 76 Q76 86 64 84 Q58 82 61 76" fill="none" stroke="url(#goldGrad)" stroke-width="5" stroke-linecap="round"/>
+            <path d="M84 48 L95 45 L92 52 Z" fill="url(#goldGrad)"/>
+        </svg>`
+    },
+    ankh: {
+        id: 'ankh',
+        name: 'Emerald Ankh',
+        payout: 4,
+        weight: 28,
+        tileClass: 'tile-ankh',
+        svg: `
+        <svg viewBox="0 0 100 100" class="w-4/5 h-4/5 drop-shadow-[0_3px_4px_rgba(0,0,0,0.8)]">
+            <defs>
+                <linearGradient id="emeraldGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#a7f3d0"/>
+                    <stop offset="50%" stop-color="#10b981"/>
+                    <stop offset="100%" stop-color="#064e3b"/>
+                </linearGradient>
+            </defs>
+            <!-- Top Loop -->
+            <path d="M50 10 C32 10 28 32 50 48 C72 32 68 10 50 10 Z M50 18 C59 18 60 30 50 38 C40 30 41 18 50 18 Z" fill="url(#emeraldGrad)" stroke="#ffd54f" stroke-width="3.5"/>
+            <!-- Horizontal Arms -->
+            <path d="M20 46 L80 46 L76 56 L24 56 Z" fill="url(#emeraldGrad)" stroke="#ffd54f" stroke-width="3"/>
+            <!-- Vertical Pillar -->
+            <path d="M43 48 L57 48 L60 90 L40 90 Z" fill="url(#emeraldGrad)" stroke="#ffd54f" stroke-width="3"/>
+            <!-- Center Gold Knot -->
+            <rect x="42" y="44" width="16" height="13" rx="3" fill="#ffd54f" stroke="#78350f" stroke-width="2"/>
+        </svg>`
+    },
+    falcon: {
+        id: 'falcon',
+        name: 'Horus Wings',
+        payout: 8,
+        weight: 20,
+        tileClass: 'tile-falcon',
+        svg: `
+        <svg viewBox="0 0 100 100" class="w-4/5 h-4/5 drop-shadow-[0_3px_4px_rgba(0,0,0,0.8)]">
+            <defs>
+                <linearGradient id="wingPink" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#f9a8d4"/>
+                    <stop offset="50%" stop-color="#e879f9"/>
+                    <stop offset="100%" stop-color="#86198f"/>
+                </linearGradient>
+            </defs>
+            <!-- Falcon Head & Crown -->
+            <path d="M22 28 Q26 16 38 20 L42 30 L28 36 Z" fill="#ffd54f" stroke="#78350f" stroke-width="2"/>
+            <circle cx="31" cy="25" r="2.5" fill="#1e1b4b"/>
+            <path d="M22 28 L15 33 L24 34 Z" fill="#f59e0b"/>
+            <!-- Layered Wing Feathers -->
+            <path d="M34 24 L90 34 L82 46 L36 36 Z" fill="url(#wingPink)" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M36 36 L88 50 L78 62 L38 48 Z" fill="url(#wingPink)" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M38 48 L82 66 L70 76 L40 60 Z" fill="url(#wingPink)" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M40 60 L72 78 L58 85 L36 70 Z" fill="url(#wingPink)" stroke="#ffd54f" stroke-width="2.5"/>
+            <!-- Ruby Sun Orb -->
+            <circle cx="36" cy="78" r="9" fill="#f43f5e" stroke="#ffd54f" stroke-width="2.5"/>
+            <circle cx="33" cy="75" r="2.5" fill="#fecdd3"/>
+        </svg>`
+    },
+    scarab: {
+        id: 'scarab',
+        name: 'Scarab Wild',
+        payout: 20,
+        weight: 10,
+        tileClass: 'tile-scarab',
+        isWild: true,
+        svg: `
+        <div class="relative w-full h-full flex items-center justify-center">
+            <div class="scarab-rune-ring"></div>
+            <svg viewBox="0 0 100 100" class="w-4/5 h-4/5 z-10 drop-shadow-[0_0_8px_rgba(255,105,180,0.9)]">
+                <!-- Emerald & Gold Side Wings -->
+                <path d="M32 38 Q10 25 12 52 Q14 75 34 68 Z" fill="#10b981" stroke="#ffd54f" stroke-width="2.5"/>
+                <path d="M68 38 Q90 25 88 52 Q86 75 66 68 Z" fill="#10b981" stroke="#ffd54f" stroke-width="2.5"/>
+                <!-- Golden Scarab Body -->
+                <ellipse cx="50" cy="55" rx="18" ry="23" fill="#ffd54f" stroke="#78350f" stroke-width="2.5"/>
+                <line x1="50" y1="42" x2="50" y2="78" stroke="#92400e" stroke-width="2.5"/>
+                <path d="M33 44 Q50 38 67 44" fill="none" stroke="#92400e" stroke-width="2.5"/>
+                <!-- Top Pink Sun Gem -->
+                <circle cx="50" cy="22" r="10" fill="#ec4899" stroke="#fef08a" stroke-width="2.5"/>
+                <circle cx="47" cy="19" r="3" fill="#fbcfe8"/>
+            </svg>
+        </div>`
+    },
+    pharaoh: {
+        id: 'pharaoh',
+        name: 'Pharaoh Mask',
+        payout: 12,
+        weight: 14,
+        tileClass: 'tile-pharaoh',
+        svg: `
+        <svg viewBox="0 0 100 100" class="w-4/5 h-4/5 drop-shadow-[0_3px_4px_rgba(0,0,0,0.8)]">
+            <!-- Nemes Headdress -->
+            <path d="M22 25 Q50 8 78 25 L86 74 L68 82 L64 64 L36 64 L32 82 L14 74 Z" fill="#1d4ed8" stroke="#ffd54f" stroke-width="3"/>
+            <!-- Gold Stripes -->
+            <path d="M19 36 L81 36 M17 48 L83 48 M15 60 L85 60" stroke="#ffd54f" stroke-width="3.5"/>
+            <!-- Golden Face -->
+            <path d="M35 32 Q50 28 65 32 L62 62 Q50 72 38 62 Z" fill="#fde047" stroke="#92400e" stroke-width="2"/>
+            <!-- Cobra Crest -->
+            <circle cx="50" cy="22" r="5" fill="#ef4444" stroke="#ffd54f" stroke-width="1.5"/>
+            <!-- Eyes & Beard -->
+            <ellipse cx="43" cy="45" rx="3.5" ry="2" fill="#1e3a8a"/>
+            <ellipse cx="57" cy="45" rx="3.5" ry="2" fill="#1e3a8a"/>
+            <rect x="46" y="67" width="8" height="18" rx="2" fill="#ffd54f" stroke="#1e3a8a" stroke-width="2"/>
+        </svg>`
+    },
+    lotus: {
+        id: 'lotus',
+        name: 'Sacred Lotus',
+        payout: 3,
+        weight: 28,
+        tileClass: 'tile-lotus',
+        svg: `
+        <svg viewBox="0 0 100 100" class="w-4/5 h-4/5 drop-shadow-[0_3px_4px_rgba(0,0,0,0.8)]">
+            <path d="M50 16 Q66 42 50 72 Q34 42 50 16 Z" fill="#5eead4" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M32 28 Q52 46 46 74 Q22 58 32 28 Z" fill="#2dd4bf" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M68 28 Q48 46 54 74 Q78 58 68 28 Z" fill="#2dd4bf" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M16 46 Q42 54 44 76 Q18 74 16 46 Z" fill="#0d9488" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M84 46 Q58 54 56 76 Q82 74 84 46 Z" fill="#0d9488" stroke="#ffd54f" stroke-width="2.5"/>
+            <path d="M30 76 L70 76 L62 86 L38 86 Z" fill="#ffd54f" stroke="#78350f" stroke-width="2"/>
+        </svg>`
+    }
+};
+
+const SYMBOL_KEYS = Object.keys(SYMBOLS);
+
+// 5 Classic 3x3 Paylines: [col0Row, col1Row, col2Row]
+const PAYLINES = [
+    { id: 1, name: 'Middle Row', coords: [1, 1, 1], color: '#fde047' },
+    { id: 2, name: 'Top Row', coords: [0, 0, 0], color: '#38bdf8' },
+    { id: 3, name: 'Bottom Row', coords: [2, 2, 2], color: '#4ade80' },
+    { id: 4, name: 'Diagonal TL-BR', coords: [0, 1, 2], color: '#f472b6' },
+    { id: 5, name: 'Diagonal BL-TR', coords: [2, 1, 0], color: '#fb923c' }
+];
+
+// Top Multiplier Wheel Segments (8 slices, 45 deg each)
+const WHEEL_SLICES = [
+    { label: '1X', value: 1, color: '#16a34a', textColor: '#fef08a' },
+    { label: '2X', value: 2, color: '#0284c7', textColor: '#fef08a' },
+    { label: '5X', value: 5, color: '#7e22ce', textColor: '#fde047' },
+    { label: '1X', value: 1, color: '#15803d', textColor: '#fef08a' },
+    { label: '3X', value: 3, color: '#0369a1', textColor: '#fef08a' },
+    { label: '10X', value: 10, color: '#b91c1c', textColor: '#fde047' },
+    { label: '2X', value: 2, color: '#0284c7', textColor: '#fef08a' },
+    { label: '3X', value: 3, color: '#6b21a8', textColor: '#fde047' }
+];
+
+// Game State
+const state = {
+    balance: 1000.00,
+    betSteps: [0.50, 1.00, 1.50, 3.00, 5.00, 10.00, 25.00],
+    betIndex: 2, // Default 1.50 matching screenshot
+    extraBet: false,
+    isSpinning: false,
+    autoSpin: false,
+    turbo: false,
+    soundEnabled: true,
+    currentWheelAngle: 0,
+    activeMultiplier: 1,
+    grid: [
+        ['eye', 'eye', 'eye'],
+        ['ankh', 'scarab', 'ankh'],
+        ['falcon', 'falcon', 'falcon']
+    ],
+    missions: [
+        { id: 1, title: 'Temple Explorer', desc: 'Spin the reels 10 times', progress: 0, target: 10, reward: 50, claimed: false },
+        { id: 2, title: 'Scarab Blessing', desc: 'Land 3 Scarab Wild symbols', progress: 0, target: 3, reward: 120, claimed: false },
+        { id: 3, title: 'Pharaoh Fortune', desc: 'Win 3 times in a session', progress: 0, target: 3, reward: 100, claimed: false }
+    ]
+};
+
+// ============================================================================
+// 2. WEB AUDIO API SYNTHESIZER (NO EXTERNAL AUDIO FILES REQUIRED)
+// ============================================================================
+class SoundEngine {
+    constructor() {
+        this.ctx = null;
+    }
+
+    init() {
+        if (!this.ctx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+    }
+
+    playTone(freq, type = 'sine', duration = 0.12, vol = 0.12, delay = 0) {
+        if (!state.soundEnabled) return;
+        this.init();
+        const now = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+    }
+
+    click() {
+        this.playTone(620, 'triangle', 0.07, 0.15);
+    }
+
+    spinStart() {
+        this.playTone(220, 'sawtooth', 0.15, 0.1, 0);
+        this.playTone(330, 'triangle', 0.2, 0.12, 0.06);
+    }
+
+    reelStop(index) {
+        const freqs = [150, 175, 200];
+        this.playTone(freqs[index] || 160, 'sine', 0.14, 0.22);
+    }
+
+    winFanfare(isBig = false) {
+        // Egyptian Hijaz Scale Arpeggio (D, Eb, F#, G, A, Bb, C#, D)
+        const notes = isBig 
+            ? [293.66, 311.13, 369.99, 392.00, 440.00, 466.16, 554.37, 587.33, 739.99, 880.00]
+            : [293.66, 369.99, 440.00, 587.33];
+        notes.forEach((n, i) => {
+            this.playTone(n, 'triangle', isBig ? 0.35 : 0.22, 0.16, i * 0.075);
+        });
+    }
+}
+
+const sfx = new SoundEngine();
+
+// ============================================================================
+// 3. INITIALIZE TOP MULTIPLIER WHEEL & INITIAL GRID
+// ============================================================================
+function buildMultiplierWheel() {
+    const group = document.getElementById('wheel-segments');
+    const cx = 100, cy = 100, r = 98;
+    const sliceDeg = 360 / WHEEL_SLICES.length;
+
+    WHEEL_SLICES.forEach((slice, idx) => {
+        // Offset so index 0 is centered at top (-90 deg)
+        const startDeg = -90 - (sliceDeg / 2) + (idx * sliceDeg);
+        const endDeg = startDeg + sliceDeg;
+        const startRad = (Math.PI / 180) * startDeg;
+        const endRad = (Math.PI / 180) * endDeg;
+
+        const x1 = cx + r * Math.cos(startRad);
+        const y1 = cy + r * Math.sin(startRad);
+        const x2 = cx + r * Math.cos(endRad);
+        const y2 = cy + r * Math.sin(endRad);
+
+        const pathData = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2} Z`;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', pathData);
+        path.setAttribute('fill', slice.color);
+        path.setAttribute('stroke', '#facc15');
+        path.setAttribute('stroke-width', '2.5');
+        group.appendChild(path);
+
+        // Label text
+        const midDeg = startDeg + sliceDeg / 2;
+        const midRad = (Math.PI / 180) * midDeg;
+        const tx = cx + (r * 0.65) * Math.cos(midRad);
+        const ty = cy + (r * 0.65) * Math.sin(midRad);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', tx);
+        text.setAttribute('y', ty);
+        text.setAttribute('fill', slice.textColor);
+        text.setAttribute('font-size', '18');
+        text.setAttribute('font-weight', '900');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('dominant-baseline', 'central');
+        text.setAttribute('stroke', '#3b1d04');
+        text.setAttribute('stroke-width', '0.8');
+        text.setAttribute('transform', `rotate(${midDeg + 90}, ${tx}, ${ty})`);
+        text.textContent = slice.label;
+        group.appendChild(text);
+    });
+}
+
+function createSymbolCellHTML(symbolKey, colIdx = -1, rowIdx = -1) {
+    const sym = SYMBOLS[symbolKey];
+    const idAttr = (colIdx >= 0 && rowIdx >= 0) ? `id="cell-${colIdx}-${rowIdx}"` : '';
+    return `
+        <div ${idAttr} class="symbol-cell">
+            <div class="symbol-tile ${sym.tileClass}">
+                ${sym.svg}
+            </div>
+        </div>
+    `;
+}
+
+function renderStaticReels() {
+    for (let c = 0; c < 3; c++) {
+        const strip = document.getElementById(`reel-strip-${c}`);
+        strip.style.transition = 'none';
+        strip.style.transform = 'translateY(0%)';
+        let html = '';
+        for (let r = 0; r < 3; r++) {
+            html += createSymbolCellHTML(state.grid[c][r], c, r);
+        }
+        strip.innerHTML = html;
+    }
+}
+
+// ============================================================================
+// 4. BETTING, EXTRA BET & UI UPDATES
+// ============================================================================
+function getCurrentTotalBet() {
+    const base = state.betSteps[state.betIndex];
+    return state.extraBet ? +(base * 1.5).toFixed(2) : base;
+}
+
+function updateHUD(winAmount = null) {
+    document.getElementById('balance-display').textContent = state.balance.toFixed(2);
+    document.getElementById('bet-display').textContent = getCurrentTotalBet().toFixed(2);
+    if (winAmount !== null) {
+        document.getElementById('win-display').textContent = winAmount.toFixed(2);
+    }
+}
+
+function getWeightedRandomSymbol() {
+    const totalWeight = SYMBOL_KEYS.reduce((acc, k) => acc + SYMBOLS[k].weight, 0);
+    let rand = Math.random() * totalWeight;
+    for (const key of SYMBOL_KEYS) {
+        if (rand < SYMBOLS[key].weight) return key;
+        rand -= SYMBOLS[key].weight;
+    }
+    return 'eye';
+}
+
+// ============================================================================
+// 5. SPIN MECHANICS & MULTIPLIER WHEEL ROTATION
+// ============================================================================
+function spinMultiplierWheel(durationMs) {
+    // Pick target slice (Extra Bet boosts odds of 3X, 5X, 10X)
+    const weights = state.extraBet 
+        ? [10, 18, 22, 10, 16, 10, 8, 6] 
+        : [28, 22, 8, 22, 10, 2, 5, 3];
+    const sum = weights.reduce((a, b) => a + b, 0);
+    let r = Math.random() * sum;
+    let targetIndex = 0;
+    for (let i = 0; i < weights.length; i++) {
+        if (r < weights[i]) {
+            targetIndex = i;
+            break;
+        }
+        r -= weights[i];
+    }
+
+    const sliceDeg = 360 / WHEEL_SLICES.length;
+    const targetSliceAngle = (360 - (targetIndex * sliceDeg)) % 360;
+    const currentMod = ((state.currentWheelAngle % 360) + 360) % 360;
+    let delta = targetSliceAngle - currentMod;
+    if (delta <= 0) delta += 360;
+
+    // Spin at least 3 full rotations
+    state.currentWheelAngle += (360 * 3) + delta;
+    state.activeMultiplier = WHEEL_SLICES[targetIndex].value;
+
+    const wheelEl = document.getElementById('multiplier-wheel');
+    wheelEl.style.transition = `transform ${durationMs}ms cubic-bezier(0.15, 0.88, 0.22, 1.03)`;
+    wheelEl.style.transform = `rotate(${state.currentWheelAngle}deg)`;
+}
+
+async function handleSpin() {
+    if (state.isSpinning) return;
+
+    const totalBet = getCurrentTotalBet();
+    if (state.balance < totalBet) {
+        state.autoSpin = false;
+        document.getElementById('auto-btn').classList.remove('active');
+        setStatus('INSUFFICIENT BALANCE! OPEN MENU TO REFILL');
+        return;
+    }
+
+    state.isSpinning = true;
+    state.balance = +(state.balance - totalBet).toFixed(2);
+    updateHUD(0.00);
+    clearWinVisuals();
+    setStatus('SPINNING...');
+    sfx.spinStart();
+
+    // Update Mission 1: Spin count
+    updateMissionProgress(1, 1);
+
+    // Generate next 3x3 outcome grid
+    const nextGrid = [[], [], []];
+    let scarabCount = 0;
+    for (let c = 0; c < 3; c++) {
+        for (let r = 0; r < 3; r++) {
+            const sym = getWeightedRandomSymbol();
+            nextGrid[c][r] = sym;
+            if (sym === 'scarab') scarabCount++;
+        }
+    }
+    state.grid = nextGrid;
+    if (scarabCount > 0) updateMissionProgress(2, scarabCount);
+
+    const baseDuration = state.turbo ? 550 : 1150;
+    const stagger = state.turbo ? 140 : 280;
+
+    // Rotate top multiplier wheel simultaneously
+    spinMultiplierWheel(baseDuration + stagger * 2);
+
+    // Animate each reel strip vertically
+    const reelPromises = [0, 1, 2].map((colIdx) => {
+        return new Promise((resolve) => {
+            const strip = document.getElementById(`reel-strip-${colIdx}`);
+            const blurCount = 12 + colIdx * 4;
+            let stripHTML = '';
+
+            // Top 3 cells = final landing symbols
+            for (let r = 0; r < 3; r++) {
+                stripHTML += createSymbolCellHTML(nextGrid[colIdx][r], colIdx, r);
+            }
+            // Middle filler cells for rapid scroll illusion
+            for (let i = 0; i < blurCount; i++) {
+                stripHTML += createSymbolCellHTML(getWeightedRandomSymbol());
+            }
+            // Bottom 3 cells = previous visible symbols
+            stripHTML += strip.innerHTML;
+
+            strip.style.transition = 'none';
+            strip.innerHTML = stripHTML;
+
+            const totalCells = 3 + blurCount + 3;
+            const startOffsetPct = -((totalCells - 3) / 3) * 100;
+            strip.style.transform = `translateY(${startOffsetPct}%)`;
+
+            // Force layout reflow
+            strip.getBoundingClientRect();
+
+            const duration = baseDuration + colIdx * stagger;
+            strip.style.transition = `transform ${duration}ms cubic-bezier(0.18, 0.89, 0.32, 1.06)`;
+            strip.style.transform = 'translateY(0%)';
+
+            setTimeout(() => {
+                sfx.reelStop(colIdx);
+                // Clean up strip back to 3 cells once landed
+                let cleanHTML = '';
+                for (let r = 0; r < 3; r++) {
+                    cleanHTML += createSymbolCellHTML(nextGrid[colIdx][r], colIdx, r);
+                }
+                strip.style.transition = 'none';
+                strip.innerHTML = cleanHTML;
+                resolve();
+            }, duration + 30);
+        });
+    });
+
+    await Promise.all(reelPromises);
+    evaluateWins(totalBet);
+
+    state.isSpinning = false;
+
+    if (state.autoSpin) {
+        const pauseDelay = state.turbo ? 500 : 1100;
+        setTimeout(() => {
+            if (state.autoSpin) handleSpin();
+        }, pauseDelay);
+    }
+}
+
+// ============================================================================
+// 6. PAYLINE EVALUATION & WIN CELEBRATION
+// ============================================================================
+function evaluateWins(totalBet) {
+    const lineBet = totalBet / 5;
+    let rawLineWin = 0;
+    const winningLines = [];
+    const winningCells = new Set();
+
+    PAYLINES.forEach((line) => {
+        const s0 = state.grid[0][line.coords[0]];
+        const s1 = state.grid[1][line.coords[1]];
+        const s2 = state.grid[2][line.coords[2]];
+        const lineSyms = [s0, s1, s2];
+
+        // Determine target symbol (ignoring Scarab Wilds unless all 3 are Scarabs)
+        const nonWilds = lineSyms.filter((s) => s !== 'scarab');
+        let matchedKey = null;
+
+        if (nonWilds.length === 0) {
+            matchedKey = 'scarab';
+        } else if (nonWilds.every((s) => s === nonWilds[0])) {
+            matchedKey = nonWilds[0];
+        }
+
+        if (matchedKey) {
+            const linePayout = lineBet * SYMBOLS[matchedKey].payout;
+            rawLineWin += linePayout;
+            winningLines.push(line);
+            winningCells.add(`0-${line.coords[0]}`);
+            winningCells.add(`1-${line.coords[1]}`);
+            winningCells.add(`2-${line.coords[2]}`);
+        }
+    });
+
+    if (rawLineWin > 0) {
+        const finalWin = +(rawLineWin * state.activeMultiplier).toFixed(2);
+        state.balance = +(state.balance + finalWin).toFixed(2);
+        updateHUD(finalWin);
+        updateMissionProgress(3, 1);
+
+        // Highlight winning tiles
+        winningCells.forEach((key) => {
+            const el = document.getElementById(`cell-${key}`);
+            if (el) el.classList.add('symbol-win');
+        });
+
+        // Draw glowing SVG paylines
+        drawPaylines(winningLines);
+
+        const ratio = finalWin / totalBet;
+        const isBigWin = ratio >= 5;
+        sfx.winFanfare(isBigWin);
+
+        setStatus(`LINE WIN! ${state.activeMultiplier}X WHEEL MULTIPLIER APPLIED!`);
+
+        if (ratio >= 2) {
+            showWinBanner(finalWin, ratio);
+        }
+    } else {
+        setStatus(`WHEEL LANDED ON ${state.activeMultiplier}X • SPIN AGAIN!`);
+    }
+}
+
+function drawPaylines(lines) {
+    const svg = document.getElementById('payline-overlay');
+    const colCenters = [50, 150, 250];
+    const rowCenters = [50, 150, 250];
+
+    let paths = '';
+    lines.forEach((line) => {
+        const pts = line.coords.map((r, c) => `${colCenters[c]},${rowCenters[r]}`).join(' ');
+        paths += `
+            <polyline points="${pts}" fill="none" stroke="${line.color}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.45"/>
+            <polyline points="${pts}" fill="none" stroke="#ffffff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        `;
+    });
+    svg.innerHTML = paths;
+}
+
+function showWinBanner(amount, ratio) {
+    const popup = document.getElementById('win-popup');
+    const tierEl = document.getElementById('win-tier-label');
+    const multEl = document.getElementById('win-mult-badge');
+    const amtEl = document.getElementById('win-amount-popup');
+
+    tierEl.textContent = ratio >= 15 ? 'MEGA WIN!' : ratio >= 5 ? 'BIG WIN!' : 'GREAT WIN!';
+    multEl.textContent = `WHEEL MULTIPLIER ${state.activeMultiplier}X`;
+    amtEl.textContent = `+${amount.toFixed(2)}`;
+
+    popup.classList.remove('hidden');
+    popup.classList.add('big-win-anim');
+
+    if (typeof confetti === 'function') {
+        confetti({
+            particleCount: ratio >= 10 ? 90 : 45,
+            spread: 65,
+            origin: { y: 0.55 },
+            colors: ['#ffd700', '#ff47b6', '#38bdf8', '#4ade80']
+        });
+    }
+
+    setTimeout(() => {
+        popup.classList.add('hidden');
+        popup.classList.remove('big-win-anim');
+    }, state.turbo ? 1200 : 2100);
+}
+
+function clearWinVisuals() {
+    document.getElementById('payline-overlay').innerHTML = '';
+    document.getElementById('win-popup').classList.add('hidden');
+    document.querySelectorAll('.symbol-win').forEach((el) => el.classList.remove('symbol-win'));
+}
+
+function setStatus(msg) {
+    document.getElementById('status-msg').textContent = msg;
+}
+
+// ============================================================================
+// 7. MISSIONS & MODALS
+// ============================================================================
+function updateMissionProgress(missionId, amount) {
+    let hasClaimable = false;
+    state.missions.forEach((m) => {
+        if (m.id === missionId && !m.claimed) {
+            m.progress = Math.min(m.target, m.progress + amount);
+        }
+        if (m.progress >= m.target && !m.claimed) {
+            hasClaimable = true;
+        }
+    });
+    const dot = document.getElementById('mission-dot');
+    if (hasClaimable) dot.classList.remove('hidden');
+    else dot.classList.add('hidden');
+}
+
+function renderMissions() {
+    const container = document.getElementById('mission-list');
+    container.innerHTML = state.missions.map((m) => {
+        const pct = Math.round((m.progress / m.target) * 100);
+        const ready = m.progress >= m.target && !m.claimed;
+        return `
+            <div class="bg-black/50 border border-yellow-500/40 rounded-xl p-3">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-bold text-yellow-300">${m.title}</span>
+                    <span class="text-emerald-400 font-extrabold">+${m.reward.toFixed(2)}</span>
+                </div>
+                <p class="text-amber-200/80 mb-2">${m.desc} (${m.progress}/${m.target})</p>
+                <div class="w-full h-2 bg-stone-800 rounded-full overflow-hidden mb-2">
+                    <div class="h-full bg-gradient-to-r from-yellow-500 to-amber-300" style="width:${pct}%"></div>
+                </div>
+                ${m.claimed 
+                    ? `<div class="text-center text-emerald-400 font-bold py-1"><i class="fas fa-check-circle mr-1"></i>CLAIMED</div>`
+                    : `<button onclick="claimMission(${m.id})" ${ready ? '' : 'disabled'} class="w-full py-1.5 rounded-lg font-extrabold ${ready ? 'bg-gradient-to-b from-green-400 to-green-700 text-white border border-yellow-200 cursor-pointer' : 'bg-stone-700 text-stone-400 cursor-not-allowed'}">
+                        ${ready ? 'CLAIM REWARD' : 'IN PROGRESS'}
+                       </button>`
+                }
+            </div>
+        `;
+    }).join('');
+}
+
+window.claimMission = function(id) {
+    const mission = state.missions.find((m) => m.id === id);
+    if (mission && mission.progress >= mission.target && !mission.claimed) {
+        mission.claimed = true;
+        state.balance = +(state.balance + mission.reward).toFixed(2);
+        updateHUD();
+        updateMissionProgress(0, 0);
+        renderMissions();
+        sfx.winFanfare(false);
+    }
+};
+
+function populateLegendSVGs() {
+    Object.keys(SYMBOLS).forEach((key) => {
+        const target = document.getElementById(`legend-${key}`);
+        if (target) {
+            target.innerHTML = `<div class="w-full h-full rounded-md ${SYMBOLS[key].tileClass} flex items-center justify-center p-1">${SYMBOLS[key].svg}</div>`;
+        }
+    });
+}
+
+// ============================================================================
+// 8. EVENT LISTENERS & BOOTSTRAP
+// ============================================================================
+window.addEventListener('DOMContentLoaded', () => {
+    buildMultiplierWheel();
+    renderStaticReels();
+    populateLegendSVGs();
+    updateHUD(0.00);
+
+    // Spin button
+    document.getElementById('spin-btn').addEventListener('click', handleSpin);
+
+    // Spacebar spin shortcut
+    window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            e.preventDefault();
+            handleSpin();
+        }
+    });
+
+    // Bet Decrease (-)
+    document.getElementById('bet-down-btn').addEventListener('click', () => {
+        if (state.isSpinning) return;
+        sfx.click();
+        if (state.betIndex > 0) {
+            state.betIndex--;
+            updateHUD();
+        }
+    });
+
+    // Bet Increase (+)
+    document.getElementById('bet-up-btn').addEventListener('click', () => {
+        if (state.isSpinning) return;
+        sfx.click();
+        if (state.betIndex < state.betSteps.length - 1) {
+            state.betIndex++;
+            updateHUD();
+        }
+    });
+
+    // Extra Bet Toggle
+    document.getElementById('extra-bet-btn').addEventListener('click', () => {
+        if (state.isSpinning) return;
+        sfx.click();
+        state.extraBet = !state.extraBet;
+        const btn = document.getElementById('extra-bet-btn');
+        const statusEl = document.getElementById('extra-bet-status');
+        btn.classList.toggle('active', state.extraBet);
+        statusEl.textContent = state.extraBet ? 'ON (HIGH MULTIPLIER ODDS)' : 'OFF (BOOST WHEEL)';
+        updateHUD();
+    });
+
+    // Turbo Toggle
+    document.getElementById('turbo-btn').addEventListener('click', (e) => {
+        sfx.click();
+        state.turbo = !state.turbo;
+        e.currentTarget.classList.toggle('active', state.turbo);
+        setStatus(state.turbo ? 'TURBO SPEED: ON' : 'TURBO SPEED: OFF');
+    });
+
+    // Auto-Spin Toggle
+    document.getElementById('auto-btn').addEventListener('click', (e) => {
+        sfx.click();
+        state.autoSpin = !state.autoSpin;
+        e.currentTarget.classList.toggle('active', state.autoSpin);
+        if (state.autoSpin && !state.isSpinning) {
+            handleSpin();
+        }
+    });
+
+    // Sound Toggles
+    const toggleSound = () => {
+        state.soundEnabled = !state.soundEnabled;
+        if (state.soundEnabled) sfx.click();
+        document.getElementById('sound-icon').className = state.soundEnabled ? 'fas fa-volume-up text-xs' : 'fas fa-volume-mute text-xs text-red-400';
+        document.getElementById('modal-sound-btn').innerHTML = state.soundEnabled 
+            ? '<i class="fas fa-volume-up"></i> <span>Sound: ON</span>' 
+            : '<i class="fas fa-volume-mute text-red-400"></i> <span>Sound: OFF</span>';
+    };
+    document.getElementById('sound-toggle-top').addEventListener('click', toggleSound);
+    document.getElementById('modal-sound-btn').addEventListener('click', toggleSound);
+
+    // Mission Modal
+    document.getElementById('mission-btn').addEventListener('click', () => {
+        sfx.click();
+        renderMissions();
+        document.getElementById('mission-modal').classList.remove('hidden');
+    });
+    document.getElementById('close-mission-btn').addEventListener('click', () => {
+        sfx.click();
+        document.getElementById('mission-modal').classList.add('hidden');
+    });
+
+    // Menu / Paytable Modal
+    document.getElementById('menu-btn').addEventListener('click', () => {
+        sfx.click();
+        document.getElementById('menu-modal').classList.remove('hidden');
+    });
+    document.getElementById('close-menu-btn').addEventListener('click', () => {
+        sfx.click();
+        document.getElementById('menu-modal').classList.add('hidden');
+    });
+
+    // Free Coin Refill Button
+    document.getElementById('refill-btn').addEventListener('click', () => {
+        sfx.winFanfare(false);
+        state.balance = +(state.balance + 500).toFixed(2);
+        updateHUD();
+        setStatus('+500.00 FREE COINS ADDED!');
+    });
+});
+</script>
+</body>
+</html>
+```
