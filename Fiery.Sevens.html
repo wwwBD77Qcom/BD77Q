@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fiery Sevens Exclusive - Slot Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #3a0400 0%, #0d0000 100%);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .game-container {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 820px;
+            background: linear-gradient(180deg, #120100 0%, #4d0800 50%, #1a0200 100%);
+            border: 2px solid #ff5500;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 0 30px rgba(255, 69, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Jackpot Section */
+        .jackpots {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding-top: 20px;
+        }
+
+        .jackpot-box {
+            text-align: center;
+            border-radius: 10px;
+            padding: 4px 25px;
+            font-weight: bold;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0,0,0,0.8);
+        }
+
+        .jackpot-title {
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px #000;
+        }
+
+        .jackpot-amount {
+            font-size: 20px;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255,255,255,0.8);
+        }
+
+        .grand {
+            width: 65%;
+            background: linear-gradient(180deg, #b8007a, #4a0030);
+            border: 2px solid #ff66cc;
+            box-shadow: 0 0 15px #ff00aa;
+        }
+        .grand .jackpot-title { color: #ffdd44; font-size: 18px; }
+
+        .major {
+            width: 55%;
+            background: linear-gradient(180deg, #004499, #001a3d);
+            border: 2px solid #3399ff;
+            box-shadow: 0 0 12px #0066ff;
+        }
+        .major .jackpot-title { color: #80c1ff; font-size: 16px; }
+
+        .mini {
+            width: 45%;
+            background: linear-gradient(180deg, #1f7a1f, #0a290a);
+            border: 2px solid #47d147;
+            box-shadow: 0 0 10px #2eb82e;
+        }
+        .mini .jackpot-title { color: #99ff99; font-size: 14px; }
+
+        /* Title Banner */
+        .title-banner {
+            text-align: center;
+            margin: 5px 0;
+        }
+
+        .title-main {
+            font-size: 30px;
+            font-weight: 900;
+            background: linear-gradient(180deg, #fff700, #ff6600, #cc0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px #ff3300);
+            letter-spacing: 1px;
+        }
+
+        .title-sub {
+            font-size: 15px;
+            font-style: italic;
+            font-weight: bold;
+            color: #66e0ff;
+            text-shadow: 0 0 8px #0099cc;
+            margin-top: -5px;
+        }
+
+        /* Slot Grid (5 Columns x 3 Rows) */
+        .slot-frame {
+            margin: 0 12px;
+            padding: 6px;
+            background: linear-gradient(180deg, #ffcc00, #ff4400, #ffcc00);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 100, 0, 0.8);
+        }
+
+        .slot-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+            background: #220300;
+            padding: 6px;
+            border-radius: 6px;
+        }
+
+        .reel {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            background: linear-gradient(180deg, #1a0200, #3d0700, #1a0200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .symbol {
+            height: 68px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 38px;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 102, 0, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .symbol.win {
+            animation: pulseWin 0.6s infinite alternate;
+            background: rgba(255, 204, 0, 0.3);
+            border: 1px solid #ffcc00;
+            border-radius: 5px;
+        }
+
+        @keyframes pulseWin {
+            from { transform: scale(1); filter: brightness(1); }
+            to { transform: scale(1.15); filter: brightness(1.4); }
+        }
+
+        .spinning {
+            animation: blurSpin 0.1s infinite linear;
+        }
+
+        @keyframes blurSpin {
+            0% { transform: translateY(-5px); filter: blur(2px); }
+            50% { transform: translateY(5px); filter: blur(3px); }
+            100% { transform: translateY(-5px); filter: blur(2px); }
+        }
+
+        /* Controls Section */
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 15px;
+        }
+
+        .btn-small {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: #2b0600;
+            border: 2px solid #ff5500;
+            color: #ff6600;
+            font-size: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 68, 0, 0.4);
+            transition: 0.2s;
+        }
+
+        .btn-small:active { transform: scale(0.9); }
+
+        .btn-spin {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffaa00 0%, #cc2900 70%, #660000 100%);
+            border: 4px solid #ffd633;
+            color: #fff;
+            font-size: 36px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 0 25px #ff6600, inset 0 0 15px #ffff99;
+            transition: transform 0.15s;
+        }
+
+        .btn-spin:active { transform: scale(0.92); }
+        .btn-spin:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        .lines-info {
+            text-align: center;
+            font-size: 12px;
+            color: #cccccc;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 15px;
+            border-radius: 10px;
+            width: fit-content;
+            margin: 0 auto 5px auto;
+        }
+
+        /* Bottom Bar */
+        .bottom-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1a0000;
+            border-top: 2px solid #ff5500;
+            height: 65px;
+        }
+
+        .info-box {
+            background: linear-gradient(180deg, #ff7700, #cc4400);
+            height: 100%;
+            width: 28%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .info-label { font-size: 12px; }
+        .info-value { font-size: 16px; }
+
+        .status-box {
+            width: 44%;
+            text-align: center;
+            color: #ffdd77;
+            font-size: 20px;
+            font-weight: bold;
+            text-shadow: 0 0 8px #ff6600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="game-container">
+    <!-- Jackpots -->
+    <div class="jackpots">
+        <div class="jackpot-box grand">
+            <div class="jackpot-title">GRAND</div>
+            <div class="jackpot-amount" id="grand-val">1,554.00</div>
+        </div>
+        <div class="jackpot-box major">
+            <div class="jackpot-title">MAJOR</div>
+            <div class="jackpot-amount" id="major-val">354.00</div>
+        </div>
+        <div class="jackpot-box mini">
+            <div class="jackpot-title">MINI</div>
+            <div class="jackpot-amount" id="mini-val">154.00</div>
+        </div>
+    </div>
+
+    <!-- Title -->
+    <div class="title-banner">
+        <div class="title-main">FIERY SEVENS</div>
+        <div class="title-sub">EXCLUSIVE</div>
+    </div>
+
+    <!-- 5x3 Slot Reels -->
+    <div class="slot-frame">
+        <div class="slot-grid" id="slot-grid">
+            <!-- Reels will be generated by JS -->
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div>
+        <div class="controls">
+            <button class="btn-small" id="turbo-btn" title="Turbo Mode">⚡</button>
+            <button class="btn-small" id="auto-btn" title="Auto Spin">▶</button>
+            <button class="btn-spin" id="spin-btn">↻</button>
+            <button class="btn-small" id="bet-btn" title="Change Bet">🪙</button>
+            <button class="btn-small" id="add-coin-btn" title="Add Free Credits">+</button>
+        </div>
+        <div class="lines-info">5 Lines &nbsp; 5 Credits</div>
+    </div>
+
+    <!-- Bottom Status Bar -->
+    <div class="bottom-bar">
+        <div class="info-box">
+            <span class="info-label">Total Bet</span>
+            <span class="info-value" id="bet-display">2.00</span>
+        </div>
+        <div class="status-box" id="message-display">Good Day</div>
+        <div class="info-box">
+            <span class="info-label">Balance</span>
+            <span class="info-value" id="balance-display">100.00</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ছবির মতো ফলের আইকন এবং স্পেশাল ৭
+    const symbols = ['🍌', '🍇', '🍉', '🍒', '🍆', '7️⃣']; 
+    // শুরুতে ছবির মতো গ্রিড সাজানো
+    const initialGrid = [
+        ['🍌', '🍌', '🍆'],
+        ['🍇', '🍉', '🍉'],
+        ['🍇', '🍉', '🍉'],
+        ['🍉', '🍇', '🍉'],
+        ['🍒', '🍆', '🍒']
+    ];
+
+    let balance = 100.00;
+    let bet = 2.00;
+    const betOptions = [1.00, 2.00, 5.00, 10.00];
+    let betIndex = 1;
+    let isSpinning = false;
+    let isTurbo = false;
+    let isAuto = false;
+    let autoInterval = null;
+
+    const slotGridEl = document.getElementById('slot-grid');
+    const spinBtn = document.getElementById('spin-btn');
+    const betBtn = document.getElementById('bet-btn');
+    const turboBtn = document.getElementById('turbo-btn');
+    const autoBtn = document.getElementById('auto-btn');
+    const addCoinBtn = document.getElementById('add-coin-btn');
+    const balanceDisplay = document.getElementById('balance-display');
+    const betDisplay = document.getElementById('bet-display');
+    const messageDisplay = document.getElementById('message-display');
+
+    // গ্রিড তৈরি করা
+    function renderGrid(gridData, winningCells = []) {
+        slotGridEl.innerHTML = '';
+        for (let col = 0; col < 5; col++) {
+            const reelEl = document.createElement('div');
+            reelEl.className = 'reel';
+            reelEl.id = `reel-${col}`;
+            for (let row = 0; row < 3; row++) {
+                const symEl = document.createElement('div');
+                symEl.className = 'symbol';
+                if (winningCells.some(c => c.col === col && c.row === row)) {
+                    symEl.classList.add('win');
+                }
+                symEl.textContent = gridData[col][row];
+                reelEl.appendChild(symEl);
+            }
+            slotGridEl.appendChild(reelEl);
+        }
+    }
+
+    // স্পিন ফাংশন
+    function spin() {
+        if (isSpinning) return;
+        if (balance < bet) {
+            messageDisplay.textContent = "Low Balance! Click +";
+            stopAuto();
+            return;
+        }
+
+        isSpinning = true;
+        spinBtn.disabled = true;
+        balance -= bet;
+        updateUI();
+        messageDisplay.textContent = "Spinning...";
+
+        // অ্যানিমেশন শুরু
+        for (let col = 0; col < 5; col++) {
+            document.getElementById(`reel-${col}`).classList.add('spinning');
+        }
+
+        const spinDuration = isTurbo ? 300 : 800;
+
+        setTimeout(() => {
+            const newGrid = [];
+            for (let col = 0; col < 5; col++) {
+                const colSymbols = [];
+                for (let row = 0; row < 3; row++) {
+                    const randSym = symbols[Math.floor(Math.random() * symbols.length)];
+                    colSymbols.push(randSym);
+                }
+                newGrid.push(colSymbols);
+            }
+
+            checkWin(newGrid);
+            isSpinning = false;
+            spinBtn.disabled = false;
+        }, spinDuration);
+    }
+
+    // ৫টি পে-লাইন চেক করা
+    function checkWin(grid) {
+        // ৫টি স্ট্যান্ডার্ড স্লট লাইন (Row indices for cols 0..4)
+        const paylines = [
+            [0, 0, 0, 0, 0], // Top row
+            [1, 1, 1, 1, 1], // Middle row
+            [2, 2, 2, 2, 2], // Bottom row
+            [0, 1, 2, 1, 0], // V shape
+            [2, 1, 0, 1, 2]  // Inverted V shape
+        ];
+
+        let totalWin = 0;
+        let winningCells = [];
+
+        paylines.forEach(line => {
+            const firstSym = grid[0][line[0]];
+            let matchCount = 1;
+
+            for (let col = 1; col < 5; col++) {
+                if (grid[col][line[col]] === firstSym) {
+                    matchCount++;
+                } else {
+                    break;
+                }
+            }
+
+            // বাম দিক থেকে অন্তত ৩টি মিললে জিতবে
+            if (matchCount >= 3) {
+                let multiplier = matchCount === 3 ? 2 : (matchCount === 4 ? 5 : 15);
+                if (firstSym === '7️⃣') multiplier *= 3; // 7 মিললে ৩ গুণ বোনাস
+                
+                totalWin += bet * multiplier;
+                for (let c = 0; c < matchCount; c++) {
+                    winningCells.push({ col: c, row: line[c] });
+                }
+            }
+        });
+
+        renderGrid(grid, winningCells);
+
+        if (totalWin > 0) {
+            balance += totalWin;
+            messageDisplay.textContent = `WIN ${totalWin.toFixed(2)}!`;
+            messageDisplay.style.color = "#00ff66";
+        } else {
+            messageDisplay.textContent = "Good Luck!";
+            messageDisplay.style.color = "#ffdd77";
+        }
+        updateUI();
+    }
+
+    function updateUI() {
+        balanceDisplay.textContent = balance.toFixed(2);
+        betDisplay.textContent = bet.toFixed(2);
+    }
+
+    function stopAuto() {
+        isAuto = false;
+        autoBtn.style.background = "#2b0600";
+        clearInterval(autoInterval);
+    }
+
+    // বাটন ইভেন্টস
+    spinBtn.addEventListener('click', spin);
+
+    betBtn.addEventListener('click', () => {
+        if (isSpinning) return;
+        betIndex = (betIndex + 1) % betOptions.length;
+        bet = betOptions[betIndex];
+        updateUI();
+    });
+
+    turboBtn.addEventListener('click', () => {
+        isTurbo = !isTurbo;
+        turboBtn.style.background = isTurbo ? "#ff5500" : "#2b0600";
+        turboBtn.style.color = isTurbo ? "#fff" : "#ff6600";
+    });
+
+    autoBtn.addEventListener('click', () => {
+        if (isAuto) {
+            stopAuto();
+        } else {
+            isAuto = true;
+            autoBtn.style.background = "#ff5500";
+            spin();
+            autoInterval = setInterval(() => {
+                if (!isSpinning) spin();
+            }, 1500);
+        }
+    });
+
+    // ব্যালেন্স শেষ হয়ে গেলে ফ্রি কয়েন যোগ করার বাটন
+    addCoinBtn.addEventListener('click', () => {
+        balance += 100.00;
+        messageDisplay.textContent = "+100.00 Added!";
+        updateUI();
+    });
+
+    // শুরুতে ছবির মতো গ্রিড লোড করা
+    renderGrid(initialGrid);
+</script>
+
+</body>
+</html>
