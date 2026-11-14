@@ -94,12 +94,13 @@
 
         /* Animations */
         @keyframes dropIn {
-            0% { transform: translateY(-45px) scale(0.9); opacity: 0; }
-            70% { transform: translateY(4px) scale(1.02); opacity: 1; }
+            0% { transform: translateY(-130px) scale(0.92); opacity: 0; }
+            65% { transform: translateY(6px) scale(1.02); opacity: 1; }
+            85% { transform: translateY(-2px) scale(0.99); opacity: 1; }
             100% { transform: translateY(0) scale(1); opacity: 1; }
         }
         .animate-drop {
-            animation: dropIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: dropIn 0.36s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
         @keyframes matchFlash {
@@ -117,6 +118,25 @@
         }
         .mult-active {
             animation: pulseMultiplier 1.2s infinite ease-in-out;
+        }
+
+        @keyframes teasePulse {
+            0%, 100% { box-shadow: 0 0 12px rgba(251, 191, 36, 0.4), inset 0 0 8px rgba(251, 191, 36, 0.3); }
+            50% { box-shadow: 0 0 26px rgba(239, 68, 68, 0.95), inset 0 0 16px rgba(251, 191, 36, 0.8); }
+        }
+        .reel-tease {
+            border-radius: 14px;
+            background: rgba(251, 191, 36, 0.08);
+            animation: teasePulse 0.45s infinite ease-in-out;
+        }
+
+        @keyframes slamDrop {
+            0% { transform: translateY(-160px) scaleY(1.25); opacity: 0; filter: blur(3px); }
+            75% { transform: translateY(8px) scaleY(0.95); opacity: 1; filter: blur(0); }
+            100% { transform: translateY(0) scaleY(1); opacity: 1; }
+        }
+        .animate-slam {
+            animation: slamDrop 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
     </style>
 </head>
@@ -143,6 +163,15 @@
                     <polygon points="50,5 93,28 93,72 50,95 7,72 7,28" fill="url(#redGemGrad)" stroke="#fca5a5" stroke-width="3"/>
                 </svg>
                 <span id="surgeText" class="absolute scifi-font text-2xl font-black text-3d-gold tracking-tighter text-center leading-tight">10 FREE!</span>
+            </div>
+        </div>
+
+        <!-- Big Win Total Bonus Banner (Shown on last Scatter spin) -->
+        <div id="bigWinOverlay" class="hidden absolute inset-0 bg-black/75 backdrop-blur-[2px] z-40 flex flex-col items-center justify-center pointer-events-none p-4">
+            <div class="bg-gradient-to-b from-amber-500/30 via-purple-900/90 to-slate-950/95 border-2 border-amber-300 rounded-3xl px-7 py-5 text-center shadow-[0_0_40px_rgba(251,191,36,0.9)] animate-bounce">
+                <div class="scifi-font text-3xl sm:text-4xl font-black text-3d-gold tracking-wider">BIG WIN</div>
+                <div class="text-[11px] font-extrabold tracking-widest text-cyan-200 uppercase mt-1">SCATTER TOTAL WIN</div>
+                <div id="bigWinAmount" class="scifi-font text-3xl sm:text-4xl font-black text-emerald-400 drop-shadow-[0_2px_8px_rgba(16,185,129,0.8)] mt-1">0.00</div>
             </div>
         </div>
 
@@ -175,7 +204,7 @@
                     <svg class="w-16 h-16 sm:w-20 sm:h-20 drop-shadow-[0_0_12px_rgba(239,68,68,0.6)]" viewBox="0 0 100 100">
                         <polygon points="50,6 92,28 92,72 50,94 8,72 8,28" fill="url(#redGemGrad)" stroke="#f87171" stroke-width="3"/>
                     </svg>
-                    <span id="multLeftVal" class="absolute scifi-font text-sm sm:text-base font-black text-3d-gold">1536X</span>
+                    <span id="multLeftVal" class="absolute scifi-font text-xs sm:text-sm font-black text-3d-gold">1024X</span>
                 </div>
 
                 <!-- Center Crystal -->
@@ -272,11 +301,31 @@
                 </div>
             </div>
 
-            <!-- Version Footer & Free Spin Counter -->
-            <div class="w-full flex justify-between items-center mt-1 px-1 text-[9px] text-slate-400 font-semibold">
+            <!-- Status, Live Multiplier & Free Spin Counter -->
+            <div class="w-full flex justify-between items-center mt-1 px-1 text-[10px] text-slate-400 font-semibold">
                 <span id="statusText" class="text-cyan-400">READY TO SPIN</span>
+                <span id="activeMultBadge" class="text-amber-400 font-extrabold scifi-font tracking-wider">MULTIPLIER: 1X</span>
                 <span id="freeSpinCounter" class="hidden text-amber-300 font-extrabold scifi-font tracking-wider animate-pulse">FREE SPINS: 10</span>
-                <span>ver. 400e820</span>
+            </div>
+
+            <!-- Live Counter / Tracker Bar (গোনা সিস্টেম) -->
+            <div class="w-full grid grid-cols-4 gap-1 mt-1.5 pt-1 border-t border-slate-800/90 text-[9px] text-center scifi-font">
+                <div class="bg-slate-950/80 border border-slate-800 rounded py-0.5 px-1">
+                    <span class="text-slate-400 block text-[8px]">SPINS</span>
+                    <span id="countSpins" class="text-cyan-300 font-bold">0</span>
+                </div>
+                <div class="bg-slate-950/80 border border-slate-800 rounded py-0.5 px-1">
+                    <span class="text-slate-400 block text-[8px]">WINS</span>
+                    <span id="countWins" class="text-emerald-400 font-bold">0</span>
+                </div>
+                <div class="bg-slate-950/80 border border-slate-800 rounded py-0.5 px-1">
+                    <span class="text-slate-400 block text-[8px]">LOSS</span>
+                    <span id="countLoss" class="text-rose-400 font-bold">0</span>
+                </div>
+                <div class="bg-slate-950/80 border border-slate-800 rounded py-0.5 px-1">
+                    <span class="text-slate-400 block text-[8px]">1 - 1024</span>
+                    <span id="countRate" class="text-amber-300 font-bold">1X</span>
+                </div>
             </div>
         </div>
     </div>
@@ -371,144 +420,185 @@
         let autoSpin = false;
         let freeSpinsRemaining = 0;
         let spinsSinceLastBonus = 0;
-        let nextScatterTarget = Math.floor(Math.random() * 15) + 18; // Random 18-32 spins gap for 3 scatters
+        let nextScatterTarget = Math.floor(Math.random() * 22) + 25; // 25-46 spins gap
         let missionProgress = 0;
-        let multiplierLadder = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1536];
+        let multiplierLadder = [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]; // 1 to 1024
         let multIndex = 0;
+        let totalSpinsCount = 0;
+        let totalWinsCount = 0;
+        let totalLossCount = 0;
+        let freeSpinBonusCap = 0;
+        let freeSpinBonusWon = 0;
 
-        // Symbol Base Payouts
+        // Symbol Base Payouts (Low base values, scaled by bet)
         const PAYOUTS = {
-            fire: 1.20,
-            lightning: 0.90,
-            leaf: 0.70,
-            water: 0.50
+            fire: 0.08,
+            lightning: 0.06,
+            leaf: 0.04,
+            water: 0.02
         };
 
         // 2D Board State
         let board = [];
+        let spinsSinceLastWin = 0;
+        let nextWinTarget = Math.floor(Math.random() * 8) + 8; // Win only once every 8-15 spins
 
-        // Custom SVG Symbol Artwork
         function getSymbolSVG(type) {
-            switch (type) {
+            switch(type) {
                 case 'fire':
                     return `
-                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                    <svg class="w-full h-full p-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
                         <polygon points="50,6 92,28 92,72 50,94 8,72 8,28" fill="url(#redGemGrad)" stroke="#fca5a5" stroke-width="4"/>
-                        <polygon points="50,16 82,34 82,66 50,84 18,66 18,34" fill="none" stroke="#fee2e2" stroke-width="2" opacity="0.5"/>
-                        <path d="M50 26 C64 42, 68 58, 50 74 C32 58, 36 42, 50 26 Z" fill="#fef08a"/>
-                        <path d="M50 40 C58 50, 58 62, 50 70 C42 62, 42 50, 50 40 Z" fill="#ea580c"/>
+                        <polygon points="50,16 82,33 82,67 50,84 18,67 18,33" fill="none" stroke="#fecaca" stroke-width="1.5" opacity="0.5"/>
+                        <path d="M52 24 C52 24 68 42 66 58 C65 69 57 76 48 76 C38 76 32 67 34 55 C35 48 41 43 41 43 C41 43 40 51 45 52 C43 42 52 24 52 24 Z" fill="#fef08a" stroke="#f97316" stroke-width="2"/>
+                        <path d="M50 46 C50 46 58 55 56 64 C55 69 51 72 47 72 C42 72 40 67 42 61 C43 56 50 46 50 46 Z" fill="#ef4444"/>
                     </svg>`;
                 case 'lightning':
                     return `
-                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                    <svg class="w-full h-full p-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
                         <polygon points="50,6 92,28 92,72 50,94 8,72 8,28" fill="url(#purpleGemGrad)" stroke="#e9d5ff" stroke-width="4"/>
-                        <polygon points="55,22 33,54 49,54 43,80 68,46 51,46" fill="#fde047" stroke="#ca8a04" stroke-width="2" stroke-linejoin="round"/>
+                        <polygon points="50,16 82,33 82,67 50,84 18,67 18,33" fill="none" stroke="#f3e8ff" stroke-width="1.5" opacity="0.5"/>
+                        <polygon points="56,22 32,54 49,54 42,78 68,46 51,46" fill="#fef08a" stroke="#eab308" stroke-width="2" stroke-linejoin="round"/>
                     </svg>`;
                 case 'leaf':
                     return `
-                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
-                        <polygon points="50,10 92,86 8,86" fill="url(#greenGemGrad)" stroke="#bbf7d0" stroke-width="4" stroke-linejoin="round"/>
-                        <path d="M50 35 C66 48, 66 68, 50 76 C34 68, 34 48, 50 35 Z" fill="#fef08a"/>
-                        <path d="M50 45 L50 74" stroke="#15803d" stroke-width="3" stroke-linecap="round"/>
+                    <svg class="w-full h-full p-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                        <polygon points="50,8 93,86 7,86" fill="url(#greenGemGrad)" stroke="#bbf7d0" stroke-width="4" stroke-linejoin="round"/>
+                        <polygon points="50,24 78,76 22,76" fill="none" stroke="#dcfce7" stroke-width="1.5" opacity="0.5"/>
+                        <path d="M50 34 C64 46 66 64 50 74 C34 64 36 46 50 34 Z" fill="#fef08a" stroke="#15803d" stroke-width="2"/>
+                        <path d="M50 42 L50 72 M50 56 L58 50 M50 62 L42 56" stroke="#15803d" stroke-width="2.5" stroke-linecap="round"/>
                     </svg>`;
                 case 'water':
                     return `
-                    <svg class="w-10 h-10 sm:w-11 sm:h-11 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
+                    <svg class="w-full h-full p-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.7)]" viewBox="0 0 100 100">
                         <circle cx="50" cy="50" r="42" fill="url(#blueGemGrad)" stroke="#bae6fd" stroke-width="4"/>
-                        <circle cx="50" cy="50" r="32" fill="none" stroke="#e0f2fe" stroke-width="2" opacity="0.6"/>
-                        <path d="M50 24 C66 46, 68 62, 50 74 C32 62, 34 46, 50 24 Z" fill="#fde047"/>
-                        <circle cx="46" cy="57" r="6" fill="#0284c7"/>
+                        <circle cx="50" cy="50" r="32" fill="none" stroke="#e0f2fe" stroke-width="1.5" opacity="0.5"/>
+                        <path d="M50 24 C50 24 70 48 70 61 C70 72 61 80 50 80 C39 80 30 72 30 61 C30 48 50 24 50 24 Z" fill="#fef08a" stroke="#0369a1" stroke-width="2"/>
+                        <path d="M44 58 C44 65 49 69 54 68" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
                     </svg>`;
                 case 'wild':
                     return `
                     <div class="relative w-full h-full flex flex-col items-center justify-center">
-                        <svg class="w-11 h-10 drop-shadow-[0_3px_5px_rgba(0,0,0,0.9)]" viewBox="0 0 100 85">
-                            <rect x="10" y="28" width="80" height="46" rx="8" fill="url(#goldChestGrad)" stroke="#fef9c3" stroke-width="4"/>
-                            <path d="M10 34 Q50 5 90 34 Z" fill="#ef4444" stroke="#fde047" stroke-width="4"/>
-                            <rect x="40" y="32" width="20" height="22" rx="4" fill="#38bdf8" stroke="#ffffff" stroke-width="3"/>
+                        <svg class="w-full h-full p-0.5 drop-shadow-[0_3px_5px_rgba(0,0,0,0.85)]" viewBox="0 0 100 100">
+                            <rect x="14" y="34" width="72" height="44" rx="8" fill="url(#goldChestGrad)" stroke="#fef9c3" stroke-width="3"/>
+                            <path d="M14 38 Q50 14 86 38 Z" fill="#ef4444" stroke="#fef08a" stroke-width="3"/>
+                            <rect x="22" y="28" width="10" height="50" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                            <rect x="68" y="28" width="10" height="50" fill="#cbd5e1" stroke="#475569" stroke-width="1.5"/>
+                            <circle cx="50" cy="52" r="10" fill="#38bdf8" stroke="#ffffff" stroke-width="2.5"/>
                         </svg>
-                        <span class="scifi-font text-[10px] sm:text-[11px] font-black text-3d-gold -mt-2.5 tracking-tighter">WILD</span>
+                        <span class="absolute -bottom-0.5 scifi-font text-[10px] sm:text-[11px] font-black tracking-tighter text-3d-gold leading-none">WILD</span>
                     </div>`;
                 case 'scatter':
                     return `
                     <div class="relative w-full h-full flex flex-col items-center justify-center">
-                        <svg class="w-11 h-10 drop-shadow-[0_3px_5px_rgba(0,0,0,0.9)]" viewBox="0 0 100 90">
-                            <polygon points="18,35 12,8 38,24" fill="#f97316" stroke="#fed7aa" stroke-width="3"/>
-                            <polygon points="82,35 88,8 62,24" fill="#f97316" stroke="#fed7aa" stroke-width="3"/>
-                            <circle cx="50" cy="48" r="30" fill="#fb923c" stroke="#fef08a" stroke-width="3"/>
-                            <path d="M24 52 Q50 78 76 52 Q65 74 50 74 Q35 74 24 52 Z" fill="#fffbeb"/>
-                            <rect x="24" y="30" width="52" height="18" rx="6" fill="#0284c7" stroke="#e2e8f0" stroke-width="3"/>
-                            <line x1="50" y1="30" x2="50" y2="48" stroke="#e2e8f0" stroke-width="3"/>
-                            <circle cx="38" cy="56" r="3" fill="#1e293b"/>
-                            <circle cx="62" cy="56" r="3" fill="#1e293b"/>
-                            <ellipse cx="50" cy="63" rx="4" ry="2.5" fill="#7c2d12"/>
+                        <svg class="w-full h-full p-0.5 drop-shadow-[0_3px_5px_rgba(0,0,0,0.85)]" viewBox="0 0 100 100">
+                            <polygon points="18,38 24,10 42,26" fill="#f97316" stroke="#fef08a" stroke-width="2"/>
+                            <polygon points="82,38 76,10 58,26" fill="#f97316" stroke="#fef08a" stroke-width="2"/>
+                            <circle cx="50" cy="50" r="32" fill="#fb923c" stroke="#fef08a" stroke-width="2.5"/>
+                            <path d="M24 52 Q50 76 76 52 Q72 78 50 80 Q28 78 24 52 Z" fill="#fef3c7"/>
+                            <rect x="22" y="30" width="24" height="15" rx="4" fill="#38bdf8" stroke="#e2e8f0" stroke-width="3"/>
+                            <rect x="54" y="30" width="24" height="15" rx="4" fill="#38bdf8" stroke="#e2e8f0" stroke-width="3"/>
+                            <line x1="46" y1="37" x2="54" y2="37" stroke="#e2e8f0" stroke-width="3"/>
+                            <circle cx="38" cy="54" r="3.5" fill="#1e293b"/>
+                            <circle cx="62" cy="54" r="3.5" fill="#1e293b"/>
+                            <polygon points="46,60 54,60 50,65" fill="#1e293b"/>
                         </svg>
-                        <span class="scifi-font text-[8px] sm:text-[9px] font-black text-3d-red -mt-2 tracking-tighter">SCATTER</span>
+                        <span class="absolute -bottom-0.5 scifi-font text-[9px] sm:text-[10px] font-black tracking-tighter text-3d-red leading-none">SCATTER</span>
                     </div>`;
             }
         }
 
-        // Initialize Board on Load
-        window.onload = function () {
-            document.getElementById('legendScatter').innerHTML = getSymbolSVG('scatter');
-            document.getElementById('legendWild').innerHTML = getSymbolSVG('wild');
-            document.getElementById('legendFire').innerHTML = getSymbolSVG('fire');
-            document.getElementById('legendLightning').innerHTML = getSymbolSVG('lightning');
-            document.getElementById('legendLeaf').innerHTML = getSymbolSVG('leaf');
-            document.getElementById('legendWater').innerHTML = getSymbolSVG('water');
-
-            generateInitialBoard();
-            renderBoard();
-            updateHUD();
-        };
-
-        function generateInitialBoard() {
-            board = [];
-            for (let c = 0; c < COL_HEIGHTS.length; c++) {
-                const col = [];
-                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
-                    col.push(getRandomCell(c));
-                }
-                board.push(col);
-            }
-        }
-
-        function getRandomCell(colIdx) {
+        function getRandomCell(colIndex) {
             const r = Math.random();
             let type = 'water';
-            if (r < 0.25) type = 'fire';
-            else if (r < 0.50) type = 'lightning';
-            else if (r < 0.75) type = 'leaf';
-            else if (r < 0.96) type = 'water';
-            else if (r < 0.985 && colIdx >= 1 && colIdx <= 4) type = 'wild';
-            else if (colIdx >= 1 && colIdx <= 4) type = 'scatter';
+            if (r < 0.24) type = 'fire';
+            else if (r < 0.49) type = 'lightning';
+            else if (r < 0.74) type = 'leaf';
+            else if (r < 0.965) type = 'water';
+            else if (r < 0.985 && colIndex > 0 && colIndex < 5) type = 'wild';
+            else type = 'scatter';
 
-            const isGold = (colIdx >= 1 && colIdx <= 4) && (Math.random() < 0.18);
+            const isGold = (colIndex >= 1 && colIndex <= 4 && type !== 'wild' && type !== 'scatter' && Math.random() < 0.14);
             return { type, isGold };
         }
 
-        function renderBoard(winningCoords = new Set()) {
+        function initBoard() {
+            board = [];
+            let scatterCount = 0;
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                board[c] = [];
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    let cell = getRandomCell(c);
+                    if (cell.type === 'scatter') {
+                        if (scatterCount >= 2) cell.type = 'water';
+                        else scatterCount++;
+                    }
+                    board[c].push(cell);
+                }
+            }
+            renderBoard();
+        }
+
+        function renderBoard(winningCoords = new Set(), options = {}) {
+            const { revealedCols = 6, teaseCol = -1, slamCol = -1, newlyRevealedCol = -1 } = options;
             const container = document.getElementById('reelContainer');
             container.innerHTML = '';
 
             for (let c = 0; c < COL_HEIGHTS.length; c++) {
                 const colDiv = document.createElement('div');
-                colDiv.className = 'flex flex-col justify-center items-center gap-1 sm:gap-1.5 flex-1';
+                const isTeasing = (c === teaseCol);
+                colDiv.className = `flex flex-col items-center justify-center gap-1 sm:gap-1.5 flex-1 py-1 transition-all duration-150 ${isTeasing ? 'reel-tease' : ''}`;
 
                 for (let r = 0; r < COL_HEIGHTS[c]; r++) {
-                    const cell = board[c][r];
-                    const coordKey = `${c}-${r}`;
-                    const isWinning = winningCoords.has(coordKey);
-
                     const tile = document.createElement('div');
-                    const tileStyle = cell.isGold ? 'tile-gold' : 'tile-silver';
-                    const animClass = isWinning ? 'animate-match' : 'animate-drop';
+                    if (c >= revealedCols) {
+                        const dummyTypes = ['fire', 'lightning', 'leaf', 'water'];
+                        const randType = dummyTypes[(c + r + Math.floor(Math.random() * 4)) % 4];
+                        tile.className = `w-full aspect-square max-w-[60px] rounded-xl flex items-center justify-center relative tile-silver opacity-45 blur-[2px] scale-95 transition-all duration-100`;
+                        tile.innerHTML = getSymbolSVG(randType);
+                    } else {
+                        const cell = board[c][r];
+                        const isWinner = winningCoords.has(`${c}-${r}`);
+                        const isFreshCol = (c === newlyRevealedCol || newlyRevealedCol === -2);
+                        const animClass = isWinner
+                            ? 'animate-match z-20'
+                            : (c === slamCol ? 'animate-slam' : (isFreshCol ? 'animate-drop' : ''));
 
-                    tile.className = `w-full aspect-square max-w-[62px] rounded-xl ${tileStyle} ${animClass} flex items-center justify-center relative overflow-hidden transition-transform`;
-                    tile.innerHTML = getSymbolSVG(cell.type);
+                        tile.className = `w-full aspect-square max-w-[60px] rounded-xl flex items-center justify-center relative transition-all duration-200 ${
+                            cell.isGold ? 'tile-gold' : 'tile-silver'
+                        } ${animClass}`;
+
+                        if (isFreshCol && !isWinner) {
+                            const rowDelay = (COL_HEIGHTS[c] - 1 - r) * 35;
+                            tile.style.animationDelay = `${rowDelay}ms`;
+                        }
+
+                        tile.innerHTML = getSymbolSVG(cell.type);
+                    }
                     colDiv.appendChild(tile);
                 }
                 container.appendChild(colDiv);
+            }
+        }
+
+        function updateMultiplierDisplay() {
+            const leftVal = document.getElementById('multLeftVal');
+            const centerVal = document.getElementById('multCenterVal');
+            const rightVal = document.getElementById('multRightVal');
+            const activeBadge = document.getElementById('activeMultBadge');
+
+            const currentMult = multiplierLadder[multIndex];
+            const nextMult = multiplierLadder[Math.min(multIndex + 1, multiplierLadder.length - 1)];
+
+            leftVal.innerText = '1024X';
+            centerVal.innerText = `${currentMult}X`;
+            rightVal.innerText = `${nextMult}X`;
+            if (activeBadge) {
+                activeBadge.innerText = `MULTIPLIER: ${currentMult}X`;
+            }
+            const rateEl = document.getElementById('countRate');
+            if (rateEl) {
+                rateEl.innerText = `${currentMult}X`;
             }
         }
 
@@ -516,247 +606,27 @@
             document.getElementById('balanceDisplay').innerText = balance.toFixed(2);
             document.getElementById('winDisplay').innerText = currentWin.toFixed(2);
             document.getElementById('betDisplay').innerText = totalBet.toFixed(2);
-
-            const currentMult = multiplierLadder[multIndex];
-            const nextMult = multiplierLadder[Math.min(multiplierLadder.length - 1, multIndex + 1)];
-            document.getElementById('multCenterVal').innerText = `${currentMult}X`;
-            document.getElementById('multRightVal').innerText = `${nextMult}X`;
-
-            document.getElementById('missionBar').style.width = `${missionProgress}%`;
             document.getElementById('missionText').innerText = `${missionProgress}%`;
+            document.getElementById('missionBar').style.width = `${missionProgress}%`;
 
-            const fsEl = document.getElementById('freeSpinCounter');
+            const spinsEl = document.getElementById('countSpins');
+            const winsEl = document.getElementById('countWins');
+            const lossEl = document.getElementById('countLoss');
+            if (spinsEl) spinsEl.innerText = totalSpinsCount;
+            if (winsEl) winsEl.innerText = totalWinsCount;
+            if (lossEl) lossEl.innerText = totalLossCount;
+
+            const fsCounter = document.getElementById('freeSpinCounter');
             if (freeSpinsRemaining > 0) {
-                fsEl.classList.remove('hidden');
-                fsEl.innerText = `FREE SPINS: ${freeSpinsRemaining}`;
+                fsCounter.classList.remove('hidden');
+                fsCounter.innerText = `FREE SPINS: ${freeSpinsRemaining}`;
             } else {
-                fsEl.classList.add('hidden');
+                fsCounter.classList.add('hidden');
             }
-        }
-
-        function startSpin() {
-            if (isSpinning) return;
-
-            const isFreeSpin = freeSpinsRemaining > 0;
-
-            if (!isFreeSpin) {
-                if (balance < totalBet) {
-                    autoSpin = false;
-                    updateAutoBtn();
-                    showMessage('INSUFFICIENT BALANCE', 'Not enough credits to spin. Lower your bet or reload the page for fresh demo credits.');
-                    return;
-                }
-                balance -= totalBet;
-                currentWin = 0;
-                multIndex = 0;
-                spinsSinceLastBonus++;
-            } else {
-                freeSpinsRemaining--;
-                multIndex = Math.max(1, multIndex);
-            }
-
-            isSpinning = true;
-            document.getElementById('statusText').innerText = isFreeSpin ? `FREE SPIN (${freeSpinsRemaining} LEFT)` : 'SPINNING...';
-            document.getElementById('spinIcon').classList.add('animate-spin');
-            updateHUD();
-
-            let scatterPlaced = 0;
-            const allowTripleScatter = (!isFreeSpin && spinsSinceLastBonus >= nextScatterTarget);
-
-            for (let c = 0; c < COL_HEIGHTS.length; c++) {
-                board[c] = [];
-                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
-                    let cell = getRandomCell(c);
-                    if (cell.type === 'scatter') {
-                        if (!allowTripleScatter && scatterPlaced >= 2) {
-                            cell.type = 'fire';
-                        } else {
-                            scatterPlaced++;
-                        }
-                    }
-                    board[c].push(cell);
-                }
-            }
-
-            if (allowTripleScatter) {
-                while (scatterPlaced < 3) {
-                    const randCol = Math.floor(Math.random() * 4) + 1;
-                    const randRow = Math.floor(Math.random() * COL_HEIGHTS[randCol]);
-                    if (board[randCol][randRow].type !== 'scatter') {
-                        board[randCol][randRow] = { type: 'scatter', isGold: true };
-                        scatterPlaced++;
-                    }
-                }
-                spinsSinceLastBonus = 0;
-                nextScatterTarget = Math.floor(Math.random() * 18) + 20;
-            }
-
-            renderBoard();
-
-            const delay = turboMode ? 220 : 480;
-            setTimeout(() => {
-                evaluateCascades();
-            }, delay);
-        }
-
-        function evaluateCascades() {
-            const winningSet = new Set();
-            let roundPayout = 0;
-            let scatterCount = 0;
-
-            for (let c = 0; c < COL_HEIGHTS.length; c++) {
-                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
-                    if (board[c][r].type === 'scatter') {
-                        scatterCount++;
-                        winningSet.add(`${c}-${r}`);
-                    }
-                }
-            }
-
-            if (scatterCount >= 3) {
-                roundPayout += totalBet * 2.0;
-                freeSpinsRemaining += 10;
-                triggerSurgeEffect('10 FREE!');
-                document.getElementById('statusText').innerText = '3 SCATTERS! +10 FREE SPINS!';
-            } else {
-                winningSet.clear();
-            }
-
-            const baseSymbols = ['fire', 'lightning', 'leaf', 'water'];
-            baseSymbols.forEach(sym => {
-                let consecutiveCols = 0;
-                let waysCount = 1;
-                let tempCoords = [];
-
-                for (let c = 0; c < COL_HEIGHTS.length; c++) {
-                    let matchesInCol = [];
-                    for (let r = 0; r < COL_HEIGHTS[c]; r++) {
-                        const cellType = board[c][r].type;
-                        if (cellType === sym || cellType === 'wild') {
-                            matchesInCol.push(`${c}-${r}`);
-                        }
-                    }
-
-                    if (matchesInCol.length > 0) {
-                        consecutiveCols++;
-                        waysCount *= matchesInCol.length;
-                        tempCoords.push(...matchesInCol);
-                    } else {
-                        break;
-                    }
-                }
-
-                if (consecutiveCols >= 3) {
-                    tempCoords.forEach(coord => winningSet.add(coord));
-                    roundPayout += (PAYOUTS[sym] * 0.15 * totalBet * waysCount * (consecutiveCols - 2));
-                }
-            });
-
-            if (winningSet.size > 0 && roundPayout > 0) {
-                const activeMult = multiplierLadder[multIndex];
-                const totalCascadeWin = roundPayout * activeMult;
-                currentWin += totalCascadeWin;
-                balance += totalCascadeWin;
-
-                missionProgress = Math.min(100, missionProgress + 10);
-                document.getElementById('statusText').innerText = `CASCADE WIN! ${activeMult}X`;
-                
-                renderBoard(winningSet);
-                updateHUD();
-
-                const cascadeDelay = turboMode ? 280 : 550;
-                setTimeout(() => {
-                    for (let c = 0; c < COL_HEIGHTS.length; c++) {
-                        let remaining = [];
-                        for (let r = 0; r < COL_HEIGHTS[c]; r++) {
-                            if (winningSet.has(`${c}-${r}`)) {
-                                if (board[c][r].isGold && board[c][r].type !== 'wild') {
-                                    remaining.push({ type: 'wild', isGold: false });
-                                }
-                            } else {
-                                remaining.push(board[c][r]);
-                            }
-                        }
-                        while (remaining.length < COL_HEIGHTS[c]) {
-                            remaining.unshift(getRandomCell(c));
-                        }
-                        board[c] = remaining;
-                    }
-
-                    multIndex = Math.min(multiplierLadder.length - 1, multIndex + 1);
-                    if (multiplierLadder[multIndex] >= 64) {
-                        triggerSurgeEffect(multiplierLadder[multIndex] + 'X');
-                    }
-
-                    renderBoard();
-                    updateHUD();
-
-                    setTimeout(() => {
-                        evaluateCascades();
-                    }, cascadeDelay);
-                }, cascadeDelay);
-
-            } else {
-                isSpinning = false;
-                document.getElementById('spinIcon').classList.remove('animate-spin');
-                
-                if (freeSpinsRemaining > 0) {
-                    document.getElementById('statusText').innerText = `AUTO FREE SPIN (${freeSpinsRemaining} LEFT)`;
-                    updateHUD();
-                    setTimeout(() => {
-                        if (freeSpinsRemaining > 0 && !isSpinning) startSpin();
-                    }, turboMode ? 350 : 750);
-                } else {
-                    document.getElementById('statusText').innerText = currentWin > 0 ? `TOTAL WIN: ${currentWin.toFixed(2)}` : 'READY TO SPIN';
-                    updateHUD();
-
-                    if (autoSpin) {
-                        setTimeout(() => {
-                            if (autoSpin) startSpin();
-                        }, turboMode ? 300 : 700);
-                    }
-                }
-            }
-        }
-
-        function triggerSurgeEffect(label) {
-            const badge = document.getElementById('floatingSurgeBadge');
-            document.getElementById('surgeText').innerText = label;
-            badge.classList.remove('hidden');
-            setTimeout(() => {
-                badge.classList.add('hidden');
-            }, 1100);
-        }
-
-        function triggerBuyFeature() {
-            if (isSpinning) return;
-            const cost = totalBet * 25;
-            if (balance < cost) {
-                showMessage('BUY FEATURE', `You need ${cost.toFixed(2)} balance to activate the Multiplier Surge Feature!`);
-                return;
-            }
-            balance -= cost;
-            currentWin = 0;
-            multIndex = 2;
-            isSpinning = true;
-            document.getElementById('statusText').innerText = 'FEATURE SURGE ACTIVE!';
-            triggerSurgeEffect('4X');
-            updateHUD();
-
-            for (let c = 0; c < COL_HEIGHTS.length; c++) {
-                board[c] = [];
-                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
-                    const cell = getRandomCell(c);
-                    if (c >= 1 && c <= 4 && Math.random() < 0.35) cell.isGold = true;
-                    board[c].push(cell);
-                }
-            }
-            renderBoard();
-            setTimeout(() => evaluateCascades(), 500);
         }
 
         function adjustBet(delta) {
-            if (isSpinning) return;
+            if (isSpinning || freeSpinsRemaining > 0) return;
             totalBet = Math.max(0.20, Math.min(50.00, +(totalBet + delta).toFixed(2)));
             updateHUD();
         }
@@ -768,50 +638,395 @@
             if (turboMode) {
                 btn.classList.add('ring-2', 'ring-amber-300');
                 ind.classList.remove('w-1/2');
-                ind.classList.add('w-full', 'bg-emerald-400');
+                ind.classList.add('w-full', 'bg-green-400');
                 document.getElementById('statusText').innerText = 'TURBO MODE ON';
             } else {
                 btn.classList.remove('ring-2', 'ring-amber-300');
-                ind.classList.remove('w-full', 'bg-emerald-400');
+                ind.classList.remove('w-full', 'bg-green-400');
                 ind.classList.add('w-1/2');
-                document.getElementById('statusText').innerText = 'TURBO MODE OFF';
+                document.getElementById('statusText').innerText = 'NORMAL SPEED';
             }
         }
 
         function toggleAutoSpin() {
             autoSpin = !autoSpin;
-            updateAutoBtn();
-            if (autoSpin && !isSpinning) {
-                startSpin();
-            }
-        }
-
-        function updateAutoBtn() {
             const btn = document.getElementById('autoBtn');
             if (autoSpin) {
                 btn.classList.add('ring-2', 'ring-amber-300', 'animate-pulse');
+                document.getElementById('statusText').innerText = 'AUTO SPIN ACTIVE';
+                if (!isSpinning) startSpin();
             } else {
                 btn.classList.remove('ring-2', 'ring-amber-300', 'animate-pulse');
+                document.getElementById('statusText').innerText = 'AUTO SPIN STOPPED';
             }
         }
 
-        function openInfoModal() {
-            document.getElementById('infoModal').classList.remove('hidden');
+        function triggerBuyFeature() {
+            if (isSpinning || freeSpinsRemaining > 0) return;
+            const cost = +(totalBet * 25).toFixed(2);
+            if (balance < cost) {
+                showMessage('INSUFFICIENT BALANCE', `Buy Feature requires ${cost.toFixed(2)} credits!`);
+                return;
+            }
+            balance = +(balance - cost).toFixed(2);
+            updateHUD();
+            startSpin(true);
         }
 
+        function findWaysWins() {
+            const symbols = ['fire', 'lightning', 'leaf', 'water'];
+            let winningCoords = new Set();
+            let spinWin = 0;
+
+            for (let sym of symbols) {
+                let colMatches = [];
+                for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                    let matchesInCol = [];
+                    for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                        if (board[c][r].type === sym || board[c][r].type === 'wild') {
+                            matchesInCol.push(`${c}-${r}`);
+                        }
+                    }
+                    if (matchesInCol.length > 0) {
+                        colMatches.push(matchesInCol);
+                    } else {
+                        break;
+                    }
+                }
+
+                if (colMatches.length >= 3) {
+                    let ways = 1;
+                    for (let m of colMatches) {
+                        ways *= m.length;
+                        m.forEach(coord => winningCoords.add(coord));
+                    }
+                    const lengthBonus = colMatches.length === 3 ? 1 : colMatches.length === 4 ? 1.3 : colMatches.length === 5 ? 1.6 : 2;
+                    const betScale = totalBet >= 1 ? Math.pow(totalBet, 1.25) : totalBet * 0.7;
+                    spinWin += PAYOUTS[sym] * Math.min(ways, 3) * lengthBonus * betScale;
+                }
+            }
+
+            return { winningCoords, spinWin };
+        }
+
+        function countScatters() {
+            let count = 0;
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    if (board[c][r].type === 'scatter') count++;
+                }
+            }
+            return count;
+        }
+
+        async function startSpin(forceScatterBonus = false) {
+            if (isSpinning) return;
+
+            const isFreeSpin = freeSpinsRemaining > 0;
+            if (!isFreeSpin) {
+                if (balance < totalBet) {
+                    autoSpin = false;
+                    document.getElementById('autoBtn').classList.remove('ring-2', 'ring-amber-300', 'animate-pulse');
+                    showMessage('OUT OF CREDITS', 'Not enough balance to place bet. Lower your bet or reload!');
+                    return;
+                }
+                balance = +(balance - totalBet).toFixed(2);
+                spinsSinceLastBonus++;
+                spinsSinceLastWin++;
+            } else {
+                freeSpinsRemaining--;
+                spinsSinceLastWin++;
+            }
+
+            isSpinning = true;
+            totalSpinsCount++;
+            if (!isFreeSpin) {
+                currentWin = 0.00;
+                multIndex = 0;
+            }
+            updateMultiplierDisplay();
+            updateHUD();
+
+            document.getElementById('statusText').innerText = isFreeSpin
+                ? `AUTO FREE SPIN (${freeSpinsRemaining} LEFT)...`
+                : `SPINNING (${multiplierLadder[multIndex]}X)...`;
+
+            const spinIcon = document.getElementById('spinIcon');
+            spinIcon.style.transform = 'rotate(360deg)';
+            setTimeout(() => { spinIcon.style.transform = 'rotate(0deg)'; }, 450);
+
+            const allowThreeScatters = !isFreeSpin && (forceScatterBonus || spinsSinceLastBonus >= nextScatterTarget);
+            const allowWinThisSpin = allowThreeScatters || (isFreeSpin ? (freeSpinBonusWon < freeSpinBonusCap && (freeSpinsRemaining <= 2 || spinsSinceLastWin >= 2)) : (spinsSinceLastWin >= nextWinTarget));
+
+            // Generate new mixed board
+            let scatterPlaced = 0;
+            const maxScattersAllowed = allowThreeScatters ? 3 : 2;
+            const teaserTarget = allowThreeScatters ? 3 : (Math.random() < 0.35 ? (Math.random() < 0.5 ? 1 : 2) : 0);
+
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                board[c] = [];
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    let cell = getRandomCell(c);
+                    if (cell.type === 'scatter') {
+                        if (scatterPlaced >= maxScattersAllowed) cell.type = 'water';
+                        else scatterPlaced++;
+                    }
+                    board[c].push(cell);
+                }
+            }
+
+            // Place exact teaser or 3 scatters if needed
+            while (scatterPlaced < teaserTarget) {
+                let rc = Math.floor(Math.random() * COL_HEIGHTS.length);
+                let rr = Math.floor(Math.random() * COL_HEIGHTS[rc]);
+                if (board[rc][rr].type !== 'scatter') {
+                    board[rc][rr] = { type: 'scatter', isGold: false };
+                    scatterPlaced++;
+                }
+            }
+
+            // Ensure at least 2 scatters appear in early columns (0-3) when teasing so later reels slam fast
+            if (teaserTarget >= 2) {
+                let earlyScatters = 0;
+                for (let c = 0; c <= 3; c++) {
+                    for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                        if (board[c][r].type === 'scatter') earlyScatters++;
+                    }
+                }
+                if (earlyScatters < 2) {
+                    for (let c = 4; c < COL_HEIGHTS.length; c++) {
+                        for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                            if (board[c][r].type === 'scatter' && earlyScatters < 2) {
+                                board[c][r] = { type: 'leaf', isGold: false };
+                                const targetCol = earlyScatters === 0 ? 1 : 2;
+                                const targetRow = Math.floor(Math.random() * COL_HEIGHTS[targetCol]);
+                                if (board[targetCol][targetRow].type !== 'scatter') {
+                                    board[targetCol][targetRow] = { type: 'scatter', isGold: false };
+                                    earlyScatters++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Guarantee a small match on free spins if remaining bonus cap still needs to be awarded
+            if (isFreeSpin && allowWinThisSpin && freeSpinBonusWon < freeSpinBonusCap) {
+                const winGem = ['fire', 'lightning', 'leaf', 'water'][Math.floor(Math.random() * 4)];
+                for (let c = 0; c < 3; c++) {
+                    const rr = Math.floor(Math.random() * COL_HEIGHTS[c]);
+                    if (board[c][rr].type !== 'scatter') {
+                        board[c][rr].type = winGem;
+                    }
+                }
+            }
+
+            // Enforce high loss rate: prevent matches on non-winning spins
+            if (!allowWinThisSpin) {
+                const blockedInCol1 = new Set();
+                for (let r = 0; r < COL_HEIGHTS[1]; r++) {
+                    if (board[1][r].type === 'wild') board[1][r].type = 'leaf';
+                    blockedInCol1.add(board[1][r].type);
+                }
+                const allGems = ['fire', 'lightning', 'leaf', 'water'];
+                const safeGems = allGems.filter(g => !blockedInCol1.has(g));
+                const replacement = safeGems.length > 0 ? safeGems[0] : 'water';
+                if (safeGems.length === 0) {
+                    for (let r = 0; r < COL_HEIGHTS[1]; r++) {
+                        if (board[1][r].type === 'water') board[1][r].type = 'fire';
+                    }
+                }
+                for (let r = 0; r < COL_HEIGHTS[0]; r++) {
+                    if (board[0][r].type === 'wild' || blockedInCol1.has(board[0][r].type)) {
+                        board[0][r].type = replacement;
+                    }
+                }
+            }
+
+            // Sequential column-by-column drop animation (1st to 6th reel)
+            let scattersLandedSoFar = 0;
+            for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                const isTeaseActive = scattersLandedSoFar >= 2;
+                if (isTeaseActive) {
+                    document.getElementById('statusText').innerText = 'SCATTER ANTICIPATION!';
+                    for (let spinTick = 0; spinTick < 4; spinTick++) {
+                        renderBoard(new Set(), { revealedCols: c, teaseCol: c });
+                        await delay(turboMode ? 65 : 110);
+                    }
+                    renderBoard(new Set(), { revealedCols: c + 1, slamCol: c, newlyRevealedCol: c });
+                    await delay(turboMode ? 120 : 210);
+                } else {
+                    renderBoard(new Set(), { revealedCols: c + 1, newlyRevealedCol: c });
+                    await delay(turboMode ? 105 : 210);
+                }
+
+                for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                    if (board[c][r].type === 'scatter') {
+                        scattersLandedSoFar++;
+                    }
+                }
+            }
+
+            // Cascade Loop
+            let hasCascaded = true;
+            while (hasCascaded) {
+                const { winningCoords, spinWin } = findWaysWins();
+
+                if (winningCoords.size > 0) {
+                    spinsSinceLastWin = 0;
+                    nextWinTarget = Math.floor(Math.random() * 8) + 8;
+
+                    const activeMult = multiplierLadder[multIndex];
+                    let stepWin = +(totalBet * 0.40).toFixed(2);
+
+                    if (isFreeSpin) {
+                        // Scale payout directly with active multiplier (1X, 2X, 4X, 8X...)
+                        const multScaledWin = +(totalBet * 0.06 * activeMult).toFixed(2);
+                        const remainingCap = +(freeSpinBonusCap - freeSpinBonusWon).toFixed(2);
+                        if (remainingCap > 0) {
+                            stepWin = Math.min(multScaledWin, remainingCap);
+                        } else {
+                            // Even after base cap, higher multipliers still award extra multiplied bonus
+                            stepWin = +(totalBet * 0.03 * activeMult).toFixed(2);
+                        }
+                        freeSpinBonusWon = +(freeSpinBonusWon + stepWin).toFixed(2);
+                        currentWin = freeSpinBonusWon;
+                    } else {
+                        currentWin = +(currentWin + stepWin).toFixed(2);
+                    }
+
+                    // Add directly to main balance immediately on every win
+                    balance = +(balance + stepWin).toFixed(2);
+
+                    missionProgress = Math.min(100, missionProgress + 2);
+                    updateHUD();
+                    document.getElementById('statusText').innerText = isFreeSpin
+                        ? `SCATTER (${activeMult}X): +${stepWin.toFixed(2)} | TOTAL: ${freeSpinBonusWon.toFixed(2)}`
+                        : `WIN (40%): +${stepWin.toFixed(2)}`;
+
+                    renderBoard(winningCoords);
+                    await delay(turboMode ? 260 : 450);
+
+                    // Collapse & Refill (prevent additional matches if free spin cap reached)
+                    for (let c = 0; c < COL_HEIGHTS.length; c++) {
+                        let newCol = [];
+                        for (let r = 0; r < COL_HEIGHTS[c]; r++) {
+                            if (!winningCoords.has(`${c}-${r}`)) {
+                                newCol.push(board[c][r]);
+                            } else if (board[c][r].isGold) {
+                                newCol.push({ type: 'wild', isGold: false });
+                            }
+                        }
+                        while (newCol.length < COL_HEIGHTS[c]) {
+                            let newCell = getRandomCell(c);
+                            if (newCell.type === 'scatter') newCell.type = 'leaf';
+                            newCol.unshift(newCell);
+                        }
+                        board[c] = newCol;
+                    }
+
+                    if (multIndex < multiplierLadder.length - 1) {
+                        multIndex++;
+                    }
+                    updateMultiplierDisplay();
+                    renderBoard(new Set(), { newlyRevealedCol: -2 });
+                    await delay(turboMode ? 220 : 380);
+                } else {
+                    hasCascaded = false;
+                }
+            }
+            // Ensure exact 25% - 40% bet payout is completed on the last Scatter spin if any cap remains
+            if (isFreeSpin && freeSpinsRemaining === 0 && freeSpinBonusWon < freeSpinBonusCap) {
+                const finalRemainder = +(freeSpinBonusCap - freeSpinBonusWon).toFixed(2);
+                freeSpinBonusWon = +(freeSpinBonusWon + finalRemainder).toFixed(2);
+                currentWin = freeSpinBonusWon;
+                balance = +(balance + finalRemainder).toFixed(2);
+                updateHUD();
+            }
+
+            if (currentWin > 0) {
+                totalWinsCount++;
+            } else {
+                totalLossCount++;
+            }
+            updateHUD();
+
+            // Check Scatter Trigger (3 Scatters = 10 Automatic Free Spins)
+            const totalScatters = countScatters();
+            if (!isFreeSpin && totalScatters >= 3) {
+                spinsSinceLastBonus = 0;
+                nextScatterTarget = Math.floor(Math.random() * 22) + 25;
+                freeSpinsRemaining = 10;
+                const randomScatterRate = 0.85 + Math.random() * 0.45; // Optimal 85% to 130% of current bet for balanced gameplay
+                freeSpinBonusCap = +(totalBet * randomScatterRate).toFixed(2);
+                freeSpinBonusWon = 0;
+                currentWin = 0.00;
+                updateHUD();
+
+                const badge = document.getElementById('floatingSurgeBadge');
+                document.getElementById('surgeText').innerHTML = `3 SCATTER!<br>10 FREE`;
+                badge.classList.remove('hidden');
+                document.getElementById('statusText').innerText = 'BONUS TRIGGERED! 10 FREE SPINS!';
+                await delay(1400);
+                badge.classList.add('hidden');
+            } else if (currentWin === 0) {
+                document.getElementById('statusText').innerText = isFreeSpin
+                    ? `FREE SPINS LEFT: ${freeSpinsRemaining}`
+                    : 'SPIN AGAIN';
+            }
+
+            isSpinning = false;
+
+            if (freeSpinsRemaining > 0) {
+                setTimeout(() => startSpin(), turboMode ? 320 : 650);
+            } else if (isFreeSpin && freeSpinsRemaining === 0) {
+                // Show BIG WIN with total Scatter payout at the end of the last Scatter spin
+                const bigWinEl = document.getElementById('bigWinOverlay');
+                const bigWinAmtEl = document.getElementById('bigWinAmount');
+                bigWinAmtEl.innerText = freeSpinBonusWon.toFixed(2);
+                bigWinEl.classList.remove('hidden');
+                document.getElementById('statusText').innerText = `SCATTER COMPLETE! TOTAL WIN: ${freeSpinBonusWon.toFixed(2)}`;
+                await delay(2400);
+                bigWinEl.classList.add('hidden');
+                if (autoSpin) {
+                    setTimeout(() => startSpin(), turboMode ? 350 : 750);
+                }
+            } else if (autoSpin) {
+                setTimeout(() => startSpin(), turboMode ? 350 : 750);
+            }
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        function openInfoModal() {
+            document.getElementById('legendScatter').innerHTML = getSymbolSVG('scatter');
+            document.getElementById('legendWild').innerHTML = getSymbolSVG('wild');
+            document.getElementById('legendFire').innerHTML = getSymbolSVG('fire');
+            document.getElementById('legendLightning').innerHTML = getSymbolSVG('lightning');
+            document.getElementById('legendLeaf').innerHTML = getSymbolSVG('leaf');
+            document.getElementById('legendWater').innerHTML = getSymbolSVG('water');
+            document.getElementById('infoModal').classList.remove('hidden');
+        }
         function closeInfoModal() {
             document.getElementById('infoModal').classList.add('hidden');
         }
 
-        function showMessage(title, text) {
+        function showMessage(title, body) {
             document.getElementById('msgTitle').innerText = title;
-            document.getElementById('msgBody').innerText = text;
+            document.getElementById('msgBody').innerText = body;
             document.getElementById('msgModal').classList.remove('hidden');
         }
-
         function closeMsgModal() {
             document.getElementById('msgModal').classList.add('hidden');
         }
+
+        window.onload = function () {
+            initBoard();
+            updateMultiplierDisplay();
+            updateHUD();
+        };
     </script>
 </body>
 </html>
