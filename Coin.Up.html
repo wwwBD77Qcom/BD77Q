@@ -1,0 +1,1149 @@
+```html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Coin Up: Hot Fire - 3x3 Slot Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Montserrat:wght@700;800;900&family=Noto+Sans+Bengali:wght@500;700&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      background-color: #090204;
+      font-family: 'Montserrat', 'Noto Sans Bengali', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Main Mobile Portrait Cabinet */
+    .game-cabinet {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      max-height: 920px;
+      background: radial-gradient(circle at 50% 28%, #9e1b08 0%, #4d0804 48%, #1c0302 88%, #0e0101 100%);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 0 50px rgba(255, 68, 0, 0.25);
+    }
+
+    /* Animated Fire Glow behind Logo */
+    .fire-aura {
+      position: absolute;
+      top: 42px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 140px;
+      background: radial-gradient(ellipse at center, rgba(255, 220, 50, 0.85) 0%, rgba(255, 94, 0, 0.55) 45%, rgba(255, 0, 0, 0) 75%);
+      filter: blur(10px);
+      animation: firePulse 1.8s infinite alternate ease-in-out;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes firePulse {
+      0% { transform: translateX(-50%) scale(0.95); opacity: 0.85; }
+      100% { transform: translateX(-50%) scale(1.08); opacity: 1; }
+    }
+
+    /* Floating Embers Canvas */
+    #embersCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Jackpot Banners matching Screenshot */
+    .jp-card {
+      position: relative;
+      border-radius: 10px;
+      padding: 2px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.7), inset 0 1px 2px rgba(255,255,255,0.6);
+      z-index: 5;
+    }
+
+    .jp-pill {
+      position: relative;
+      margin: -9px auto 1px auto;
+      width: 82%;
+      border-radius: 999px;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      line-height: 1.25;
+      padding: 1px 0;
+      background: linear-gradient(180deg, #fff5a8 0%, #f6c324 55%, #d18700 100%);
+      border: 1.5px solid #fff3b0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+    }
+
+    .jp-value {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 17px;
+      text-align: center;
+      letter-spacing: 0.4px;
+      padding-bottom: 3px;
+    }
+
+    /* Grand Banner */
+    .jp-grand {
+      background: linear-gradient(180deg, #ffe259 0%, #ffa751 100%);
+      border: 1.5px solid #fff29c;
+    }
+    .jp-grand .jp-pill { color: #9c0d00; }
+    .jp-grand .jp-value {
+      color: #b30e00;
+      text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+    }
+
+    /* Major Banner */
+    .jp-major {
+      background: linear-gradient(180deg, #c9188b 0%, #7d0955 100%);
+      border: 1.5px solid #ff9ce0;
+    }
+    .jp-major .jp-pill { color: #6e064a; }
+    .jp-major .jp-value {
+      color: #fff6b3;
+      text-shadow: 0 1.5px 2px rgba(0,0,0,0.8);
+    }
+
+    /* Minor Banner */
+    .jp-minor {
+      background: linear-gradient(180deg, #1b58d1 0%, #0a2a75 100%);
+      border: 1.5px solid #8cb8ff;
+    }
+    .jp-minor .jp-pill { color: #0c3285; }
+    .jp-minor .jp-value {
+      color: #fff6b3;
+      text-shadow: 0 1.5px 2px rgba(0,0,0,0.8);
+    }
+
+    /* Mini Banner */
+    .jp-mini {
+      background: linear-gradient(180deg, #278016 0%, #104207 100%);
+      border: 1.5px solid #a2f58c;
+    }
+    .jp-mini .jp-pill { color: #135207; }
+    .jp-mini .jp-value {
+      color: #fff6b3;
+      text-shadow: 0 1.5px 2px rgba(0,0,0,0.8);
+    }
+
+    /* Center Logo: COIN UP HOT FIRE */
+    .logo-wrapper {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      margin-top: -22px;
+      margin-bottom: 4px;
+      pointer-events: none;
+    }
+
+    .logo-coinup {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 32px;
+      line-height: 0.95;
+      letter-spacing: -1px;
+      display: inline-flex;
+      align-items: center;
+      filter: drop-shadow(0 3px 3px rgba(0,0,0,0.9)) drop-shadow(0 0 8px rgba(255,140,0,0.9));
+    }
+
+    .logo-coin {
+      background: linear-gradient(180deg, #ffffff 0%, #ffe659 45%, #ff8c00 90%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 1.2px #6b1400;
+    }
+
+    .logo-up {
+      background: linear-gradient(180deg, #ffffff 0%, #ff5e5e 50%, #b80000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 1.2px #4a0000;
+      margin-left: 2px;
+    }
+
+    .logo-hotfire {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-style: italic;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: #b80000;
+      text-shadow: 0 0 4px #fff380, 0 0 8px #ffae00, 0 1px 1px #ffffff;
+      margin-top: -1px;
+    }
+
+    /* 3x3 Ornate Slot Grid Frame */
+    .grid-frame {
+      position: relative;
+      z-index: 6;
+      margin: 0 10px;
+      padding: 6px;
+      border-radius: 14px;
+      background: linear-gradient(180deg, #fff199 0%, #e09b19 35%, #8f5300 70%, #ffd54f 100%);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.85), 0 0 20px rgba(255, 136, 0, 0.35);
+    }
+
+    .grid-inner {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 3px;
+      background-color: #d99b26;
+      border-radius: 9px;
+      overflow: hidden;
+      border: 2px solid #592e00;
+    }
+
+    /* Slot Cells with Concentric Pattern */
+    .slot-cell {
+      aspect-ratio: 1.12 / 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .cell-purple {
+      background-color: #46094d;
+      background-image:
+        radial-gradient(circle at center, transparent 18%, rgba(255, 110, 240, 0.08) 19%, rgba(255, 110, 240, 0.08) 23%, transparent 24%),
+        radial-gradient(circle at center, transparent 34%, rgba(255, 110, 240, 0.08) 35%, rgba(255, 110, 240, 0.08) 39%, transparent 40%),
+        radial-gradient(circle at center, transparent 50%, rgba(255, 110, 240, 0.07) 51%, rgba(255, 110, 240, 0.07) 55%, transparent 56%),
+        radial-gradient(circle at center, #630f6b 0%, #2e0433 100%);
+      box-shadow: inset 0 0 12px rgba(0,0,0,0.7);
+    }
+
+    /* Middle Crimson Row */
+    .cell-crimson {
+      background-color: #8a0808;
+      background-image:
+        radial-gradient(circle at center, transparent 18%, rgba(255, 150, 120, 0.12) 19%, rgba(255, 150, 120, 0.12) 23%, transparent 24%),
+        radial-gradient(circle at center, transparent 34%, rgba(255, 150, 120, 0.12) 35%, rgba(255, 150, 120, 0.12) 39%, transparent 40%),
+        radial-gradient(circle at center, transparent 50%, rgba(255, 150, 120, 0.10) 51%, rgba(255, 150, 120, 0.10) 55%, transparent 56%),
+        radial-gradient(circle at center, #b80d0d 0%, #5c0303 100%);
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.65);
+    }
+
+    .cell-crimson.win-flash {
+      animation: rowWinPulse 0.6s infinite alternate;
+    }
+
+    @keyframes rowWinPulse {
+      0% { box-shadow: inset 0 0 15px #ffae00; }
+      100% { box-shadow: inset 0 0 32px #fff275; }
+    }
+
+    /* Gold Coin Design */
+    .coin-gold {
+      width: 86%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: conic-gradient(from 45deg, #ffd700, #fff3a1, #e09100, #ffd700, #b86b00, #ffe866, #ffd700);
+      padding: 6%;
+      box-shadow:
+        0 4px 10px rgba(0,0,0,0.85),
+        0 0 14px rgba(255, 200, 0, 0.75),
+        inset 0 2px 3px rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: coinPop 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .coin-gold-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #fff08a 0%, #f5a600 55%, #b56200 100%);
+      border: 2px dashed rgba(138, 69, 0, 0.55);
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .coin-gold-text {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(18px, 5.2vw, 22px);
+      color: #ffffff;
+      -webkit-text-stroke: 1.5px #8f2d00;
+      text-shadow: 0 2px 3px rgba(0,0,0,0.75);
+      letter-spacing: -0.5px;
+    }
+
+    /* Special Jackpot Coin (Holographic Silver/Green/Blue/Purple/Gold) */
+    .coin-jackpot {
+      width: 88%;
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #ffffff, #a8ffcf, #ffd6fa, #b8e8ff, #ffffff, #c2ffd8, #ffffff);
+      padding: 6%;
+      box-shadow:
+        0 4px 12px rgba(0,0,0,0.85),
+        0 0 16px rgba(255, 220, 120, 0.85),
+        inset 0 2px 4px #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: coinPop 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .coin-jackpot-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffffff 0%, #e4f7ec 50%, #b5d6c5 100%);
+      border: 3px solid #299e19;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .coin-jackpot-inner.type-mini { border-color: #259e16; }
+    .coin-jackpot-inner.type-minor { border-color: #1659d1; }
+    .coin-jackpot-inner.type-major { border-color: #b81484; }
+    .coin-jackpot-inner.type-grand { border-color: #d97b00; }
+
+    .coin-jp-label {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: clamp(16px, 4.8vw, 20px);
+      letter-spacing: 0.3px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      text-shadow: 0 1.5px 0 #ffffff, 0 -1px 0 #ffffff, 1.5px 0 0 #ffffff, -1.5px 0 0 #ffffff, 0 3px 4px rgba(0,0,0,0.45);
+    }
+
+    .type-mini .coin-jp-label { color: #199e0b; }
+    .type-minor .coin-jp-label { color: #1152c9; }
+    .type-major .coin-jp-label { color: #b50e7e; }
+    .type-grand .coin-jp-label { color: #c91400; }
+
+    @keyframes coinPop {
+      0% { transform: translateY(-55px) scale(0.7) rotate(-18deg); opacity: 0.2; }
+      70% { transform: translateY(4px) scale(1.06) rotate(6deg); opacity: 1; }
+      100% { transform: translateY(0) scale(1) rotate(var(--coin-tilt, 0deg)); opacity: 1; }
+    }
+
+    /* Spinning blur streak animation */
+    .spinning-streak {
+      width: 65%;
+      height: 85%;
+      border-radius: 999px;
+      background: linear-gradient(180deg, transparent 0%, rgba(255, 215, 0, 0.45) 30%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 166, 0, 0.45) 70%, transparent 100%);
+      filter: blur(4px);
+      animation: reelBlur 0.14s linear infinite;
+    }
+
+    @keyframes reelBlur {
+      0% { transform: translateY(-35%); opacity: 0.6; }
+      50% { transform: translateY(0%); opacity: 1; }
+      100% { transform: translateY(35%); opacity: 0.6; }
+    }
+
+    /* Big Center Green Spin Button */
+    .spin-btn {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 30%, #24e066 0%, #09a847 65%, #056e2d 100%);
+      border: 3px solid #163b24;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.8), inset 0 2px 4px rgba(255,255,255,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      transition: transform 0.1s ease, filter 0.15s ease;
+      cursor: pointer;
+    }
+
+    .spin-btn:active {
+      transform: scale(0.93);
+    }
+
+    .spin-btn.turbo-active {
+      background: radial-gradient(circle at 50% 30%, #ff9900 0%, #e03c00 70%, #851800 100%);
+      box-shadow: 0 0 20px rgba(255, 115, 0, 0.8), inset 0 2px 4px rgba(255,255,255,0.6);
+    }
+
+    /* Small Circular Control Buttons */
+    .ctrl-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(20, 8, 8, 0.75);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+
+    .ctrl-btn:active {
+      transform: scale(0.9);
+    }
+
+    .ctrl-btn.active-state {
+      border-color: #24e066;
+      color: #24e066;
+      box-shadow: 0 0 10px rgba(36, 224, 102, 0.45);
+    }
+
+    /* Win Banner Floating Popup */
+    .win-banner {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.5);
+      z-index: 30;
+      background: radial-gradient(circle, #7a0900 0%, #2e0200 100%);
+      border: 3px solid #ffd700;
+      border-radius: 18px;
+      padding: 12px 26px;
+      text-align: center;
+      box-shadow: 0 0 35px rgba(255, 200, 0, 0.9), 0 10px 25px rgba(0,0,0,0.9);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .win-banner.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-cabinet" id="gameCabinet">
+    <!-- Floating Fire Embers -->
+    <canvas id="embersCanvas"></canvas>
+    <div class="fire-aura"></div>
+
+    <!-- TOP HEADER BAR -->
+    <div class="relative z-10 flex items-center justify-between px-3 pt-2.5 pb-1">
+      <!-- Left Four-Leaf Clover Icon -->
+      <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-fuchsia-500 via-purple-600 to-indigo-800 flex items-center justify-center shadow-md border border-pink-300/40">
+        <svg class="w-6 h-6 text-white drop-shadow" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 10.5c-1.5-2.5-5-2.5-5 0.5 0 2 2.5 2.5 5 1 2.5 1.5 5 1 5-1 0-3-3.5-3-5-0.5zm0 3c-2.5-1.5-5-1-5 1 0 3 3.5 3 5 0.5 1.5 2.5 5 2.5 5-0.5 0-2-2.5-2.5-5-1z"/>
+          <path d="M12 12v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- Center Dropdown Tab -->
+      <button id="topDrawerBtn" class="px-5 py-1 rounded-b-lg bg-slate-900/80 border border-slate-700/60 text-slate-300 text-xs hover:text-white transition" title="Quick Stats">
+        ▼
+      </button>
+
+      <!-- Right Circular Green Menu Button -->
+      <div class="relative flex flex-col items-center">
+        <button id="menuBtn" class="w-9 h-9 rounded-full border-2 border-emerald-400 bg-black/50 flex items-center justify-center text-emerald-400 shadow-md active:scale-95 transition">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 14L4 9l5-5"/>
+            <path d="M4 9h10.5a5.5 5.5 0 0 1 5.5 5.5v0a5.5 5.5 0 0 1-5.5 5.5H11"/>
+          </svg>
+        </button>
+        <span class="text-[9px] font-extrabold text-emerald-400 tracking-wider mt-0.5">MENU</span>
+        <span class="w-2 h-2 rounded-full bg-red-500 absolute -bottom-0.5 -right-0.5 border border-black"></span>
+      </div>
+    </div>
+
+    <!-- JACKPOT TIERS & LOGO SECTION -->
+    <div class="relative z-10 px-2.5 pt-1.5">
+      <!-- Top Row: GRAND & MAJOR -->
+      <div class="grid grid-cols-2 gap-16">
+        <div class="jp-card jp-grand">
+          <div class="jp-pill">GRAND</div>
+          <div class="jp-value" id="jpGrandVal">500.00</div>
+        </div>
+        <div class="jp-card jp-major">
+          <div class="jp-pill">MAJOR</div>
+          <div class="jp-value" id="jpMajorVal">50.00</div>
+        </div>
+      </div>
+
+      <!-- Bottom Row: MINOR & MINI -->
+      <div class="grid grid-cols-2 gap-24 mt-3">
+        <div class="jp-card jp-minor">
+          <div class="jp-pill">MINOR</div>
+          <div class="jp-value" id="jpMinorVal">20.00</div>
+        </div>
+        <div class="jp-card jp-mini">
+          <div class="jp-pill">MINI</div>
+          <div class="jp-value" id="jpMiniVal">10.00</div>
+        </div>
+      </div>
+
+      <!-- Overlapping Center Logo: COIN UP HOT FIRE -->
+      <div class="logo-wrapper">
+        <div class="logo-coinup">
+          <span class="logo-coin">COIN</span><span class="logo-up">UP</span>
+        </div>
+        <div class="logo-hotfire">HOT FIRE</div>
+      </div>
+    </div>
+
+    <!-- CENTER 3x3 SLOT GRID -->
+    <div class="my-auto py-1">
+      <div class="grid-frame">
+        <div class="grid-inner" id="slotGrid">
+          <!-- 9 Cells populated via JS -->
+        </div>
+      </div>
+      <!-- Active Payline Indicator Hint -->
+      <div class="text-center mt-1.5">
+        <span id="statusBanner" class="text-[11px] font-semibold text-amber-200/90 tracking-wide bg-black/40 px-3 py-0.5 rounded-full border border-amber-500/30">
+          মাঝের লাল সারিতে ৩টি কয়েন মিললেই জিতুন!
+        </span>
+      </div>
+    </div>
+
+    <!-- FLOATING WIN POPUP -->
+    <div class="win-banner" id="winBanner">
+      <div class="text-xs font-extrabold uppercase tracking-widest text-amber-300" id="winBannerTitle">BIG WIN!</div>
+      <div class="text-3xl font-black text-white drop-shadow mt-0.5" id="winBannerAmount">৳0.00</div>
+    </div>
+
+    <!-- BOTTOM CONTROL PANEL -->
+    <div class="relative z-10 px-3 pb-4 pt-2 bg-gradient-to-t from-black/95 via-black/75 to-transparent">
+      <!-- Balance & Last Win Row -->
+      <div class="flex items-end justify-between px-1 mb-2.5">
+        <div>
+          <div class="text-[10px] font-bold text-slate-300 tracking-wider">BALANCE</div>
+          <div class="text-sm font-extrabold text-white" id="balanceDisplay">৳100.00</div>
+        </div>
+        <div class="text-right">
+          <div class="text-[10px] font-bold text-slate-300 tracking-wider">LAST WIN</div>
+          <div class="text-sm font-extrabold text-amber-300" id="lastWinDisplay">৳10.00</div>
+        </div>
+      </div>
+
+      <!-- Main Action Buttons Row -->
+      <div class="flex items-center justify-between gap-1">
+        <!-- Info Button -->
+        <button id="infoBtn" class="ctrl-btn font-serif font-bold text-sm" title="গেমের নিয়মাবলী">i</button>
+
+        <!-- Sound Toggle Button -->
+        <button id="soundBtn" class="ctrl-btn active-state" title="সাউন্ড চালু/বন্ধ">
+          <svg id="soundIconOn" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+          </svg>
+          <svg id="soundIconOff" class="w-4 h-4 hidden text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        </button>
+
+        <!-- Fast Forward / Turbo Toggle -->
+        <button id="turboBtn" class="ctrl-btn" title="টার্বো স্পিড">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M5 6l7 6-7 6V6zm8 0l7 6-7 6V6z"/>
+          </svg>
+        </button>
+
+        <!-- CENTER HUGE GREEN SPIN BUTTON -->
+        <button id="spinBtn" class="spin-btn mx-0.5" title="স্পিন করুন (হোল্ড করলে টার্বো)">
+          <!-- Top Curved White Arrow -->
+          <svg class="w-11 h-5 text-white -mb-1" viewBox="0 0 64 28" fill="currentColor">
+            <path d="M8 24C12 10 26 4 42 7L40 1L58 12L43 23L44 16C30 13 18 17 12 26L8 24Z"/>
+          </svg>
+          <span class="text-[8.5px] font-black text-white leading-tight text-center tracking-tight px-1 drop-shadow">
+            HOLD FOR<br>TURBO
+          </span>
+          <!-- Bottom Curved White Arrow -->
+          <svg class="w-11 h-5 text-white -mt-1" viewBox="0 0 64 28" fill="currentColor">
+            <path d="M56 4C52 18 38 24 22 21L24 27L6 16L21 5L20 12C34 15 46 11 52 2L56 4Z"/>
+          </svg>
+        </button>
+
+        <!-- Auto-Spin Button -->
+        <button id="autoBtn" class="ctrl-btn relative" title="অটো স্পিন">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+            <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+          </svg>
+          <span id="autoLabel" class="absolute text-[9px] font-black">A</span>
+        </button>
+
+        <!-- Green Bonus Buy Cart Button -->
+        <button id="bonusBuyBtn" class="w-8 h-8 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 flex items-center justify-center shadow-md active:scale-90 transition" title="বোনাস স্পিন কিনুন (20x Bet)">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1.003 1.003 0 0 0 20 4H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
+          </svg>
+        </button>
+
+        <!-- Bet Stack Button -->
+        <button id="betBtn" class="ctrl-btn" title="বেট পরিবর্তন করুন">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <ellipse cx="12" cy="6" rx="7" ry="3"/>
+            <path d="M5 6v6c0 1.66 3.13 3 7 3s7-1.34 7-3V6"/>
+            <path d="M5 12v6c0 1.66 3.13 3 7 3s7-1.34 7-3v-6"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Current Bet Display Footer -->
+      <div class="flex justify-end pr-1 mt-1">
+        <div class="text-right">
+          <div class="text-[9px] font-bold text-slate-400 tracking-wider">BET</div>
+          <div class="text-xs font-extrabold text-white" id="betDisplay">1.00</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INFO / RULES MODAL -->
+    <div id="infoModal" class="hidden absolute inset-0 z-40 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-gradient-to-b from-red-950 to-stone-950 border-2 border-amber-400 rounded-2xl p-5 max-w-sm w-full text-white shadow-2xl">
+        <div class="flex items-center justify-between border-b border-amber-500/30 pb-2.5 mb-3">
+          <h3 class="text-lg font-black text-amber-300">COIN UP: HOT FIRE নিয়মাবলী</h3>
+          <button id="closeInfoBtn" class="w-7 h-7 rounded-full bg-red-800 text-white font-bold">✕</button>
+        </div>
+        <div class="space-y-2.5 text-xs text-slate-200 leading-relaxed">
+          <p>• <strong class="text-amber-300">জয়ের নিয়ম:</strong> মাঝখানের লাল রঙের সারিতে (Middle Row) একসাথে ৩টি কয়েন পড়লে আপনি উইন হবেন এবং বোর্ডে থাকা সব কয়েন ও জ্যাকপটের টাকা আপনার ব্যালেন্সে যোগ হবে!</p>
+          <p>• <strong class="text-emerald-400">জ্যাকপট কয়েন:</strong> MINI (10x), MINOR (20x), MAJOR (50x), এবং GRAND (500x) কয়েন পড়লে বিশাল বোনাস পাওয়া যায়।</p>
+          <p>• <strong class="text-amber-300">বোনাস বাই (Cart বাটন):</strong> 20x বেট দিয়ে সরাসরি নিশ্চিত জয়ের বোনাস রাউন্ড কিনতে পারবেন।</p>
+          <p>• <strong class="text-amber-300">টার্বো মোড:</strong> বড় সবুজ বাটনটি চেপে ধরে রাখলে অথবা '>>' বাটনে চাপলে দ্রুত স্পিন হবে।</p>
+        </div>
+        <button id="resetBalanceBtn" class="mt-4 w-full py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-extrabold text-xs transition">
+          ফ্রি ৳১০০.০০ ব্যালেন্স রিফিল করুন
+        </button>
+      </div>
+    </div>
+
+    <!-- BONUS BUY CONFIRMATION MODAL -->
+    <div id="bonusModal" class="hidden absolute inset-0 z-40 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-gradient-to-b from-emerald-950 to-stone-950 border-2 border-emerald-400 rounded-2xl p-5 max-w-xs w-full text-center text-white shadow-2xl">
+        <div class="text-emerald-400 font-black text-base mb-1">HOT FIRE BONUS BUY</div>
+        <p class="text-xs text-slate-300 mb-3">নিশ্চিতভাবে মাঝের সারিতে ৩টি কয়েন ও জ্যাকপট ড্রপ পেতে চান?</p>
+        <div class="text-xl font-black text-amber-300 mb-4" id="bonusCostText">খরচ: ৳20.00</div>
+        <div class="flex gap-2">
+          <button id="cancelBonusBtn" class="flex-1 py-2 rounded-xl bg-stone-800 text-slate-300 font-bold text-xs">বাতিল</button>
+          <button id="confirmBonusBtn" class="flex-1 py-2 rounded-xl bg-emerald-500 text-black font-black text-xs">কিনুন ও স্পিন</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * Web Audio Synthesizer for Casino Sound Effects (No external MP3 required)
+     */
+    class SoundEngine {
+      constructor() {
+        this.enabled = true;
+        this.ctx = null;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTick() {
+        if (!this.enabled) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(90, this.ctx.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.04);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.04);
+      }
+
+      playCoinClink(pitchMultiplier = 1) {
+        if (!this.enabled) return;
+        this.init();
+        const now = this.ctx.currentTime;
+        const osc1 = this.ctx.createOscillator();
+        const osc2 = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+
+        osc1.type = 'sine';
+        osc2.type = 'triangle';
+        osc1.frequency.setValueAtTime(1400 * pitchMultiplier, now);
+        osc2.frequency.setValueAtTime(2150 * pitchMultiplier, now);
+
+        gain.gain.setValueAtTime(0.14, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc1.start(now);
+        osc2.start(now);
+        osc1.stop(now + 0.25);
+        osc2.stop(now + 0.25);
+      }
+
+      playWinFanfare() {
+        if (!this.enabled) return;
+        this.init();
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+        notes.forEach((freq, idx) => {
+          const now = this.ctx.currentTime + idx * 0.09;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, now);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.45);
+        });
+      }
+    }
+
+    const sfx = new SoundEngine();
+
+    /**
+     * Game State & Configuration
+     */
+    const BET_LEVELS = [1.00, 2.00, 5.00, 10.00, 20.00];
+    let betIndex = 0;
+    let balance = 100.00;
+    let lastWin = 10.00;
+    let isSpinning = false;
+    let isTurbo = false;
+    let isAutoSpin = false;
+    let holdTimer = null;
+
+    // Initial 3x3 Board matching the exact screenshot layout:
+    // Row 0: [null, null, null]
+    // Row 1: [null, 3.00, 4.00]
+    // Row 2: [MINI, null, 1.00]
+    let boardState = [
+      null, null, null,
+      null, { type: 'coin', mult: 3 }, { type: 'coin', mult: 4 },
+      { type: 'jp', tier: 'MINI', mult: 10 }, null, { type: 'coin', mult: 1 }
+    ];
+
+    // DOM Elements
+    const slotGrid = document.getElementById('slotGrid');
+    const balanceDisplay = document.getElementById('balanceDisplay');
+    const lastWinDisplay = document.getElementById('lastWinDisplay');
+    const betDisplay = document.getElementById('betDisplay');
+    const jpGrandVal = document.getElementById('jpGrandVal');
+    const jpMajorVal = document.getElementById('jpMajorVal');
+    const jpMinorVal = document.getElementById('jpMinorVal');
+    const jpMiniVal = document.getElementById('jpMiniVal');
+    const spinBtn = document.getElementById('spinBtn');
+    const turboBtn = document.getElementById('turboBtn');
+    const autoBtn = document.getElementById('autoBtn');
+    const soundBtn = document.getElementById('soundBtn');
+    const betBtn = document.getElementById('betBtn');
+    const winBanner = document.getElementById('winBanner');
+    const winBannerTitle = document.getElementById('winBannerTitle');
+    const winBannerAmount = document.getElementById('winBannerAmount');
+    const statusBanner = document.getElementById('statusBanner');
+
+    function getCurrentBet() {
+      return BET_LEVELS[betIndex];
+    }
+
+    function updateHUD() {
+      const bet = getCurrentBet();
+      balanceDisplay.textContent = `৳${balance.toFixed(2)}`;
+      lastWinDisplay.textContent = `৳${lastWin.toFixed(2)}`;
+      betDisplay.textContent = bet.toFixed(2);
+
+      // Jackpot banners scale dynamically with current Bet
+      jpGrandVal.textContent = (500 * bet).toFixed(2);
+      jpMajorVal.textContent = (50 * bet).toFixed(2);
+      jpMinorVal.textContent = (20 * bet).toFixed(2);
+      jpMiniVal.textContent = (10 * bet).toFixed(2);
+    }
+
+    function renderGrid(spinningCols = [false, false, false], highlightWinRow = false) {
+      slotGrid.innerHTML = '';
+      const bet = getCurrentBet();
+
+      for (let idx = 0; idx < 9; idx++) {
+        const row = Math.floor(idx / 3);
+        const col = idx % 3;
+
+        const cell = document.createElement('div');
+        cell.className = `slot-cell ${row === 1 ? 'cell-crimson' : 'cell-purple'}`;
+        if (row === 1 && highlightWinRow) {
+          cell.classList.add('win-flash');
+        }
+
+        if (spinningCols[col]) {
+          const streak = document.createElement('div');
+          streak.className = 'spinning-streak';
+          streak.style.animationDelay = `-${(Math.random() * 0.14).toFixed(2)}s`;
+          cell.appendChild(streak);
+        } else {
+          const item = boardState[idx];
+          if (item) {
+            const randomTilt = (Math.random() * 14 - 7).toFixed(1);
+            if (item.type === 'coin') {
+              const coinVal = (item.mult * bet).toFixed(2);
+              const coin = document.createElement('div');
+              coin.className = 'coin-gold';
+              coin.style.setProperty('--coin-tilt', `${randomTilt}deg`);
+              coin.style.transform = `rotate(${randomTilt}deg)`;
+              coin.innerHTML = `
+                <div class="coin-gold-inner">
+                  <span class="coin-gold-text">${coinVal}</span>
+                </div>
+              `;
+              cell.appendChild(coin);
+            } else if (item.type === 'jp') {
+              const jpCoin = document.createElement('div');
+              jpCoin.className = 'coin-jackpot';
+              jpCoin.style.setProperty('--coin-tilt', `${randomTilt}deg`);
+              jpCoin.style.transform = `rotate(${randomTilt}deg)`;
+              jpCoin.innerHTML = `
+                <div class="coin-jackpot-inner type-${item.tier.toLowerCase()}">
+                  <span class="coin-jp-label">${item.tier}</span>
+                </div>
+              `;
+              cell.appendChild(jpCoin);
+            }
+          }
+        }
+
+        slotGrid.appendChild(cell);
+      }
+    }
+
+    function generateRandomSymbol(forceCoin = false) {
+      const rand = Math.random();
+      if (!forceCoin && rand > 0.45) {
+        return null; // Empty slot
+      }
+
+      const coinRoll = Math.random();
+      if (coinRoll < 0.85) {
+        const mults = [0.5, 1, 1.5, 2];
+        const mult = mults[Math.floor(Math.random() * mults.length)];
+        return { type: 'coin', mult };
+      } else if (coinRoll < 0.95) {
+        return { type: 'jp', tier: 'MINI', mult: 10 };
+      } else if (coinRoll < 0.985) {
+        return { type: 'jp', tier: 'MINOR', mult: 20 };
+      } else if (coinRoll < 0.997) {
+        return { type: 'jp', tier: 'MAJOR', mult: 50 };
+      } else {
+        return { type: 'jp', tier: 'GRAND', mult: 500 };
+      }
+    }
+
+    async function triggerSpin(isBonusBuy = false) {
+      if (isSpinning) return;
+      const bet = getCurrentBet();
+      const totalCost = isBonusBuy ? bet * 20 : bet;
+
+      if (balance < totalCost) {
+        isAutoSpin = false;
+        autoBtn.classList.remove('active-state');
+        statusBanner.textContent = 'ব্যালেন্স শেষ! (i) বাটনে ক্লিক করে ফ্রি রিফিল করুন';
+        statusBanner.classList.add('text-red-400');
+        return;
+      }
+
+      statusBanner.classList.remove('text-red-400');
+      balance -= totalCost;
+      updateHUD();
+
+      isSpinning = true;
+      winBanner.classList.remove('show');
+      statusBanner.textContent = isBonusBuy ? 'HOT FIRE BONUS SPIN চলছে...' : 'স্পিন হচ্ছে...';
+
+      // Start spinning all 3 columns
+      const spinningCols = [true, true, true];
+      renderGrid(spinningCols, false);
+
+      const tickInterval = setInterval(() => {
+        sfx.playTick();
+      }, isTurbo ? 65 : 100);
+
+      // Generate outcome board
+      const nextBoard = Array.from({ length: 9 }, () => generateRandomSymbol(false));
+
+      // ~28% chance of guaranteed middle row win (3 coins), otherwise mostly 2 coins in middle row
+      if (isBonusBuy || Math.random() < 0.28) {
+        nextBoard[3] = generateRandomSymbol(true);
+        nextBoard[4] = generateRandomSymbol(true);
+        nextBoard[5] = generateRandomSymbol(true);
+
+        if (isBonusBuy) {
+          const bonusIdx = 3 + Math.floor(Math.random() * 3);
+          const jpPool = [
+            { type: 'jp', tier: 'MINI', mult: 10 },
+            { type: 'jp', tier: 'MINOR', mult: 20 },
+            { type: 'jp', tier: 'MAJOR', mult: 50 }
+          ];
+          nextBoard[bonusIdx] = jpPool[Math.floor(Math.random() * jpPool.length)];
+        }
+      } else {
+        // 80% of non-winning spins place exactly 2 coins in the middle row (Row 2 / indices 3, 4, 5)
+        nextBoard[3] = null;
+        nextBoard[4] = null;
+        nextBoard[5] = null;
+        if (Math.random() < 0.80) {
+          const midIndices = [3, 4, 5].sort(() => Math.random() - 0.5);
+          nextBoard[midIndices[0]] = generateRandomSymbol(true);
+          nextBoard[midIndices[1]] = generateRandomSymbol(true);
+        }
+      }
+
+      // Stop columns in random order with random delays
+      const colOrder = [0, 1, 2].sort(() => Math.random() - 0.5);
+      const baseDelay = isTurbo ? 160 : 320;
+      const stepDelay = isTurbo ? 110 : 220;
+
+      for (let i = 0; i < colOrder.length; i++) {
+        const colIdx = colOrder[i];
+        const randomJitter = Math.floor(Math.random() * (isTurbo ? 60 : 140));
+        await new Promise(r => setTimeout(r, (i === 0 ? baseDelay : stepDelay) + randomJitter));
+        spinningCols[colIdx] = false;
+        boardState[colIdx] = nextBoard[colIdx];
+        boardState[colIdx + 3] = nextBoard[colIdx + 3];
+        boardState[colIdx + 6] = nextBoard[colIdx + 6];
+        renderGrid(spinningCols, false);
+
+        const colHasCoin = boardState[colIdx] || boardState[colIdx + 3] || boardState[colIdx + 6];
+        if (colHasCoin) {
+          sfx.playCoinClink(0.9 + Math.random() * 0.25);
+        }
+      }
+
+      clearInterval(tickInterval);
+
+      // Check Middle Row (indices 3, 4, 5) for Win
+      const isWin = boardState[3] !== null && boardState[4] !== null && boardState[5] !== null;
+
+      if (isWin) {
+        let totalMult = 0;
+        let highestTier = null;
+        boardState.forEach(item => {
+          if (item) {
+            totalMult += item.mult;
+            if (item.type === 'jp') {
+              highestTier = item.tier;
+            }
+          }
+        });
+
+        const winAmount = totalMult * bet;
+        balance += winAmount;
+        lastWin = winAmount;
+        updateHUD();
+        renderGrid([false, false, false], true);
+
+        sfx.playWinFanfare();
+        winBannerTitle.textContent = highestTier ? `${highestTier} JACKPOT WIN!` : 'COIN UP WIN!';
+        winBannerAmount.textContent = `৳${winAmount.toFixed(2)}`;
+        winBanner.classList.add('show');
+        statusBanner.textContent = `অভিনন্দন! আপনি জিতেছেন ৳${winAmount.toFixed(2)}`;
+
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: highestTier ? 85 : 45,
+            spread: 65,
+            origin: { y: 0.55 },
+            colors: ['#ffd700', '#ffae00', '#ffffff', '#ff4500']
+          });
+        }
+
+        setTimeout(() => {
+          winBanner.classList.remove('show');
+        }, isTurbo ? 1100 : 1800);
+      } else {
+        statusBanner.textContent = 'আবার চেষ্টা করুন! মাঝের সারিতে ৩টি কয়েন মিলান';
+      }
+
+      isSpinning = false;
+
+      if (isAutoSpin && balance >= getCurrentBet()) {
+        setTimeout(() => {
+          if (isAutoSpin && !isSpinning) {
+            triggerSpin(false);
+          }
+        }, isTurbo ? 350 : 750);
+      }
+    }
+
+    // Event Listeners
+    spinBtn.addEventListener('click', () => {
+      if (!isSpinning) {
+        triggerSpin(false);
+      }
+    });
+
+    // Hold Spin button for Turbo toggle
+    const startHold = () => {
+      holdTimer = setTimeout(() => {
+        isTurbo = !isTurbo;
+        spinBtn.classList.toggle('turbo-active', isTurbo);
+        turboBtn.classList.toggle('active-state', isTurbo);
+        statusBanner.textContent = isTurbo ? 'টার্বো মোড চালু হয়েছে!' : 'টার্বো মোড বন্ধ হয়েছে';
+      }, 550);
+    };
+    const endHold = () => clearTimeout(holdTimer);
+
+    spinBtn.addEventListener('mousedown', startHold);
+    spinBtn.addEventListener('touchstart', startHold, { passive: true });
+    spinBtn.addEventListener('mouseup', endHold);
+    spinBtn.addEventListener('mouseleave', endHold);
+    spinBtn.addEventListener('touchend', endHold);
+
+    turboBtn.addEventListener('click', () => {
+      isTurbo = !isTurbo;
+      spinBtn.classList.toggle('turbo-active', isTurbo);
+      turboBtn.classList.toggle('active-state', isTurbo);
+      statusBanner.textContent = isTurbo ? 'টার্বো স্পিড চালু' : 'স্বাভাবিক স্পিড';
+    });
+
+    autoBtn.addEventListener('click', () => {
+      isAutoSpin = !isAutoSpin;
+      autoBtn.classList.toggle('active-state', isAutoSpin);
+      if (isAutoSpin && !isSpinning) {
+        triggerSpin(false);
+      }
+    });
+
+    soundBtn.addEventListener('click', () => {
+      sfx.enabled = !sfx.enabled;
+      soundBtn.classList.toggle('active-state', sfx.enabled);
+      document.getElementById('soundIconOn').classList.toggle('hidden', !sfx.enabled);
+      document.getElementById('soundIconOff').classList.toggle('hidden', sfx.enabled);
+    });
+
+    betBtn.addEventListener('click', () => {
+      if (isSpinning) return;
+      betIndex = (betIndex + 1) % BET_LEVELS.length;
+      updateHUD();
+      renderGrid([false, false, false], false);
+      sfx.playCoinClink(1.2);
+    });
+
+    // Info Modal
+    const infoModal = document.getElementById('infoModal');
+    document.getElementById('infoBtn').addEventListener('click', () => infoModal.classList.remove('hidden'));
+    document.getElementById('menuBtn').addEventListener('click', () => infoModal.classList.remove('hidden'));
+    document.getElementById('closeInfoBtn').addEventListener('click', () => infoModal.classList.add('hidden'));
+    document.getElementById('resetBalanceBtn').addEventListener('click', () => {
+      balance = 100.00;
+      updateHUD();
+      infoModal.classList.add('hidden');
+      statusBanner.textContent = 'ব্যালেন্স ৳১০০.০০ রিফিল করা হয়েছে!';
+      statusBanner.classList.remove('text-red-400');
+    });
+
+    // Bonus Buy Modal
+    const bonusModal = document.getElementById('bonusModal');
+    document.getElementById('bonusBuyBtn').addEventListener('click', () => {
+      if (isSpinning) return;
+      document.getElementById('bonusCostText').textContent = `খরচ: ৳${(getCurrentBet() * 20).toFixed(2)}`;
+      bonusModal.classList.remove('hidden');
+    });
+    document.getElementById('cancelBonusBtn').addEventListener('click', () => bonusModal.classList.add('hidden'));
+    document.getElementById('confirmBonusBtn').addEventListener('click', () => {
+      bonusModal.classList.add('hidden');
+      triggerSpin(true);
+    });
+
+    // Floating Fire Embers Particle System
+    function initEmbers() {
+      const canvas = document.getElementById('embersCanvas');
+      const ctx = canvas.getContext('2d');
+      const cabinet = document.getElementById('gameCabinet');
+
+      function resize() {
+        canvas.width = cabinet.clientWidth;
+        canvas.height = cabinet.clientHeight;
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const particles = Array.from({ length: 28 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2.2 + 0.8,
+        speedY: Math.random() * 0.9 + 0.3,
+        drift: (Math.random() - 0.5) * 0.5,
+        alpha: Math.random() * 0.7 + 0.2
+      }));
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.y -= p.speedY;
+          p.x += p.drift;
+          if (p.y < -10) {
+            p.y = canvas.height + 10;
+            p.x = Math.random() * canvas.width;
+          }
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255, ${140 + Math.floor(Math.random() * 90)}, 20, ${p.alpha})`;
+          ctx.fill();
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // Initialize Game on Load
+    window.addEventListener('load', () => {
+      updateHUD();
+      renderGrid([false, false, false], false);
+      initEmbers();
+    });
+  </script>
+</body>
+</html>
+```
