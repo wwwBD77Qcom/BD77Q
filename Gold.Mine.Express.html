@@ -1,0 +1,1680 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Gold Mine Express - Virtual Fun Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Fredoka:wght@600;700&family=Inter:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold-light: #fff3a1;
+      --gold-mid: #f5b727;
+      --gold-dark: #a66208;
+      --wood-dark: #3a1f10;
+      --wood-mid: #5c3219;
+      --wood-light: #7c4625;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at center, #2c1810 0%, #120905 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* Main Mobile-First Cabinet Frame */
+    #game-cabinet {
+      position: relative;
+      width: 100%;
+      max-width: 460px;
+      height: 100dvh;
+      max-height: 920px;
+      background: linear-gradient(180deg, #3c8ce7 0%, #7ec2f8 38%, #c99768 42%, #4e2b18 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 0 2px #5e3819;
+    }
+
+    @media (min-width: 500px) {
+      #game-cabinet {
+        height: 95vh;
+        border-radius: 26px;
+        border: 4px solid #784822;
+      }
+    }
+
+    /* Typography Helpers */
+    .font-display {
+      font-family: 'Fredoka', sans-serif;
+    }
+    .font-royal {
+      font-family: 'Cinzel', serif;
+    }
+
+    .text-gold-3d {
+      background: linear-gradient(180deg, #fffbe0 0%, #ffd54f 45%, #e68a00 85%, #994d00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 0 #3d1c00) drop-shadow(0 3px 3px rgba(0,0,0,0.7));
+    }
+
+    .text-stroke-dark {
+      text-shadow: 
+        -1.5px -1.5px 0 #291103,
+         1.5px -1.5px 0 #291103,
+        -1.5px  1.5px 0 #291103,
+         1.5px  1.5px 0 #291103,
+         0px    3px   4px rgba(0,0,0,0.85);
+    }
+
+    /* Animated Clouds & Canyon Sky */
+    .sky-section {
+      position: relative;
+      flex: 0 0 37%;
+      background: linear-gradient(180deg, #2d7dd2 0%, #6cb8f6 65%, #b5defc 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-top: 8px;
+    }
+
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.55);
+      border-radius: 50px;
+      filter: blur(8px);
+      animation: driftCloud linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes driftCloud {
+      from { transform: translateX(-140px); }
+      to { transform: translateX(520px); }
+    }
+
+    /* Jackpot Banners */
+    .jp-frame {
+      position: relative;
+      border-radius: 10px;
+      border: 2px solid #f7c956;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.55), inset 0 1px 2px rgba(255,255,255,0.6);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .jp-frame:hover {
+      transform: scale(1.03);
+    }
+
+    .jp-grand {
+      background: linear-gradient(180deg, #e52d27 0%, #9b0b07 100%);
+      border-width: 2.5px;
+      border-color: #ffe07d;
+    }
+    .jp-minor {
+      background: linear-gradient(180deg, #1d75d8 0%, #0d3b7a 100%);
+    }
+    .jp-major {
+      background: linear-gradient(180deg, #b524a7 0%, #5e0d56 100%);
+    }
+    .jp-mini {
+      background: linear-gradient(180deg, #22a83a 0%, #0e571b 100%);
+    }
+
+    /* Buy Bonus Button */
+    .buy-bonus-btn {
+      background: radial-gradient(circle at 30% 30%, #ff5252 0%, #b71c1c 75%, #690000 100%);
+      border: 2.5px solid #ffd54f;
+      box-shadow: 0 5px 12px rgba(0,0,0,0.6), inset 0 2px 4px rgba(255,255,255,0.5);
+      animation: pulseBonus 2.2s infinite ease-in-out;
+    }
+    @keyframes pulseBonus {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.06); filter: brightness(1.15); }
+    }
+
+    /* Smoke Puff Animation */
+    .smoke-puff {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(200,200,200,0.4) 60%, transparent 100%);
+      pointer-events: none;
+      animation: riseSmoke 2.8s ease-out infinite;
+    }
+    @keyframes riseSmoke {
+      0% {
+        transform: translate(0, 0) scale(0.3);
+        opacity: 0.95;
+      }
+      50% {
+        transform: translate(-45px, -28px) scale(1.1);
+        opacity: 0.65;
+      }
+      100% {
+        transform: translate(-120px, -48px) scale(1.9);
+        opacity: 0;
+      }
+    }
+
+    /* Train Idle Bounce */
+    .train-chug {
+      animation: trainChug 0.45s infinite alternate ease-in-out;
+    }
+    @keyframes trainChug {
+      0% { transform: translateY(0px); }
+      100% { transform: translateY(-2px); }
+    }
+    .train-turbo {
+      animation: trainChug 0.14s infinite alternate ease-in-out;
+    }
+
+    /* Wooden Bridge & Title Plaque */
+    .wooden-beam {
+      background: linear-gradient(180deg, #8c532b 0%, #5c3216 45%, #381c0a 100%);
+      border-top: 2px solid #b57343;
+      border-bottom: 3px solid #241004;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.7);
+    }
+
+    /* Slot Grid Container */
+    .reels-wrapper {
+      position: relative;
+      flex: 1 1 auto;
+      background: linear-gradient(180deg, #3c2214 0%, #593521 50%, #381e10 100%);
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      box-shadow: inset 0 8px 18px rgba(0,0,0,0.85), inset 0 -8px 18px rgba(0,0,0,0.85);
+    }
+
+    .reels-grid {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      background: rgba(24, 12, 6, 0.72);
+      border-radius: 10px;
+      padding: 4px;
+      border: 2px solid #7c4925;
+      overflow: hidden;
+    }
+
+    .reel-col {
+      position: relative;
+      height: 100%;
+      display: grid;
+      grid-template-rows: repeat(4, 1fr);
+      gap: 4px;
+      overflow: hidden;
+      border-radius: 6px;
+      background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(45,25,14,0.2) 50%, rgba(0,0,0,0.35) 100%);
+    }
+
+    .reel-col.anticipation {
+      box-shadow: inset 0 0 18px #ff9800, 0 0 12px #ffd54f;
+      border: 1.5px solid #ffd54f;
+    }
+
+    /* Spinning Blur Effect */
+    .reel-spinning .symbol-cell {
+      animation: reelBlurSpin 0.14s linear infinite;
+      filter: blur(1.5px);
+    }
+
+    @keyframes reelBlurSpin {
+      0% { transform: translateY(-25%); opacity: 0.75; }
+      50% { transform: translateY(0%); opacity: 1; }
+      100% { transform: translateY(25%); opacity: 0.75; }
+    }
+
+    .symbol-cell {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+    }
+
+    .symbol-cell.land-bounce {
+      animation: landBounce 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes landBounce {
+      0% { transform: translateY(-18px) scale(1.04); }
+      65% { transform: translateY(4px) scale(0.98); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    .symbol-cell.win-highlight {
+      z-index: 15;
+      animation: winPulse 0.65s infinite alternate ease-in-out;
+      box-shadow: 0 0 14px #ffd54f, inset 0 0 10px #fff176;
+      border: 2px solid #fff59d;
+      background: radial-gradient(circle, rgba(255,215,64,0.32) 0%, transparent 75%);
+    }
+
+    @keyframes winPulse {
+      0% { transform: scale(0.96); }
+      100% { transform: scale(1.06); }
+    }
+
+    /* Bottom Rocky Mine Floor Controls */
+    .control-deck {
+      position: relative;
+      flex: 0 0 21%;
+      min-height: 138px;
+      background: linear-gradient(180deg, #9c6b4e 0%, #6e452e 45%, #422617 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 12px 10px;
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    /* Central Golden Spin Button */
+    .spin-btn-outer {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, #754c19, #ffd54f, #9c6615, #fff176, #754c19);
+      padding: 5px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.75), 0 0 15px rgba(255, 193, 7, 0.45);
+      cursor: pointer;
+      transition: transform 0.12s ease, filter 0.2s ease;
+    }
+    .spin-btn-outer:active {
+      transform: scale(0.93);
+    }
+    .spin-btn-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffe082 0%, #f59e0b 55%, #92400e 100%);
+      border: 2px solid #fff8e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spin-icon-rotate {
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .spinning-active .spin-icon-rotate {
+      animation: spinIconLoop 0.7s linear infinite;
+    }
+    @keyframes spinIconLoop {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Small Round Control Buttons */
+    .ctrl-pill {
+      background: rgba(34, 18, 10, 0.65);
+      border: 1.5px solid #b57b4c;
+      color: #f7d99c;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.5);
+    }
+    .ctrl-pill:active {
+      transform: scale(0.9);
+    }
+    .ctrl-pill.active-toggle {
+      background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
+      border-color: #fef08a;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.8);
+    }
+
+    /* Particle & Coin Overlay Canvas */
+    #fx-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    /* Custom Scrollbar for Paytable Modal */
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #2b160b;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #b87a3d;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-cabinet">
+    <!-- Particle & Gold Coin Fountain Canvas -->
+    <canvas id="fx-canvas"></canvas>
+
+    <!-- ================= TOP SECTION: SKY, JACKPOTS & GOLDEN TRAIN ================= -->
+    <div class="sky-section">
+      <!-- Drifting Sky Clouds -->
+      <div class="cloud" style="width: 130px; height: 34px; top: 14px; animation-duration: 24s;"></div>
+      <div class="cloud" style="width: 180px; height: 42px; top: 44px; animation-duration: 34s; animation-delay: -11s;"></div>
+      <div class="cloud" style="width: 110px; height: 28px; top: 82px; animation-duration: 20s; animation-delay: -5s;"></div>
+
+      <!-- Left Fun Mode Tag -->
+      <div class="absolute left-0 top-12 z-20 bg-gradient-to-b from-amber-600 to-amber-900 border-r-2 border-y-2 border-amber-300 rounded-r-lg px-1.5 py-2 shadow-lg">
+        <span class="block text-[10px] font-black tracking-widest text-amber-200 [writing-mode:vertical-rl] rotate-180">EXPRESS</span>
+      </div>
+
+      <!-- Top Jackpot Display Grid -->
+      <div class="relative z-20 px-3 pt-1 flex flex-col items-center gap-1.5">
+        <!-- Row 1: GRAND + BUY BONUS -->
+        <div class="w-full flex items-center justify-center relative">
+          <div class="jp-frame jp-grand px-5 py-1 w-[64%]">
+            <div class="flex items-center gap-1.5">
+              <!-- Mini Gold Train Icon -->
+              <svg class="w-5 h-5 shrink-0" viewBox="0 0 36 36">
+                <rect x="6" y="12" width="22" height="12" rx="2" fill="#ffd54f" stroke="#7c2d12" stroke-width="1.5"/>
+                <rect x="4" y="8" width="10" height="16" rx="1.5" fill="#fbbf24" stroke="#7c2d12" stroke-width="1.5"/>
+                <rect x="21" y="6" width="4" height="6" fill="#f59e0b" stroke="#7c2d12" stroke-width="1.2"/>
+                <circle cx="10" cy="26" r="3.5" fill="#b45309" stroke="#fef08a" stroke-width="1.2"/>
+                <circle cx="22" cy="26" r="3.5" fill="#b45309" stroke="#fef08a" stroke-width="1.2"/>
+              </svg>
+              <div class="text-center leading-none">
+                <div class="text-[11px] font-black tracking-wider text-amber-200 text-stroke-dark">GRAND</div>
+                <div id="jp-grand-val" class="text-lg font-black text-amber-300 text-stroke-dark tracking-tight">15,000</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BUY BONUS Circular Badge -->
+          <button id="buy-bonus-btn" class="buy-bonus-btn absolute right-1 -top-0.5 w-14 h-14 rounded-full flex flex-col items-center justify-center leading-none cursor-pointer z-30" title="Trigger Bonus Feature (30x Bet)">
+            <span class="text-[10px] font-black text-yellow-200 text-stroke-dark">BUY</span>
+            <span class="text-[10px] font-black text-white text-stroke-dark">BONUS</span>
+            <span id="buy-bonus-cost" class="text-[8px] font-bold text-amber-200 mt-0.5">90</span>
+          </button>
+        </div>
+
+        <!-- Row 2: MINOR | MAJOR | MINI -->
+        <div class="w-full grid grid-cols-3 gap-1.5 px-1">
+          <!-- MINOR -->
+          <div class="jp-frame jp-minor py-0.5 px-1.5">
+            <div class="text-[9px] font-black tracking-wider text-sky-200 text-stroke-dark leading-none">MINOR</div>
+            <div id="jp-minor-val" class="text-sm font-black text-white text-stroke-dark leading-tight">150</div>
+          </div>
+          <!-- MAJOR -->
+          <div class="jp-frame jp-major py-0.5 px-1.5">
+            <div class="text-[9px] font-black tracking-wider text-fuchsia-200 text-stroke-dark leading-none">MAJOR</div>
+            <div id="jp-major-val" class="text-sm font-black text-white text-stroke-dark leading-tight">1,500</div>
+          </div>
+          <!-- MINI -->
+          <div class="jp-frame jp-mini py-0.5 px-1.5">
+            <div class="text-[9px] font-black tracking-wider text-emerald-200 text-stroke-dark leading-none">MINI</div>
+            <div id="jp-mini-val" class="text-sm font-black text-white text-stroke-dark leading-tight">60</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Centerpiece Golden Locomotive & Gold Ore Carts -->
+      <div class="relative w-full h-28 mt-auto flex items-end justify-center overflow-visible z-10">
+        <!-- Canyon Silhouette Behind Train -->
+        <svg class="absolute bottom-0 w-full h-24 opacity-45 pointer-events-none" viewBox="0 0 400 100" preserveAspectRatio="none">
+          <path d="M0,100 L0,40 L35,35 L55,65 L120,75 L260,72 L345,45 L380,30 L400,38 L400,100 Z" fill="#b47b56"/>
+        </svg>
+
+        <!-- Smoke Emitter Container -->
+        <div id="smoke-emitter" class="absolute right-[13%] bottom-[84px] w-4 h-4 z-20 pointer-events-none"></div>
+
+        <!-- Golden Steam Locomotive + Gold Mine Carts SVG -->
+        <svg id="hero-train" class="w-[98%] max-w-[430px] h-28 train-chug drop-shadow-[0_6px_8px_rgba(0,0,0,0.65)]" viewBox="0 0 440 115">
+          <defs>
+            <linearGradient id="goldBody" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#fff8b8"/>
+              <stop offset="30%" stop-color="#ffd54f"/>
+              <stop offset="70%" stop-color="#d97706"/>
+              <stop offset="100%" stop-color="#78350f"/>
+            </linearGradient>
+            <linearGradient id="goldBright" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ffffff"/>
+              <stop offset="40%" stop-color="#fde047"/>
+              <stop offset="100%" stop-color="#ca8a04"/>
+            </linearGradient>
+            <linearGradient id="cabGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#fef08a"/>
+              <stop offset="100%" stop-color="#ea580c"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Left Partial Cart -->
+          <g transform="translate(-18, 42)">
+            <polygon points="10,24 62,24 54,54 18,54" fill="url(#goldBody)" stroke="#5c2806" stroke-width="2"/>
+            <!-- Gold Nuggets Heap -->
+            <polygon points="14,24 24,10 38,14 48,8 58,24" fill="url(#goldBright)" stroke="#92400e" stroke-width="1.5"/>
+            <circle cx="24" cy="60" r="8" fill="#92400e" stroke="#fde047" stroke-width="2"/>
+            <circle cx="48" cy="60" r="8" fill="#92400e" stroke="#fde047" stroke-width="2"/>
+          </g>
+
+          <!-- Coupler 1 -->
+          <rect x="44" y="88" width="16" height="5" rx="2" fill="#92400e" stroke="#fde047" stroke-width="1"/>
+
+          <!-- Center Flatbed Cart Piled High with Gold Nuggets -->
+          <g transform="translate(56, 36)">
+            <!-- Pile of Shining Gold Nuggets -->
+            <path d="M18,46 Q35,12 65,16 Q95,4 125,18 Q152,14 166,46 Z" fill="url(#goldBright)" stroke="#92400e" stroke-width="2"/>
+            <polygon points="35,44 52,20 72,34 62,46" fill="#fef9c3" opacity="0.85"/>
+            <polygon points="75,44 95,14 118,32 104,46" fill="#fde047" opacity="0.9"/>
+            <polygon points="116,44 134,22 154,42 138,46" fill="#fef08a" opacity="0.85"/>
+            <!-- Cart Bed -->
+            <rect x="8" y="45" width="168" height="12" rx="3" fill="url(#goldBody)" stroke="#5c2806" stroke-width="2"/>
+            <!-- Bogie Wheels -->
+            <circle cx="32" cy="64" r="9" fill="#78350f" stroke="#fde047" stroke-width="2.2"/>
+            <circle cx="56" cy="64" r="9" fill="#78350f" stroke="#fde047" stroke-width="2.2"/>
+            <circle cx="128" cy="64" r="9" fill="#78350f" stroke="#fde047" stroke-width="2.2"/>
+            <circle cx="152" cy="64" r="9" fill="#78350f" stroke="#fde047" stroke-width="2.2"/>
+          </g>
+
+          <!-- Coupler 2 -->
+          <rect x="230" y="88" width="14" height="5" rx="2" fill="#92400e" stroke="#fde047" stroke-width="1"/>
+
+          <!-- Main Golden Steam Locomotive (Right) -->
+          <g transform="translate(238, 12)">
+            <!-- Cabin Roof -->
+            <path d="M-4,26 L68,26 L62,20 L2,20 Z" fill="url(#goldBright)" stroke="#5c2806" stroke-width="2"/>
+            <!-- Cabin Body -->
+            <rect x="4" y="26" width="56" height="48" rx="2" fill="url(#goldBody)" stroke="#5c2806" stroke-width="2"/>
+            <!-- Glowing Cab Window -->
+            <rect x="14" y="33" width="32" height="20" rx="2" fill="url(#cabGlow)" stroke="#78350f" stroke-width="2"/>
+            <!-- Boiler Cylinder -->
+            <rect x="60" y="34" width="112" height="38" rx="4" fill="url(#goldBody)" stroke="#5c2806" stroke-width="2"/>
+            <!-- Boiler Bands -->
+            <rect x="86" y="34" width="4" height="38" fill="#fef08a" opacity="0.8"/>
+            <rect x="118" y="34" width="4" height="38" fill="#fef08a" opacity="0.8"/>
+            <rect x="150" y="34" width="4" height="38" fill="#fef08a" opacity="0.8"/>
+            <!-- Steam Domes -->
+            <path d="M82,34 Q92,20 102,34 Z" fill="url(#goldBright)" stroke="#5c2806" stroke-width="1.8"/>
+            <path d="M114,34 Q122,23 130,34 Z" fill="url(#goldBright)" stroke="#5c2806" stroke-width="1.8"/>
+            <!-- Chimney Smokestack -->
+            <polygon points="146,34 142,14 164,14 160,34" fill="url(#goldBright)" stroke="#5c2806" stroke-width="2"/>
+            <rect x="140" y="10" width="26" height="5" rx="2" fill="#fef08a" stroke="#5c2806" stroke-width="1.5"/>
+            <!-- Front Headlight -->
+            <rect x="172" y="38" width="8" height="12" rx="2" fill="#fffbeb" stroke="#92400e" stroke-width="1.5"/>
+            <circle cx="182" cy="44" r="6" fill="#fef08a" opacity="0.65"/>
+            <!-- Chassis Frame -->
+            <rect x="2" y="72" width="176" height="10" rx="2" fill="#92400e" stroke="#fde047" stroke-width="1.5"/>
+            <!-- Cowcatcher (Front Guard) -->
+            <polygon points="174,72 196,95 170,95" fill="url(#goldBright)" stroke="#5c2806" stroke-width="2"/>
+            <!-- Large Driving Wheels -->
+            <g>
+              <circle cx="34" cy="84" r="14" fill="#78350f" stroke="#fde047" stroke-width="3"/>
+              <circle cx="34" cy="84" r="5" fill="#fde047"/>
+              <circle cx="72" cy="84" r="14" fill="#78350f" stroke="#fde047" stroke-width="3"/>
+              <circle cx="72" cy="84" r="5" fill="#fde047"/>
+              <circle cx="110" cy="84" r="14" fill="#78350f" stroke="#fde047" stroke-width="3"/>
+              <circle cx="110" cy="84" r="5" fill="#fde047"/>
+              <!-- Connecting Rod -->
+              <rect x="30" y="82" width="84" height="4" rx="2" fill="#fef08a" stroke="#78350f" stroke-width="1"/>
+              <!-- Front Pilot Wheels -->
+              <circle cx="144" cy="89" r="9" fill="#78350f" stroke="#fde047" stroke-width="2.2"/>
+              <circle cx="164" cy="89" r="9" fill="#78350f" stroke="#fde047" stroke-width="2.2"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- ================= WOODEN BRIDGE & GAME TITLE PLAQUE ================= -->
+    <div class="wooden-beam relative z-20 px-3 py-1 flex items-center justify-center">
+      <!-- Status Banner (Free Spins / Bonus / Normal) -->
+      <div id="mode-badge" class="absolute left-2.5 bg-amber-950/90 border border-amber-400/70 rounded-md px-2 py-0.5 text-[10px] font-extrabold text-amber-300 tracking-wide shadow">
+        20 LINES
+      </div>
+
+      <!-- Center Logo Title -->
+      <div class="text-center leading-none py-0.5">
+        <div class="font-display text-base sm:text-lg font-black tracking-wide text-gold-3d">GOLD MINE</div>
+        <div class="font-display text-xs sm:text-sm font-black tracking-widest text-red-500 text-stroke-dark -mt-1">EXPRESS</div>
+      </div>
+
+      <!-- Info (i) Paytable Button -->
+      <button id="info-btn" class="absolute right-2.5 w-7 h-7 rounded-full bg-gradient-to-b from-amber-600 to-amber-900 border-2 border-amber-300 flex items-center justify-center text-amber-100 font-royal font-black text-sm shadow-md cursor-pointer hover:brightness-110 active:scale-90" title="Paytable & Rules">
+        i
+      </button>
+    </div>
+
+    <!-- ================= MIDDLE SECTION: 5x4 SLOT REEL GRID ================= -->
+    <div class="reels-wrapper">
+      <!-- Free Spins / Feature Overlay Banner -->
+      <div id="feature-banner" class="hidden absolute top-2 left-1/2 -translate-x-1/2 z-30 bg-gradient-to-r from-red-800 via-amber-600 to-red-800 border-2 border-yellow-300 rounded-full px-4 py-1 shadow-xl whitespace-nowrap">
+        <span id="feature-banner-text" class="text-xs font-black text-white tracking-wider text-stroke-dark">FREE SPINS: 8 LEFT</span>
+      </div>
+
+      <div id="reels-grid" class="reels-grid">
+        <!-- 5 Columns populated dynamically by JS -->
+        <div class="reel-col" data-col="0"></div>
+        <div class="reel-col" data-col="1"></div>
+        <div class="reel-col" data-col="2"></div>
+        <div class="reel-col" data-col="3"></div>
+        <div class="reel-col" data-col="4"></div>
+      </div>
+
+      <!-- Big Win / Feature Announcement Overlay -->
+      <div id="win-popup" class="hidden absolute inset-0 z-30 bg-black/65 backdrop-blur-[2px] flex flex-col items-center justify-center p-4 text-center animate-fadeIn">
+        <div id="win-popup-title" class="font-display text-3xl sm:text-4xl font-black text-gold-3d tracking-wider mb-1">BIG WIN!</div>
+        <div id="win-popup-sub" class="text-xs font-bold text-amber-200 uppercase tracking-widest mb-2">GOLD EXPRESS PAYOUT</div>
+        <div id="win-popup-amount" class="font-display text-4xl sm:text-5xl font-black text-white text-stroke-dark">0.00</div>
+      </div>
+    </div>
+
+    <!-- ================= BOTTOM SECTION: WIN BAR & ROCKY CONTROL DECK ================= -->
+    <div class="wooden-beam relative z-20 py-1 px-4 flex items-center justify-center gap-3">
+      <span class="text-sm font-black tracking-wider text-amber-300 text-stroke-dark">WIN</span>
+      <span id="win-display" class="text-lg font-black text-white text-stroke-dark min-w-[75px] text-center">0.00</span>
+    </div>
+
+    <div class="control-deck">
+      <!-- Primary Control Buttons Row -->
+      <div class="flex items-center justify-between px-1 my-auto">
+        <!-- Settings / Sound Toggle -->
+        <button id="sound-btn" class="ctrl-pill" title="Toggle Sound Effects">
+          <svg id="sound-on-icon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+          </svg>
+          <svg id="sound-off-icon" class="w-5 h-5 hidden text-red-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+          </svg>
+        </button>
+
+        <!-- Bet Selector -->
+        <button id="bet-btn" class="flex flex-col items-center justify-center bg-black/45 hover:bg-black/60 border border-amber-500/70 rounded-xl px-3 py-1 cursor-pointer active:scale-95 transition" title="Change Virtual Bet">
+          <div class="flex items-center gap-1 text-emerald-400">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <ellipse cx="12" cy="6" rx="8" ry="3"/>
+              <path d="M4 10v3c0 1.66 3.58 3 8 3s8-1.34 8-3v-3c0 1.66-3.58 3-8 3s-8-1.34-8-3z"/>
+              <path d="M4 15v3c0 1.66 3.58 3 8 3s8-1.34 8-3v-3c0 1.66-3.58 3-8 3s-8-1.34-8-3z"/>
+            </svg>
+            <span class="text-[10px] font-extrabold uppercase text-amber-200">Bet</span>
+          </div>
+          <span id="bet-display" class="text-sm font-black text-white leading-tight">3</span>
+        </button>
+
+        <!-- Central Golden SPIN Button -->
+        <div id="spin-btn" class="spin-btn-outer" role="button" tabindex="0" aria-label="Spin Reels">
+          <div class="spin-btn-inner">
+            <!-- Sunburst Rays -->
+            <svg class="absolute inset-0 w-full h-full opacity-35" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="42" fill="none" stroke="#78350f" stroke-width="8" stroke-dasharray="6 6"/>
+            </svg>
+            <!-- Circular Spin Arrow -->
+            <svg class="spin-icon-rotate w-10 h-10 text-amber-950 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0114.93-4M20 4v4h-4M20 12a8 8 0 01-14.93 4M4 20v-4h4"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Auto-Spin Toggle -->
+        <button id="auto-btn" class="ctrl-pill relative" title="Toggle Auto-Spin">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 2l4 4-4 4"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 11v-1a4 4 0 014-4h14"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M7 22l-4-4 4-4"/>
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 13v1a4 4 0 01-4 4H3"/>
+          </svg>
+          <span id="auto-badge" class="hidden absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[9px] font-black px-1 rounded-full border border-yellow-300">ON</span>
+        </button>
+
+        <!-- Turbo Spin Toggle -->
+        <button id="turbo-btn" class="ctrl-pill" title="Toggle Turbo Speed">
+          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Bottom Status Row: Level, Virtual Fun Balance & Refill -->
+      <div class="flex items-center justify-between pt-1 border-t border-amber-900/60 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="bg-gradient-to-b from-emerald-500 to-emerald-800 border border-emerald-300 text-white font-black text-[10px] px-2 py-0.5 rounded shadow">
+            LV <span id="player-level">2</span>
+          </span>
+          <span class="text-amber-300 font-bold">Balance</span>
+          <span id="balance-display" class="text-white font-black text-sm tracking-tight">1,000.00</span>
+        </div>
+
+        <button id="refill-btn" class="bg-amber-600/80 hover:bg-amber-500 border border-amber-300 text-white font-extrabold text-[10px] px-2 py-0.5 rounded-full shadow cursor-pointer active:scale-95 transition" title="Add 1,000 Virtual Fun Credits">
+          + Refill
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= PAYTABLE & RULES MODAL ================= -->
+    <div id="paytable-modal" class="hidden absolute inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+      <div class="bg-gradient-to-b from-[#4a2815] to-[#261309] border-2 border-amber-400 rounded-2xl w-full max-h-[88%] flex flex-col shadow-2xl overflow-hidden">
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-4 py-3 border-b border-amber-700/70 bg-black/30">
+          <h2 class="font-display text-lg font-black text-gold-3d tracking-wide">PAYTABLE & FEATURES</h2>
+          <button id="close-modal-btn" class="w-7 h-7 rounded-full bg-red-700 border border-amber-300 text-white font-black text-sm flex items-center justify-center cursor-pointer">✕</button>
+        </div>
+
+        <!-- Modal Content -->
+        <div class="p-4 overflow-y-auto custom-scroll space-y-4 text-xs text-amber-100">
+          <div class="bg-black/35 border border-amber-600/40 rounded-xl p-3">
+            <h3 class="font-black text-amber-300 text-sm mb-1">🚂 GOLD NUGGET CASH COLLECT</h3>
+            <p class="leading-relaxed text-amber-100/90">
+              Gold Nuggets land with credit values (<strong>1x to 10x Bet</strong>) or Jackpot badges (<strong>MINI, MINOR, MAJOR</strong>). Landing <strong>5 or more Gold Nuggets</strong> on any spin immediately collects all visible nugget values!
+            </p>
+          </div>
+
+          <div class="bg-black/35 border border-amber-600/40 rounded-xl p-3">
+            <h3 class="font-black text-red-400 text-sm mb-1">🧨 DYNAMITE SCATTER & FREE SPINS</h3>
+            <p class="leading-relaxed text-amber-100/90">
+              Land <strong>3 or more Scatter symbols</strong> anywhere on the reels to trigger <strong>8 Free Spins</strong>! During Free Spins, extra Gold Nuggets and Wild Express trains appear on the tracks. You can also use <strong>BUY BONUS</strong> for 30x your current bet.
+            </p>
+          </div>
+
+          <!-- Symbol Payouts Grid -->
+          <div>
+            <h3 class="font-black text-amber-300 text-sm mb-2">SYMBOL PAYOUTS (MULTIPLIER × BET)</h3>
+            <div class="grid grid-cols-2 gap-2" id="paytable-symbols-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <p class="text-[10px] text-center text-amber-300/70 pt-2 border-t border-amber-800/50">
+            Entertainment & Simulation Only — Virtual Fun Credits Have No Real-World Monetary Value.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Banner -->
+    <div id="toast-msg" class="hidden absolute top-20 left-1/2 -translate-x-1/2 z-50 bg-amber-950/95 border border-amber-400 text-amber-100 text-xs font-bold px-4 py-2 rounded-full shadow-xl whitespace-nowrap">
+      Notification
+    </div>
+  </div>
+
+  <script>
+    /**
+     * GOLD MINE EXPRESS - Interactive Slot Simulation
+     * Pure Vanilla JS + Custom SVG Artwork + Web Audio API Sound Synthesizer
+     */
+
+    // ==================== 1. WEB AUDIO SOUND ENGINE ====================
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type, duration, vol = 0.12, delay = 0) {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+
+        const now = this.ctx.currentTime + delay;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, now);
+
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + duration);
+      }
+
+      playSpinStart() {
+        this.playTone(180, 'triangle', 0.12, 0.14, 0);
+        this.playTone(260, 'triangle', 0.14, 0.14, 0.06);
+      }
+
+      playReelStop(colIndex) {
+        const base = 130 + colIndex * 22;
+        this.playTone(base, 'sine', 0.09, 0.18, 0);
+        this.playTone(base * 1.5, 'triangle', 0.06, 0.08, 0.01);
+      }
+
+      playScatterLand(count) {
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        const freq = notes[Math.min(count - 1, notes.length - 1)];
+        this.playTone(freq, 'sine', 0.25, 0.2, 0);
+        this.playTone(freq * 1.25, 'triangle', 0.3, 0.15, 0.08);
+      }
+
+      playWinSmall() {
+        const notes = [523.25, 659.25, 783.99, 1046.5];
+        notes.forEach((n, idx) => {
+          this.playTone(n, 'triangle', 0.22, 0.14, idx * 0.07);
+        });
+      }
+
+      playTrainWhistle() {
+        if (this.muted) return;
+        this.init();
+        if (!this.ctx) return;
+        // Two-chord steam locomotive horn
+        [370, 466.16, 554.37].forEach(freq => {
+          this.playTone(freq, 'sawtooth', 0.55, 0.07, 0);
+          this.playTone(freq, 'sawtooth', 0.75, 0.08, 0.62);
+        });
+      }
+    }
+
+    const sfx = new SoundEngine();
+
+    // ==================== 2. SYMBOL DEFINITIONS & SVG RENDERERS ====================
+    const SYMBOLS = {
+      WILD: {
+        id: 'WILD',
+        name: 'Gold Mine Wild',
+        weight: 5,
+        pays: { 3: 2.5, 4: 8, 5: 25 },
+        isWild: true
+      },
+      TRAIN_RED: {
+        id: 'TRAIN_RED',
+        name: 'Red Express',
+        weight: 7,
+        pays: { 3: 2.0, 4: 6, 5: 18 }
+      },
+      TRAIN_PURPLE: {
+        id: 'TRAIN_PURPLE',
+        name: 'Purple Express',
+        weight: 8,
+        pays: { 3: 1.5, 4: 4.5, 5: 14 }
+      },
+      TRAIN_BLUE: {
+        id: 'TRAIN_BLUE',
+        name: 'Blue Express',
+        weight: 9,
+        pays: { 3: 1.2, 4: 3.5, 5: 10 }
+      },
+      TRAIN_GREEN: {
+        id: 'TRAIN_GREEN',
+        name: 'Green Express',
+        weight: 10,
+        pays: { 3: 1.0, 4: 3.0, 5: 8 }
+      },
+      LANTERN: {
+        id: 'LANTERN',
+        name: 'Emerald Lantern',
+        weight: 12,
+        pays: { 3: 0.6, 4: 1.8, 5: 5 }
+      },
+      NUGGET: {
+        id: 'NUGGET',
+        name: 'Gold Nugget',
+        weight: 13,
+        pays: {} // Paid via 5+ Cash Collect
+      },
+      SCATTER: {
+        id: 'SCATTER',
+        name: 'Dynamite Scatter',
+        weight: 5,
+        pays: {} // Triggers 8 Free Spins on 3+
+      },
+      A: {
+        id: 'A',
+        name: 'Ace',
+        weight: 15,
+        pays: { 3: 0.4, 4: 1.0, 5: 3.0 }
+      },
+      K: {
+        id: 'K',
+        name: 'King',
+        weight: 16,
+        pays: { 3: 0.3, 4: 0.8, 5: 2.5 }
+      },
+      Q: {
+        id: 'Q',
+        name: 'Queen',
+        weight: 17,
+        pays: { 3: 0.25, 4: 0.6, 5: 2.0 }
+      },
+      J: {
+        id: 'J',
+        name: 'Jack',
+        weight: 18,
+        pays: { 3: 0.2, 4: 0.5, 5: 1.5 }
+      }
+    };
+
+    // Helper to build colored locomotive SVG
+    function createTrainSVG(primary, secondary, accent) {
+      return `
+        <svg class="w-[88%] h-[88%] drop-shadow-[0_3px_4px_rgba(0,0,0,0.75)]" viewBox="0 0 100 84">
+          <rect x="4" y="6" width="92" height="72" rx="10" fill="rgba(0,0,0,0.28)" stroke="#eab308" stroke-width="2"/>
+          <!-- Cab -->
+          <rect x="12" y="20" width="26" height="36" rx="2" fill="${primary}" stroke="#fef08a" stroke-width="1.5"/>
+          <rect x="17" y="25" width="14" height="14" rx="1.5" fill="#fef08a"/>
+          <!-- Boiler -->
+          <rect x="38" y="26" width="44" height="28" rx="3" fill="${primary}" stroke="#fef08a" stroke-width="1.5"/>
+          <rect x="52" y="26" width="4" height="28" fill="${accent}"/>
+          <rect x="68" y="26" width="4" height="28" fill="${accent}"/>
+          <!-- Smokestack -->
+          <polygon points="70,26 67,12 81,12 78,26" fill="${secondary}" stroke="#fef08a" stroke-width="1.5"/>
+          <!-- Cowcatcher -->
+          <polygon points="80,52 92,66 76,66" fill="${accent}" stroke="#451a03" stroke-width="1.5"/>
+          <!-- Wheels -->
+          <circle cx="24" cy="60" r="8" fill="#1e1b18" stroke="#fde047" stroke-width="2.5"/>
+          <circle cx="46" cy="60" r="8" fill="#1e1b18" stroke="#fde047" stroke-width="2.5"/>
+          <circle cx="68" cy="60" r="8" fill="#1e1b18" stroke="#fde047" stroke-width="2.5"/>
+        </svg>
+      `;
+    }
+
+    // Generate HTML for any symbol cell
+    function renderSymbolHTML(cellData, currentBet) {
+      const id = cellData.id;
+
+      if (id === 'WILD') {
+        return `
+          <div class="w-full h-full flex flex-col items-center justify-center bg-gradient-to-b from-amber-700/60 to-red-950/80 border border-amber-400/70 rounded-lg p-1 leading-none">
+            <span class="font-display text-sm sm:text-base font-black text-gold-3d tracking-tight">GOLD</span>
+            <span class="text-[9px] font-black text-amber-200 tracking-widest">MINE</span>
+            <span class="bg-red-700 border border-yellow-300 text-white text-[8px] font-black px-1.5 py-0.5 rounded mt-0.5">WILD</span>
+          </div>
+        `;
+      }
+
+      if (id === 'TRAIN_RED') return createTrainSVG('#dc2626', '#991b1b', '#fde047');
+      if (id === 'TRAIN_PURPLE') return createTrainSVG('#9333ea', '#581c87', '#f0abfc');
+      if (id === 'TRAIN_BLUE') return createTrainSVG('#2563eb', '#1e3a8a', '#93c5fd');
+      if (id === 'TRAIN_GREEN') return createTrainSVG('#16a34a', '#14532d', '#86efac');
+
+      if (id === 'NUGGET') {
+        const displayVal = cellData.jackpotLabel
+          ? cellData.jackpotLabel
+          : (cellData.mult * currentBet).toFixed(2);
+        const badgeColor = cellData.jackpotLabel === 'MAJOR'
+          ? 'text-fuchsia-200'
+          : cellData.jackpotLabel === 'MINOR'
+          ? 'text-sky-200'
+          : cellData.jackpotLabel === 'MINI'
+          ? 'text-emerald-200'
+          : 'text-white';
+
+        return `
+          <div class="relative w-full h-full flex items-center justify-center">
+            <svg class="w-[86%] h-[86%] drop-shadow-[0_4px_5px_rgba(0,0,0,0.75)]" viewBox="0 0 100 90">
+              <defs>
+                <linearGradient id="nugGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#fef9c3"/>
+                  <stop offset="35%" stop-color="#facc15"/>
+                  <stop offset="75%" stop-color="#d97706"/>
+                  <stop offset="100%" stop-color="#78350f"/>
+                </linearGradient>
+              </defs>
+              <polygon points="26,12 68,8 90,34 82,72 44,84 12,66 10,32" fill="url(#nugGrad)" stroke="#713f12" stroke-width="3"/>
+              <polygon points="28,16 64,14 74,34 46,44 20,32" fill="#fef08a" opacity="0.65"/>
+            </svg>
+            <span class="absolute font-display text-xs sm:text-sm font-black ${badgeColor} text-stroke-dark tracking-tight">
+              ${displayVal}
+            </span>
+          </div>
+        `;
+      }
+
+      if (id === 'SCATTER') {
+        return `
+          <div class="relative w-full h-full flex flex-col items-center justify-center">
+            <svg class="w-[82%] h-[78%] drop-shadow-[0_3px_5px_rgba(0,0,0,0.8)]" viewBox="0 0 100 85">
+              <!-- Dynamite Sticks -->
+              <rect x="24" y="22" width="54" height="14" rx="5" transform="rotate(-22 50 30)" fill="#dc2626" stroke="#450a0a" stroke-width="2"/>
+              <rect x="26" y="34" width="54" height="14" rx="5" transform="rotate(-22 50 42)" fill="#ef4444" stroke="#450a0a" stroke-width="2"/>
+              <rect x="28" y="46" width="54" height="14" rx="5" transform="rotate(-22 50 54)" fill="#b91c1c" stroke="#450a0a" stroke-width="2"/>
+              <!-- Straps -->
+              <rect x="44" y="20" width="6" height="42" transform="rotate(-22 47 41)" fill="#1f2937"/>
+              <!-- Fuse & Spark -->
+              <path d="M24,36 Q12,28 14,16" fill="none" stroke="#d97706" stroke-width="3"/>
+              <circle cx="14" cy="15" r="7" fill="#fef08a"/>
+              <circle cx="14" cy="15" r="4" fill="#f97316"/>
+            </svg>
+            <span class="absolute bottom-0.5 font-display text-[10px] sm:text-[11px] font-black text-amber-300 text-stroke-dark tracking-wider">SCATTER</span>
+          </div>
+        `;
+      }
+
+      if (id === 'LANTERN') {
+        return `
+          <svg class="w-[78%] h-[84%] drop-shadow-[0_3px_6px_rgba(34,197,94,0.5)]" viewBox="0 0 80 95">
+            <circle cx="40" cy="12" r="6" fill="none" stroke="#a3e635" stroke-width="3"/>
+            <polygon points="24,24 56,24 62,32 18,32" fill="#365314" stroke="#bef264" stroke-width="1.5"/>
+            <polygon points="22,32 58,32 54,72 26,72" fill="#22c55e" stroke="#ecfccb" stroke-width="2"/>
+            <ellipse cx="40" cy="52" rx="10" ry="14" fill="#fef9c3" opacity="0.9"/>
+            <rect x="20" y="72" width="40" height="8" rx="3" fill="#365314" stroke="#bef264" stroke-width="1.5"/>
+          </svg>
+        `;
+      }
+
+      // Card Ranks: A, K, Q, J
+      return `
+        <div class="w-full h-full flex items-center justify-center">
+          <span class="font-display text-3xl sm:text-4xl font-black text-gold-3d select-none">${id}</span>
+        </div>
+      `;
+    }
+
+    // ==================== 3. PAYLINES (20 LINES ON 5x4 GRID) ====================
+    const PAYLINES = [
+      [0, 0, 0, 0, 0], // Top row
+      [1, 1, 1, 1, 1], // Row 2
+      [2, 2, 2, 2, 2], // Row 3
+      [3, 3, 3, 3, 3], // Bottom row
+      [0, 1, 2, 1, 0], // V shape top
+      [3, 2, 1, 2, 3], // Inverted V bottom
+      [1, 2, 3, 2, 1], // V shape lower
+      [2, 1, 0, 1, 2], // Inverted V upper
+      [0, 0, 1, 2, 3], // Diagonal down
+      [3, 3, 2, 1, 0], // Diagonal up
+      [1, 0, 0, 0, 1],
+      [2, 3, 3, 3, 2],
+      [0, 1, 1, 1, 0],
+      [3, 2, 2, 2, 3],
+      [1, 1, 2, 3, 3],
+      [2, 2, 1, 0, 0],
+      [0, 2, 0, 2, 0],
+      [3, 1, 3, 1, 3],
+      [1, 3, 1, 3, 1],
+      [2, 0, 2, 0, 2]
+    ];
+
+    // ==================== 4. PARTICLE & COIN FOUNTAIN ENGINE ====================
+    class ParticleEngine {
+      constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.particles = [];
+        this.resize();
+        window.addEventListener('resize', () => this.resize());
+        this.loop();
+      }
+
+      resize() {
+        const rect = this.canvas.parentElement.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+      }
+
+      burstCoins(count = 35) {
+        const cx = this.canvas.width / 2;
+        const cy = this.canvas.height * 0.58;
+        for (let i = 0; i < count; i++) {
+          const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.8;
+          const speed = 5 + Math.random() * 9;
+          this.particles.push({
+            x: cx + (Math.random() - 0.5) * 80,
+            y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 2,
+            gravity: 0.36,
+            size: 8 + Math.random() * 6,
+            rot: Math.random() * Math.PI * 2,
+            vRot: (Math.random() - 0.5) * 0.25,
+            life: 1.0
+          });
+        }
+      }
+
+      loop() {
+        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+          const p = this.particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += p.gravity;
+          p.rot += p.vRot;
+          p.life -= 0.014;
+
+          if (p.life <= 0 || p.y > this.canvas.height + 30) {
+            this.particles.splice(i, 1);
+            continue;
+          }
+
+          this.ctx.save();
+          this.ctx.translate(p.x, p.y);
+          this.ctx.rotate(p.rot);
+          this.ctx.globalAlpha = Math.max(0, p.life);
+
+          // Draw 3D-style Gold Coin
+          const scaleX = Math.cos(p.rot * 2);
+          this.ctx.scale(Math.max(0.25, Math.abs(scaleX)), 1);
+          this.ctx.beginPath();
+          this.ctx.arc(0, 0, p.size, 0, Math.PI * 2);
+          this.ctx.fillStyle = '#facc15';
+          this.ctx.fill();
+          this.ctx.lineWidth = 2;
+          this.ctx.strokeStyle = '#92400e';
+          this.ctx.stroke();
+
+          this.ctx.beginPath();
+          this.ctx.arc(0, 0, p.size * 0.65, 0, Math.PI * 2);
+          this.ctx.strokeStyle = '#fef08a';
+          this.ctx.lineWidth = 1.2;
+          this.ctx.stroke();
+
+          this.ctx.restore();
+        }
+        requestAnimationFrame(() => this.loop());
+      }
+    }
+
+    // ==================== 5. MAIN GAME STATE & CONTROLLER ====================
+    const BET_STEPS = [1, 2, 3, 5, 10, 20];
+    const JACKPOT_MULTS = {
+      GRAND: 5000,
+      MAJOR: 500,
+      MINOR: 50,
+      MINI: 20
+    };
+
+    const state = {
+      balance: 1000.00,
+      betIndex: 2, // Default Bet = 3 (matches screenshot!)
+      win: 0.00,
+      level: 2,
+      xp: 0,
+      isSpinning: false,
+      autoSpin: false,
+      turbo: false,
+      freeSpinsLeft: 0,
+      grid: [], // 5 cols x 4 rows
+      autoTimer: null
+    };
+
+    // DOM References
+    const dom = {
+      cols: document.querySelectorAll('.reel-col'),
+      balance: document.getElementById('balance-display'),
+      bet: document.getElementById('bet-display'),
+      win: document.getElementById('win-display'),
+      level: document.getElementById('player-level'),
+      jpGrand: document.getElementById('jp-grand-val'),
+      jpMajor: document.getElementById('jp-major-val'),
+      jpMinor: document.getElementById('jp-minor-val'),
+      jpMini: document.getElementById('jp-mini-val'),
+      buyCost: document.getElementById('buy-bonus-cost'),
+      spinBtn: document.getElementById('spin-btn'),
+      betBtn: document.getElementById('bet-btn'),
+      autoBtn: document.getElementById('auto-btn'),
+      autoBadge: document.getElementById('auto-badge'),
+      turboBtn: document.getElementById('turbo-btn'),
+      soundBtn: document.getElementById('sound-btn'),
+      soundOn: document.getElementById('sound-on-icon'),
+      soundOff: document.getElementById('sound-off-icon'),
+      buyBonusBtn: document.getElementById('buy-bonus-btn'),
+      refillBtn: document.getElementById('refill-btn'),
+      infoBtn: document.getElementById('info-btn'),
+      modal: document.getElementById('paytable-modal'),
+      closeModalBtn: document.getElementById('close-modal-btn'),
+      paytableList: document.getElementById('paytable-symbols-list'),
+      featureBanner: document.getElementById('feature-banner'),
+      featureBannerText: document.getElementById('feature-banner-text'),
+      modeBadge: document.getElementById('mode-badge'),
+      winPopup: document.getElementById('win-popup'),
+      winPopupTitle: document.getElementById('win-popup-title'),
+      winPopupSub: document.getElementById('win-popup-sub'),
+      winPopupAmount: document.getElementById('win-popup-amount'),
+      heroTrain: document.getElementById('hero-train'),
+      smokeEmitter: document.getElementById('smoke-emitter'),
+      toast: document.getElementById('toast-msg')
+    };
+
+    const fx = new ParticleEngine(document.getElementById('fx-canvas'));
+
+    function getCurrentBet() {
+      return BET_STEPS[state.betIndex];
+    }
+
+    function showToast(msg) {
+      dom.toast.textContent = msg;
+      dom.toast.classList.remove('hidden');
+      clearTimeout(dom.toast._t);
+      dom.toast._t = setTimeout(() => dom.toast.classList.add('hidden'), 2400);
+    }
+
+    // Spawn periodic locomotive chimney smoke puffs
+    function startTrainSmoke() {
+      setInterval(() => {
+        const puff = document.createElement('div');
+        puff.className = 'smoke-puff';
+        const size = 14 + Math.random() * 14;
+        puff.style.width = `${size}px`;
+        puff.style.height = `${size}px`;
+        puff.style.left = `${(Math.random() - 0.5) * 6}px`;
+        puff.style.top = '0px';
+        dom.smokeEmitter.appendChild(puff);
+        setTimeout(() => puff.remove(), 2800);
+      }, 480);
+    }
+
+    // Generate weighted random symbol cell
+    function createRandomCell(isFreeSpin = false) {
+      const pool = Object.values(SYMBOLS);
+      const totalWeight = pool.reduce((acc, s) => {
+        let w = s.weight;
+        if (isFreeSpin && (s.id === 'NUGGET' || s.id === 'WILD')) w *= 1.5;
+        return acc + w;
+      }, 0);
+
+      let r = Math.random() * totalWeight;
+      let chosen = pool[0];
+      for (const s of pool) {
+        let w = s.weight;
+        if (isFreeSpin && (s.id === 'NUGGET' || s.id === 'WILD')) w *= 1.5;
+        if (r < w) {
+          chosen = s;
+          break;
+        }
+        r -= w;
+      }
+
+      const cell = { id: chosen.id };
+      if (chosen.id === 'NUGGET') {
+        const roll = Math.random();
+        if (roll < 0.03) {
+          cell.jackpotLabel = 'MAJOR';
+          cell.mult = JACKPOT_MULTS.MAJOR;
+        } else if (roll < 0.10) {
+          cell.jackpotLabel = 'MINOR';
+          cell.mult = JACKPOT_MULTS.MINOR;
+        } else if (roll < 0.24) {
+          cell.jackpotLabel = 'MINI';
+          cell.mult = JACKPOT_MULTS.MINI;
+        } else {
+          const nuggetMults = [1, 2, 3, 4, 5, 8, 10];
+          cell.mult = nuggetMults[Math.floor(Math.random() * nuggetMults.length)];
+        }
+      }
+      return cell;
+    }
+
+    // Build initial visual grid matching the iconic look of the screenshot
+    function buildInitialGrid() {
+      const bet = getCurrentBet();
+      state.grid = [
+        [{ id: 'A' }, { id: 'A' }, { id: 'A' }, { id: 'A' }],
+        [
+          { id: 'NUGGET', mult: 8 },
+          { id: 'NUGGET', mult: 2 },
+          { id: 'NUGGET', mult: 1 },
+          { id: 'NUGGET', mult: 8 }
+        ],
+        [{ id: 'WILD' }, { id: 'WILD' }, { id: 'WILD' }, { id: 'WILD' }],
+        [
+          { id: 'TRAIN_RED' },
+          { id: 'TRAIN_PURPLE' },
+          { id: 'TRAIN_BLUE' },
+          { id: 'TRAIN_GREEN' }
+        ],
+        [
+          { id: 'SCATTER' },
+          { id: 'LANTERN' },
+          { id: 'LANTERN' },
+          { id: 'LANTERN' }
+        ]
+      ];
+      renderFullGrid(bet);
+    }
+
+    function renderFullGrid(bet) {
+      dom.cols.forEach((colEl, cIdx) => {
+        colEl.innerHTML = '';
+        for (let rIdx = 0; rIdx < 4; rIdx++) {
+          const cellDiv = document.createElement('div');
+          cellDiv.className = 'symbol-cell';
+          cellDiv.dataset.col = cIdx;
+          cellDiv.dataset.row = rIdx;
+          cellDiv.innerHTML = renderSymbolHTML(state.grid[cIdx][rIdx], bet);
+          colEl.appendChild(cellDiv);
+        }
+      });
+    }
+
+    function updateHUD() {
+      const bet = getCurrentBet();
+      dom.bet.textContent = bet;
+      dom.balance.textContent = state.balance.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      dom.level.textContent = state.level;
+
+      // Update Jackpots proportionally to Bet (at Bet 3: 15,000 / 1,500 / 150 / 60)
+      dom.jpGrand.textContent = (JACKPOT_MULTS.GRAND * bet).toLocaleString();
+      dom.jpMajor.textContent = (JACKPOT_MULTS.MAJOR * bet).toLocaleString();
+      dom.jpMinor.textContent = (JACKPOT_MULTS.MINOR * bet).toLocaleString();
+      dom.jpMini.textContent = (JACKPOT_MULTS.MINI * bet).toLocaleString();
+      dom.buyCost.textContent = (bet * 30).toLocaleString();
+
+      if (state.freeSpinsLeft > 0) {
+        dom.featureBanner.classList.remove('hidden');
+        dom.featureBannerText.textContent = `FREE SPINS: ${state.freeSpinsLeft} LEFT`;
+        dom.modeBadge.textContent = 'FREE SPINS';
+        dom.modeBadge.classList.add('bg-red-800', 'text-yellow-200');
+      } else {
+        dom.featureBanner.classList.add('hidden');
+        dom.modeBadge.textContent = '20 LINES';
+        dom.modeBadge.classList.remove('bg-red-800', 'text-yellow-200');
+      }
+    }
+
+    function animateWinCountUp(targetWin) {
+      const start = 0;
+      const duration = Math.min(1200, 350 + targetWin * 8);
+      const startTime = performance.now();
+
+      function tick(now) {
+        const elapsed = now - startTime;
+        const progress = Math.min(1, elapsed / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = start + (targetWin - start) * eased;
+        dom.win.textContent = current.toFixed(2);
+        if (progress < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          dom.win.textContent = targetWin.toFixed(2);
+        }
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // Evaluate 20 Paylines + Gold Nugget Cash Collect + Scatter Free Spins
+    function evaluateRound(grid, bet) {
+      let totalWin = 0;
+      const winningCoords = new Set();
+
+      // 1. Evaluate 20 Left-to-Right Paylines
+      for (const line of PAYLINES) {
+        let targetSymbol = null;
+        let matchCount = 0;
+        const lineCoords = [];
+
+        for (let col = 0; col < 5; col++) {
+          const row = line[col];
+          const symId = grid[col][row].id;
+
+          if (symId === 'SCATTER' || symId === 'NUGGET') break;
+
+          if (targetSymbol === null) {
+            if (symId === 'WILD') {
+              matchCount++;
+              lineCoords.push(`${col},${row}`);
+            } else {
+              targetSymbol = symId;
+              matchCount++;
+              lineCoords.push(`${col},${row}`);
+            }
+          } else {
+            if (symId === targetSymbol || symId === 'WILD') {
+              matchCount++;
+              lineCoords.push(`${col},${row}`);
+            } else {
+              break;
+            }
+          }
+        }
+
+        // If all matched symbols were WILD, evaluate as WILD
+        if (targetSymbol === null && matchCount >= 3) {
+          targetSymbol = 'WILD';
+        }
+
+        if (targetSymbol && matchCount >= 3) {
+          const payMult = SYMBOLS[targetSymbol].pays[matchCount] || 0;
+          if (payMult > 0) {
+            totalWin += payMult * bet;
+            lineCoords.forEach(c => winningCoords.add(c));
+          }
+        }
+      }
+
+      // 2. Evaluate Gold Nugget Cash Collect (5+ Nuggets anywhere)
+      const nuggetCoords = [];
+      let nuggetSum = 0;
+      for (let c = 0; c < 5; c++) {
+        for (let r = 0; r < 4; r++) {
+          if (grid[c][r].id === 'NUGGET') {
+            nuggetCoords.push(`${c},${r}`);
+            nuggetSum += grid[c][r].mult * bet;
+          }
+        }
+      }
+      let collectedNuggets = false;
+      if (nuggetCoords.length >= 5) {
+        collectedNuggets = true;
+        totalWin += nuggetSum;
+        nuggetCoords.forEach(c => winningCoords.add(c));
+      }
+
+      // 3. Evaluate Scatter Dynamites (3+ triggers 8 Free Spins)
+      const scatterCoords = [];
+      for (let c = 0; c < 5; c++) {
+        for (let r = 0; r < 4; r++) {
+          if (grid[c][r].id === 'SCATTER') {
+            scatterCoords.push(`${c},${r}`);
+          }
+        }
+      }
+      let triggeredFreeSpins = 0;
+      if (scatterCoords.length >= 3) {
+        triggeredFreeSpins = 8;
+        scatterCoords.forEach(c => winningCoords.add(c));
+      }
+
+      return {
+        totalWin: Number(totalWin.toFixed(2)),
+        winningCoords,
+        collectedNuggets,
+        triggeredFreeSpins
+      };
+    }
+
+    // Execute a Single Spin Cycle
+    async function triggerSpin(forcedBonus = false) {
+      if (state.isSpinning) return;
+
+      const bet = getCurrentBet();
+      const isFree = state.freeSpinsLeft > 0;
+
+      if (!isFree && !forcedBonus) {
+        if (state.balance < bet) {
+          showToast('Not enough virtual credits! Tap + Refill.');
+          stopAutoSpin();
+          return;
+        }
+        state.balance = Number((state.balance - bet).toFixed(2));
+      } else if (isFree) {
+        state.freeSpinsLeft--;
+      }
+
+      state.isSpinning = true;
+      state.win = 0;
+      dom.win.textContent = '0.00';
+      dom.winPopup.classList.add('hidden');
+      dom.spinBtn.classList.add('spinning-active');
+      dom.heroTrain.classList.add('train-turbo');
+      sfx.playSpinStart();
+
+      // Experience & Level Progression
+      state.xp += 10;
+      if (state.xp >= state.level * 100) {
+        state.xp = 0;
+        state.level++;
+        showToast(`🎉 Level Up! You reached LV ${state.level}!`);
+      }
+
+      updateHUD();
+
+      // Clear previous highlights
+      document.querySelectorAll('.symbol-cell').forEach(el => {
+        el.classList.remove('win-highlight', 'land-bounce');
+      });
+      dom.cols.forEach(col => col.classList.remove('anticipation'));
+
+      // Generate Outcome Grid
+      const nextGrid = Array.from({ length: 5 }, () =>
+        Array.from({ length: 4 }, () => createRandomCell(isFree))
+      );
+
+      // If Buy Bonus triggered, guarantee 3 Scatters + rich Nuggets
+      if (forcedBonus) {
+        nextGrid[0][1] = { id: 'SCATTER' };
+        nextGrid[2][2] = { id: 'SCATTER' };
+        nextGrid[4][1] = { id: 'SCATTER' };
+      }
+
+      // Start Reel Spin Visuals
+      dom.cols.forEach(col => col.classList.add('reel-spinning'));
+
+      const baseDelay = state.turbo ? 160 : 340;
+      const stepDelay = state.turbo ? 95 : 190;
+      let scattersSeen = 0;
+
+      // Stop Reels Sequentially (1 to 5)
+      for (let c = 0; c < 5; c++) {
+        // Anticipation delay on reel 4/5 if 2 scatters already landed
+        const extraDelay = scattersSeen >= 2 && !state.turbo ? 420 : 0;
+        if (extraDelay > 0) {
+          dom.cols[c].classList.add('anticipation');
+        }
+
+        await new Promise(res => setTimeout(res, (c === 0 ? baseDelay : stepDelay) + extraDelay));
+
+        const colEl = dom.cols[c];
+        colEl.classList.remove('reel-spinning', 'anticipation');
+        colEl.innerHTML = '';
+
+        let colHasScatter = false;
+        for (let r = 0; r < 4; r++) {
+          const cellObj = nextGrid[c][r];
+          if (cellObj.id === 'SCATTER') {
+            scattersSeen++;
+            colHasScatter = true;
+          }
+          const cellDiv = document.createElement('div');
+          cellDiv.className = 'symbol-cell land-bounce';
+          cellDiv.dataset.col = c;
+          cellDiv.dataset.row = r;
+          cellDiv.innerHTML = renderSymbolHTML(cellObj, bet);
+          colEl.appendChild(cellDiv);
+        }
+
+        if (colHasScatter) {
+          sfx.playScatterLand(scattersSeen);
+        } else {
+          sfx.playReelStop(c);
+        }
+      }
+
+      state.grid = nextGrid;
+      dom.heroTrain.classList.remove('train-turbo');
+      dom.spinBtn.classList.remove('spinning-active');
+
+      // Evaluate Results
+      const result = evaluateRound(state.grid, bet);
+
+      if (result.triggeredFreeSpins > 0) {
+        state.freeSpinsLeft += result.triggeredFreeSpins;
+        sfx.playTrainWhistle();
+        fx.burstCoins(45);
+        showToast(`🧨 BONUS TRIGGERED! +${result.triggeredFreeSpins} FREE SPINS!`);
+      }
+
+      if (result.totalWin > 0) {
+        state.win = result.totalWin;
+        state.balance = Number((state.balance + result.totalWin).toFixed(2));
+        animateWinCountUp(result.totalWin);
+
+        // Highlight winning cells
+        result.winningCoords.forEach(coord => {
+          const [c, r] = coord.split(',');
+          const cell = dom.cols[c]?.children[r];
+          if (cell) cell.classList.add('win-highlight');
+        });
+
+        // Big Win vs Standard Win celebration
+        if (result.totalWin >= bet * 10 || result.collectedNuggets) {
+          sfx.playTrainWhistle();
+          fx.burstCoins(55);
+          dom.winPopupTitle.textContent = result.collectedNuggets ? 'GOLD COLLECT!' : 'MEGA EXPRESS WIN!';
+          dom.winPopupSub.textContent = `${(result.totalWin / bet).toFixed(1)}X TOTAL BET`;
+          dom.winPopupAmount.textContent = result.totalWin.toFixed(2);
+          dom.winPopup.classList.remove('hidden');
+          setTimeout(() => dom.winPopup.classList.add('hidden'), state.turbo ? 1200 : 2100);
+        } else {
+          sfx.playWinSmall();
+          fx.burstCoins(16);
+        }
+      }
+
+      updateHUD();
+      state.isSpinning = false;
+
+      // Continue Free Spins or Auto-Spin automatically
+      if (state.freeSpinsLeft > 0) {
+        setTimeout(() => triggerSpin(false), state.turbo ? 650 : 1200);
+      } else if (state.autoSpin) {
+        state.autoTimer = setTimeout(() => {
+          if (state.autoSpin) triggerSpin(false);
+        }, state.turbo ? 500 : 1050);
+      }
+    }
+
+    function stopAutoSpin() {
+      state.autoSpin = false;
+      clearTimeout(state.autoTimer);
+      dom.autoBtn.classList.remove('active-toggle');
+      dom.autoBadge.classList.add('hidden');
+    }
+
+    // ==================== 6. EVENT LISTENERS & INITIALIZATION ====================
+    dom.spinBtn.addEventListener('click', () => {
+      if (!state.isSpinning) triggerSpin(false);
+    });
+
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space' && dom.modal.classList.contains('hidden')) {
+        e.preventDefault();
+        if (!state.isSpinning) triggerSpin(false);
+      }
+    });
+
+    dom.betBtn.addEventListener('click', () => {
+      if (state.isSpinning || state.freeSpinsLeft > 0) return;
+      state.betIndex = (state.betIndex + 1) % BET_STEPS.length;
+      const newBet = getCurrentBet();
+      renderFullGrid(newBet);
+      updateHUD();
+      sfx.playTone(440, 'sine', 0.08, 0.1);
+    });
+
+    dom.autoBtn.addEventListener('click', () => {
+      if (state.autoSpin) {
+        stopAutoSpin();
+        showToast('Auto-Spin Stopped');
+      } else {
+        state.autoSpin = true;
+        dom.autoBtn.classList.add('active-toggle');
+        dom.autoBadge.classList.remove('hidden');
+        showToast('Auto-Spin Enabled');
+        if (!state.isSpinning) triggerSpin(false);
+      }
+    });
+
+    dom.turboBtn.addEventListener('click', () => {
+      state.turbo = !state.turbo;
+      dom.turboBtn.classList.toggle('active-toggle', state.turbo);
+      showToast(state.turbo ? '⚡ Turbo Mode ON' : 'Normal Speed');
+    });
+
+    dom.soundBtn.addEventListener('click', () => {
+      sfx.muted = !sfx.muted;
+      dom.soundOn.classList.toggle('hidden', sfx.muted);
+      dom.soundOff.classList.toggle('hidden', !sfx.muted);
+    });
+
+    dom.buyBonusBtn.addEventListener('click', () => {
+      if (state.isSpinning || state.freeSpinsLeft > 0) return;
+      const cost = getCurrentBet() * 30;
+      if (state.balance < cost) {
+        showToast(`Need ${cost} virtual credits for Buy Bonus!`);
+        return;
+      }
+      state.balance = Number((state.balance - cost).toFixed(2));
+      updateHUD();
+      triggerSpin(true);
+    });
+
+    dom.refillBtn.addEventListener('click', () => {
+      state.balance = Number((state.balance + 1000).toFixed(2));
+      updateHUD();
+      sfx.playWinSmall();
+      showToast('+1,000.00 Virtual Fun Credits Added!');
+    });
+
+    // Populate Paytable Modal
+    function populatePaytable() {
+      const displayOrder = ['WILD', 'TRAIN_RED', 'TRAIN_PURPLE', 'TRAIN_BLUE', 'TRAIN_GREEN', 'LANTERN', 'A', 'K', 'Q', 'J'];
+      dom.paytableList.innerHTML = displayOrder.map(key => {
+        const sym = SYMBOLS[key];
+        return `
+          <div class="flex items-center gap-2 bg-black/40 border border-amber-700/50 rounded-lg p-1.5">
+            <div class="w-11 h-11 shrink-0 flex items-center justify-center">
+              ${renderSymbolHTML({ id: key }, getCurrentBet())}
+            </div>
+            <div class="text-[10px] leading-tight">
+              <div class="font-black text-amber-300">${sym.name}</div>
+              <div class="text-amber-100/90 mt-0.5">
+                5x: <strong>${sym.pays[5]}x</strong> | 4x: <strong>${sym.pays[4]}x</strong> | 3x: <strong>${sym.pays[3]}x</strong>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    dom.infoBtn.addEventListener('click', () => {
+      populatePaytable();
+      dom.modal.classList.remove('hidden');
+    });
+
+    dom.closeModalBtn.addEventListener('click', () => {
+      dom.modal.classList.add('hidden');
+    });
+
+    // Initialize Game on Load
+    window.addEventListener('load', () => {
+      buildInitialGrid();
+      updateHUD();
+      startTrainSmoke();
+    });
+  </script>
+</body>
+</html>
+```
