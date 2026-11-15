@@ -1,0 +1,1511 @@
+html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Fortune Gems 2 - Aztec Temple Slot</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold-light: #fff0a8;
+      --gold-mid: #f5b935;
+      --gold-dark: #8a5108;
+      --stone-dark: #2c1810;
+      --crimson: #8b0000;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+      background: #1a0f08;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Main Mobile-First Game Cabinet Container */
+    .game-cabinet {
+      position: relative;
+      width: 100%;
+      max-width: 460px;
+      min-height: 100vh;
+      background: linear-gradient(180deg, #b8e4f9 0%, #fceabb 35%, #f8b500 62%, #6d3a18 85%, #2b1508 100%);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Sunlit Temple Rays & Pillars Background */
+    .sun-rays {
+      position: absolute;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, rgba(255,250,210,0.95) 0%, rgba(255,215,100,0.4) 45%, transparent 72%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .temple-pillar-left, .temple-pillar-right {
+      position: absolute;
+      top: 40px;
+      width: 68px;
+      height: 420px;
+      background: linear-gradient(90deg, #c68642, #e5aa70, #9c5e25);
+      border: 2px solid #754112;
+      z-index: 2;
+      opacity: 0.88;
+      pointer-events: none;
+    }
+    .temple-pillar-left {
+      left: -12px;
+      border-radius: 0 12px 0 0;
+      box-shadow: inset -6px 0 12px rgba(60, 25, 5, 0.5);
+    }
+    .temple-pillar-right {
+      right: -12px;
+      border-radius: 12px 0 0 0;
+      box-shadow: inset 6px 0 12px rgba(60, 25, 5, 0.5);
+    }
+
+    /* Title Logo Styling */
+    .logo-container {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding-top: 12px;
+      filter: drop-shadow(0 4px 6px rgba(45, 18, 0, 0.85));
+    }
+
+    .game-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 1.85rem;
+      letter-spacing: 0.5px;
+      background: linear-gradient(180deg, #fff9c4 0%, #ffd54f 35%, #ff8f00 75%, #b71c1c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 1.2px #4a1c00;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .title-two {
+      font-size: 2.3rem;
+      background: linear-gradient(180deg, #ff8a80 0%, #e53935 45%, #8e0000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      -webkit-text-stroke: 1.5px #ffd54f;
+      margin-left: 2px;
+      transform: rotate(4deg);
+      display: inline-block;
+    }
+
+    /* Upper Lucky Fortune Wheel */
+    .wheel-section {
+      position: relative;
+      z-index: 8;
+      width: 100%;
+      height: 155px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 2px;
+      overflow: hidden;
+    }
+
+    .fortune-wheel-wrapper {
+      position: relative;
+      width: 310px;
+      height: 310px;
+      border-radius: 50%;
+      border: 12px solid #d4941c;
+      box-shadow: 0 0 25px rgba(255, 200, 50, 0.8), inset 0 0 15px rgba(0, 0, 0, 0.8);
+      background: #2b1408;
+      transition: transform 4.2s cubic-bezier(0.15, 0.88, 0.22, 1);
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 15;
+      width: 68px;
+      height: 145px;
+      pointer-events: none;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.8));
+    }
+
+    /* EX Extra Bet Floating Control */
+    .ex-control-box {
+      position: absolute;
+      left: 8px;
+      bottom: 6px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .ex-btn {
+      background: linear-gradient(180deg, #ffe066 0%, #f59f00 55%, #b35900 100%);
+      border: 2px solid #fff3bf;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 1rem;
+      color: #4a1c00;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .ex-btn.active {
+      background: linear-gradient(180deg, #ff6b6b 0%, #c92a2a 60%, #7a0000 100%);
+      color: #fff3bf;
+      border-color: #ffd43b;
+      box-shadow: 0 0 16px #ff922b;
+      transform: scale(1.06);
+    }
+
+    /* Marquee & Special Wheel Header */
+    .reel-top-banner {
+      position: relative;
+      z-index: 15;
+      display: grid;
+      grid-template-columns: 3fr 1.15fr;
+      gap: 4px;
+      padding: 0 8px;
+      margin-top: -8px;
+    }
+
+    .marquee-bar {
+      background: linear-gradient(180deg, #4a1212 0%, #260707 100%);
+      border: 2px solid #d4941c;
+      border-radius: 6px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      box-shadow: inset 0 2px 6px rgba(0,0,0,0.8);
+    }
+
+    .marquee-text {
+      white-space: nowrap;
+      color: #ffe066;
+      font-weight: 800;
+      font-size: 0.82rem;
+      animation: scrollMarquee 11s linear infinite;
+      padding-left: 100%;
+    }
+
+    @keyframes scrollMarquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .special-wheel-badge {
+      background: linear-gradient(180deg, #7a1c1c 0%, #3b0909 100%);
+      border: 2px solid #f5b935;
+      border-radius: 6px;
+      height: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      line-height: 1;
+      color: #ffd43b;
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 0.62rem;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.7);
+    }
+
+    /* Main Slot Frame (3x3 + 1x3) */
+    .slot-frame {
+      position: relative;
+      z-index: 15;
+      margin: 4px 8px;
+      padding: 6px;
+      background: linear-gradient(180deg, #8b5a2b 0%, #4a2810 50%, #2b1406 100%);
+      border: 3px solid #e6a82e;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.85), inset 0 0 12px rgba(0,0,0,0.9);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr) 1.12fr;
+      gap: 5px;
+    }
+
+    .reel-column {
+      position: relative;
+      height: 276px;
+      background: linear-gradient(180deg, #1d0d06 0%, #38180a 50%, #1d0d06 100%);
+      border: 2px solid #9c621c;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: inset 0 0 14px rgba(0,0,0,0.95);
+    }
+
+    .reel-column.multiplier-col {
+      background: linear-gradient(180deg, #2e0808 0%, #5c1212 50%, #2e0808 100%);
+      border-color: #f5b935;
+    }
+
+    .reel-strip {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      will-change: transform;
+    }
+
+    .symbol-cell {
+      width: 100%;
+      height: 92px;
+      padding: 4px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Highlight Frame on Center Multiplier Cell */
+    .multiplier-center-highlight {
+      position: absolute;
+      top: 92px;
+      left: 0;
+      width: 100%;
+      height: 92px;
+      border: 3px solid #ffe066;
+      box-shadow: 0 0 14px #ffd43b, inset 0 0 10px #ffd43b;
+      border-radius: 6px;
+      pointer-events: none;
+      z-index: 10;
+      animation: pulseGoldBorder 1.6s infinite alternate;
+    }
+
+    @keyframes pulseGoldBorder {
+      from { box-shadow: 0 0 8px #f59f00, inset 0 0 6px #f59f00; }
+      to { box-shadow: 0 0 18px #fff066, inset 0 0 12px #fff066; }
+    }
+
+    /* Winning Cell Animation */
+    .win-highlight {
+      animation: winPop 0.65s ease-in-out infinite alternate;
+      z-index: 12;
+    }
+
+    @keyframes winPop {
+      0% { transform: scale(1); filter: brightness(1); }
+      100% { transform: scale(1.08); filter: brightness(1.35) drop-shadow(0 0 10px #ffd43b); }
+    }
+
+    /* SVG Paylines Overlay */
+    .paylines-overlay {
+      position: absolute;
+      inset: 6px;
+      pointer-events: none;
+      z-index: 14;
+    }
+
+    /* Temple Stairs & Bottom HUD */
+    .temple-bottom {
+      position: relative;
+      z-index: 15;
+      background: linear-gradient(180deg, #703e19 0%, #4b260d 25%, #2b1305 100%);
+      border-top: 3px solid #c98628;
+      padding: 8px 12px 14px;
+      box-shadow: 0 -6px 18px rgba(0,0,0,0.7);
+    }
+
+    /* Horizontal Temple Stair Lines */
+    .temple-bottom::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255, 200, 120, 0.08) 0px,
+        rgba(255, 200, 120, 0.08) 2px,
+        transparent 2px,
+        transparent 16px
+      );
+      pointer-events: none;
+    }
+
+    .win-readout {
+      text-align: center;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #ffd43b;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+      margin-bottom: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hud-circle-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #8c5828, #42220a);
+      border: 2px solid #d4941c;
+      color: #ffe066;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.75);
+      transition: transform 0.12s ease, box-shadow 0.2s ease;
+    }
+
+    .hud-circle-btn:active {
+      transform: scale(0.92);
+    }
+
+    .hud-circle-btn.active-mode {
+      background: radial-gradient(circle at 30% 30%, #ff922b, #b34700);
+      border-color: #fff3bf;
+      box-shadow: 0 0 14px #ffa94d;
+      color: #fff;
+    }
+
+    /* Main Center Golden Spin Button */
+    .spin-btn-outer {
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #ffe066 0%, #d48806 50%, #613400 100%);
+      padding: 5px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.85), 0 0 20px rgba(255, 193, 7, 0.45);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+    }
+
+    .spin-btn-outer:active {
+      transform: scale(0.94);
+    }
+
+    .spin-btn-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 25%, #fff3bf 0%, #f59f00 55%, #9c5200 100%);
+      border: 2px solid #5c2d00;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #4a1c00;
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      position: relative;
+    }
+
+    .spin-icon-rotate {
+      transition: transform 0.6s ease;
+    }
+    .spinning .spin-icon-rotate {
+      animation: spinArrow 0.7s linear infinite;
+    }
+    @keyframes spinArrow {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Particle Canvas */
+    #fxCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    /* Big Win / Wheel Modal */
+    .overlay-modal {
+      position: absolute;
+      inset: 0;
+      background: rgba(18, 7, 2, 0.86);
+      backdrop-filter: blur(4px);
+      z-index: 40;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .overlay-modal.show {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .big-win-card {
+      background: linear-gradient(180deg, #5e1914 0%, #2b0907 100%);
+      border: 3px solid #ffd43b;
+      border-radius: 16px;
+      padding: 22px 24px;
+      width: 90%;
+      max-width: 340px;
+      box-shadow: 0 0 35px rgba(255, 200, 40, 0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-cabinet" id="gameCabinet">
+    <!-- Ambient Sunlight & Temple Architecture -->
+    <div class="sun-rays"></div>
+    <div class="temple-pillar-left"></div>
+    <div class="temple-pillar-right"></div>
+
+    <!-- Top Foliage SVG -->
+    <svg class="absolute top-0 left-0 w-36 h-28 z-10 pointer-events-none" viewBox="0 0 140 110">
+      <path d="M0,0 L120,0 C105,35 75,45 55,65 C35,80 15,95 0,105 Z" fill="#2b5e1e" opacity="0.9"/>
+      <path d="M0,0 L95,0 C80,25 55,35 40,50 C25,65 10,75 0,85 Z" fill="#4c9a2a"/>
+      <circle cx="30" cy="25" r="18" fill="#68bb36" opacity="0.7"/>
+      <circle cx="65" cy="15" r="14" fill="#3a7d23" opacity="0.8"/>
+    </svg>
+    <svg class="absolute top-0 right-0 w-36 h-28 z-10 pointer-events-none" viewBox="0 0 140 110">
+      <path d="M140,0 L20,0 C35,35 65,45 85,65 C105,80 125,95 140,105 Z" fill="#2b5e1e" opacity="0.9"/>
+      <path d="M140,0 L45,0 C60,25 85,35 100,50 C115,65 130,75 140,85 Z" fill="#4c9a2a"/>
+      <circle cx="110" cy="25" r="18" fill="#68bb36" opacity="0.7"/>
+      <circle cx="75" cy="15" r="14" fill="#3a7d23" opacity="0.8"/>
+    </svg>
+
+    <!-- Top Sound & Info Bar -->
+    <div class="relative z-20 flex justify-between items-center px-3 pt-2">
+      <div class="bg-amber-950/80 border border-amber-500/60 rounded-full px-2.5 py-0.5 text-[11px] font-bold text-amber-200 flex items-center gap-1">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>DEMO PLAY</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="soundToggleBtn" class="bg-amber-950/85 border border-amber-400/70 text-amber-300 rounded-full p-1.5 shadow hover:scale-105 transition" title="Sound Toggle">
+          <svg id="soundOnIcon" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+          </svg>
+          <svg id="soundOffIcon" class="w-4 h-4 hidden text-red-400" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+          </svg>
+        </button>
+        <button id="paytableBtn" class="bg-gradient-to-b from-amber-400 to-amber-700 border border-amber-200 text-amber-950 font-black text-xs rounded-full w-7 h-7 flex items-center justify-center shadow hover:scale-105 transition" title="Paytable & Rules">
+          ?
+        </button>
+      </div>
+    </div>
+
+    <!-- Game Title Logo -->
+    <div class="logo-container">
+      <div class="game-title">
+        <span>F</span>
+        <span class="inline-flex items-center justify-center">
+          <svg class="w-6 h-6 inline -mx-0.5" viewBox="0 0 32 32">
+            <polygon points="16,2 28,10 28,22 16,30 4,22 4,10" fill="#10b981" stroke="#ffd43b" stroke-width="2.5"/>
+            <polygon points="16,7 22,12 22,20 16,25 10,20 10,12" fill="#6ee7b7"/>
+          </svg>
+        </span>
+        <span>RTUNE</span>
+        <span class="ml-1">G</span>
+        <span class="inline-flex items-center justify-center">
+          <svg class="w-6 h-6 inline -mx-0.5" viewBox="0 0 32 32">
+            <polygon points="16,2 28,10 28,22 16,30 4,22 4,10" fill="#2563eb" stroke="#ffd43b" stroke-width="2.5"/>
+            <polygon points="16,7 22,12 22,20 16,25 10,20 10,12" fill="#93c5fd"/>
+          </svg>
+        </span>
+        <span>MS</span>
+        <span class="title-two">2</span>
+      </div>
+    </div>
+
+    <!-- Upper Lucky Fortune Wheel -->
+    <div class="wheel-section">
+      <!-- Golden Pointer Frame -->
+      <svg class="wheel-pointer" viewBox="0 0 80 160">
+        <defs>
+          <linearGradient id="goldPointerGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#fff3bf"/>
+            <stop offset="50%" stop-color="#f59f00"/>
+            <stop offset="100%" stop-color="#7c3d00"/>
+          </linearGradient>
+        </defs>
+        <path d="M12,18 Q40,2 68,18 L52,148 L28,148 Z" fill="rgba(255, 240, 150, 0.22)" stroke="url(#goldPointerGrad)" stroke-width="5"/>
+        <polygon points="40,6 48,16 40,26 32,16" fill="#e11d48" stroke="#fff3bf" stroke-width="1.5"/>
+      </svg>
+
+      <!-- Rotating Wheel SVG -->
+      <div class="fortune-wheel-wrapper" id="fortuneWheel">
+        <svg viewBox="0 0 300 300" class="w-full h-full">
+          <g id="wheelSegmentsGroup"></g>
+        </svg>
+      </div>
+
+      <!-- EX Extra Bet Floating Toggle -->
+      <div class="ex-control-box">
+        <button id="exToggleBtn" class="ex-btn" title="Extra Bet: Boosts High Multipliers on 4th Reel">
+          <span>EX</span>
+          <span id="exArrow" class="text-xs">▲</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Banner Bar + Special Wheel Header -->
+    <div class="reel-top-banner">
+      <div class="marquee-bar">
+        <div class="marquee-text" id="marqueeText">
+          Lucky wheel randomly get 1X, 2X, 3X, 5X, 10X, 15X • Land WHEEL for up to 3,000X Mega Prize!
+        </div>
+      </div>
+      <div class="special-wheel-badge">
+        <span>SPECIAL</span>
+        <span class="text-amber-200">WHEEL</span>
+      </div>
+    </div>
+
+    <!-- Main 4-Column Slot Reels Frame -->
+    <div class="slot-frame" id="slotFrame">
+      <!-- Column 1 -->
+      <div class="reel-column" id="reelCol0">
+        <div class="reel-strip" id="reelStrip0"></div>
+      </div>
+      <!-- Column 2 -->
+      <div class="reel-column" id="reelCol1">
+        <div class="reel-strip" id="reelStrip1"></div>
+      </div>
+      <!-- Column 3 -->
+      <div class="reel-column" id="reelCol2">
+        <div class="reel-strip" id="reelStrip2"></div>
+      </div>
+      <!-- Column 4 (Multiplier / Special Wheel Reel) -->
+      <div class="reel-column multiplier-col" id="reelCol3">
+        <div class="multiplier-center-highlight"></div>
+        <div class="reel-strip" id="reelStrip3"></div>
+      </div>
+
+      <!-- Paylines SVG Overlay -->
+      <svg class="paylines-overlay" id="paylinesSvg" viewBox="0 0 320 276" preserveAspectRatio="none"></svg>
+    </div>
+
+    <!-- Temple Stairs & Bottom Controls HUD -->
+    <div class="temple-bottom">
+      <div class="win-readout flex items-center justify-center gap-3">
+        <span class="text-amber-200/90 text-sm">WIN</span>
+        <span id="winDisplay" class="text-xl text-yellow-300 font-black">0.00</span>
+      </div>
+
+      <div class="controls-row">
+        <!-- Settings / Reset Balance -->
+        <button id="refillBtn" class="hud-circle-btn" title="Refill Virtual Balance">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
+        </button>
+
+        <!-- Bet Selector -->
+        <div class="flex flex-col items-center">
+          <button id="betBtn" class="hud-circle-btn" title="Change Bet Amount">
+            <svg class="w-5 h-5 text-emerald-300" fill="currentColor" viewBox="0 0 24 24">
+              <ellipse cx="12" cy="6" rx="7" ry="3"/>
+              <path d="M5 10c0 1.66 3.13 3 7 3s7-1.34 7-3v3c0 1.66-3.13 3-7 3s-7-1.34-7-3v-3z"/>
+              <path d="M5 15c0 1.66 3.13 3 7 3s7-1.34 7-3v3c0 1.66-3.13 3-7 3s-7-1.34-7-3v-3z"/>
+            </svg>
+          </button>
+          <span class="text-[11px] font-extrabold text-amber-200 mt-0.5">Bet <span id="betDisplay" class="text-white">3</span></span>
+        </div>
+
+        <!-- Central Golden Spin Button -->
+        <div class="spin-btn-outer" id="spinBtn">
+          <div class="spin-btn-inner">
+            <svg class="w-10 h-10 spin-icon-rotate" viewBox="0 0 48 48" fill="none">
+              <path d="M36 16A14 14 0 1 0 38 26" stroke="#5c2d00" stroke-width="4.5" stroke-linecap="round"/>
+              <polygon points="36,9 43,18 32,19" fill="#5c2d00"/>
+            </svg>
+            <span class="text-[10px] tracking-wider -mt-1 font-black text-amber-950">SPIN</span>
+          </div>
+        </div>
+
+        <!-- Auto Spin Toggle -->
+        <div class="flex flex-col items-center">
+          <button id="autoSpinBtn" class="hud-circle-btn" title="Auto Spin">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 20v-5h-5M5.64 17.36A9 9 0 0019.5 13M18.36 6.64A9 9 0 004.5 11"/>
+            </svg>
+          </button>
+          <span class="text-[10px] font-bold text-amber-200/90 mt-0.5" id="autoLabel">Auto</span>
+        </div>
+
+        <!-- Turbo Spin Toggle -->
+        <div class="flex flex-col items-center">
+          <button id="turboBtn" class="hud-circle-btn" title="Turbo Spin">
+            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/>
+            </svg>
+          </button>
+          <span class="text-[10px] font-bold text-amber-200/90 mt-0.5">Turbo</span>
+        </div>
+      </div>
+
+      <!-- Bottom Balance Bar -->
+      <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-amber-700/50 text-xs">
+        <div class="flex items-center gap-2">
+          <span class="bg-emerald-700 border border-emerald-400 text-white font-black px-1.5 py-0.5 rounded text-[10px]">LV 2</span>
+          <span class="text-amber-300 font-bold">Balance</span>
+          <span id="balanceDisplay" class="text-white font-black text-sm">1000.00</span>
+        </div>
+        <div class="flex items-center gap-1 text-emerald-400 text-[11px] font-bold">
+          <span>FREE CREDITS</span>
+          <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 18c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm-4.9-2.3l1.4 1.4C9.4 16.4 10.6 16 12 16s2.6.4 3.5 1.1l1.4-1.4C15.6 14.6 13.9 14 12 14s-3.6.6-4.9 1.7zm-2.8-2.8l1.4 1.4C7.3 13 9.5 12 12 12s4.7 1 6.3 2.3l1.4-1.4C17.7 11.1 15 10 12 10s-5.7 1.1-7.7 2.9z"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Particle Effects Canvas -->
+    <canvas id="fxCanvas"></canvas>
+
+    <!-- Big Win / Fortune Wheel Result Modal -->
+    <div class="overlay-modal" id="winModal">
+      <div class="big-win-card">
+        <div id="modalSubtitle" class="text-xs font-extrabold tracking-widest uppercase text-amber-300 mb-1">FORTUNE BONUS</div>
+        <h2 id="modalTitle" class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-b from-yellow-200 via-amber-400 to-orange-500 mb-2" style="font-family: 'Cinzel', serif;">MEGA WIN!</h2>
+        <div class="my-3 py-3 px-4 rounded-xl bg-black/50 border border-amber-500/50">
+          <div id="modalAmount" class="text-4xl font-black text-yellow-300 drop-shadow">0.00</div>
+        </div>
+        <button id="closeWinModalBtn" class="mt-2 w-full py-2.5 rounded-full bg-gradient-to-b from-yellow-300 to-amber-600 text-amber-950 font-black text-sm shadow-lg active:scale-95 transition">
+          COLLECT
+        </button>
+      </div>
+    </div>
+
+    <!-- Paytable & Rules Modal -->
+    <div class="overlay-modal" id="paytableModal">
+      <div class="big-win-card text-left max-h-[85vh] overflow-y-auto">
+        <div class="flex justify-between items-center border-b border-amber-500/40 pb-2 mb-3">
+          <h3 class="text-lg font-black text-amber-300" style="font-family: 'Cinzel', serif;">PAYTABLE & RULES</h3>
+          <button id="closePaytableBtn" class="text-amber-200 hover:text-white font-black text-lg px-2">✕</button>
+        </div>
+        <p class="text-xs text-amber-100/90 mb-3 leading-relaxed">
+          Match 3 identical symbols across any of the <strong>5 paylines</strong> (3 horizontal, 2 diagonal). The center symbol on the <strong>4th Reel</strong> multiplies your total line win!
+        </p>
+        <div class="grid grid-cols-2 gap-2 text-xs mb-3" id="paytableGrid"></div>
+        <div class="bg-amber-950/80 border border-amber-500/40 rounded-lg p-2.5 text-[11px] text-amber-200 space-y-1">
+          <div>• <strong>WILD (Garuda):</strong> Substitutes for all gems & letters.</div>
+          <div>• <strong>SPECIAL WHEEL:</strong> Landing WHEEL in the 4th reel center spins the top Fortune Wheel for up to <strong>3,000x</strong>!</div>
+          <div>• <strong>EX Mode:</strong> Increases total bet by 1.5x and boosts high multipliers (5x, 10x, 15x, Wheel).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Message Box -->
+    <div id="toastBox" class="fixed top-14 left-1/2 -translate-x-1/2 z-50 bg-amber-950/95 border border-amber-400 text-amber-200 text-xs font-bold px-4 py-2 rounded-full shadow-xl opacity-0 pointer-events-none transition-opacity duration-300">
+      Message
+    </div>
+  </div>
+
+  <script>
+    /**
+     * Web Audio API Sound Synthesizer
+     * Generates authentic casino slot clicks, spin hums, wheel ticks, and win fanfare without external audio files.
+     */
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+      }
+
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioCtx();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+
+      playTone(freq, type, duration, vol = 0.15, delay = 0) {
+        if (this.muted) return;
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, this.ctx.currentTime + delay);
+        gain.gain.setValueAtTime(vol, this.ctx.currentTime + delay);
+        gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + delay + duration);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(this.ctx.currentTime + delay);
+        osc.stop(this.ctx.currentTime + delay + duration);
+      }
+
+      playSpinStart() {
+        this.playTone(220, 'triangle', 0.12, 0.18, 0);
+        this.playTone(330, 'triangle', 0.15, 0.18, 0.06);
+      }
+
+      playReelStop(colIndex) {
+        const baseFreq = 140 + colIndex * 35;
+        this.playTone(baseFreq, 'sine', 0.12, 0.25, 0);
+        this.playTone(baseFreq * 1.5, 'triangle', 0.08, 0.12, 0.02);
+      }
+
+      playWheelTick() {
+        this.playTone(680, 'triangle', 0.04, 0.12, 0);
+      }
+
+      playWin(isBig = false) {
+        const notes = isBig
+          ? [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]
+          : [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((n, idx) => {
+          this.playTone(n, 'triangle', 0.35, 0.2, idx * 0.08);
+          this.playTone(n * 0.5, 'sine', 0.35, 0.12, idx * 0.08);
+        });
+      }
+    }
+
+    const sound = new SoundEngine();
+
+    /**
+     * Symbol Definitions & Payouts (per base bet unit)
+     */
+    const MAIN_SYMBOLS = [
+      { id: 'WILD', name: 'Garuda Wild', payout: 14, weight: 1 },
+      { id: 'RUBY', name: 'Red Ruby', payout: 10, weight: 2 },
+      { id: 'SAPPHIRE', name: 'Blue Sapphire', payout: 8, weight: 3 },
+      { id: 'EMERALD', name: 'Green Emerald', payout: 6.5, weight: 5 },
+      { id: 'A', name: 'Ace', payout: 5, weight: 7 },
+      { id: 'K', name: 'King', payout: 4, weight: 9 },
+      { id: 'Q', name: 'Queen', payout: 3.2, weight: 11 },
+      { id: 'J', name: 'Jack', payout: 2.5, weight: 13 }
+    ];
+
+    const MULTIPLIER_SYMBOLS = [
+      { id: '1X', val: 1, weightNormal: 55, weightEx: 40 },
+      { id: '2X', val: 2, weightNormal: 28, weightEx: 32 },
+      { id: '3X', val: 3, weightNormal: 11, weightEx: 16 },
+      { id: '5X', val: 5, weightNormal: 4, weightEx: 7 },
+      { id: '10X', val: 10, weightNormal: 1.2, weightEx: 3 },
+      { id: '15X', val: 15, weightNormal: 0.5, weightEx: 1.3 },
+      { id: 'WHEEL', val: 'WHEEL', weightNormal: 0.3, weightEx: 0.7 }
+    ];
+
+    // 5 Paylines: indices represent row (0=top, 1=mid, 2=bot) for columns 0, 1, 2
+    const PAYLINES = [
+      { rows: [1, 1, 1], color: '#ffe066' }, // Middle horizontal
+      { rows: [0, 0, 0], color: '#ff6b6b' }, // Top horizontal
+      { rows: [2, 2, 2], color: '#4dabf7' }, // Bottom horizontal
+      { rows: [0, 1, 2], color: '#51cf66' }, // Diagonal TL -> BR
+      { rows: [2, 1, 0], color: '#cc5de8' }  // Diagonal BL -> TR
+    ];
+
+    // Top Fortune Wheel Segments (multiplies total bet)
+    const WHEEL_SEGMENTS = [
+      { label: '60', mult: 15, color: '#1d4ed8' },
+      { label: '45', mult: 12, color: '#15803d' },
+      { label: '3,000', mult: 100, color: '#7e22ce' },
+      { label: '15', mult: 5, color: '#92400e' },
+      { label: '100', mult: 25, color: '#b91c1c' },
+      { label: '30', mult: 8, color: '#0f766e' },
+      { label: '300', mult: 40, color: '#6b21a8' },
+      { label: '9', mult: 3, color: '#5c4033' }
+    ];
+
+    /**
+     * Rich Detailed SVG Artwork Generator for Symbols
+     */
+    function getSymbolSVG(id) {
+      switch (id) {
+        case 'WILD':
+          return `
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+              <defs>
+                <linearGradient id="wildGold" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#fff9db"/>
+                  <stop offset="45%" stop-color="#fcc419"/>
+                  <stop offset="100%" stop-color="#9c5200"/>
+                </linearGradient>
+              </defs>
+              <rect x="4" y="4" width="92" height="92" rx="12" fill="#3b0d0c" stroke="url(#wildGold)" stroke-width="5"/>
+              <!-- Garuda Golden Wings & Crown -->
+              <path d="M12,35 Q25,12 50,10 Q75,12 88,35 L80,62 L20,62 Z" fill="url(#wildGold)" stroke="#5c2d00" stroke-width="2"/>
+              <polygon points="50,8 56,20 50,28 44,20" fill="#e11d48" stroke="#fff" stroke-width="1"/>
+              <!-- Fierce Eyes -->
+              <ellipse cx="36" cy="40" rx="7" ry="5" fill="#fff"/>
+              <circle cx="37" cy="40" r="3" fill="#dc2626"/>
+              <ellipse cx="64" cy="40" rx="7" ry="5" fill="#fff"/>
+              <circle cx="63" cy="40" r="3" fill="#dc2626"/>
+              <!-- Golden Beak -->
+              <polygon points="42,46 58,46 50,62" fill="#f59f00" stroke="#5c2d00" stroke-width="2"/>
+              <!-- WILD Banner -->
+              <rect x="10" y="66" width="80" height="24" rx="6" fill="#991b1b" stroke="#ffd43b" stroke-width="2"/>
+              <text x="50" y="83" text-anchor="middle" fill="#ffe066" font-family="Cinzel, serif" font-weight="900" font-size="18" letter-spacing="1">WILD</text>
+            </svg>`;
+
+        case 'RUBY':
+          return `
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+              <rect x="5" y="5" width="90" height="90" rx="10" fill="#2c1306" stroke="#f5b935" stroke-width="5"/>
+              <circle cx="50" cy="50" r="34" fill="#4c0519" stroke="#fbbf24" stroke-width="3"/>
+              <polygon points="50,18 76,34 76,66 50,82 24,66 24,34" fill="#e11d48" stroke="#fda4af" stroke-width="2"/>
+              <polygon points="50,28 66,38 66,62 50,72 34,62 34,38" fill="#fb7185" opacity="0.85"/>
+              <polygon points="50,18 66,38 34,38" fill="#fff1f2" opacity="0.6"/>
+            </svg>`;
+
+        case 'SAPPHIRE':
+          return `
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+              <rect x="5" y="5" width="90" height="90" rx="10" fill="#2c1306" stroke="#f5b935" stroke-width="5"/>
+              <polygon points="50,14 82,32 82,68 50,86 18,68 18,32" fill="#1d4ed8" stroke="#93c5fd" stroke-width="3"/>
+              <polygon points="50,25 70,37 70,63 50,75 30,63 30,37" fill="#38bdf8"/>
+              <polygon points="50,14 70,37 30,37" fill="#e0f2fe" opacity="0.7"/>
+            </svg>`;
+
+        case 'EMERALD':
+          return `
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+              <rect x="5" y="5" width="90" height="90" rx="10" fill="#2c1306" stroke="#f5b935" stroke-width="5"/>
+              <rect x="22" y="18" width="56" height="64" rx="10" fill="#059669" stroke="#6ee7b7" stroke-width="3"/>
+              <rect x="31" y="27" width="38" height="46" rx="6" fill="#34d399"/>
+              <polygon points="22,18 78,18 69,27 31,27" fill="#d1fae5" opacity="0.7"/>
+            </svg>`;
+
+        case 'A':
+        case 'K':
+        case 'Q':
+        case 'J': {
+          const colors = {
+            A: ['#dc2626', '#fca5a5'],
+            K: ['#7c3aed', '#ddd6fe'],
+            Q: ['#0284c7', '#bae6fd'],
+            J: ['#d97706', '#fde68a']
+          };
+          const [mainCol, hiCol] = colors[id];
+          return `
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow">
+              <rect x="6" y="6" width="88" height="88" rx="10" fill="#231107" stroke="#c98628" stroke-width="4"/>
+              <text x="50" y="71" text-anchor="middle" fill="${mainCol}" stroke="${hiCol}" stroke-width="2.5" font-family="Cinzel, serif" font-weight="900" font-size="62">${id}</text>
+            </svg>`;
+        }
+
+        // Column 4 Multiplier Medallions
+        case '1X':
+        case '2X':
+        case '3X':
+        case '5X':
+        case '10X':
+        case '15X': {
+          const badgeColors = {
+            '1X': ['#059669', '#a7f3d0'],
+            '2X': ['#0284c7', '#bae6fd'],
+            '3X': ['#d97706', '#fde68a'],
+            '5X': ['#2563eb', '#93c5fd'],
+            '10X': ['#7e22ce', '#e9d5ff'],
+            '15X': ['#dc2626', '#fecaca']
+          };
+          const [bg, ring] = badgeColors[id];
+          return `
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-md">
+              <circle cx="50" cy="50" r="42" fill="${bg}" stroke="#ffd43b" stroke-width="5"/>
+              <circle cx="50" cy="50" r="34" fill="none" stroke="${ring}" stroke-width="2" stroke-dasharray="6 4"/>
+              <text x="50" y="61" text-anchor="middle" fill="#fff9db" stroke="#4a1c00" stroke-width="2" font-family="Cinzel, serif" font-weight="900" font-size="31">${id}</text>
+            </svg>`;
+        }
+
+        case 'WHEEL':
+          return `
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-lg">
+              <circle cx="50" cy="50" r="43" fill="#b91c1c" stroke="#ffe066" stroke-width="5"/>
+              <path d="M50,50 L50,10 A40,40 0 0,1 85,30 Z" fill="#2563eb"/>
+              <path d="M50,50 L85,30 A40,40 0 0,1 85,70 Z" fill="#16a34a"/>
+              <path d="M50,50 L85,70 A40,40 0 0,1 50,90 Z" fill="#9333ea"/>
+              <path d="M50,50 L50,90 A40,40 0 0,1 15,70 Z" fill="#ea580c"/>
+              <path d="M50,50 L15,70 A40,40 0 0,1 15,30 Z" fill="#0d9488"/>
+              <circle cx="50" cy="50" r="16" fill="#ffd43b" stroke="#4a1c00" stroke-width="2"/>
+              <rect x="12" y="38" width="76" height="24" rx="6" fill="#4a0404" stroke="#ffd43b" stroke-width="2"/>
+              <text x="50" y="54" text-anchor="middle" fill="#ffe066" font-family="Cinzel, serif" font-weight="900" font-size="14">WHEEL</text>
+            </svg>`;
+      }
+    }
+
+    /**
+     * Game State Management
+     */
+    const state = {
+      balance: 1000.00,
+      bets: [1, 2, 3, 5, 10, 20, 50, 100],
+      betIndex: 2, // Default Bet = 3
+      exMode: false,
+      isSpinning: false,
+      autoSpin: false,
+      turboSpin: false,
+      wheelRotation: 0,
+      grid: [
+        ['WILD', 'WILD', 'WILD'],
+        ['RUBY', 'RUBY', 'RUBY'],
+        ['SAPPHIRE', 'SAPPHIRE', 'SAPPHIRE'],
+        ['5X', '10X', '15X']
+      ]
+    };
+
+    // DOM References
+    const balanceDisplay = document.getElementById('balanceDisplay');
+    const betDisplay = document.getElementById('betDisplay');
+    const winDisplay = document.getElementById('winDisplay');
+    const spinBtn = document.getElementById('spinBtn');
+    const betBtn = document.getElementById('betBtn');
+    const autoSpinBtn = document.getElementById('autoSpinBtn');
+    const autoLabel = document.getElementById('autoLabel');
+    const turboBtn = document.getElementById('turboBtn');
+    const exToggleBtn = document.getElementById('exToggleBtn');
+    const refillBtn = document.getElementById('refillBtn');
+    const paylinesSvg = document.getElementById('paylinesSvg');
+    const fortuneWheel = document.getElementById('fortuneWheel');
+    const winModal = document.getElementById('winModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalSubtitle = document.getElementById('modalSubtitle');
+    const modalAmount = document.getElementById('modalAmount');
+    const closeWinModalBtn = document.getElementById('closeWinModalBtn');
+    const paytableModal = document.getElementById('paytableModal');
+    const paytableBtn = document.getElementById('paytableBtn');
+    const closePaytableBtn = document.getElementById('closePaytableBtn');
+    const soundToggleBtn = document.getElementById('soundToggleBtn');
+    const toastBox = document.getElementById('toastBox');
+
+    function showToast(msg) {
+      toastBox.textContent = msg;
+      toastBox.style.opacity = '1';
+      clearTimeout(toastBox._timer);
+      toastBox._timer = setTimeout(() => {
+        toastBox.style.opacity = '0';
+      }, 2200);
+    }
+
+    function getCurrentTotalBet() {
+      const base = state.bets[state.betIndex];
+      return state.exMode ? +(base * 1.5).toFixed(2) : base;
+    }
+
+    function updateHUD() {
+      balanceDisplay.textContent = state.balance.toFixed(2);
+      betDisplay.textContent = getCurrentTotalBet();
+      buildPaytableUI();
+    }
+
+    /**
+     * Build Upper Fortune Wheel SVG Segments
+     */
+    function buildFortuneWheel() {
+      const group = document.getElementById('wheelSegmentsGroup');
+      const cx = 150, cy = 150, r = 145;
+      const count = WHEEL_SEGMENTS.length;
+      const step = (2 * Math.PI) / count;
+
+      let html = '';
+      WHEEL_SEGMENTS.forEach((seg, i) => {
+        // Offset so segment 0 is centered at top (-90 deg)
+        const startAngle = i * step - Math.PI / 2 - step / 2;
+        const endAngle = startAngle + step;
+        const x1 = cx + r * Math.cos(startAngle);
+        const y1 = cy + r * Math.sin(startAngle);
+        const x2 = cx + r * Math.cos(endAngle);
+        const y2 = cy + r * Math.sin(endAngle);
+
+        const midAngle = (startAngle + endAngle) / 2;
+        const textR = r * 0.68;
+        const tx = cx + textR * Math.cos(midAngle);
+        const ty = cy + textR * Math.sin(midAngle);
+        const rotDeg = (midAngle * 180) / Math.PI + 90;
+
+        html += `
+          <path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 0,1 ${x2},${y2} Z"
+                fill="${seg.color}" stroke="#f5b935" stroke-width="3"/>
+          <text x="${tx}" y="${ty}" fill="#ffe066" stroke="#2b1408" stroke-width="1"
+                font-family="Cinzel, serif" font-weight="900" font-size="18"
+                text-anchor="middle" dominant-baseline="middle"
+                transform="rotate(${rotDeg}, ${tx}, ${ty})">
+            ${seg.label}
+          </text>
+        `;
+      });
+      group.innerHTML = html;
+    }
+
+    /**
+     * Weighted Random Symbol Picker
+     */
+    function pickRandomMainSymbol() {
+      const totalWeight = MAIN_SYMBOLS.reduce((acc, s) => acc + s.weight, 0);
+      let r = Math.random() * totalWeight;
+      for (const s of MAIN_SYMBOLS) {
+        if (r < s.weight) return s.id;
+        r -= s.weight;
+      }
+      return 'J';
+    }
+
+    function pickRandomMultiplierSymbol() {
+      const key = state.exMode ? 'weightEx' : 'weightNormal';
+      const totalWeight = MULTIPLIER_SYMBOLS.reduce((acc, s) => acc + s[key], 0);
+      let r = Math.random() * totalWeight;
+      for (const s of MULTIPLIER_SYMBOLS) {
+        if (r < s[key]) return s.id;
+        r -= s[key];
+      }
+      return '1X';
+    }
+
+    /**
+     * Render Initial Static Reel Columns
+     */
+    function renderStaticReels() {
+      for (let col = 0; col < 4; col++) {
+        const strip = document.getElementById(`reelStrip${col}`);
+        strip.style.transition = 'none';
+        strip.style.transform = 'translateY(0px)';
+        strip.innerHTML = state.grid[col]
+          .map((symId, rowIdx) => `<div class="symbol-cell" id="cell-${col}-${rowIdx}">${getSymbolSVG(symId)}</div>`)
+          .join('');
+      }
+    }
+
+    /**
+     * Main Spin Execution
+     */
+    async function triggerSpin() {
+      if (state.isSpinning) return;
+
+      const totalBet = getCurrentTotalBet();
+      if (state.balance < totalBet) {
+        state.autoSpin = false;
+        autoSpinBtn.classList.remove('active-mode');
+        autoLabel.textContent = 'Auto';
+        showToast('Insufficient balance! Tap + to refill free demo credits.');
+        return;
+      }
+
+      state.isSpinning = true;
+      state.balance = +(state.balance - totalBet).toFixed(2);
+      winDisplay.textContent = '0.00';
+      paylinesSvg.innerHTML = '';
+      updateHUD();
+
+      spinBtn.classList.add('spinning');
+      sound.playSpinStart();
+
+      // Generate next outcome
+      const nextGrid = [
+        [pickRandomMainSymbol(), pickRandomMainSymbol(), pickRandomMainSymbol()],
+        [pickRandomMainSymbol(), pickRandomMainSymbol(), pickRandomMainSymbol()],
+        [pickRandomMainSymbol(), pickRandomMainSymbol(), pickRandomMainSymbol()],
+        [pickRandomMultiplierSymbol(), pickRandomMultiplierSymbol(), pickRandomMultiplierSymbol()]
+      ];
+
+      const cellHeight = 92;
+      const baseSpinItems = state.turboSpin ? 10 : 18;
+
+      const reelPromises = [0, 1, 2, 3].map((col) => {
+        return new Promise((resolve) => {
+          const strip = document.getElementById(`reelStrip${col}`);
+          const extraCount = baseSpinItems + col * (state.turboSpin ? 3 : 6);
+          const filler = [];
+
+          for (let i = 0; i < extraCount; i++) {
+            filler.push(col < 3 ? pickRandomMainSymbol() : pickRandomMultiplierSymbol());
+          }
+
+          // Final 3 visible symbols sit at the top of the strip after scrolling down
+          const fullSequence = [...nextGrid[col], ...filler, ...state.grid[col]];
+          strip.style.transition = 'none';
+          strip.innerHTML = fullSequence
+            .map((symId, idx) => `<div class="symbol-cell" id="${idx < 3 ? `cell-${col}-${idx}` : ''}">${getSymbolSVG(symId)}</div>`)
+            .join('');
+
+          const startOffset = -(fullSequence.length - 3) * cellHeight;
+          strip.style.transform = `translateY(${startOffset}px)`;
+
+          // Force reflow
+          strip.getBoundingClientRect();
+
+          const duration = state.turboSpin
+            ? 0.45 + col * 0.1
+            : 0.95 + col * 0.25;
+
+          strip.style.transition = `transform ${duration}s cubic-bezier(0.15, 0.85, 0.3, 1.04)`;
+          strip.style.transform = 'translateY(0px)';
+
+          setTimeout(() => {
+            sound.playReelStop(col);
+            resolve();
+          }, duration * 1000);
+        });
+      });
+
+      await Promise.all(reelPromises);
+      state.grid = nextGrid;
+      spinBtn.classList.remove('spinning');
+
+      await evaluateWins();
+      state.isSpinning = false;
+
+      if (state.autoSpin) {
+        setTimeout(() => {
+          if (state.autoSpin) triggerSpin();
+        }, state.turboSpin ? 450 : 900);
+      }
+    }
+
+    /**
+     * Evaluate 5 Paylines + 4th Reel Multiplier / Special Fortune Wheel
+     */
+    async function evaluateWins() {
+      const baseBet = state.bets[state.betIndex];
+      const winningLines = [];
+      let rawLineWin = 0;
+
+      PAYLINES.forEach((line, lineIdx) => {
+        const s0 = state.grid[0][line.rows[0]];
+        const s1 = state.grid[1][line.rows[1]];
+        const s2 = state.grid[2][line.rows[2]];
+        const syms = [s0, s1, s2];
+
+        // Find non-wild target symbol
+        const nonWilds = syms.filter((s) => s !== 'WILD');
+        let matchedSym = null;
+
+        if (nonWilds.length === 0) {
+          matchedSym = 'WILD';
+        } else if (nonWilds.every((s) => s === nonWilds[0])) {
+          matchedSym = nonWilds[0];
+        }
+
+        if (matchedSym) {
+          const symObj = MAIN_SYMBOLS.find((m) => m.id === matchedSym);
+          // Payout scales strictly proportional to the player's selected bet
+          const linePayout = +((symObj.payout / 10) * baseBet).toFixed(2);
+          rawLineWin += linePayout;
+          winningLines.push({ lineIdx, rows: line.rows, color: line.color });
+        }
+      });
+
+      // Center symbol of 4th column (row index 1)
+      const centerMultSym = state.grid[3][1];
+      let totalWin = 0;
+
+      // Highlight winning cells
+      if (winningLines.length > 0) {
+        drawWinningPaylines(winningLines);
+      }
+
+      // Case 1: WHEEL landed in center of 4th reel!
+      if (centerMultSym === 'WHEEL') {
+        const wheelBonus = await spinUpperFortuneWheel(baseBet);
+        const linePart = rawLineWin > 0 ? rawLineWin : 0;
+        totalWin = +(linePart + wheelBonus).toFixed(2);
+      } else if (rawLineWin > 0) {
+        const multObj = MULTIPLIER_SYMBOLS.find((m) => m.id === centerMultSym);
+        const multVal = multObj ? multObj.val : 1;
+        totalWin = +(rawLineWin * multVal).toFixed(2);
+      }
+
+      if (totalWin > 0) {
+        state.balance = +(state.balance + totalWin).toFixed(2);
+        winDisplay.textContent = totalWin.toFixed(2);
+        updateHUD();
+
+        const isBigWin = totalWin >= getCurrentTotalBet() * 10 || centerMultSym === 'WHEEL';
+        sound.playWin(isBigWin);
+        spawnParticles(isBigWin ? 90 : 35);
+
+        if (isBigWin) {
+          modalSubtitle.textContent = centerMultSym === 'WHEEL' ? 'FORTUNE WHEEL PRIZE!' : `${centerMultSym} MULTIPLIER WIN!`;
+          modalTitle.textContent = totalWin >= getCurrentTotalBet() * 25 ? 'JACKPOT WIN!' : 'MEGA WIN!';
+          modalAmount.textContent = totalWin.toFixed(2);
+          winModal.classList.add('show');
+        }
+      }
+    }
+
+    /**
+     * Spin Upper Semicircular Fortune Wheel when WHEEL lands
+     */
+    function spinUpperFortuneWheel(baseBet) {
+      return new Promise((resolve) => {
+        showToast('SPECIAL FORTUNE WHEEL ACTIVATED!');
+        // Weighted selection favoring smaller wheel prizes (9, 15, 30, 45)
+        const wheelWeights = [4, 6, 0.2, 18, 2, 12, 1, 22];
+        const totalW = wheelWeights.reduce((a, b) => a + b, 0);
+        let r = Math.random() * totalW;
+        let chosenIndex = 7;
+        for (let i = 0; i < wheelWeights.length; i++) {
+          if (r < wheelWeights[i]) {
+            chosenIndex = i;
+            break;
+          }
+          r -= wheelWeights[i];
+        }
+        const chosenSeg = WHEEL_SEGMENTS[chosenIndex];
+        const segAngle = 360 / WHEEL_SEGMENTS.length;
+
+        // Calculate target angle so chosenIndex stops directly under top center pointer
+        const targetOffset = 360 - chosenIndex * segAngle;
+        const extraSpins = 360 * 5;
+        const currentMod = state.wheelRotation % 360;
+        state.wheelRotation += extraSpins + (targetOffset - currentMod + 360) % 360;
+
+        fortuneWheel.style.transform = `rotate(${state.wheelRotation}deg)`;
+
+        let ticks = 0;
+        const tickInterval = setInterval(() => {
+          sound.playWheelTick();
+          ticks++;
+          if (ticks > 28) clearInterval(tickInterval);
+        }, 135);
+
+        setTimeout(() => {
+          clearInterval(tickInterval);
+          // Wheel prize scales directly with the player's selected bet
+          const prize = +(chosenSeg.mult * (baseBet / 3)).toFixed(2);
+          resolve(prize);
+        }, 4300);
+      });
+    }
+
+    /**
+     * Draw Glowing SVG Paylines & Highlight Winning Cells
+     */
+    function drawWinningPaylines(winningLines) {
+      const colCentersX = [40, 120, 200, 280];
+      const rowCentersY = [46, 138, 230];
+      let pathsHtml = '';
+
+      winningLines.forEach((wl) => {
+        const p0 = `${colCentersX[0]},${rowCentersY[wl.rows[0]]}`;
+        const p1 = `${colCentersX[1]},${rowCentersY[wl.rows[1]]}`;
+        const p2 = `${colCentersX[2]},${rowCentersY[wl.rows[2]]}`;
+        const p3 = `${colCentersX[3]},${rowCentersY[1]}`; // Connects to center multiplier
+
+        pathsHtml += `
+          <polyline points="${p0} ${p1} ${p2} ${p3}" fill="none" stroke="${wl.color}"
+                    stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                    style="filter: drop-shadow(0 0 6px ${wl.color}); opacity: 0.9;"/>
+        `;
+
+        wl.rows.forEach((r, c) => {
+          const cell = document.getElementById(`cell-${c}-${r}`);
+          if (cell) cell.classList.add('win-highlight');
+        });
+      });
+
+      const multCell = document.getElementById('cell-3-1');
+      if (multCell) multCell.classList.add('win-highlight');
+
+      paylinesSvg.innerHTML = pathsHtml;
+    }
+
+    /**
+     * Golden Coin & Sparkle Particle System
+     */
+    const fxCanvas = document.getElementById('fxCanvas');
+    const fxCtx = fxCanvas.getContext('2d');
+    let particles = [];
+
+    function resizeFxCanvas() {
+      const rect = document.getElementById('gameCabinet').getBoundingClientRect();
+      fxCanvas.width = rect.width;
+      fxCanvas.height = rect.height;
+    }
+    window.addEventListener('resize', resizeFxCanvas);
+    resizeFxCanvas();
+
+    function spawnParticles(count = 40) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: fxCanvas.width / 2 + (Math.random() - 0.5) * 140,
+          y: fxCanvas.height * 0.55,
+          vx: (Math.random() - 0.5) * 11,
+          vy: -Math.random() * 12 - 3,
+          size: Math.random() * 7 + 4,
+          color: Math.random() > 0.3 ? '#ffd43b' : '#ff922b',
+          life: 1.0
+        });
+      }
+    }
+
+    function animateParticles() {
+      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+      particles = particles.filter((p) => p.life > 0);
+
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35; // gravity
+        p.life -= 0.018;
+
+        fxCtx.save();
+        fxCtx.globalAlpha = Math.max(0, p.life);
+        fxCtx.fillStyle = p.color;
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        fxCtx.fill();
+        fxCtx.strokeStyle = '#7c3d00';
+        fxCtx.lineWidth = 1.5;
+        fxCtx.stroke();
+        fxCtx.restore();
+      });
+
+      requestAnimationFrame(animateParticles);
+    }
+
+    /**
+     * Populate Paytable Modal
+     */
+    function buildPaytableUI() {
+      const grid = document.getElementById('paytableGrid');
+      const baseBet = state.bets[state.betIndex];
+      grid.innerHTML = MAIN_SYMBOLS.map((sym) => {
+        const winForBet = ((sym.payout / 10) * baseBet).toFixed(2);
+        return `
+        <div class="flex items-center gap-2 bg-black/40 border border-amber-500/30 rounded-lg p-1.5">
+          <div class="w-10 h-10 shrink-0">${getSymbolSVG(sym.id)}</div>
+          <div>
+            <div class="font-bold text-amber-200">${sym.name}</div>
+            <div class="text-yellow-400 font-black">Win: ${winForBet}</div>
+          </div>
+        </div>
+      `;
+      }).join('');
+    }
+
+    /**
+     * Event Listeners
+     */
+    spinBtn.addEventListener('click', () => {
+      if (state.autoSpin) {
+        state.autoSpin = false;
+        autoSpinBtn.classList.remove('active-mode');
+        autoLabel.textContent = 'Auto';
+      }
+      triggerSpin();
+    });
+
+    betBtn.addEventListener('click', () => {
+      if (state.isSpinning) return;
+      state.betIndex = (state.betIndex + 1) % state.bets.length;
+      updateHUD();
+      sound.playTone(440, 'sine', 0.08, 0.15);
+      showToast(`Total Bet: ${getCurrentTotalBet()}`);
+    });
+
+    exToggleBtn.addEventListener('click', () => {
+      if (state.isSpinning) return;
+      state.exMode = !state.exMode;
+      exToggleBtn.classList.toggle('active', state.exMode);
+      updateHUD();
+      sound.playTone(state.exMode ? 620 : 340, 'triangle', 0.15, 0.2);
+      showToast(state.exMode ? 'EX Mode ON: High Multipliers Boosted!' : 'EX Mode OFF');
+    });
+
+    autoSpinBtn.addEventListener('click', () => {
+      state.autoSpin = !state.autoSpin;
+      autoSpinBtn.classList.toggle('active-mode', state.autoSpin);
+      autoLabel.textContent = state.autoSpin ? 'Stop' : 'Auto';
+      if (state.autoSpin && !state.isSpinning) {
+        triggerSpin();
+      }
+    });
+
+    turboBtn.addEventListener('click', () => {
+      state.turboSpin = !state.turboSpin;
+      turboBtn.classList.toggle('active-mode', state.turboSpin);
+      showToast(state.turboSpin ? 'Turbo Spin Enabled' : 'Normal Spin Speed');
+    });
+
+    refillBtn.addEventListener('click', () => {
+      state.balance += 1000;
+      updateHUD();
+      sound.playWin(false);
+      showToast('+1,000.00 Free Virtual Credits Added!');
+    });
+
+    soundToggleBtn.addEventListener('click', () => {
+      sound.muted = !sound.muted;
+      document.getElementById('soundOnIcon').classList.toggle('hidden', sound.muted);
+      document.getElementById('soundOffIcon').classList.toggle('hidden', !sound.muted);
+    });
+
+    closeWinModalBtn.addEventListener('click', () => {
+      winModal.classList.remove('show');
+    });
+
+    paytableBtn.addEventListener('click', () => {
+      paytableModal.classList.add('show');
+    });
+
+    closePaytableBtn.addEventListener('click', () => {
+      paytableModal.classList.remove('show');
+    });
+
+    // Keyboard Spacebar support
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        if (winModal.classList.contains('show')) {
+          winModal.classList.remove('show');
+        } else {
+          triggerSpin();
+        }
+      }
+    });
+
+    // Initialize Game on Window Load
+    window.onload = () => {
+      buildFortuneWheel();
+      renderStaticReels();
+      buildPaytableUI();
+      updateHUD();
+      animateParticles();
+    };
+  </script>
+</body>
+</html>
