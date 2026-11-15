@@ -1,0 +1,1478 @@
+html
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Wild Ape 2304 Ways - Fun Arcade Edition</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fredoka:wght@500;600;700&family=Hind+Siliguri:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --neon-cyan: #00f3ff;
+      --neon-pink: #ff2a85;
+      --neon-gold: #ffd700;
+      --neon-purple: #b537f2;
+      --neon-green: #00ff88;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0d0b1a;
+      font-family: 'Fredoka', 'Hind Siliguri', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Main Mobile-First Cabinet Frame */
+    .cabinet-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 450px;
+      min-height: 100vh;
+      max-height: 920px;
+      background: linear-gradient(180deg, #3a2359 0%, #5b3266 22%, #2b1d38 55%, #162b32 78%, #0c1f24 100%);
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(0, 243, 255, 0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    @media (min-width: 500px) {
+      .cabinet-wrapper {
+        min-height: 840px;
+        height: 94vh;
+        border-radius: 28px;
+        border: 3px solid #3f2e56;
+      }
+    }
+
+    /* Background Decorative Elements */
+    .bg-scene {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* String Lights Animation */
+    @keyframes bulbGlow {
+      0%, 100% { filter: brightness(1.1) drop-shadow(0 0 6px currentColor); transform: scale(1); }
+      50% { filter: brightness(1.6) drop-shadow(0 0 12px currentColor); transform: scale(1.08); }
+    }
+    .bulb {
+      animation: bulbGlow 2s infinite alternate ease-in-out;
+    }
+    .bulb:nth-child(odd) { animation-delay: 0.7s; }
+    .bulb:nth-child(3n) { animation-delay: 1.3s; }
+
+    /* Pond Water Ripples */
+    @keyframes waterShimmer {
+      0% { transform: translateX(-10%) scaleY(1); opacity: 0.35; }
+      50% { transform: translateX(10%) scaleY(1.15); opacity: 0.6; }
+      100% { transform: translateX(-10%) scaleY(1); opacity: 0.35; }
+    }
+    .water-ripple {
+      animation: waterShimmer 6s infinite ease-in-out;
+    }
+
+    /* Top Wooden Sign '2304 WAYS' */
+    .wooden-sign {
+      background: linear-gradient(180deg, #7c4425 0%, #522914 100%);
+      border: 3px solid #9e5d36;
+      border-bottom: 4px solid #36190a;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.65), inset 0 2px 3px rgba(255, 200, 150, 0.3);
+      border-radius: 14px;
+      position: relative;
+    }
+    .ways-text {
+      font-family: 'Bangers', cursive;
+      letter-spacing: 2px;
+      color: #fff3e6;
+      text-shadow:
+        0 2px 0 #b81d13,
+        0 -2px 0 #b81d13,
+        2px 0 0 #b81d13,
+        -2px 0 0 #b81d13,
+        0 0 12px #ff4500,
+        0 4px 6px rgba(0,0,0,0.8);
+    }
+
+    /* 6-Column Reel Grid (3-4-4-4-4-3) */
+    .reel-board-frame {
+      position: relative;
+      z-index: 10;
+      margin: 0 8px;
+      padding: 6px;
+      background: linear-gradient(180deg, rgba(22, 14, 38, 0.92), rgba(14, 10, 26, 0.96));
+      border: 2px solid #8c583a;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.75), inset 0 0 15px rgba(255, 196, 0, 0.15);
+    }
+
+    .reels-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 4px;
+      height: 330px;
+      position: relative;
+    }
+
+    @media (min-height: 760px) {
+      .reels-container {
+        height: 365px;
+      }
+    }
+
+    .reel-col {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 4px;
+      height: 100%;
+      position: relative;
+    }
+
+    /* Outer columns 1 and 6 have 3 rows, slightly taller cells */
+    .reel-col.col-outer .symbol-cell {
+      height: calc((100% - 8px) / 3);
+    }
+
+    /* Inner columns 2, 3, 4, 5 have 4 rows */
+    .reel-col.col-inner .symbol-cell {
+      height: calc((100% - 12px) / 4);
+    }
+
+    .symbol-cell {
+      position: relative;
+      border-radius: 10px;
+      background: rgba(34, 24, 58, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s;
+    }
+
+    /* Individual Symbol Card Tints matching screenshot */
+    .sym-A { background: linear-gradient(145deg, #4b1d3f, #2a1026); border-color: rgba(255, 65, 150, 0.45); }
+    .sym-K { background: linear-gradient(145deg, #3c1e54, #211033); border-color: rgba(185, 75, 255, 0.45); }
+    .sym-Q { background: linear-gradient(145deg, #1b3859, #102036); border-color: rgba(56, 189, 248, 0.45); }
+    .sym-J { background: linear-gradient(145deg, #1c4738, #0f2920); border-color: rgba(52, 211, 153, 0.45); }
+    .sym-10 { background: linear-gradient(145deg, #2b4425, #182614); border-color: rgba(132, 204, 22, 0.45); }
+    .sym-BANANA { background: linear-gradient(145deg, #4d3d18, #29200b); border-color: rgba(250, 204, 21, 0.55); }
+    .sym-POTION { background: linear-gradient(145deg, #193e66, #0d2138); border-color: rgba(56, 189, 248, 0.65); }
+    .sym-CROWN { background: linear-gradient(145deg, #664412, #382307); border-color: rgba(251, 191, 36, 0.8); box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.35); }
+    .sym-SCATTER { background: radial-gradient(circle, #4c1d95 0%, #1e1b4b 85%); border-color: #c084fc; box-shadow: inset 0 0 12px rgba(192, 132, 252, 0.5); }
+    .sym-WILD { background: linear-gradient(145deg, #784814, #3d2106); border-color: #fde047; box-shadow: inset 0 0 12px rgba(253, 224, 71, 0.5); }
+
+    /* Drop & Spin Animations */
+    @keyframes cellDrop {
+      0% { transform: translateY(-45px) scale(0.85); opacity: 0; }
+      70% { transform: translateY(4px) scale(1.03); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .animate-drop {
+      animation: cellDrop 0.32s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes reelSpinBlur {
+      0% { transform: translateY(-8px); filter: blur(1.5px); }
+      50% { transform: translateY(8px); filter: blur(2px); }
+      100% { transform: translateY(-8px); filter: blur(1.5px); }
+    }
+    .spinning-cell {
+      animation: reelSpinBlur 0.14s infinite linear;
+    }
+
+    /* Winning Symbol Pulse & Explosion */
+    @keyframes winPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px #ffd700, inset 0 0 12px #ffd700; border-color: #fff; z-index: 20; }
+      50% { transform: scale(1.08); box-shadow: 0 0 26px #ffae00, inset 0 0 18px #fff; border-color: #ffd700; z-index: 20; }
+    }
+    .symbol-win {
+      animation: winPulse 0.45s infinite ease-in-out;
+    }
+
+    @keyframes popVanish {
+      0% { transform: scale(1.1); opacity: 1; filter: brightness(2); }
+      100% { transform: scale(0.1) rotate(25deg); opacity: 0; filter: brightness(3); }
+    }
+    .symbol-explode {
+      animation: popVanish 0.3s ease-in forwards;
+    }
+
+    /* Center Locked / Unlocked Bored Ape Overlay (Cols 3-4, Rows 2-3) */
+    .center-ape-overlay {
+      position: absolute;
+      left: calc((100% / 6) * 2 + 2px);
+      width: calc((100% / 6) * 2 - 4px);
+      top: calc(25% + 1px);
+      height: calc(50% - 2px);
+      z-index: 25;
+      border-radius: 14px;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: hidden;
+    }
+
+    .ape-locked-box {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(168, 118, 22, 0.92) 0%, rgba(72, 46, 10, 0.96) 100%);
+      border: 2.5px solid #fbbf24;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 215, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .ape-unlocked-box {
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, #f59e0b 0%, #b45309 65%, #78350f 100%);
+      border: 3px solid #fef08a;
+      box-shadow: 0 0 30px rgba(250, 204, 21, 0.95), inset 0 0 20px #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      animation: unlockedGlow 1.2s infinite alternate;
+    }
+
+    @keyframes unlockedGlow {
+      0% { box-shadow: 0 0 20px #f59e0b, inset 0 0 12px #fef08a; }
+      100% { box-shadow: 0 0 38px #fde047, inset 0 0 24px #ffffff; }
+    }
+
+    @keyframes chainShake {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      25% { transform: rotate(-3deg) scale(1.04); }
+      75% { transform: rotate(3deg) scale(1.04); }
+    }
+    .chain-hit {
+      animation: chainShake 0.35s ease-in-out;
+    }
+
+    /* Pink Mailbox FEATURE BUY Button */
+    .mailbox-btn {
+      background: linear-gradient(180deg, #ff4d94 0%, #c81e6b 65%, #8f114b 100%);
+      border: 2.5px solid #ff99c2;
+      border-radius: 18px 18px 8px 8px;
+      box-shadow: 0 6px 16px rgba(255, 42, 133, 0.45), inset 0 3px 6px rgba(255, 255, 255, 0.4);
+      transition: transform 0.15s, filter 0.15s;
+      cursor: pointer;
+    }
+    .mailbox-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      filter: brightness(1.1);
+    }
+    .mailbox-btn:active {
+      transform: translateY(1px) scale(0.97);
+    }
+
+    .feature-buy-neon {
+      color: #a5f3fc;
+      text-shadow: 0 0 6px #06b6d4, 0 0 12px #0891b2, 0 2px 2px rgba(0,0,0,0.8);
+      font-family: 'Bangers', cursive;
+      letter-spacing: 1.5px;
+    }
+
+    /* Blue Glowing Info Ticker Banner */
+    .info-ticker-bar {
+      background: linear-gradient(90deg, #07254a 0%, #0d4b8c 50%, #07254a 100%);
+      border-top: 2px solid #38bdf8;
+      border-bottom: 2px solid #38bdf8;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(0, 243, 255, 0.35);
+      position: relative;
+      overflow: hidden;
+    }
+    .ticker-text {
+      font-family: 'Bangers', 'Hind Siliguri', cursive;
+      letter-spacing: 1.2px;
+      color: #ffffff;
+      text-shadow: 0 0 8px #00f3ff, 0 2px 3px #000;
+    }
+
+    /* Circular Cyan Spin Button */
+    .spin-btn-outer {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #38bdf8, #0284c7 60%, #0c4a6e 100%);
+      border: 3px solid #bae6fd;
+      box-shadow: 0 0 22px rgba(0, 243, 255, 0.75), inset 0 3px 8px rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .spin-btn-outer:hover:not(:disabled) {
+      transform: scale(1.06);
+      box-shadow: 0 0 30px rgba(0, 243, 255, 0.95), inset 0 3px 10px rgba(255, 255, 255, 0.9);
+    }
+    .spin-btn-outer:active:not(:disabled) {
+      transform: scale(0.94);
+    }
+    .spin-btn-outer:disabled {
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    @keyframes spinIconRotate {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .spinning-icon {
+      animation: spinIconRotate 0.7s linear infinite;
+    }
+
+    /* Secondary HUD Buttons */
+    .hud-circle-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1.5px solid rgba(148, 163, 184, 0.45);
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+    .hud-circle-btn:hover {
+      background: rgba(30, 41, 59, 0.95);
+      border-color: #38bdf8;
+      color: #38bdf8;
+    }
+    .hud-circle-btn.active {
+      background: rgba(2, 132, 199, 0.35);
+      border-color: #00f3ff;
+      color: #00f3ff;
+      box-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
+    }
+
+    /* Particle Canvas */
+    #fxCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    /* Big Win Celebration Overlay */
+    @keyframes bounceIn {
+      0% { transform: scale(0.3); opacity: 0; }
+      60% { transform: scale(1.1); opacity: 1; }
+      80% { transform: scale(0.95); }
+      100% { transform: scale(1); }
+    }
+    .win-banner-anim {
+      animation: bounceIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+  </style>
+</head>
+<body>
+
+<div class="cabinet-wrapper" id="gameCabinet">
+  <!-- Background Scene (Wooden Shack Roof, Glowing Lanterns, Pond, Lily Pads, Grass) -->
+  <div class="bg-scene">
+    <svg viewBox="0 0 450 900" preserveAspectRatio="none" class="w-full h-full">
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4c2c72"/>
+          <stop offset="30%" stop-color="#7c3f6c"/>
+          <stop offset="60%" stop-color="#281d3d"/>
+          <stop offset="100%" stop-color="#0b1f26"/>
+        </linearGradient>
+        <linearGradient id="roofWood" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#6b3e26"/>
+          <stop offset="100%" stop-color="#3b2012"/>
+        </linearGradient>
+        <radialGradient id="pondGlow" cx="50%" cy="85%" r="55%">
+          <stop offset="0%" stop-color="#1e4d59" stop-opacity="0.7"/>
+          <stop offset="100%" stop-color="#08171c" stop-opacity="0.95"/>
+        </radialGradient>
+      </defs>
+
+      <!-- Dusk Sky -->
+      <rect width="450" height="900" fill="url(#skyGrad)"/>
+
+      <!-- Wooden Shack Roof -->
+      <polygon points="35,115 225,22 415,115" fill="url(#roofWood)" stroke="#291409" stroke-width="4"/>
+      <polygon points="85,105 225,38 365,105" fill="#4f2c19" opacity="0.8"/>
+      <!-- Roof Planks -->
+      <line x1="150" y1="60" x2="120" y2="110" stroke="#291409" stroke-width="3"/>
+      <line x1="225" y1="30" x2="225" y2="110" stroke="#291409" stroke-width="3"/>
+      <line x1="300" y1="60" x2="330" y2="110" stroke="#291409" stroke-width="3"/>
+
+      <!-- String Lights Left & Right -->
+      <path d="M 0,70 Q 55,65 100,20" fill="none" stroke="#1f1209" stroke-width="2.5"/>
+      <path d="M 350,20 Q 395,65 450,70" fill="none" stroke="#1f1209" stroke-width="2.5"/>
+      <!-- Glowing Bulbs -->
+      <circle cx="15" cy="68" r="5" fill="#ff3b30" color="#ff3b30" class="bulb"/>
+      <circle cx="42" cy="62" r="5" fill="#ff2a85" color="#ff2a85" class="bulb"/>
+      <circle cx="68" cy="48" r="5" fill="#ffd60a" color="#ffd60a" class="bulb"/>
+      <circle cx="90" cy="30" r="5" fill="#32d74b" color="#32d74b" class="bulb"/>
+
+      <circle cx="360" cy="30" r="5" fill="#ff2a85" color="#ff2a85" class="bulb"/>
+      <circle cx="382" cy="48" r="5" fill="#00f3ff" color="#00f3ff" class="bulb"/>
+      <circle cx="408" cy="62" r="5" fill="#ffd60a" color="#ffd60a" class="bulb"/>
+      <circle cx="435" cy="68" r="5" fill="#32d74b" color="#32d74b" class="bulb"/>
+
+      <!-- Wooden Dock Wall behind Mailbox -->
+      <rect x="0" y="515" width="450" height="120" fill="#3b2316" opacity="0.85"/>
+      <line x1="0" y1="545" x2="450" y2="545" stroke="#24130a" stroke-width="3"/>
+      <line x1="0" y1="575" x2="450" y2="575" stroke="#24130a" stroke-width="3"/>
+      <line x1="0" y1="605" x2="450" y2="605" stroke="#24130a" stroke-width="3"/>
+
+      <!-- String lights under the dock -->
+      <circle cx="60" cy="532" r="4" fill="#ff2a85" color="#ff2a85" class="bulb"/>
+      <circle cx="110" cy="536" r="4" fill="#00f3ff" color="#00f3ff" class="bulb"/>
+      <circle cx="340" cy="536" r="4" fill="#ffd60a" color="#ffd60a" class="bulb"/>
+      <circle cx="390" cy="532" r="4" fill="#32d74b" color="#32d74b" class="bulb"/>
+
+      <!-- Lifebuoy Ring on Left Post -->
+      <g transform="translate(38, 595)">
+        <rect x="-14" y="-55" width="28" height="110" rx="6" fill="#4a2c18" stroke="#29160a" stroke-width="2"/>
+        <circle cx="0" cy="0" r="44" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+        <path d="M -31,-31 L -15,-15 A 22,22 0 0,1 15,-15 L 31,-31 A 44,44 0 0,0 -31,-31 Z" fill="#dc2626"/>
+        <path d="M -31,31 L -15,15 A 22,22 0 0,0 15,15 L 31,31 A 44,44 0 0,1 -31,31 Z" fill="#dc2626"/>
+        <circle cx="0" cy="0" r="22" fill="#2c1a10" stroke="#94a3b8" stroke-width="2"/>
+      </g>
+
+      <!-- Pond Water at Bottom -->
+      <rect x="0" y="630" width="450" height="270" fill="url(#pondGlow)"/>
+      <ellipse cx="225" cy="740" rx="190" ry="18" fill="#2b6b7a" class="water-ripple"/>
+      <ellipse cx="180" cy="810" rx="150" ry="14" fill="#1e525e" class="water-ripple"/>
+
+      <!-- Lily Pads -->
+      <g transform="translate(215, 745)">
+        <ellipse cx="0" cy="0" rx="52" ry="16" fill="#2d6a3e" stroke="#1b4326" stroke-width="2"/>
+        <polygon points="0,0 45,-6 48,4" fill="#12353d"/>
+      </g>
+      <g transform="translate(335, 770)">
+        <ellipse cx="0" cy="0" rx="36" ry="11" fill="#357a48" stroke="#1b4326" stroke-width="2"/>
+      </g>
+
+      <!-- Foreground Pond Reeds / Grass -->
+      <path d="M 10,900 Q 25,830 5,780 Q 30,830 35,900 Z" fill="#1c4532"/>
+      <path d="M 30,900 Q 55,820 45,765 Q 65,825 60,900 Z" fill="#265c42"/>
+      <path d="M 380,900 Q 370,825 395,775 Q 390,835 405,900 Z" fill="#1c4532"/>
+      <path d="M 410,900 Q 400,815 430,760 Q 425,830 440,900 Z" fill="#265c42"/>
+    </svg>
+  </div>
+
+  <!-- Particle Effects Overlay Canvas -->
+  <canvas id="fxCanvas"></canvas>
+
+  <!-- TOP HEADER: Demo Badge + '2304 WAYS' Wooden Sign -->
+  <header class="relative z-20 pt-2 px-3 flex flex-col items-center">
+    <div class="w-full flex justify-between items-center mb-1">
+      <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/20 border border-emerald-400/50 text-emerald-300 tracking-wide">
+        🎮 FUN PLAY • ভার্চুয়াল কয়েন
+      </span>
+      <div class="flex items-center gap-1.5">
+        <span id="freeSpinsBadge" class="hidden px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-pink-600/80 border border-pink-300 text-white animate-pulse">
+          FREE SPINS: <span id="freeSpinsCount">0</span>
+        </span>
+        <button id="paytableBtn" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/25 border border-amber-400/60 text-amber-200 hover:bg-amber-500/40 transition">
+          ℹ️ নিয়ম / Paytable
+        </button>
+      </div>
+    </div>
+
+    <!-- Wooden 2304 WAYS Banner -->
+    <div class="wooden-sign px-7 py-1 flex items-center justify-center">
+      <span class="ways-text text-2xl sm:text-3xl tracking-wider">2304 WAYS</span>
+    </div>
+  </header>
+
+  <!-- MAIN 6-REEL GAME GRID -->
+  <main class="relative z-20 my-auto">
+    <div class="reel-board-frame">
+      <div class="reels-container" id="reelsContainer">
+        <!-- 6 Columns generated dynamically by JS -->
+      </div>
+
+      <!-- CENTER LOCKED / UNLOCKED BORED APE FEATURE (Cols 3 & 4, Rows 2 & 3) -->
+      <div class="center-ape-overlay" id="centerApeOverlay">
+        <!-- Locked State -->
+        <div id="apeLockedView" class="ape-locked-box">
+          <!-- Ape Portrait SVG -->
+          <div class="w-16 h-16 sm:w-20 sm:h-20 relative flex items-center justify-center">
+            <svg viewBox="0 0 100 100" class="w-full h-full drop-shadow-lg">
+              <!-- Ape Fur & Head -->
+              <circle cx="50" cy="54" r="32" fill="#4a3222"/>
+              <circle cx="20" cy="52" r="10" fill="#5c3e2b"/>
+              <circle cx="80" cy="52" r="10" fill="#5c3e2b"/>
+              <!-- Face Muzzle -->
+              <ellipse cx="50" cy="62" rx="22" ry="18" fill="#c99e7a"/>
+              <!-- Black Cap -->
+              <path d="M 22,38 Q 50,14 78,38 Z" fill="#18181b"/>
+              <rect x="20" y="34" width="66" height="7" rx="3" fill="#27272a"/>
+              <text x="50" y="31" font-size="7" fill="#fbbf24" font-weight="bold" text-anchor="middle">APE</text>
+              <!-- Cool Eyes -->
+              <ellipse cx="39" cy="48" rx="6" ry="4" fill="#fff"/>
+              <circle cx="40" cy="48" r="2.5" fill="#111"/>
+              <ellipse cx="61" cy="48" rx="6" ry="4" fill="#fff"/>
+              <circle cx="60" cy="48" r="2.5" fill="#111"/>
+              <path d="M 31,42 L 46,45 M 69,42 L 54,45" stroke="#2d1d12" stroke-width="3" stroke-linecap="round"/>
+              <!-- Grinning Teeth -->
+              <rect x="35" y="62" width="30" height="11" rx="5" fill="#fff" stroke="#3b2314" stroke-width="2"/>
+              <line x1="35" y1="67.5" x2="65" y2="67.5" stroke="#3b2314" stroke-width="1.5"/>
+              <line x1="42" y1="62" x2="42" y2="73" stroke="#3b2314" stroke-width="1.5"/>
+              <line x1="50" y1="62" x2="50" y2="73" stroke="#3b2314" stroke-width="1.5"/>
+              <line x1="58" y1="62" x2="58" y2="73" stroke="#3b2314" stroke-width="1.5"/>
+            </svg>
+          </div>
+
+          <!-- Chains & Golden Padlocks Overlay -->
+          <svg viewBox="0 0 140 140" class="absolute inset-0 w-full h-full pointer-events-none">
+            <!-- Diagonal Silver Chains -->
+            <line x1="6" y1="6" x2="134" y2="134" stroke="#cbd5e1" stroke-width="6" stroke-dasharray="8 4"/>
+            <line x1="6" y1="6" x2="134" y2="134" stroke="#475569" stroke-width="2" stroke-dasharray="8 4"/>
+            <line x1="134" y1="6" x2="6" y2="134" stroke="#cbd5e1" stroke-width="6" stroke-dasharray="8 4"/>
+            <line x1="134" y1="6" x2="6" y2="134" stroke="#475569" stroke-width="2" stroke-dasharray="8 4"/>
+
+            <!-- Left Golden Padlock (Breaks on 1st Cascade) -->
+            <g id="padlockLeft" transform="translate(24, 65)">
+              <path d="M -8,-10 V -18 A 8,8 0 0,1 8,-18 V -10" fill="none" stroke="#fde047" stroke-width="4"/>
+              <rect x="-12" y="-10" width="24" height="20" rx="4" fill="#f59e0b" stroke="#fef08a" stroke-width="2"/>
+              <circle cx="0" cy="-1" r="2.5" fill="#451a03"/>
+              <rect x="-1.5" y="0" width="3" height="5" fill="#451a03"/>
+            </g>
+
+            <!-- Right Golden Padlock (Breaks on 2nd Cascade -> Unlocks Wild!) -->
+            <g id="padlockRight" transform="translate(116, 65)">
+              <path d="M -8,-10 V -18 A 8,8 0 0,1 8,-18 V -10" fill="none" stroke="#fde047" stroke-width="4"/>
+              <rect x="-12" y="-10" width="24" height="20" rx="4" fill="#f59e0b" stroke="#fef08a" stroke-width="2"/>
+              <circle cx="0" cy="-1" r="2.5" fill="#451a03"/>
+              <rect x="-1.5" y="0" width="3" height="5" fill="#451a03"/>
+            </g>
+          </svg>
+
+          <!-- Multiplier Progression Strip (x2 -> x4 -> x6 -> x8) -->
+          <div class="absolute bottom-1.5 inset-x-1.5 flex items-center justify-around bg-black/75 rounded-lg py-0.5 px-1 border border-amber-400/50">
+            <span id="multBadge2" class="text-[11px] font-extrabold text-amber-300 px-1 rounded">x2</span>
+            <span class="text-amber-500 text-[10px]">›</span>
+            <span id="multBadge4" class="text-[11px] font-extrabold text-slate-400 px-1 rounded">x4</span>
+            <span class="text-amber-500 text-[10px]">›</span>
+            <span id="multBadge6" class="text-[11px] font-extrabold text-slate-400 px-1 rounded">x6</span>
+            <span class="text-amber-500 text-[10px]">›</span>
+            <span id="multBadge8" class="text-[11px] font-extrabold text-slate-400 px-1 rounded">x8</span>
+          </div>
+        </div>
+
+        <!-- Unlocked Giant 2x2 WILD APE State -->
+        <div id="apeUnlockedView" class="ape-unlocked-box hidden">
+          <div class="absolute top-1 right-1.5 bg-red-600 text-white font-black text-sm px-2 py-0.5 rounded-full border-2 border-yellow-300 shadow-lg" id="activeWildMultTag">
+            x2
+          </div>
+          <svg viewBox="0 0 100 100" class="w-24 h-24 drop-shadow-[0_4px_10px_rgba(0,0,0,0.8)]">
+            <circle cx="50" cy="52" r="34" fill="#5c3a21"/>
+            <circle cx="18" cy="50" r="11" fill="#784c2c"/>
+            <circle cx="82" cy="50" r="11" fill="#784c2c"/>
+            <ellipse cx="50" cy="60" rx="23" ry="18" fill="#e0b189"/>
+            <!-- Golden Crown / Cap -->
+            <path d="M 20,36 Q 50,10 80,36 Z" fill="#111827"/>
+            <rect x="18" y="32" width="68" height="7" rx="3.5" fill="#fbbf24"/>
+            <!-- Glowing Eyes -->
+            <ellipse cx="38" cy="46" rx="6" ry="4.5" fill="#fef08a"/>
+            <circle cx="39" cy="46" r="2.5" fill="#dc2626"/>
+            <ellipse cx="62" cy="46" rx="6" ry="4.5" fill="#fef08a"/>
+            <circle cx="61" cy="46" r="2.5" fill="#dc2626"/>
+            <!-- Big Smile -->
+            <rect x="33" y="60" width="34" height="12" rx="6" fill="#fff" stroke="#451a03" stroke-width="2"/>
+            <line x1="33" y1="66" x2="67" y2="66" stroke="#451a03" stroke-width="1.5"/>
+            <line x1="41" y1="60" x2="41" y2="72" stroke="#451a03" stroke-width="1.5"/>
+            <line x1="50" y1="60" x2="50" y2="72" stroke="#451a03" stroke-width="1.5"/>
+            <line x1="59" y1="60" x2="59" y2="72" stroke="#451a03" stroke-width="1.5"/>
+          </svg>
+          <div class="ways-text text-2xl tracking-widest -mt-2 text-yellow-200">WILD</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MIDDLE SECTION: Pink 'FEATURE BUY' Mailbox + Blue Glowing Info Ticker -->
+  <section class="relative z-20 flex flex-col items-center gap-1.5 mt-1">
+    <!-- Pink Mailbox Button -->
+    <button id="featureBuyBtn" class="mailbox-btn px-6 py-1.5 flex flex-col items-center justify-center">
+      <span class="feature-buy-neon text-xl leading-none">FEATURE BUY</span>
+      <span class="text-[10px] font-bold text-pink-100 tracking-wider mt-0.5">ফ্রি স্পিন কিনুন (50x Bet)</span>
+    </button>
+
+    <!-- Blue Glowing Info Ticker Banner -->
+    <div class="info-ticker-bar w-full py-1.5 px-3 flex items-center justify-center">
+      <p id="infoBannerText" class="ticker-text text-base sm:text-lg text-center tracking-wider uppercase truncate">
+        WILD BORED APE SYMBOL WITH 2 WINNING!
+      </p>
+    </div>
+  </section>
+
+  <!-- BOTTOM HUD & ARCADE CONTROLS -->
+  <footer class="relative z-20 px-3 pb-4 pt-1 flex flex-col gap-2.5">
+    <!-- Balance, Win, and Bet Readout Pill Bar -->
+    <div class="grid grid-cols-3 gap-1.5 bg-slate-950/85 border border-slate-700/70 rounded-full px-3 py-1.5 shadow-lg">
+      <!-- Balance -->
+      <div class="flex flex-col items-start justify-center pl-1">
+        <span class="text-[10px] uppercase text-slate-400 font-semibold leading-none">ব্যালেন্স (Coins)</span>
+        <span id="balanceDisplay" class="text-sm sm:text-base font-bold text-emerald-400 tracking-tight">1,000.00</span>
+      </div>
+
+      <!-- Current Spin Win -->
+      <div class="flex flex-col items-center justify-center border-x border-slate-800">
+        <span class="text-[10px] uppercase text-amber-300/80 font-semibold leading-none">জয় (Win)</span>
+        <span id="winDisplay" class="text-sm sm:text-base font-extrabold text-amber-400 tracking-tight">0.00</span>
+      </div>
+
+      <!-- Bet Amount -->
+      <div class="flex flex-col items-end justify-center pr-1">
+        <span class="text-[10px] uppercase text-slate-400 font-semibold leading-none">বেট (Bet)</span>
+        <span id="betDisplay" class="text-sm sm:text-base font-bold text-cyan-300 tracking-tight">10.00</span>
+      </div>
+    </div>
+
+    <!-- Main Action Row: Sound/Turbo | Bet - | SPIN | Bet + | Auto-Spin -->
+    <div class="flex items-center justify-between px-2">
+      <!-- Sound & Turbo Group -->
+      <div class="flex items-center gap-2">
+        <button id="muteBtn" class="hud-circle-btn" title="Mute / Unmute Sound">
+          <svg id="soundOnIcon" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M19.07 4.93a10 10 0 010 14.14"/>
+          </svg>
+          <svg id="soundOffIcon" class="w-5 h-5 hidden text-rose-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/>
+          </svg>
+        </button>
+
+        <button id="turboBtn" class="hud-circle-btn" title="Turbo Spin (দ্রুত স্পিন)">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Bet Decrease (-) -->
+      <button id="betMinusBtn" class="hud-circle-btn text-xl font-bold" title="Decrease Bet">−</button>
+
+      <!-- Large Glowing Cyan SPIN Button -->
+      <button id="spinBtn" class="spin-btn-outer" title="SPIN">
+        <svg id="spinIcon" class="w-10 h-10 text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.6)]" fill="none" stroke="currentColor" stroke-width="2.8" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+      </button>
+
+      <!-- Bet Increase (+) -->
+      <button id="betPlusBtn" class="hud-circle-btn text-xl font-bold" title="Increase Bet">+</button>
+
+      <!-- Auto-Spin Toggle -->
+      <button id="autoSpinBtn" class="hud-circle-btn relative" title="Auto Spin">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span id="autoBadge" class="hidden absolute -top-1 -right-1 bg-cyan-400 text-slate-950 text-[9px] font-black px-1 rounded-full">AUTO</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- MODAL: FEATURE BUY DIALOG -->
+  <div id="featureBuyModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-slate-900 to-indigo-950 border-2 border-pink-500 rounded-2xl max-w-sm w-full p-5 text-center shadow-[0_0_35px_rgba(255,42,133,0.5)]">
+      <div class="inline-block px-3 py-1 rounded-full bg-pink-500/20 border border-pink-400 text-pink-300 text-xs font-bold mb-2">
+        SPECIAL FEATURE BUY
+      </div>
+      <h3 class="text-2xl font-extrabold text-white mb-1">ফ্রি স্পিন মোড আনলক করুন!</h3>
+      <p class="text-xs text-slate-300 mb-4 leading-relaxed">
+        ৮টি ফ্রি স্পিন পাবেন যেখানে মাঝখানের <span class="text-amber-300 font-bold">Wild Bored Ape (x2 থেকে x8)</span> শুরু থেকেই আনলক থাকবে!
+      </p>
+      <div class="bg-slate-950/80 border border-slate-700 rounded-xl p-3 mb-4">
+        <div class="text-xs text-slate-400">প্রয়োজনীয় ভার্চুয়াল কয়েন</div>
+        <div id="featureBuyCostText" class="text-2xl font-black text-amber-400">500.00 Coins</div>
+      </div>
+      <div class="flex gap-3">
+        <button id="cancelFeatureBuy" class="flex-1 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-sm transition">
+          বাতিল (Cancel)
+        </button>
+        <button id="confirmFeatureBuy" class="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-rose-500 hover:brightness-110 text-white font-extrabold text-sm shadow-lg transition">
+          কিনুন (Start)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PAYTABLE & RULES -->
+  <div id="paytableModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-slate-900 border-2 border-amber-400/70 rounded-2xl max-w-sm w-full p-5 text-slate-200 max-h-[85vh] overflow-y-auto shadow-2xl">
+      <div class="flex justify-between items-center border-b border-slate-700 pb-2 mb-3">
+        <h3 class="text-lg font-extrabold text-amber-300">খেলার নিয়ম ও পে-টেবিল</h3>
+        <button id="closePaytableBtn" class="text-slate-400 hover:text-white text-xl font-bold px-2">✕</button>
+      </div>
+      <ul class="text-xs space-y-2 text-slate-300 mb-4">
+        <li>• <strong class="text-cyan-300">2304 Ways:</strong> বাম থেকে ডানে পরপর ৩ বা ততোধিক কলামে একই সিম্বল মিললে জিতবেন।</li>
+        <li>• <strong class="text-amber-300">Cascading Reels:</strong> জেতা সিম্বলগুলো বিস্ফোরিত হয়ে নতুন সিম্বল নিচে নেমে আসে।</li>
+        <li>• <strong class="text-pink-400">Locked Wild Ape:</strong> একই স্পিনে পরপর ২ বার জিতলে মাঝখানের দুটি তালা ভেঙে Giant Wild Ape (x2) আনলক হয় এবং পরের জয়ে x4, x6, x8 পর্যন্ত বাড়ে!</li>
+        <li>• <strong class="text-purple-300">Scatter:</strong> ৩টি বা তার বেশি ব্ল্যাক হোল Scatter পেলে ৮টি ফ্রি স্পিন চালু হয়।</li>
+      </ul>
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <div class="bg-slate-800/80 p-2 rounded-lg border border-amber-500/30 flex items-center justify-between">
+          <span class="font-bold text-amber-300">👑 Crown</span><span>6x = 5.0x Bet</span>
+        </div>
+        <div class="bg-slate-800/80 p-2 rounded-lg border border-cyan-500/30 flex items-center justify-between">
+          <span class="font-bold text-cyan-300">🧪 Potion</span><span>6x = 3.5x Bet</span>
+        </div>
+        <div class="bg-slate-800/80 p-2 rounded-lg border border-yellow-500/30 flex items-center justify-between">
+          <span class="font-bold text-yellow-300">🍌 Banana</span><span>6x = 2.5x Bet</span>
+        </div>
+        <div class="bg-slate-800/80 p-2 rounded-lg border border-pink-500/30 flex items-center justify-between">
+          <span class="font-bold text-pink-400">A / K / Q / J / 10</span><span>6x = 1.0x–1.5x</span>
+        </div>
+      </div>
+      <button id="resetCoinsBtn" class="mt-4 w-full py-2 rounded-xl bg-emerald-600/30 border border-emerald-500/60 text-emerald-300 text-xs font-bold hover:bg-emerald-600/50 transition">
+        🔄 ফ্রি কয়েন রিফিল করুন (Reset to 1,000 Coins)
+      </button>
+    </div>
+  </div>
+
+  <!-- BIG WIN CELEBRATION POPUP -->
+  <div id="bigWinOverlay" class="hidden fixed inset-0 z-40 pointer-events-none flex items-center justify-center">
+    <div class="win-banner-anim bg-gradient-to-b from-amber-500 via-orange-600 to-red-700 border-4 border-yellow-200 rounded-3xl px-8 py-5 text-center shadow-[0_0_50px_rgba(255,215,0,0.9)]">
+      <div id="bigWinTitle" class="ways-text text-4xl text-yellow-200 tracking-wider">MEGA WIN!</div>
+      <div id="bigWinAmount" class="text-3xl font-black text-white drop-shadow-md mt-1">+250.00</div>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * WILD APE 2304 WAYS - Interactive 6-Reel Cascading Arcade Game
+ * Pure Vanilla JS + Custom SVGs + Web Audio API Synthesizer
+ */
+
+// --- 1. GAME CONFIGURATION & SYMBOLS ---
+const REEL_STRUCTURE = [3, 4, 4, 4, 4, 3]; // 3 * 4 * 4 * 4 * 4 * 3 = 2304 Ways
+const BET_STEPS = [2, 5, 10, 20, 50, 100];
+
+const SYMBOLS = {
+  CROWN:   { id: 'CROWN',   name: 'Royal Crown',  weight: 8,  payouts: { 3: 0.8, 4: 1.5, 5: 3.0, 6: 5.0 } },
+  POTION:  { id: 'POTION',  name: 'Magic Potion', weight: 10, payouts: { 3: 0.6, 4: 1.2, 5: 2.2, 6: 3.5 } },
+  BANANA:  { id: 'BANANA',  name: 'Golden Banana',weight: 12, payouts: { 3: 0.5, 4: 1.0, 5: 1.8, 6: 2.5 } },
+  A:       { id: 'A',       name: 'Ace',          weight: 15, payouts: { 3: 0.3, 4: 0.6, 5: 1.0, 6: 1.5 } },
+  K:       { id: 'K',       name: 'King',         weight: 16, payouts: { 3: 0.25,4: 0.5, 5: 0.9, 6: 1.3 } },
+  Q:       { id: 'Q',       name: 'Queen',        weight: 17, payouts: { 3: 0.2, 4: 0.4, 5: 0.8, 6: 1.2 } },
+  J:       { id: 'J',       name: 'Jack',         weight: 18, payouts: { 3: 0.15,4: 0.35,5: 0.7, 6: 1.0 } },
+  '10':    { id: '10',      name: 'Ten',          weight: 18, payouts: { 3: 0.15,4: 0.3, 5: 0.6, 6: 1.0 } },
+  WILD:    { id: 'WILD',    name: 'Wild Ape',     weight: 5,  payouts: {} },
+  SCATTER: { id: 'SCATTER', name: 'Black Hole',   weight: 4,  payouts: {} }
+};
+
+// Custom Vector Artwork Generator for Each Symbol
+function getSymbolSVG(type) {
+  switch (type) {
+    case 'CROWN':
+      return `
+        <svg viewBox="0 0 80 80" class="w-4/5 h-4/5 drop-shadow-[0_3px_6px_rgba(0,0,0,0.7)]">
+          <path d="M 14,56 L 10,26 L 28,40 L 40,18 L 52,40 L 70,26 L 66,56 Z" fill="#dc2626"/>
+          <path d="M 12,56 L 8,24 L 27,39 L 40,15 L 53,39 L 72,24 L 68,56 Z" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linejoin="round"/>
+          <rect x="12" y="54" width="56" height="10" rx="4" fill="#f59e0b" stroke="#fef08a" stroke-width="2"/>
+          <circle cx="8" cy="22" r="4" fill="#fef08a"/>
+          <circle cx="40" cy="13" r="4.5" fill="#fef08a"/>
+          <circle cx="72" cy="22" r="4" fill="#fef08a"/>
+          <circle cx="26" cy="59" r="3" fill="#38bdf8"/>
+          <circle cx="40" cy="59" r="3.5" fill="#10b981"/>
+          <circle cx="54" cy="59" r="3" fill="#f43f5e"/>
+        </svg>`;
+    case 'POTION':
+      return `
+        <svg viewBox="0 0 80 80" class="w-4/5 h-4/5 drop-shadow-[0_3px_6px_rgba(0,0,0,0.7)]">
+          <rect x="33" y="10" width="14" height="9" rx="2" fill="#b45309"/>
+          <rect x="30" y="18" width="20" height="8" rx="3" fill="#38bdf8"/>
+          <rect x="18" y="25" width="44" height="44" rx="12" fill="#0284c7" stroke="#bae6fd" stroke-width="2.5"/>
+          <path d="M 21,44 Q 40,38 59,44 L 59,58 A 10,10 0 0,1 49,66 L 31,66 A 10,10 0 0,1 21,58 Z" fill="#00f3ff" opacity="0.85"/>
+          <circle cx="32" cy="52" r="3" fill="#fff" opacity="0.7"/>
+          <circle cx="46" cy="58" r="2" fill="#fff" opacity="0.7"/>
+          <circle cx="24" cy="55" r="8" fill="#f43f5e" stroke="#fff" stroke-width="2"/>
+        </svg>`;
+    case 'BANANA':
+      return `
+        <svg viewBox="0 0 80 80" class="w-4/5 h-4/5 drop-shadow-[0_3px_6px_rgba(0,0,0,0.7)]">
+          <path d="M 22,55 Q 48,68 65,30 Q 52,48 25,44 Z" fill="#facc15" stroke="#fef08a" stroke-width="2"/>
+          <path d="M 24,52 Q 44,58 58,28 Q 42,40 24,42 Z" fill="#fef9c3"/>
+          <path d="M 22,44 Q 14,32 22,22 Q 26,34 26,43 Z" fill="#eab308"/>
+          <path d="M 27,44 Q 34,26 44,24 Q 37,36 31,44 Z" fill="#facc15"/>
+          <circle cx="65" cy="29" r="3" fill="#78350f"/>
+        </svg>`;
+    case 'WILD':
+      return `
+        <div class="w-full h-full flex flex-col items-center justify-center relative">
+          <svg viewBox="0 0 80 65" class="w-4/5 h-3/4">
+            <circle cx="40" cy="36" r="24" fill="#5c3a21"/>
+            <ellipse cx="40" cy="42" rx="16" ry="13" fill="#d6a37a"/>
+            <path d="M 18,25 Q 40,8 62,25 Z" fill="#111827"/>
+            <rect x="16" y="22" width="50" height="5" rx="2.5" fill="#374151"/>
+            <circle cx="32" cy="32" r="3.5" fill="#fff"/><circle cx="33" cy="32" r="1.8" fill="#000"/>
+            <circle cx="48" cy="32" r="3.5" fill="#fff"/><circle cx="47" cy="32" r="1.8" fill="#000"/>
+            <rect x="29" y="42" width="22" height="8" rx="4" fill="#fff" stroke="#3b2314" stroke-width="1.5"/>
+          </svg>
+          <span class="ways-text text-sm sm:text-base text-yellow-300 leading-none -mt-1">WILD</span>
+        </div>`;
+    case 'SCATTER':
+      return `
+        <div class="w-full h-full flex flex-col items-center justify-center relative">
+          <svg viewBox="0 0 80 65" class="w-4/5 h-3/4">
+            <ellipse cx="40" cy="32" rx="32" ry="10" transform="rotate(-18 40 32)" fill="none" stroke="#e879f9" stroke-width="4"/>
+            <circle cx="40" cy="32" r="15" fill="#090d16" stroke="#fde047" stroke-width="3"/>
+            <ellipse cx="40" cy="32" rx="32" ry="10" transform="rotate(-18 40 32)" fill="none" stroke="#fff" stroke-width="1.5" stroke-dasharray="25 35"/>
+          </svg>
+          <span class="ways-text text-xs sm:text-sm text-fuchsia-300 leading-none -mt-1">SCATTER</span>
+        </div>`;
+    case 'A':
+      return `<span class="text-3xl sm:text-4xl font-black text-pink-400 drop-shadow-[0_0_10px_rgba(244,114,182,0.9)]">A</span>`;
+    case 'K':
+      return `<span class="text-3xl sm:text-4xl font-black text-purple-400 drop-shadow-[0_0_10px_rgba(192,132,252,0.9)]">K</span>`;
+    case 'Q':
+      return `<span class="text-3xl sm:text-4xl font-black text-sky-400 drop-shadow-[0_0_10px_rgba(56,189,248,0.9)]">Q</span>`;
+    case 'J':
+      return `<span class="text-3xl sm:text-4xl font-black text-emerald-400 drop-shadow-[0_0_10px_rgba(52,211,153,0.9)]">J</span>`;
+    case '10':
+      return `<span class="text-2xl sm:text-3xl font-black text-lime-400 drop-shadow-[0_0_10px_rgba(163,230,53,0.9)]">10</span>`;
+  }
+}
+
+// --- 2. WEB AUDIO SYNTHESIZER (NO EXTERNAL AUDIO FILES NEEDED) ---
+class SoundFX {
+  constructor() {
+    this.ctx = null;
+    this.muted = false;
+  }
+
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      this.ctx = new AudioCtx();
+    }
+    if (this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
+  }
+
+  playTone(freq, type, duration, vol = 0.15, slideTo = null) {
+    if (this.muted) return;
+    this.init();
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+    if (slideTo) {
+      osc.frequency.exponentialRampToValueAtTime(slideTo, this.ctx.currentTime + duration);
+    }
+    gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start();
+    osc.stop(this.ctx.currentTime + duration);
+  }
+
+  spinWhoosh() {
+    this.playTone(220, 'sine', 0.25, 0.14, 520);
+  }
+
+  reelStop(colIdx) {
+    this.playTone(140 + colIdx * 25, 'triangle', 0.08, 0.16, 70);
+  }
+
+  winChime(cascadeLevel) {
+    const base = 440 + cascadeLevel * 90;
+    this.playTone(base, 'sine', 0.18, 0.16);
+    setTimeout(() => this.playTone(base * 1.25, 'sine', 0.22, 0.16), 80);
+    setTimeout(() => this.playTone(base * 1.5, 'triangle', 0.3, 0.18), 160);
+  }
+
+  chainBreak() {
+    this.playTone(620, 'sawtooth', 0.14, 0.18, 180);
+    setTimeout(() => this.playTone(880, 'square', 0.25, 0.16, 1320), 90);
+  }
+
+  bigWinFanfare() {
+    const notes = [523.25, 659.25, 783.99, 1046.5];
+    notes.forEach((n, idx) => {
+      setTimeout(() => this.playTone(n, 'triangle', 0.35, 0.2), idx * 110);
+    });
+  }
+}
+
+const sfx = new SoundFX();
+
+// --- 3. PARTICLE SYSTEM ON CANVAS ---
+const fxCanvas = document.getElementById('fxCanvas');
+const fxCtx = fxCanvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  const rect = document.getElementById('gameCabinet').getBoundingClientRect();
+  fxCanvas.width = rect.width;
+  fxCanvas.height = rect.height;
+}
+window.addEventListener('resize', resizeCanvas);
+
+function spawnBurst(x, y, color = '#ffd700', count = 16) {
+  for (let i = 0; i < count; i++) {
+    const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.4;
+    const speed = 2 + Math.random() * 4.5;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed - 1.5,
+      size: 3 + Math.random() * 4,
+      color,
+      life: 1.0,
+      decay: 0.025 + Math.random() * 0.02
+    });
+  }
+}
+
+function animateParticles() {
+  fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.15; // gravity
+    p.life -= p.decay;
+    if (p.life <= 0) {
+      particles.splice(i, 1);
+      continue;
+    }
+    fxCtx.globalAlpha = p.life;
+    fxCtx.fillStyle = p.color;
+    fxCtx.beginPath();
+    fxCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    fxCtx.fill();
+  }
+  fxCtx.globalAlpha = 1;
+  requestAnimationFrame(animateParticles);
+}
+
+// --- 4. GAME STATE & CORE ENGINE ---
+const state = {
+  balance: 1000.00,
+  betIndex: 2, // Default 10.00
+  currentWin: 0.00,
+  grid: [], // 6 columns
+  isSpinning: false,
+  turbo: false,
+  autoSpin: false,
+  freeSpins: 0,
+  cascadeCount: 0,
+  apeUnlocked: false,
+  apeMultiplier: 2
+};
+
+function getCurrentBet() {
+  return BET_STEPS[state.betIndex];
+}
+
+// Weighted Random Symbol Generator
+function pickRandomSymbol(colIdx) {
+  const pool = [];
+  for (const key in SYMBOLS) {
+    // Wilds mostly appear on inner reels 2-5
+    if (key === 'WILD' && (colIdx === 0 || colIdx === 5)) continue;
+    const w = SYMBOLS[key].weight;
+    for (let i = 0; i < w; i++) pool.push(key);
+  }
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// Generate initial decorative grid matching the uploaded screenshot vibe
+function createInitialGrid() {
+  return [
+    ['A', 'BANANA', 'K'],
+    ['10', 'CROWN', 'SCATTER', 'J'],
+    ['POTION', 'WILD', 'Q', 'A'],
+    ['POTION', 'WILD', 'Q', 'A'],
+    ['10', 'CROWN', 'SCATTER', 'J'],
+    ['A', 'BANANA', 'K']
+  ];
+}
+
+// Render the 6-Column Grid to DOM
+function renderGrid(animateDrop = false) {
+  const container = document.getElementById('reelsContainer');
+  container.innerHTML = '';
+
+  state.grid.forEach((colSymbols, colIdx) => {
+    const colDiv = document.createElement('div');
+    const isOuter = (colIdx === 0 || colIdx === 5);
+    colDiv.className = `reel-col ${isOuter ? 'col-outer' : 'col-inner'}`;
+    colDiv.dataset.col = colIdx;
+
+    colSymbols.forEach((symKey, rowIdx) => {
+      const cell = document.createElement('div');
+      cell.className = `symbol-cell sym-${symKey} ${animateDrop ? 'animate-drop' : ''}`;
+      cell.dataset.col = colIdx;
+      cell.dataset.row = rowIdx;
+      cell.innerHTML = getSymbolSVG(symKey);
+      colDiv.appendChild(cell);
+    });
+
+    container.appendChild(colDiv);
+  });
+}
+
+// Update Center Bored Ape Lock/Unlock Visuals
+function updateCenterApeUI(shake = false) {
+  const overlay = document.getElementById('centerApeOverlay');
+  const lockedView = document.getElementById('apeLockedView');
+  const unlockedView = document.getElementById('apeUnlockedView');
+  const padlockLeft = document.getElementById('padlockLeft');
+  const padlockRight = document.getElementById('padlockRight');
+
+  if (shake) {
+    overlay.classList.remove('chain-hit');
+    void overlay.offsetWidth;
+    overlay.classList.add('chain-hit');
+  }
+
+  if (state.apeUnlocked) {
+    lockedView.classList.add('hidden');
+    unlockedView.classList.remove('hidden');
+    document.getElementById('activeWildMultTag').textContent = `x${state.apeMultiplier}`;
+  } else {
+    lockedView.classList.remove('hidden');
+    unlockedView.classList.add('hidden');
+
+    // Padlock 1 breaks on cascade >= 1
+    padlockLeft.style.opacity = state.cascadeCount >= 1 ? '0.15' : '1';
+    padlockRight.style.opacity = state.cascadeCount >= 2 ? '0.15' : '1';
+
+    // Highlight multiplier progression
+    [2, 4, 6, 8].forEach(m => {
+      const el = document.getElementById(`multBadge${m}`);
+      if (m === 2) {
+        el.className = 'text-[11px] font-extrabold text-amber-300 bg-amber-500/30 px-1.5 rounded';
+      } else {
+        el.className = 'text-[11px] font-extrabold text-slate-400 px-1 rounded';
+      }
+    });
+  }
+}
+
+// Update HUD Numbers
+function updateHUD() {
+  document.getElementById('balanceDisplay').textContent = state.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('winDisplay').textContent = state.currentWin.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  document.getElementById('betDisplay').textContent = getCurrentBet().toFixed(2);
+  document.getElementById('featureBuyCostText').textContent = `${(getCurrentBet() * 50).toFixed(2)} Coins`;
+
+  const fsBadge = document.getElementById('freeSpinsBadge');
+  if (state.freeSpins > 0) {
+    fsBadge.classList.remove('hidden');
+    document.getElementById('freeSpinsCount').textContent = state.freeSpins;
+  } else {
+    fsBadge.classList.add('hidden');
+  }
+}
+
+function setBannerMessage(msg) {
+  document.getElementById('infoBannerText').textContent = msg;
+}
+
+// Helper: Check if a cell is covered by the Unlocked 2x2 Wild Bored Ape (Cols 2 & 3, Rows 1 & 2 in 0-indexed)
+function isCoveredByGiantWild(col, row) {
+  return state.apeUnlocked && (col === 2 || col === 3) && (row === 1 || row === 2);
+}
+
+// Evaluate 2304 Ways Left-to-Right Wins
+function evaluateWins() {
+  const winningCoords = new Set();
+  let totalWinAmount = 0;
+  let wildUsedInWin = false;
+
+  // Candidate symbols from Reel 0 (excluding SCATTER)
+  const firstColSymbols = [...new Set(state.grid[0])].filter(s => s !== 'SCATTER' && s !== 'WILD');
+
+  firstColSymbols.forEach(targetSym => {
+    let consecutiveCols = 0;
+    let ways = 1;
+    const tempCoords = [];
+
+    for (let c = 0; c < 6; c++) {
+      const matchingRows = [];
+      for (let r = 0; r < REEL_STRUCTURE[c]; r++) {
+        const cellSym = state.grid[c][r];
+        const isGiantWild = isCoveredByGiantWild(c, r);
+        if (cellSym === targetSym || cellSym === 'WILD' || isGiantWild) {
+          matchingRows.push({ c, r, isGiantWild });
+        }
+      }
+
+      if (matchingRows.length > 0) {
+        consecutiveCols++;
+        ways *= matchingRows.length;
+        matchingRows.forEach(m => {
+          tempCoords.push(`${m.c},${m.r}`);
+          if (m.isGiantWild) wildUsedInWin = true;
+        });
+      } else {
+        break;
+      }
+    }
+
+    if (consecutiveCols >= 3) {
+      const baseMult = SYMBOLS[targetSym].payouts[consecutiveCols] || 0.2;
+      const apeMult = (state.apeUnlocked && wildUsedInWin) ? state.apeMultiplier : 1;
+      const payout = getCurrentBet() * baseMult * (ways * 0.35) * apeMult;
+      totalWinAmount += payout;
+      tempCoords.forEach(coord => winningCoords.add(coord));
+    }
+  });
+
+  // Count Scatters anywhere
+  let scatterCount = 0;
+  for (let c = 0; c < 6; c++) {
+    for (let r = 0; r < REEL_STRUCTURE[c]; r++) {
+      if (state.grid[c][r] === 'SCATTER') scatterCount++;
+    }
+  }
+
+  return {
+    winningCoords: Array.from(winningCoords).map(str => {
+      const [c, r] = str.split(',').map(Number);
+      return { c, r };
+    }),
+    winAmount: Number(totalWinAmount.toFixed(2)),
+    scatterCount
+  };
+}
+
+// Sleep utility
+const sleep = ms => new Promise(res => setTimeout(res, ms));
+
+// --- 5. SPIN & CASCADE FLOW ---
+async function startSpin(isFreeTrigger = false) {
+  if (state.isSpinning) return;
+
+  const bet = getCurrentBet();
+  if (state.freeSpins <= 0 && !isFreeTrigger) {
+    if (state.balance < bet) {
+      setBannerMessage('কয়েন শেষ! নিয়ম বাটন থেকে ফ্রি রিফিল করুন।');
+      state.autoSpin = false;
+      updateAutoSpinUI();
+      return;
+    }
+    state.balance -= bet;
+  } else if (state.freeSpins > 0) {
+    state.freeSpins--;
+  }
+
+  state.isSpinning = true;
+  state.currentWin = 0;
+  state.cascadeCount = 0;
+
+  // In Free Spins mode, Wild Ape stays unlocked! Otherwise resets locked
+  if (state.freeSpins > 0 || isFreeTrigger) {
+    state.apeUnlocked = true;
+    state.apeMultiplier = Math.max(2, state.apeMultiplier);
+  } else {
+    state.apeUnlocked = false;
+    state.apeMultiplier = 2;
+  }
+
+  updateCenterApeUI();
+  updateHUD();
+  sfx.spinWhoosh();
+
+  const spinBtn = document.getElementById('spinBtn');
+  const spinIcon = document.getElementById('spinIcon');
+  spinBtn.disabled = true;
+  spinIcon.classList.add('spinning-icon');
+  setBannerMessage(state.freeSpins > 0 ? `FREE SPINS (${state.freeSpins} LEFT)!` : 'GOOD LUCK! 2304 WAYS ACTIVE');
+
+  // Visual spinning blur on cells
+  document.querySelectorAll('.symbol-cell').forEach(c => c.classList.add('spinning-cell'));
+
+  const spinDuration = state.turbo ? 240 : 520;
+  await sleep(spinDuration);
+
+  // Generate new grid
+  state.grid = REEL_STRUCTURE.map((rows, colIdx) => {
+    const col = [];
+    for (let r = 0; r < rows; r++) {
+      col.push(pickRandomSymbol(colIdx));
+    }
+    return col;
+  });
+
+  // Staggered Reel Stop Feel
+  renderGrid(true);
+  for (let c = 0; c < 6; c++) {
+    sfx.reelStop(c);
+    if (!state.turbo) await sleep(45);
+  }
+
+  // Cascade Evaluation Loop
+  await processCascades();
+
+  // Check Scatter Trigger (3+ Scatters)
+  const scatterCheck = evaluateWins().scatterCount;
+  if (scatterCheck >= 3) {
+    state.freeSpins += 8;
+    state.apeUnlocked = true;
+    state.apeMultiplier = 2;
+    updateCenterApeUI(true);
+    updateHUD();
+    sfx.bigWinFanfare();
+    setBannerMessage('🎉 3+ SCATTER! 8 FREE SPINS UNLOCKED!');
+    await sleep(1200);
+  }
+
+  // Big Win Celebration if total spin win >= 5x Bet
+  if (state.currentWin >= bet * 5) {
+    showBigWinPopup(state.currentWin);
+  }
+
+  state.isSpinning = false;
+  spinBtn.disabled = false;
+  spinIcon.classList.remove('spinning-icon');
+
+  // Continue Auto-Spin or Free Spins automatically
+  if (state.freeSpins > 0) {
+    await sleep(state.turbo ? 400 : 800);
+    startSpin();
+  } else if (state.autoSpin) {
+    await sleep(state.turbo ? 350 : 750);
+    if (state.autoSpin) startSpin();
+  }
+}
+
+async function processCascades() {
+  let keepCascading = true;
+
+  while (keepCascading) {
+    const { winningCoords, winAmount } = evaluateWins();
+
+    if (winningCoords.length === 0) {
+      keepCascading = false;
+      break;
+    }
+
+    state.cascadeCount++;
+    state.currentWin += winAmount;
+    state.balance += winAmount;
+    updateHUD();
+    sfx.winChime(state.cascadeCount);
+
+    // Highlight winning cells & spawn gold particles
+    const cabinetRect = document.getElementById('gameCabinet').getBoundingClientRect();
+    winningCoords.forEach(({ c, r }) => {
+      const cellEl = document.querySelector(`.symbol-cell[data-col="${c}"][data-row="${r}"]`);
+      if (cellEl) {
+        cellEl.classList.add('symbol-win');
+        const rect = cellEl.getBoundingClientRect();
+        spawnBurst(rect.left - cabinetRect.left + rect.width / 2, rect.top - cabinetRect.top + rect.height / 2, '#ffd700', 12);
+      }
+    });
+
+    setBannerMessage(`CASCADE x${state.cascadeCount}! WON +${winAmount.toFixed(2)} COINS!`);
+    await sleep(state.turbo ? 320 : 620);
+
+    // Unlock / Upgrade Center Wild Bored Ape on consecutive wins
+    if (!state.apeUnlocked) {
+      if (state.cascadeCount === 1) {
+        sfx.chainBreak();
+        updateCenterApeUI(true);
+        setBannerMessage('⛓️ 1ST LOCK BROKEN! 1 MORE WIN TO UNLOCK WILD APE!');
+      } else if (state.cascadeCount >= 2) {
+        state.apeUnlocked = true;
+        state.apeMultiplier = 2;
+        sfx.chainBreak();
+        updateCenterApeUI(true);
+        const overlayRect = document.getElementById('centerApeOverlay').getBoundingClientRect();
+        spawnBurst(overlayRect.left - cabinetRect.left + overlayRect.width / 2, overlayRect.top - cabinetRect.top + overlayRect.height / 2, '#00f3ff', 30);
+        setBannerMessage('🦍 WILD BORED APE UNLOCKED (x2 MULTIPLIER)!');
+      }
+    } else {
+      // Increase Multiplier x2 -> x4 -> x6 -> x8
+      if (state.apeMultiplier < 8) {
+        state.apeMultiplier += 2;
+        sfx.chainBreak();
+        updateCenterApeUI(true);
+        setBannerMessage(`🔥 WILD APE MULTIPLIER UPGRADED TO x${state.apeMultiplier}!`);
+      }
+    }
+
+    // Explode winning symbols (excluding Giant 2x2 Wild cells which stay sticky!)
+    winningCoords.forEach(({ c, r }) => {
+      if (!isCoveredByGiantWild(c, r)) {
+        const cellEl = document.querySelector(`.symbol-cell[data-col="${c}"][data-row="${r}"]`);
+        if (cellEl) cellEl.classList.add('symbol-explode');
+        state.grid[c][r] = null;
+      }
+    });
+
+    await sleep(state.turbo ? 180 : 300);
+
+    // Drop remaining symbols down & fill top with fresh symbols
+    for (let c = 0; c < 6; c++) {
+      const remaining = state.grid[c].filter(sym => sym !== null);
+      const needed = REEL_STRUCTURE[c] - remaining.length;
+      const fresh = [];
+      for (let i = 0; i < needed; i++) {
+        fresh.push(pickRandomSymbol(c));
+      }
+      state.grid[c] = [...fresh, ...remaining];
+    }
+
+    renderGrid(true);
+    await sleep(state.turbo ? 200 : 350);
+  }
+}
+
+function showBigWinPopup(amount) {
+  const overlay = document.getElementById('bigWinOverlay');
+  const titleEl = document.getElementById('bigWinTitle');
+  const amtEl = document.getElementById('bigWinAmount');
+
+  titleEl.textContent = amount >= getCurrentBet() * 15 ? 'SUPER MEGA WIN!' : 'BIG WIN!';
+  amtEl.textContent = `+${amount.toFixed(2)}`;
+  overlay.classList.remove('hidden');
+  sfx.bigWinFanfare();
+
+  setTimeout(() => {
+    overlay.classList.add('hidden');
+  }, 1800);
+}
+
+// --- 6. UI EVENT LISTENERS ---
+document.getElementById('spinBtn').addEventListener('click', () => startSpin());
+
+document.getElementById('betMinusBtn').addEventListener('click', () => {
+  if (state.isSpinning) return;
+  if (state.betIndex > 0) {
+    state.betIndex--;
+    sfx.playTone(300, 'sine', 0.08, 0.12);
+    updateHUD();
+  }
+});
+
+document.getElementById('betPlusBtn').addEventListener('click', () => {
+  if (state.isSpinning) return;
+  if (state.betIndex < BET_STEPS.length - 1) {
+    state.betIndex++;
+    sfx.playTone(420, 'sine', 0.08, 0.12);
+    updateHUD();
+  }
+});
+
+document.getElementById('muteBtn').addEventListener('click', () => {
+  sfx.muted = !sfx.muted;
+  document.getElementById('soundOnIcon').classList.toggle('hidden', sfx.muted);
+  document.getElementById('soundOffIcon').classList.toggle('hidden', !sfx.muted);
+});
+
+document.getElementById('turboBtn').addEventListener('click', () => {
+  state.turbo = !state.turbo;
+  document.getElementById('turboBtn').classList.toggle('active', state.turbo);
+  setBannerMessage(state.turbo ? '⚡ TURBO SPIN ON' : 'NORMAL SPIN SPEED');
+});
+
+function updateAutoSpinUI() {
+  document.getElementById('autoSpinBtn').classList.toggle('active', state.autoSpin);
+  document.getElementById('autoBadge').classList.toggle('hidden', !state.autoSpin);
+}
+
+document.getElementById('autoSpinBtn').addEventListener('click', () => {
+  state.autoSpin = !state.autoSpin;
+  updateAutoSpinUI();
+  if (state.autoSpin && !state.isSpinning) {
+    startSpin();
+  }
+});
+
+// Feature Buy Mailbox Modal
+document.getElementById('featureBuyBtn').addEventListener('click', () => {
+  if (state.isSpinning) return;
+  updateHUD();
+  document.getElementById('featureBuyModal').classList.remove('hidden');
+});
+
+document.getElementById('cancelFeatureBuy').addEventListener('click', () => {
+  document.getElementById('featureBuyModal').classList.add('hidden');
+});
+
+document.getElementById('confirmFeatureBuy').addEventListener('click', () => {
+  const cost = getCurrentBet() * 50;
+  if (state.balance < cost) {
+    setBannerMessage('পর্যাপ্ত ভার্চুয়াল কয়েন নেই!');
+    document.getElementById('featureBuyModal').classList.add('hidden');
+    return;
+  }
+  state.balance -= cost;
+  state.freeSpins = 8;
+  state.apeUnlocked = true;
+  state.apeMultiplier = 2;
+  document.getElementById('featureBuyModal').classList.add('hidden');
+  updateCenterApeUI(true);
+  updateHUD();
+  startSpin(true);
+});
+
+// Paytable & Refill Modal
+document.getElementById('paytableBtn').addEventListener('click', () => {
+  document.getElementById('paytableModal').classList.remove('hidden');
+});
+document.getElementById('closePaytableBtn').addEventListener('click', () => {
+  document.getElementById('paytableModal').classList.add('hidden');
+});
+document.getElementById('resetCoinsBtn').addEventListener('click', () => {
+  state.balance = 1000.00;
+  updateHUD();
+  setBannerMessage('1,000.00 ভার্চুয়াল কয়েন রিফিল করা হয়েছে!');
+  document.getElementById('paytableModal').classList.add('hidden');
+});
+
+// Keyboard Spacebar Support
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && !state.isSpinning) {
+    e.preventDefault();
+    startSpin();
+  }
+});
+
+// --- 7. INITIALIZE ON WINDOW LOAD ---
+window.onload = function () {
+  resizeCanvas();
+  animateParticles();
+  state.grid = createInitialGrid();
+  renderGrid(false);
+  updateCenterApeUI();
+  updateHUD();
+};
+</script>
+</body>
+</html> 
